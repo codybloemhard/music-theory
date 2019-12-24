@@ -4,6 +4,7 @@ use hound;
 
 pub mod tones;
 pub mod constants;
+pub mod mathh;
 
 #[cfg(test)]
 mod tests {

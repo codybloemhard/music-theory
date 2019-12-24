@@ -43,7 +43,7 @@ impl Track{
         for ch in 0..self.channels{
             let mut max = 0.0;
             for i in 0..len{
-                let s = self.samples[i * self.channels + ch];
+                let s = self.samples[i * self.channels + ch].abs();
                 if s > max{
                     max = s;
                 }
