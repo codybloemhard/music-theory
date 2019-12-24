@@ -19,11 +19,15 @@ pub fn square_sample(t: f32, hz: f32) -> f32{
 }
 
 pub fn topflat_sine_sample(t: f32, hz: f32) -> f32{
-    (t * hz * 2.0 * PI).sin().min(0.0)
+    (t * hz * 2.0 * PI).sin().min(0.0) * 2.0 + 1.0
 }
 
 pub fn botflat_sine_sample(t: f32, hz: f32) -> f32{
-    (t * hz * 2.0 * PI).sin().max(0.0)
+    (t * hz * 2.0 * PI).sin().max(0.0) * 2.0 - 1.0
+}
+
+pub fn triangle_sample(t: f32, hz: f32) -> f32{
+    4.0 * ((t * hz) - ((t * hz) + 0.5).floor()).abs() - 1.0
 }
 
 pub fn arg_id(a: f32, t: f32) -> f32 { a }
@@ -58,3 +62,5 @@ pub fn sine_wave(track: &mut Track, start: usize, duration: usize, pan: f32, vol
 pub fn square_wave(track: &mut Track, start: usize, duration: usize, pan: f32, vol: f32, hz: f32){
     tone_to_track(track, start, duration, pan, vol, hz, square_sample, arg_id, arg_id, arg_id);
 }
+
+
