@@ -1,5 +1,9 @@
-pub mod tone_pure;
+pub mod tones;
 pub mod track;
+pub mod samples;
+pub mod volfs;
 
-pub use tone_pure::*;
+pub use tones::*;
 pub use track::*;
+pub use samples::*;
+pub use volfs::*;
