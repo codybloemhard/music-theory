@@ -1,8 +1,28 @@
-type Note = u16;
+pub type Note = u16;
 
 #[derive(Clone,Copy)]
 pub enum NoteName{
     A, As, B, C, Cs, D, Ds, E, F, Fs, G, Gs,
+}
+
+impl std::fmt::Display for NoteName{
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result{
+        let string = match self{
+            NoteName::A     => "A",
+            NoteName::As    => "As",
+            NoteName::B     => "B",
+            NoteName::C     => "C",
+            NoteName::Cs    => "Cs",
+            NoteName::D     => "D",
+            NoteName::Ds    => "Ds",
+            NoteName::E     => "E",
+            NoteName::F     => "F",
+            NoteName::Fs    => "Fs",
+            NoteName::G     => "G",
+            NoteName::Gs    => "Gs",
+        };
+        write!(f, "{}", string)
+    }
 }
 
 pub const NOTE_NAMES: [NoteName; 12] = [NoteName::A,NoteName::As,NoteName::B,NoteName::C,NoteName::Cs,NoteName::D,NoteName::Ds,NoteName::E,NoteName::F,NoteName::Fs,NoteName::G,NoteName::Gs];
@@ -18,7 +38,7 @@ pub const NOTE_NAMES: [NoteName; 12] = [NoteName::A,NoteName::As,NoteName::B,Not
 // note 48 (12*4) is A4 at 440 hz
 pub fn to_pitch(note: Note) -> f32{
     let x = note as i32 - 49;
-    (2.0f32).powf(note as f32 / 12.0) * 440.0
+    (2.0f32).powf(x as f32 / 12.0) * 440.0
 }
 
 pub fn to_note_name(note: Note) -> NoteName{
@@ -26,7 +46,7 @@ pub fn to_note_name(note: Note) -> NoteName{
     NOTE_NAMES[inrank as usize]
 }
 
-pub fn to_note_rank(note: Note) -> {
+pub fn to_note_rank(note: Note) -> u16{
     note / 12
 }
 
@@ -52,5 +72,5 @@ pub fn dodeca_scale_index(name: NoteName) -> u16{
 }
 
 pub fn to_note(name: NoteName, rank: u16) -> Note{
-    (rank * 12) + 
+    (rank * 12) + dodeca_scale_index(name)
 }
