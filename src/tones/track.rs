@@ -63,7 +63,6 @@ impl Track{
                 max = s;
             }
         }
-        println!("max: {}", max);
         for sam in 0..len{
             self.samples[sam] /= max;
             self.samples[sam] *= vol;

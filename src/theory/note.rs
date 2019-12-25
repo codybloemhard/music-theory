@@ -9,17 +9,17 @@ impl std::fmt::Display for NoteName{
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result{
         let string = match self{
             NoteName::A     => "A",
-            NoteName::As    => "As",
+            NoteName::As    => "A#/Bb",
             NoteName::B     => "B",
             NoteName::C     => "C",
-            NoteName::Cs    => "Cs",
+            NoteName::Cs    => "C#/Db",
             NoteName::D     => "D",
-            NoteName::Ds    => "Ds",
+            NoteName::Ds    => "D#/Eb",
             NoteName::E     => "E",
             NoteName::F     => "F",
-            NoteName::Fs    => "Fs",
+            NoteName::Fs    => "F#/Gb",
             NoteName::G     => "G",
-            NoteName::Gs    => "Gs",
+            NoteName::Gs    => "G#/Ab",
         };
         write!(f, "{}", string)
     }
@@ -34,6 +34,20 @@ pub const NOTE_NAMES: [NoteName; 12] = [NoteName::A,NoteName::As,NoteName::B,Not
 36  37  38  39  40  41  42  43  44  45  46  47  // rank 3
 48                                              // A4
 */
+
+pub enum Accidental{
+    Sharp, Flat, Natural, DoubleSharp, DoubleFlat,
+}
+
+pub fn apply_accidental_global(note: Note, acc: Accidental) -> Note{
+    match acc{
+        Accidental::Sharp => note + 1,
+        Accidental::Flat => note - 1,
+        Accidental::DoubleSharp => note + 2,
+        Accidental::DoubleFlat => note - 2,
+        Accidental::Natural => note // can't apply natural without context
+    }
+}
 
 // note 48 (12*4) is A4 at 440 hz
 pub fn to_pitch(note: Note) -> f32{
