@@ -38,7 +38,7 @@ impl Track{
         self.samples[pos*self.channels + channel] += sample;
     }
 
-    pub fn normalize(&mut self){
+    pub fn normalize_per_channel(&mut self){
         let len = self.samples.len() / self.channels;
         for ch in 0..self.channels{
             let mut max = 0.0;
@@ -54,6 +54,22 @@ impl Track{
         }
     }
 
+    pub fn normalize(&mut self, vol: f32){
+        let len = self.samples.len();
+        let mut max = 0.0;
+        for sam in 0..len{
+            let s = self.samples[sam].abs();
+            if s > max{
+                max = s;
+            }
+        }
+        println!("max: {}", max);
+        for sam in 0..len{
+            self.samples[sam] /= max;
+            self.samples[sam] *= vol;
+        }
+    }
+
     pub fn render(&self, filepath: &str){
         let spec = hound::WavSpec{
             channels: self.channels as u16,
@@ -63,7 +79,7 @@ impl Track{
         };
         let mut writer = hound::WavWriter::create(filepath, spec).expect("Error: src::track::Track::render creating writer failed.");
         for s in &self.samples{
-            writer.write_sample((s * (i16::MAX as f32)) as i16).expect("Error: src::track::Track::render write_sample failed.");
+            writer.write_sample((s * ((i16::MAX - 1) as f32)) as i16).expect("Error: src::track::Track::render write_sample failed.");
         }
     }
 }
