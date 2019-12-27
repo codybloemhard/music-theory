@@ -1,31 +1,131 @@
-pub type Note = u16;
+use std::convert::TryInto;
+
+pub type Note = i32;
+pub type Rank = u16;
+
+pub const SEMI: Note = 120;
+pub const WHOLE: Note = 240;
 
 #[derive(Clone,Copy)]
-pub enum NoteName{
-    A, As, B, C, Cs, D, Ds, E, F, Fs, G, Gs,
+pub enum NamedNote{
+    A(Rank), As(Rank), B(Rank), C(Rank), Cs(Rank), D(Rank), Ds(Rank), E(Rank), F(Rank), Fs(Rank), G(Rank), Gs(Rank), MicroTonal(Note)
 }
 
-impl std::fmt::Display for NoteName{
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result{
-        let string = match self{
-            NoteName::A     => "A",
-            NoteName::As    => "A#/Bb",
-            NoteName::B     => "B",
-            NoteName::C     => "C",
-            NoteName::Cs    => "C#/Db",
-            NoteName::D     => "D",
-            NoteName::Ds    => "D#/Eb",
-            NoteName::E     => "E",
-            NoteName::F     => "F",
-            NoteName::Fs    => "F#/Gb",
-            NoteName::G     => "G",
-            NoteName::Gs    => "G#/Ab",
+impl NamedNote{
+    pub fn from_note(note: Note) -> Self{
+        if note % 120 == 0 { // This a a chromatic note
+            let rank: Rank = (note / 1440).max(0).try_into().unwrap();
+            let inrank = (note / 120) % 12;
+            match inrank{
+                0 => NamedNote::A(rank),
+                1 => NamedNote::As(rank),
+                2 => NamedNote::B(rank),
+                3 => NamedNote::C(rank),
+                4 => NamedNote::Cs(rank),
+                5 => NamedNote::D(rank),
+                6 => NamedNote::Ds(rank),
+                7 => NamedNote::E(rank),
+                8 => NamedNote::F(rank),
+                9 => NamedNote::Fs(rank),
+                10 => NamedNote::G(rank),
+                11 => NamedNote::Gs(rank),
+                _ => { panic!("NamedNote::from_note: should never happen!"); }
+            }
+        } else { // This is a microtonal note
+            NamedNote::MicroTonal(note)
+        }
+    }
+
+    pub fn rank(self) -> Rank{
+        match self{
+            NamedNote::A(r)     => r,
+            NamedNote::As(r)    => r,
+            NamedNote::B(r)     => r,
+            NamedNote::C(r)     => r,
+            NamedNote::Cs(r)    => r,
+            NamedNote::D(r)     => r,
+            NamedNote::Ds(r)    => r,
+            NamedNote::E(r)     => r,
+            NamedNote::F(r)     => r,
+            NamedNote::Fs(r)    => r,
+            NamedNote::G(r)     => r,
+            NamedNote::Gs(r)    => r,
+            NamedNote::MicroTonal(n) => (n / 1440) as Rank,
+        }
+    }
+
+    pub fn chromatic_to_index(self) -> Note{
+        match self{
+            NamedNote::A(_)     => 0,
+            NamedNote::As(_)    => 1,
+            NamedNote::B(_)     => 2,
+            NamedNote::C(_)     => 3,
+            NamedNote::Cs(_)    => 4,
+            NamedNote::D(_)     => 5,
+            NamedNote::Ds(_)    => 6,
+            NamedNote::E(_)     => 7,
+            NamedNote::F(_)     => 8,
+            NamedNote::Fs(_)    => 9,
+            NamedNote::G(_)     => 10,
+            NamedNote::Gs(_)    => 11,
+            _ => 0,
+        }
+    }
+    
+    pub fn to_note(self) -> Note{
+        let x = match self{
+            NamedNote::MicroTonal(n) => n,
+            _ => -1,
         };
-        write!(f, "{}", string)
+        if x > -1 {
+            return x;
+        }
+        (self.rank() * 12 * 120) as Note + (self.chromatic_to_index() * 120)
+    }
+
+    pub fn to_string_name(self) -> String{
+        match self{
+            NamedNote::A(_)     => "A",
+            NamedNote::As(_)    => "A#/Bb",
+            NamedNote::B(_)     => "B",
+            NamedNote::C(_)     => "C",
+            NamedNote::Cs(_)    => "C#/Db",
+            NamedNote::D(_)     => "D",
+            NamedNote::Ds(_)    => "D#/Eb",
+            NamedNote::E(_)     => "E",
+            NamedNote::F(_)     => "F",
+            NamedNote::Fs(_)    => "F#/Gb",
+            NamedNote::G(_)     => "G",
+            NamedNote::Gs(_)    => "G#/Ab",
+            NamedNote::MicroTonal(n) => "X",
+        }.to_string()
+    }
+
+    pub fn is_chromatic(self) -> bool{
+        match self{
+            Self::MicroTonal(_) => false,
+            _ => true,
+        }
+    }
+
+    pub fn as_string(self) -> String{
+        if self.is_chromatic() {
+            format!("{}{}", self.to_string_name(), self.rank())
+        }else{
+            let n = self.to_note();
+            let close_chromatic = (n / 120) * 120;
+            let diff = n - close_chromatic;
+            let chroma = Self::from_note(close_chromatic);
+            format!("{}+{}",chroma.to_string(),diff as f32 / 120 as f32)
+        }
     }
 }
 
-pub const NOTE_NAMES: [NoteName; 12] = [NoteName::A,NoteName::As,NoteName::B,NoteName::C,NoteName::Cs,NoteName::D,NoteName::Ds,NoteName::E,NoteName::F,NoteName::Fs,NoteName::G,NoteName::Gs];
+impl std::fmt::Display for NamedNote{
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result{ //TODO fix
+        write!(f, "{}", self.as_string())
+    }
+}
 
 /*
 0   1   2   3   4   5   6   7   8   9   10  11  // rank 0
@@ -34,7 +134,7 @@ pub const NOTE_NAMES: [NoteName; 12] = [NoteName::A,NoteName::As,NoteName::B,Not
 36  37  38  39  40  41  42  43  44  45  46  47  // rank 3
 48                                              // A4
 */
-
+#[derive(Clone,Copy)]
 pub enum Accidental{
     Sharp, Flat, Natural, DoubleSharp, DoubleFlat,
 }
@@ -49,42 +149,8 @@ pub fn apply_accidental_global(note: Note, acc: Accidental) -> Note{
     }
 }
 
-// note 48 (12*4) is A4 at 440 hz
+// note (48*120) (48=12*4) is A4 at 440 hz
 pub fn to_pitch(note: Note) -> f32{
-    let x = note as i32 - 49;
-    (2.0f32).powf(x as f32 / 12.0) * 440.0
-}
-
-pub fn to_note_name(note: Note) -> NoteName{
-    let inrank = note % 12;
-    NOTE_NAMES[inrank as usize]
-}
-
-pub fn to_note_rank(note: Note) -> u16{
-    note / 12
-}
-
-pub fn to_name_rank(note: Note) -> (NoteName, u16){
-    (to_note_name(note), to_note_rank(note))
-}
-
-pub fn dodeca_scale_index(name: NoteName) -> u16{
-    match name{
-        NoteName::A     => 0,
-        NoteName::As    => 1,
-        NoteName::B     => 2,
-        NoteName::C     => 3,
-        NoteName::Cs    => 4,
-        NoteName::D     => 5,
-        NoteName::Ds    => 6,
-        NoteName::E     => 7,
-        NoteName::F     => 8,
-        NoteName::Fs    => 9,
-        NoteName::G     => 10,
-        NoteName::Gs    => 11,
-    }
-}
-
-pub fn to_note(name: NoteName, rank: u16) -> Note{
-    (rank * 12) + dodeca_scale_index(name)
+    let x = note as i32 - (48*120);
+    (2.0f32).powf(x as f32 / 1440.0) * 440.0
 }

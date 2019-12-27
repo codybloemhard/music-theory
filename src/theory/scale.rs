@@ -1,9 +1,6 @@
 use super::note::*;
 
-pub const SEMI: u8 = 1;
-pub const WHOLE: u8 = 2;
-
-pub type Scale = Vec<u8>;
+pub type Scale = Vec<Note>;
 pub type Mode = u8;
 
 pub const IONIAN: Mode = 0;
@@ -33,7 +30,7 @@ pub fn next_mode(mut scale: Scale) -> Scale{
 
 pub fn mode_of_scale(mut scale: Scale, mut mode: Mode) -> Scale{
     mode = mode % 7;
-    for i in 0..mode{
+    for _ in 0..mode{
         scale = next_mode(scale)
     }
     scale
@@ -50,13 +47,13 @@ pub fn scale_notes(scale: &Scale, mut note: Note) -> Vec<Note>{
 }
 
 pub fn ionian_mode(note: Note, mode: Mode) -> Vec<Note>{
-    let scale = mode_of_scale(ionian_scale_steps(), PHRYGIAN);
+    let scale = mode_of_scale(ionian_scale_steps(), mode);
     scale_notes(&scale, note)
 }
 
 pub fn print_notes(notes: &Vec<Note>){
     for i in 0..notes.len()-1{
-        print!("{},\t", to_note_name(notes[i]));
+        print!("{},\t", NamedNote::from_note(notes[i]));
     }
-    print!("{}\n", to_note_name(notes[notes.len()-1]));
+    print!("{}\n", NamedNote::from_note(notes[notes.len()-1]));
 }

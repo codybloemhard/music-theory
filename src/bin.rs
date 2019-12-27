@@ -3,9 +3,8 @@ use music_gen::tones::*;
 use music_gen::theory::*;
 
 fn main(){
-    let phrygian = ionian_mode(to_note(NoteName::D, 4), PHRYGIAN);
+    let phrygian = ionian_mode(NamedNote::A(4).to_note(), PHRYGIAN);
     print_notes(&phrygian);
-
     let sr = 44100;
     let mut track = music_gen::tones::Track::new(sr, 2);
     let volf = &hit_lin_quad(10.0,2.0,2.0);
