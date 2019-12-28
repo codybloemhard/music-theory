@@ -28,6 +28,13 @@ pub fn greek_dorian_enharmonic() -> Scale{
 pub fn greek_dorian_chromatic() -> Scale{
     vec![SEMI,SEMI,MINOR_THIRD,WHOLE,SEMI,SEMI,MINOR_THIRD]
 }
+/* 
+A,B,C,D#,E,F#,A
+2 + 1 + 3 + 1 + 2 + 3 = 12
+*/
+pub fn satie_scale() -> Scale{
+    vec![WHOLE,SEMI,MINOR_THIRD,SEMI,WHOLE,MINOR_THIRD]
+}
 
 pub fn next_mode(mut scale: Scale) -> Scale{
     let len = scale.len();
