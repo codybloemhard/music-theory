@@ -15,10 +15,10 @@ impl Score{
         if staff >= self.bars.len(){ return; } // need some logging
         if self.bars[staff].is_empty() { return; }
         self.append_if_needed(staff);
-        let residue = self.append_note(staff, note);
-        if let Some(rnote) = residue{
+        let mut residue = self.append_note(staff, note);
+        while let Some(rnote) = residue{
             self.append_if_needed(staff);
-            let rr = self.append_note(staff, rnote); // TODO: make while loop
+            residue = self.append_note(staff, rnote);
         }
     }
 
@@ -83,7 +83,7 @@ impl TimeSig{
 
 pub enum Clef{
     GClef,
-    CClef(usize),
+    CClef,
     FClef,
 }
 
@@ -105,14 +105,19 @@ impl Key{
         }
     }
 
-    pub fn from_accidentals(acc: Vec<Accidental>) -> Self{
+    pub fn from_accidentals(clef: Clef, acc: Vec<Accidental>) -> Self{
         let mut gen = Self::std_generator();
         let x = std::cmp::min(gen.len(), acc.len());
         for i in 0..x{
             gen[i] = apply_accidental_global(gen[i], acc[i]);
         }
+        let bnote = match clef {
+            Clef::GClef => NamedNote::G(4).to_note(),
+            Clef::FClef => NamedNote::F(3).to_note(),
+            Clef::CClef => NamedNote::C(4).to_note(),
+        };
         Self{
-            base: NamedNote::G(4).to_note(),
+            base: bnote,
             generator: gen,
         }
     }
@@ -140,7 +145,7 @@ pub struct Bar{
 }
 
 impl Bar{
-    pub fn new(note_zero: Note, key: Key, tempo: f32, time_sig: TimeSig) -> Self{
+    pub fn new(key: Key, tempo: f32, time_sig: TimeSig) -> Self{
         Self{
             notes: Vec::new(),
             key,
@@ -163,7 +168,7 @@ impl Bar{
     pub fn new_from_accidentals(clef: Clef, acc: Vec<Accidental>, tempo: f32, time_sig: TimeSig) -> Self{
         Self{
             notes: Vec::new(),
-            key: Key::from_accidentals(acc),
+            key: Key::from_accidentals(clef, acc),
             tempo,
             time_sig,
             time_left: time_sig.total(),

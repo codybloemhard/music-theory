@@ -3,8 +3,16 @@ use std::convert::TryInto;
 pub type Note = i32;
 pub type Rank = u16;
 
+pub const QUAD: Note = 60;
 pub const SEMI: Note = 120;
 pub const WHOLE: Note = 240;
+
+pub const MINOR_SECOND: Note = 120;
+pub const MAJOR_SECOND: Note = 240;
+pub const MINOR_THIRD: Note = 360;
+pub const MAJOR_THIRD: Note = 480;
+pub const OCTAVE: Note = 1200;
+
 pub const SILENT: Note = -1;
 pub const CARRY_ON: Note = -2;
 
@@ -99,7 +107,7 @@ impl NamedNote{
             NamedNote::Fs(_)    => "F#/Gb",
             NamedNote::G(_)     => "G",
             NamedNote::Gs(_)    => "G#/Ab",
-            NamedNote::MicroTonal(n) => "X",
+            NamedNote::MicroTonal(_) => "X",
         }.to_string()
     }
 
