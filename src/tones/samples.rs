@@ -18,5 +18,5 @@ pub fn botflat_sine_sample(t: f32, hz: f32) -> f32{
 }
 
 pub fn triangle_sample(t: f32, hz: f32) -> f32{
-    4.0 * ((t * hz) - ((t * hz) + 0.5).floor()).abs() - 1.0
+    (4.0 * ((t * hz) - ((t * hz) + 0.5).floor()).abs() - 1.0)
 }
