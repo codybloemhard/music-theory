@@ -3,11 +3,11 @@ use music_gen::tones::*;
 use music_gen::theory::*;
 
 fn main(){
-    let scale = notes_of_mode(NamedNote::A(4).to_note(), greek_dorian_enharmonic(), 0);
+    let scale = notes_of_mode(NamedNote::A(4).to_note(), greek_dorian_chromatic(), 0);
     print_notes(&scale);
     let sr = 44100;
     let mut track = music_gen::tones::Track::new(sr, 2);
-    let volf = &hit_lin_quad(10.0,2.0,2.0);
+    let volf = &hit_lin_quot(40.0,0.1);
     let mut time = 0;
     for note in scale{
         let hz = to_pitch(note);
