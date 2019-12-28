@@ -5,6 +5,8 @@ pub type Rank = u16;
 
 pub const SEMI: Note = 120;
 pub const WHOLE: Note = 240;
+pub const SILENT: Note = -1;
+pub const CARRY_ON: Note = -2;
 
 #[derive(Clone,Copy)]
 pub enum NamedNote{
@@ -122,7 +124,7 @@ impl NamedNote{
 }
 
 impl std::fmt::Display for NamedNote{
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result{ //TODO fix
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result{
         write!(f, "{}", self.as_string())
     }
 }
@@ -141,10 +143,10 @@ pub enum Accidental{
 
 pub fn apply_accidental_global(note: Note, acc: Accidental) -> Note{
     match acc{
-        Accidental::Sharp => note + 1,
-        Accidental::Flat => note - 1,
-        Accidental::DoubleSharp => note + 2,
-        Accidental::DoubleFlat => note - 2,
+        Accidental::Sharp => note + SEMI,
+        Accidental::Flat => note - SEMI,
+        Accidental::DoubleSharp => note + WHOLE,
+        Accidental::DoubleFlat => note - WHOLE,
         Accidental::Natural => note // can't apply natural without context
     }
 }
