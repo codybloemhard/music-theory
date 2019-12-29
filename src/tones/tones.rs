@@ -8,7 +8,12 @@ pub fn to_stereo(s: f32, pan: f32) -> (f32,f32){
     (s * vl, s * vr)
 }
 
+pub fn smooth_pass(smoothing: f32) -> impl Fn(f32,f32) -> f32{
+    move |old, new| old + (new - old) / smoothing
+}
+
 pub fn arg_id(a: f32, _: f32) -> f32 { a }
+pub fn pass_id(_: f32, new: f32) -> f32 { new }
 
 pub fn tone_to_track<F0,F1,F2,F3>(track: &mut Track, start: usize, duration: usize, 
     vol: f32, mut pan: f32, mut start_vol: f32, mut hz: f32,
@@ -37,13 +42,14 @@ pub fn tone_to_track<F0,F1,F2,F3>(track: &mut Track, start: usize, duration: usi
     }
 }
 
-pub fn tone_to_track_stereo<F0,F1,F2>(track: &mut Track, start: usize, duration: usize, 
+pub fn tone_to_track_stereo<F0,F1,F2,F3>(track: &mut Track, start: usize, duration: usize, 
     vol: f32, mut start_vol: f32, mut hz: f32,
-    tonef: &F0, volf: &F1, hzf: &F2)
+    tonef: &F0, volf: &F1, hzf: &F2, pass: &F3)
     where
         F0: Fn(f32,f32) -> (f32,f32),
         F1: Fn(f32,f32) -> f32,
         F2: Fn(f32,f32) -> f32,
+        F3: Fn(f32,f32) -> f32,
 {
     let end = start + duration;
     if end >= track.len(){
@@ -51,12 +57,17 @@ pub fn tone_to_track_stereo<F0,F1,F2>(track: &mut Track, start: usize, duration:
         track.enlongate(diff);
     }
     let sr = track.sample_rate();
-
+    let mut oldl = 0.0;
+    let mut oldr = 0.0;
     for i in 0..duration{
         let t = i as f32 / sr as f32;
         let (sl,sr) = tonef(t, hz);
-        track.add_sample(sl * vol * start_vol, start + i, LEFT);
-        track.add_sample(sr * vol * start_vol, start + i, RIGHT);
+        let slp = pass(oldl, sl);
+        let srp = pass(oldr, sr);
+        oldl = slp;
+        oldr = srp;
+        track.add_sample(slp * vol * start_vol, start + i, LEFT);
+        track.add_sample(srp * vol * start_vol, start + i, RIGHT);
         start_vol = volf(start_vol, t);
         hz = hzf(hz, t);
     }
