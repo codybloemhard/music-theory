@@ -11,14 +11,25 @@ impl Score{
         }
     }
 
-    pub fn add_note(&mut self, note: BarNote, staff: usize){
+    pub fn new_staff(&mut self){
+        self.bars.push(Vec::new());
+    }
+
+    pub fn new_bar(&mut self, staff: usize, bar: Bar){
+        if staff >= self.bars.len(){
+            return;
+        }
+        self.bars[staff].push(bar);
+    }
+
+    pub fn add_note(&mut self, note: BarNote, parralel: bool, staff: usize){
         if staff >= self.bars.len(){ return; } // need some logging
         if self.bars[staff].is_empty() { return; }
         self.append_if_needed(staff);
-        let mut residue = self.append_note(staff, note);
+        let mut residue = self.append_note(staff, note, parralel);
         while let Some(rnote) = residue{
             self.append_if_needed(staff);
-            residue = self.append_note(staff, rnote);
+            residue = self.append_note(staff, rnote, parralel);
         }
     }
 
@@ -41,9 +52,9 @@ impl Score{
         }
     }
 
-    pub fn append_note(&mut self, staff: usize, note: BarNote) -> Option<BarNote>{
+    pub fn append_note(&mut self, staff: usize, note: BarNote, parralel: bool) -> Option<BarNote>{
         let index = self.staff_head_unsafe(staff);
-        self.bars[staff][index].add_note(note)
+        self.bars[staff][index].add_note(note, parralel)
     }
 }
 
@@ -136,8 +147,12 @@ pub enum NoteEffect{
 
 pub type BarNote = (Note,f32,Vec<NoteEffect>);
 
+pub fn barnote(note: Note, d: f32) -> BarNote{
+    (note,d, Vec::new())
+}
+
 pub struct Bar{
-    pub notes: Vec<BarNote>,
+    pub notes: Vec<Vec<BarNote>>,
     pub key: Key,
     pub tempo: f32,
     pub time_sig: TimeSig,
@@ -175,16 +190,30 @@ impl Bar{
         }
     }
 
-    pub fn add_note(&mut self, (note,duration,effects): BarNote) -> Option<BarNote>{
+    pub fn add_note(&mut self, (note,duration,effects): BarNote, increase_time: bool) -> Option<BarNote>{
         let diff = self.time_left - duration;
-        if diff > 0.0{ // fits inside this bar still
-            self.notes.push((note,duration,effects));
-            self.time_left = diff;
+        if diff > -0.001{ // fits inside this bar still
+            if increase_time{
+                self.notes.push(vec![(note,duration,effects)]);
+                self.time_left = diff;
+            }else{
+                self.create_chord_if_none();
+                let last = self.notes.len() - 1;
+                self.notes[last].push((note,duration,effects));
+            }
             Option::None
         }else{
-            self.notes.push((note,self.time_left,effects.clone()));
+            self.create_chord_if_none();
+            let last = self.notes.len() - 1;
+            self.notes[last].push((note,self.time_left,effects.clone()));
             self.time_left = 0.0;
             Option::Some((CARRY_ON,-diff,effects))
+        }
+    }
+
+    pub fn create_chord_if_none(&mut self){
+        if self.notes.is_empty(){
+            self.notes.push(Vec::new());
         }
     }
 
