@@ -69,6 +69,24 @@ impl Track{
         }
     }
 
+    pub fn trim_end(&mut self, epsilon: f32){
+        let mut collecting = false;
+        let mut i = 0;
+        for (j,sam) in self.samples.iter().enumerate(){
+            if collecting{
+                if sam.abs() > epsilon{
+                    collecting = false;
+                }
+            }else if sam.abs() <= epsilon{
+                i = j;
+                collecting = true;
+            }
+        }
+        if collecting{
+            self.samples.truncate(i);
+        }
+    }
+
     pub fn render(&self, filepath: &str){
         let spec = hound::WavSpec{
             channels: self.channels as u16,

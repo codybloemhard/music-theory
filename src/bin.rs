@@ -13,9 +13,10 @@ fn main(){
     for note in scale{
         let hz = to_pitch(note);
         //tone_to_track(&mut track, time, sr * 3, 1.0, 0.0, 0.0, hz, &sine_sample, &arg_id, volf, &arg_id);
-        tone_to_track_stereo(&mut track, time, (sr as f32 * 1.5) as usize, 1.0, 0.0, hz, &spread(6,1.003,0.0, topflat_sine_sample), volf, &arg_id, &smooth_pass(10.0));
+        tone_to_track_stereo(&mut track, time, sr * 3 as usize, 1.0, 0.0, hz, &spread(6,1.003,0.0, topflat_sine_sample), volf, &arg_id, &smooth_pass(10.0));
         time += sr/2;
     }
+    //track.trim_end(0.001);
     track.normalize(0.99);
     track.render("test.wav");
 }
