@@ -20,8 +20,10 @@ fn test1(){
     score.add_note(barnote(NamedNote::A(4).to_note(), 0.5), false, 0);
     score.add_note(barnote(NamedNote::A(4).to_note(), 0.5), false, 0);
     score.add_note(barnote(NamedNote::Cs(4).to_note(), 0.5), true, 0);
-    score.add_note(barnote(NamedNote::E(4).to_note(), 0.5), true, 0);//TODO: fix timing issue, chord doesnt play at once
+    score.add_note(barnote(NamedNote::E(4).to_note(), 0.5), true, 0);
     
+    println!("{}", score.as_string(0));
+
     score.render_to_track_stereo(0, &mut track, 3.0, 1.0, 0.0, tonef, volf, hzf, passf);
     track.trim_end(0.001);
     track.normalize(0.99);

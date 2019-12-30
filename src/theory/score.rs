@@ -27,7 +27,9 @@ impl Score{
     pub fn add_note(&mut self, note: BarNote, parralel: bool, staff: usize){
         if staff >= self.bars.len(){ return; } // need some logging
         if self.bars[staff].is_empty() { return; }
-        self.append_if_needed(staff);
+        if !parralel{
+            self.append_if_needed(staff);
+        }
         let mut residue = self.append_note(staff, note, parralel);
         while let Some(rnote) = residue{
             self.append_if_needed(staff);
@@ -40,7 +42,7 @@ impl Score{
     }
 
     pub fn need_new(&self, staff: usize) -> bool{
-        self.bars[staff][self.staff_head_unsafe(staff)].has_left()
+        !self.bars[staff][self.staff_head_unsafe(staff)].has_left()
     }
 
     pub fn append_from_prev(&mut self, staff: usize){
@@ -56,7 +58,7 @@ impl Score{
 
     pub fn append_note(&mut self, staff: usize, note: BarNote, parralel: bool) -> Option<BarNote>{
         let index = self.staff_head_unsafe(staff);
-        self.bars[staff][index].add_note(note, parralel)
+        self.bars[staff][index].add_note(note, !parralel)
     }
 
     pub fn render_to_track_stereo<F0,F1,F2,F3>(&self, staff: usize, track: &mut Track, runout: f32, volume: f32, pan: f32, samplef: &F0, volf: &F1, hzf: &F2, passf: &F3)
@@ -83,12 +85,23 @@ impl Score{
             }
         }
     }
+
+    pub fn as_string(&self, staff: usize) -> String{
+        let mut builder = String::new();
+        if self.bars.len() <= staff { return builder; }
+        for bar in &self.bars[staff]{
+            let string = bar.as_string();
+            builder.push_str(&string);
+            builder.push_str("\n");
+        }
+        builder
+    }
 }
 
 #[derive(Clone,Copy)]
 pub struct TimeSig{
-    beats: u16,
-    size: f32,
+    pub beats: u16,
+    pub size: f32,
 }
 
 impl TimeSig{
@@ -225,23 +238,22 @@ impl Bar{
     }
 
     pub fn add_note(&mut self, (note,duration,effects): BarNote, increase_time: bool) -> Option<BarNote>{
-        let diff = self.time_left - duration;
-        if diff > -0.001{ // fits inside this bar still
-            if increase_time{
+        if increase_time{
+            let diff = self.time_left - duration;
+            if diff > -0.001{ // fits inside this bar still
                 self.notes.push(vec![(note,duration,effects)]);
                 self.time_left = diff;
+                Option::None
             }else{
-                self.create_chord_if_none();
-                let last = self.notes.len() - 1;
-                self.notes[last].push((note,duration,effects));
+                self.notes.push(vec![(note,self.time_left,effects.clone())]);
+                self.time_left = 0.0;
+                Option::Some((CARRY_ON,-diff,effects))
             }
-            Option::None
-        }else{
+        }else{ // play notes in parralel, can go outside bar without carryover
             self.create_chord_if_none();
             let last = self.notes.len() - 1;
-            self.notes[last].push((note,self.time_left,effects.clone()));
-            self.time_left = 0.0;
-            Option::Some((CARRY_ON,-diff,effects))
+            self.notes[last].push((note,duration,effects));
+            Option::None
         }
     }
 
@@ -263,5 +275,28 @@ impl Bar{
             time_sig: self.time_sig,
             time_left: self.time_sig.total(),
         }
+    }
+
+    pub fn as_string(&self) -> String{
+        let mut string = format!("||{}", self.time_sig.beats);
+        let size = (1.0 / self.time_sig.size).round() as i32;
+        //println!("{}", size.to_string());
+        string.push_str("/");
+        string.push_str(&size.to_string());
+        string.push_str("||");
+        for chord in &self.notes{
+            for (note,dur,_) in chord{
+                let named = NamedNote::from_note(*note);
+                string.push_str(&named.as_string());
+                string.push_str("\\");
+                string.push_str(&format!("{}", dur));
+                string.push_str(", ");
+            }
+            for _ in 0..2 { string.pop(); }
+            string.push_str(" | ")
+        }
+        for _ in 0..3 { string.pop(); }
+        string.push_str("||");
+        string
     }
 }
