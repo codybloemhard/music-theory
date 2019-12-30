@@ -1,5 +1,3 @@
-use crate::mathh::Clampable;
-
 pub fn hit_lin(slope: f32) -> impl Fn(f32,f32) -> f32{
     move |_, t| (1.0 - (t*slope)).max(0.0)
 }

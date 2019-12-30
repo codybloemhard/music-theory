@@ -1,4 +1,6 @@
 use super::note::*;
+use crate::tones::tones::*;
+use crate::tones::track::*;
 
 pub struct Score{
     pub bars: Vec<Vec<Bar>>,
@@ -55,6 +57,31 @@ impl Score{
     pub fn append_note(&mut self, staff: usize, note: BarNote, parralel: bool) -> Option<BarNote>{
         let index = self.staff_head_unsafe(staff);
         self.bars[staff][index].add_note(note, parralel)
+    }
+
+    pub fn render_to_track_stereo<F0,F1,F2,F3>(&self, staff: usize, track: &mut Track, runout: f32, volume: f32, pan: f32, samplef: &F0, volf: &F1, hzf: &F2, passf: &F3)
+        where
+            F0: Fn(f32,f32) -> (f32,f32),
+            F1: Fn(f32,f32) -> f32,
+            F2: Fn(f32,f32) -> f32,
+            F3: Fn(f32,f32) -> f32,
+    {
+        if self.bars.len() <= staff { return; }
+        let sr = track.sample_rate();
+        let rout = ((sr as f32) * runout) as usize;
+        let mut time = 0;
+        for bar in &self.bars[staff]{
+            let whole_note_time = 60.0 / (bar.tempo / 4.0);
+            for chord in &bar.notes{
+                if chord.is_empty() { continue; }
+                for (note,_,_) in chord{
+                    if note < &0 { continue; } //rest or continued note in score
+                    let hz = to_pitch(*note);
+                    tone_to_track_stereo(track, time, rout, volume, pan, hz, samplef, volf, hzf, passf);
+                }
+                time += (chord[0].1 * whole_note_time * (sr as f32)) as usize;
+            }
+        }
     }
 }
 
@@ -113,6 +140,13 @@ impl Key{
         Self{
             base,
             generator,
+        }
+    }
+
+    pub fn std_key() -> Self{
+        Self{
+            base: NamedNote::G(4).to_note(),
+            generator: Self::std_generator(),
         }
     }
 
