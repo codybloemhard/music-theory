@@ -73,7 +73,7 @@ impl Score{
         let rout = ((sr as f32) * runout) as usize;
         let mut time = 0;
         for bar in &self.bars[staff]{
-            let whole_note_time = 60.0 / (bar.tempo / 4.0);
+            let whole_note_time = (60.0 / bar.tempo) * 4.0; //tempo is quarter notes per minute
             for chord in &bar.notes{
                 if chord.is_empty() { continue; }
                 for (note,_,_) in chord{
@@ -197,6 +197,17 @@ pub type BarNote = (Note,f32,Vec<NoteEffect>);
 pub fn barnote(note: Note, d: f32) -> BarNote{
     (note,d, Vec::new())
 }
+
+/*
+Tempo is quarter notes per minute.
+Why?
+We start on 5/4 for example and set a nice tempo.
+We want an extra eighth note in the next bar.
+Notate [5*2 + 1]/[4 * 2] = 11/8.
+But the 8th is now the beat, if we want the quarter note to be the same lenght,
+we need to do tempo =/ 2;
+And i don't feel like doing that. 
+*/
 
 pub struct Bar{
     pub notes: Vec<Vec<BarNote>>,

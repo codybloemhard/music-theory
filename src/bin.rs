@@ -16,11 +16,11 @@ fn test1(){
     
     let mut score = Score::new();
     score.new_staff();
-    score.new_bar(0, Bar::new(Key::std_key(), 120.0, TimeSig::new(1, 1.0))); // TODO: tempo not right?
-    score.add_note(barnote(NamedNote::A(4).to_note(), 0.5), false, 0);
-    score.add_note(barnote(NamedNote::A(4).to_note(), 0.5), false, 0);
-    score.add_note(barnote(NamedNote::Cs(4).to_note(), 0.5), true, 0);
-    score.add_note(barnote(NamedNote::E(4).to_note(), 0.5), true, 0);
+    score.new_bar(0, Bar::new(Key::std_key(), 120.0, TimeSig::new(1, 1.0)));
+    score.add_note(barnote(NamedNote::A(4).to_note(), 1.0), false, 0);
+    score.add_note(barnote(NamedNote::A(4).to_note(), 1.0), false, 0);
+    score.add_note(barnote(NamedNote::Cs(4).to_note(), 1.0), true, 0);
+    score.add_note(barnote(NamedNote::E(4).to_note(), 1.0), true, 0);
     
     println!("{}", score.as_string(0));
 
