@@ -1,7 +1,7 @@
 use super::note::*;
 use crate::tones::tones::*;
 use crate::tones::track::*;
-use super::intervals::CARRY_ON;
+use super::interval::CARRY_ON;
 
 pub struct Score{
     pub bars: Vec<Vec<Bar>>,

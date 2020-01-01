@@ -1,5 +1,5 @@
 use std::convert::TryInto;
-use super::intervals::*;
+use super::interval::*;
 
 pub type Note = i32;
 pub type Rank = u16;

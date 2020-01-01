@@ -9,9 +9,7 @@ fn main(){
 fn test2(){
     print_notes(&major_chord(NamedNote::A(4).to_note()), ", ");
     print_notes(&minor_chord(NamedNote::A(4).to_note()), ", ");
-    print_notes(&chord_std_from_notes(NamedNote::A(4).to_note(),
-        &vec![49*SEMI,50*SEMI,51*SEMI,52*SEMI,53*SEMI,54*SEMI,55*SEMI], 3), ", ");
-    print_notes(&chord_std_from_scale(NamedNote::A(4).to_note(), &ionian_scale_steps(), 3), ", "); // todo fix shit
+    print_notes(&chord_from_scale(NamedNote::A(4).to_note(), &ionian_scale_steps(), &vec![1,3,5,7]) ,", ");
 }
 
 fn test1(){
