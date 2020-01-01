@@ -4,17 +4,28 @@ use super::scale::*;
 
 type Chord = Vec<Note>;
 
-pub fn major_chord(base: Note) -> Chord{
-    vec![base, base + MAJOR_THIRD, base + PERFECT_FIFTH]
+pub const MAJOR_TRIAD: [Note; 2] = [MAJOR_THIRD, PERFECT_FIFTH];
+pub const MINOR_TRIAD: [Note; 2] = [MINOR_THIRD, PERFECT_FIFTH];
+pub const MAJOR_SIXTH_CHORD: [Note; 3] = [MAJOR_THIRD, PERFECT_FIFTH, MAJOR_SIXTH];
+pub const MINOR_SIXTH_CHORD: [Note; 3] = [MINOR_THIRD, PERFECT_FIFTH, MAJOR_SIXTH];
+
+pub fn chord_from_intervals(base: Note, intervals: &[Note]) -> Chord{
+    let mut chord = vec![base];
+    for interval in intervals{
+        chord.push(base + interval);
+    }
+    chord
 }
 
-pub fn minor_chord(base: Note) -> Chord{
-    vec![base, base + MINOR_THIRD, base + PERFECT_FIFTH]
-}
+pub const TRIAD_DEGREES: [usize; 2] = [3, 5];
+pub const SEVENTH_DEGREES: [usize; 3] = [3, 5, 7];
+pub const NINETH_DEGREES: [usize; 4] = [3, 5, 7, 9];
+pub const ELEVENTH_DEGREES: [usize; 5] = [3, 5, 7, 9, 11];
+pub const THIRTEENTH_DEGREES: [usize; 6] = [3, 5, 7, 9, 11, 13];
 
-pub fn chord_from_scale(base: Note, scale: &Scale, degrees: &Vec<usize>) -> Chord{
+pub fn chord_from_scale(base: Note, scale: &Scale, degrees: &[usize]) -> Chord{
     let slen = scale.len();
-    let mut chord = Vec::new();
+    let mut chord = vec![base];
     let mut i = 1;
     let mut note = base;
     let mut index = 0;

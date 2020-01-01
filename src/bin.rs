@@ -7,9 +7,9 @@ fn main(){
 }
 
 fn test2(){
-    print_notes(&major_chord(NamedNote::A(4).to_note()), ", ");
-    print_notes(&minor_chord(NamedNote::A(4).to_note()), ", ");
-    print_notes(&chord_from_scale(NamedNote::A(4).to_note(), &ionian_scale_steps(), &vec![1,3,5,7]) ,", ");
+    print_notes(&chord_from_intervals(A4, &MAJOR_TRIAD), ", ");
+    print_notes(&chord_from_intervals(A4, &MINOR_TRIAD), ", ");
+    print_notes(&chord_from_scale(A4, &ionian_scale_steps(), &NINETH_DEGREES) ,", ");
 }
 
 fn test1(){
