@@ -1,4 +1,5 @@
 use super::note::*;
+use super::intervals::*;
 
 pub type Scale = Vec<Note>;
 pub type Mode = u8;
@@ -28,7 +29,7 @@ pub fn greek_dorian_enharmonic() -> Scale{
 pub fn greek_dorian_chromatic() -> Scale{
     vec![SEMI,SEMI,MINOR_THIRD,WHOLE,SEMI,SEMI,MINOR_THIRD]
 }
-/* 
+/*
 A,B,C,D#,E,F#,A
 2 + 1 + 3 + 1 + 2 + 3 = 12
 */
@@ -75,11 +76,4 @@ pub fn ionian_mode(note: Note, mode: Mode) -> Vec<Note>{
 pub fn notes_of_mode(note: Note, scale: Scale, mode: Mode) -> Vec<Note>{
     let scale = mode_of_scale(scale, mode);
     scale_notes(&scale, note)
-}
-
-pub fn print_notes(notes: &Vec<Note>){
-    for i in 0..notes.len()-1{
-        print!("{},\t", NamedNote::from_note(notes[i]));
-    }
-    print!("{}\n", NamedNote::from_note(notes[notes.len()-1]));
 }

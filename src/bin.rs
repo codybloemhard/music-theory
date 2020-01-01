@@ -3,7 +3,15 @@ use music_gen::tones::*;
 use music_gen::theory::*;
 
 fn main(){
-    test1();
+    test2();
+}
+
+fn test2(){
+    print_notes(&major_chord(NamedNote::A(4).to_note()), ", ");
+    print_notes(&minor_chord(NamedNote::A(4).to_note()), ", ");
+    print_notes(&chord_std_from_notes(NamedNote::A(4).to_note(),
+        &vec![49*SEMI,50*SEMI,51*SEMI,52*SEMI,53*SEMI,54*SEMI,55*SEMI], 3), ", ");
+    print_notes(&chord_std_from_scale(NamedNote::A(4).to_note(), &ionian_scale_steps(), 3), ", "); // todo fix shit
 }
 
 fn test1(){
@@ -33,7 +41,7 @@ fn test1(){
 fn test0(){
     //let scale = ionian_mode(NamedNote::A(4).to_note(), AEOLIAN);
     let scale = notes_of_mode(NamedNote::A(3).to_note(), satie_scale(), 0);
-    print_notes(&scale);
+    print_notes(&scale, "\t");
     let sr = 44100;
     let mut track = music_gen::tones::Track::new(sr, 2);
     let volf = &hit_lin_quot_quad(40.0,0.2, 1.0, 2);
