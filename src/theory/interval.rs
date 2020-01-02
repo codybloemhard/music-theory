@@ -18,6 +18,21 @@ pub const MINOR_SEVENTH: Note = SEMI * 10;
 pub const MAJOR_SEVENTH: Note = SEMI * 11;
 pub const PERFECT_OCTAVE: Note = SEMI * 12;
 
+pub const DIMINISHED_SECOND: Note = 0;
+pub const AUGMENTED_UNISON: Note = SEMI;
+pub const DIMINISHED_THIRD: Note = WHOLE;
+pub const AUGMENTED_SECOND: Note = SEMI * 3;
+pub const DIMINISHED_FOURTH: Note = SEMI * 4;
+pub const AUGMENTED_THIRD: Note = SEMI * 5;
+pub const DIMINISHED_FIFTH: Note = SEMI * 6;
+pub const AUGMENTED_FOURTH: Note = SEMI * 6;
+pub const DIMINISHED_SIXTH: Note = SEMI * 7;
+pub const AUGMENTED_FIFTH: Note = SEMI * 8;
+pub const DIMINISHED_SEVENTH: Note = SEMI * 9;
+pub const AUGMENTED_SIXTH: Note = SEMI * 10;
+pub const DIMINISHED_OCTAVE: Note = SEMI * 11;
+pub const AUGMENTED_SEVENTH: Note = SEMI * 12;
+
 pub const SILENT: Note = -1;
 pub const CARRY_ON: Note = -2;
 
