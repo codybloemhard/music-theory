@@ -12,6 +12,14 @@ pub const MIXOLYDIAN: Mode = 4;
 pub const AEOLIAN: Mode = 5;
 pub const LOCRIAN: Mode = 6;
 
+pub const TONIC: Note = 0;
+pub const SUPER_TONIC: Note = 1;
+pub const MEDIANT: Note = 2;
+pub const SUB_DOMINANT: Note = 3;
+pub const DOMINANT: Note = 4;
+pub const SUB_MEDIANT: Note = 5;
+pub const SUB_TONIC: Note = 6;
+
 pub fn ionian_scale_steps() -> Scale{
     vec![WHOLE,WHOLE,SEMI,WHOLE,WHOLE,WHOLE,SEMI]
 }
@@ -76,4 +84,33 @@ pub fn ionian_mode(note: Note, mode: Mode) -> Vec<Note>{
 pub fn notes_of_mode(note: Note, scale: Scale, mode: Mode) -> Vec<Note>{
     let scale = mode_of_scale(scale, mode);
     scale_notes(&scale, note)
+}
+
+pub struct ScaleIterator<'a>{
+    scale: &'a Scale,
+    current: usize,
+    len: usize,
+    root: Note,
+}
+
+impl<'a> Iterator for ScaleIterator<'a>{
+    type Item = Note;
+    fn next(&mut self) -> Option<Note>{
+        if self.current >= self.len{
+            self.current = 0;
+        }
+        let res = self.root;
+        self.root += self.scale[self.current];
+        self.current += 1;
+        Some(res)
+    }
+}
+
+pub fn note_iter(root: Note, scale: &Scale) -> ScaleIterator{
+    ScaleIterator{
+        scale,
+        current: 0,
+        len: scale.len(),
+        root,
+    }
 }

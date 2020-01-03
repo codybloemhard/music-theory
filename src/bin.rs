@@ -10,6 +10,12 @@ fn test2(){
     print_notes(&chord_from_intervals(A4, &MAJOR_TRIAD), ", ");
     print_notes(&chord_from_intervals(A4, &MINOR_TRIAD), ", ");
     print_notes(&chord_from_scale(A4, &ionian_scale_steps(), &NINETH_DEGREES) ,", ");
+    for step in ionian_scale_steps().iter().cycle().take(20){
+        println!("{}", step);
+    }
+    for note in note_iter(A4, &ionian_scale_steps()).take(20){
+        println!("{}", NamedNote::from_note(note).as_string());
+    }
 }
 
 fn test1(){
