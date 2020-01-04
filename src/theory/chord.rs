@@ -149,7 +149,7 @@ impl NamedChord{
 
 pub fn intervals_from_chord(chord: &Chord) -> Chord{
     if chord.is_empty() { return Vec::new(); }
-    let mut root = chord[0];
+    let root = chord[0];
     let mut intervals = vec![0];
     for note in chord.iter().skip(1){
         let diff = note - root;

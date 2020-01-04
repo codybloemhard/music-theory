@@ -72,8 +72,8 @@ pub fn interval_name_short(interval: Note) -> String{
         PERFECT_FIFTH => "P5",
         MINOR_SIXTH => "m6",
         MAJOR_SIXTH => "M6",
-        MINOR_SEVENT => "m7",
-        MAJOR_SEVENT  => "M7",
+        MINOR_SEVENTH => "m7",
+        MAJOR_SEVENTH  => "M7",
         PERFECT_OCTAVE => "P8",
         _ => "",
     }.to_string();
