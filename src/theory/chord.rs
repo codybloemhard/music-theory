@@ -97,12 +97,12 @@ impl NamedChord{
 
     pub fn from_chord(chord: &Chord) -> Self{
         fn same_intervals(inters: &Chord, blueprint: &[Note]) -> bool{
-            if inters.len() != blueprint.len(){
+            if inters.len() != blueprint.len() + 1{
                 return false;
             }
             let len = inters.len();
-            for i in 0..len{
-                if inters[i] != blueprint[i]{
+            for i in 1..len{
+                if inters[i] != blueprint[i - 1]{
                     return false;
                 }
             }
