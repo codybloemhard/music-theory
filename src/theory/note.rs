@@ -101,6 +101,24 @@ impl NamedNote{
         }.to_string()
     }
 
+    pub fn to_string_name_sharp(self) -> String{
+        match self{
+            NamedNote::A(_)     => "A",
+            NamedNote::As(_)    => "A#",
+            NamedNote::B(_)     => "B",
+            NamedNote::C(_)     => "C",
+            NamedNote::Cs(_)    => "C#",
+            NamedNote::D(_)     => "D",
+            NamedNote::Ds(_)    => "D#",
+            NamedNote::E(_)     => "E",
+            NamedNote::F(_)     => "F",
+            NamedNote::Fs(_)    => "F#",
+            NamedNote::G(_)     => "G",
+            NamedNote::Gs(_)    => "G#",
+            NamedNote::MicroTonal(_) => "X",
+        }.to_string()
+    }
+
     pub fn is_chromatic(self) -> bool{
         match self{
             Self::MicroTonal(_) => false,

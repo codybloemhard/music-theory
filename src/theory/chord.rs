@@ -145,6 +145,66 @@ impl NamedChord{
             Self::Arbitrary(chord.clone())
         }
     }
+
+    pub fn root(&self) -> Note{
+        *match self{
+            Self::Power(r) => r,
+            Self::Major(r) => r,
+            Self::Minor(r) => r,
+            Self::Augmented(r) => r,
+            Self::Diminished(r) => r,
+            Self::MajorSixth(r) => r,
+            Self::MinorSixth(r) => r,
+            Self::DominantSeventh(r) => r,
+            Self::AugmentedSeventh(r) => r,
+            Self::MajorSeventh(r) => r,
+            Self::MinorSeventh(r) => r,
+            Self::MinorMajorSeventh(r) => r,
+            Self::DiminishedSeventh(r) => r,
+            Self::HalfDiminishedSeventh(r) => r,
+            Self::Arbitrary(ch) => {
+                if ch.is_empty() {
+                    &-1
+                }else{
+                    &ch[0]
+                }
+            },
+        }
+    }
+
+    pub fn as_string(&self) -> String{
+        let root = NamedNote::from_note(self.root()).to_string_name_sharp();
+        let mut lowercase = String::new();
+        for c in root.chars(){
+            for l in c.to_lowercase(){
+                lowercase.push(l);
+            }
+        }
+        match self{
+            Self::Power(_) => format!("{}!", root),
+            Self::Major(_) => format!("{}", root),
+            Self::Minor(_) => format!("{}", lowercase),
+            Self::Augmented(_) => format!("{}+", root),
+            Self::Diminished(_) => format!("{}o", root),
+            Self::MajorSixth(_) => format!("{}maj6", root),
+            Self::MinorSixth(_) => format!("{}min6", root),
+            Self::DominantSeventh(_) => format!("{}dom7", root),
+            Self::AugmentedSeventh(_) => format!("{}+7", root),
+            Self::MajorSeventh(_) => format!("{}∆", root),
+            Self::MinorSeventh(_) => format!("{}-", root),
+            Self::MinorMajorSeventh(_) => format!("{}min(maj7)", root),
+            Self::DiminishedSeventh(_) => format!("{}o7", root),
+            Self::HalfDiminishedSeventh(_) => format!("{}ø7", root),
+            Self::Arbitrary(ch) => {
+                let mut st = format!("{}", root);
+                let intervals = intervals_from_chord(ch);
+                for interval in intervals.iter().skip(1){
+                    st.push_str(&format!("{}", interval_name_short(*interval)));
+                }
+                st
+            }
+        }
+    }
 }
 
 pub fn intervals_from_chord(chord: &Chord) -> Chord{
