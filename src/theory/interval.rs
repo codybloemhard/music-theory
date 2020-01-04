@@ -21,7 +21,7 @@ pub const PERFECT_OCTAVE: Note = SEMI * 12;
 pub const DIMINISHED_SECOND: Note = 0;
 pub const AUGMENTED_UNISON: Note = SEMI;
 pub const DIMINISHED_THIRD: Note = WHOLE;
-pub const AUGMENTED_SECOND: Note = SEMI * 3;
+pub const AUGMENTED_SECOND: Note = MINOR_THIRD;
 pub const DIMINISHED_FOURTH: Note = SEMI * 4;
 pub const AUGMENTED_THIRD: Note = SEMI * 5;
 pub const DIMINISHED_FIFTH: Note = SEMI * 6;
@@ -38,19 +38,19 @@ pub const CARRY_ON: Note = -2;
 
 pub fn interval_name(interval: Note) -> String{
     let string = match interval{
-        0 => "Perfect Unison",
-        1 => "Minor Second",
-        2 => "Major Second",
-        3 => "Minor Third",
-        4 => "Major Third",
-        5 => "Perfect Fourth",
-        6 => "Tritone",
-        7 => "Perfect Fifth",
-        8 => "Minor Sixth",
-        9 => "Major Sixth",
-        10 => "Minor Seventh",
-        11 => "Major Seventh",
-        12 => "Perfect Octave",
+        PERFECT_UNISON => "Perfect Unison",
+        MINOR_SECOND => "Minor Second",
+        MAJOR_SECOND => "Major Second",
+        MINOR_THIRD => "Minor Third",
+        MAJOR_THIRD => "Major Third",
+        PERFECT_FOURTH => "Perfect Fourth",
+        TRITONE => "Tritone",
+        PERFECT_FIFTH => "Perfect Fifth",
+        MINOR_SIXTH => "Minor Sixth",
+        MAJOR_SIXTH => "Major Sixth",
+        MINOR_SEVENTH => "Minor Seventh",
+        MAJOR_SEVENTH => "Major Seventh",
+        PERFECT_OCTAVE => "Perfect Octave",
         _ => "",
     }.to_string();
     if string.is_empty(){
@@ -62,19 +62,19 @@ pub fn interval_name(interval: Note) -> String{
 
 pub fn interval_name_short(interval: Note) -> String{
     let string = match interval{
-        0 => "P1",
-        1 => "m2",
-        2 => "M2",
-        3 => "m3",
-        4 => "M3",
-        5 => "P4",
-        6 => "TT",
-        7 => "P5",
-        8 => "m6",
-        9 => "M6",
-        10 => "m7",
-        11 => "M7",
-        12 => "P8",
+        PERFECT_UNISON => "P1",
+        MINOR_SECOND => "m2",
+        MAJOR_SECOND => "M2",
+        MINOR_THIRD => "m3",
+        MAJOR_THIRD => "M3",
+        PERFECT_FOURTH => "P4",
+        TRITONE => "TT",
+        PERFECT_FIFTH => "P5",
+        MINOR_SIXTH => "m6",
+        MAJOR_SIXTH => "M6",
+        MINOR_SEVENT => "m7",
+        MAJOR_SEVENT  => "M7",
+        PERFECT_OCTAVE => "P8",
         _ => "",
     }.to_string();
     if string.is_empty(){
@@ -86,19 +86,19 @@ pub fn interval_name_short(interval: Note) -> String{
 
 pub fn interval_name_augdim(interval: Note) -> String{
     let string = match interval{
-        0 => "Diminished Second",
-        1 => "Augmented Unison",
-        2 => "Diminished Third",
-        3 => "Augmented Second",
-        4 => "Diminished Fourth",
-        5 => "Augmented Third",
-        6 => "Diminished Fifth/Augmented Fourth",
-        7 => "Diminished Sixth",
-        8 => "Augmented Fifth",
-        9 => "Diminished Seventh",
-        10 => "Augmented Sixth",
-        11 => "Diminished Octave",
-        12 => "Augmented Seventh",
+        PERFECT_UNISON => "Diminished Second",
+        MINOR_SECOND => "Augmented Unison",
+        MAJOR_SECOND => "Diminished Third",
+        MINOR_THIRD => "Augmented Second",
+        MAJOR_THIRD => "Diminished Fourth",
+        PERFECT_FOURTH => "Augmented Third",
+        TRITONE => "Diminished Fifth/Augmented Fourth",
+        PERFECT_FIFTH => "Diminished Sixth",
+        MINOR_SIXTH => "Augmented Fifth",
+        MAJOR_SIXTH => "Diminished Seventh",
+        MINOR_SEVENTH => "Augmented Sixth",
+        MAJOR_SEVENTH => "Diminished Octave",
+        PERFECT_OCTAVE => "Augmented Seventh",
         _ => "",
     }.to_string();
     if string.is_empty(){
@@ -110,19 +110,19 @@ pub fn interval_name_augdim(interval: Note) -> String{
 
 pub fn interval_name_augdim_short(interval: Note) -> String{
     let string = match interval{
-        0 => "d2",
-        1 => "A1",
-        2 => "d3",
-        3 => "A2",
-        4 => "d4",
-        5 => "A3",
-        6 => "d5/A4",
-        7 => "d6",
-        8 => "A5",
-        9 => "d7",
-        10 => "A6",
-        11 => "d8",
-        12 => "A7",
+        PERFECT_UNISON => "d2",
+        MINOR_SECOND => "A1",
+        MAJOR_SECOND => "d3",
+        MINOR_THIRD => "A2",
+        MAJOR_THIRD => "d4",
+        PERFECT_FOURTH => "A3",
+        TRITONE => "d5/A4",
+        PERFECT_FIFTH => "d6",
+        MINOR_SIXTH => "A5",
+        MAJOR_SIXTH => "d7",
+        MINOR_SEVENTH => "A6",
+        MAJOR_SEVENTH => "d8",
+        PERFECT_OCTAVE => "A7",
         _ => "",
     }.to_string();
     if string.is_empty(){
