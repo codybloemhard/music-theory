@@ -95,9 +95,56 @@ impl NamedChord{
         }
     }
 
-    /* pub fn from_chord(chord: &Chord) -> Self{
-        
-    } */
+    pub fn from_chord(chord: &Chord) -> Self{
+        fn same_intervals(inters: &Chord, blueprint: &[Note]) -> bool{
+            if inters.len() != blueprint.len(){
+                return false;
+            }
+            let len = inters.len();
+            for i in 0..len{
+                if inters[i] != blueprint[i]{
+                    return false;
+                }
+            }
+            true
+        }
+        if chord.len() == 0{
+            return Self::Arbitrary(Vec::new());
+        }
+        let intervals = &intervals_from_chord(chord);
+        let root = chord[0];
+        if same_intervals(intervals, &POWER_DYAD){
+            Self::Power(root)
+        }else if same_intervals(intervals, &MAJOR_TRIAD){
+            Self::Major(root)
+        }else if same_intervals(intervals, &MINOR_TRIAD){
+            Self::Minor(root)
+        }else if same_intervals(intervals, &AUGMENTED_TRIAD){
+            Self::Augmented(root)
+        }else if same_intervals(intervals, &DIMINISHED_TRIAD){
+            Self::Diminished(root)
+        }else if same_intervals(intervals, &MAJOR_SIXTH_TETRAD){
+            Self::MajorSixth(root)
+        }else if same_intervals(intervals, &MINOR_SIXTH_TETRAD){
+            Self::MinorSixth(root)
+        }else if same_intervals(intervals, &DOMINANT_SEVENTH_TETRAD){
+            Self::DominantSeventh(root)
+        }else if same_intervals(intervals, &AUGMENTED_SEVENTH_TETRAD){
+            Self::AugmentedSeventh(root)
+        }else if same_intervals(intervals, &MAJOR_SEVENTH_TETRAD){
+            Self::MajorSeventh(root)
+        }else if same_intervals(intervals, &MINOR_SEVENTH_TETRAD){
+            Self::MinorSeventh(root)
+        }else if same_intervals(intervals, &MINOR_MAJOR_SEVENTH_TETRAD){
+            Self::MinorMajorSeventh(root)
+        }else if same_intervals(intervals, &DIMINISHED_SEVENTH_TETRAD){
+            Self::DiminishedSeventh(root)
+        }else if same_intervals(intervals, &HALF_DIMINISHED_SEVENTH_TETRAD){
+            Self::HalfDiminishedSeventh(root)
+        }else{
+            Self::Arbitrary(chord.clone())
+        }
+    }
 }
 
 pub fn intervals_from_chord(chord: &Chord) -> Chord{

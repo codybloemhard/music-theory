@@ -10,9 +10,7 @@ fn test2(){
     print_notes(&chord_from_intervals(A4, &MAJOR_TRIAD), ", ");
     print_notes(&chord_from_intervals(A4, &MINOR_TRIAD), ", ");
     print_notes(&chord_from_scale(A4, &ionian_scale_steps(), &NINETH_DEGREES) ,", ");
-    for interval in intervals_from_chord(&chord_from_intervals(A4, &DOMINANT_SEVENTH_TETRAD)){
-        print!("{}, ", interval_name_short(interval));
-    }
+    let x = NamedChord::from_chord(&chord_from_intervals(A4, &DOMINANT_SEVENTH_TETRAD));
 }
 
 fn test1(){
