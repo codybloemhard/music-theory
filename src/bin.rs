@@ -7,10 +7,13 @@ fn main(){
 }
 
 fn test2(){
-    print_notes(&chord_from_intervals(A4, &MAJOR_TRIAD), ", ");
+    print_notes(&chord_from_intervals(0, &MAJOR_TRIAD), ", ");
     print_notes(&chord_from_intervals(A4, &MINOR_TRIAD), ", ");
     print_notes(&chord_from_scale(A4, &ionian_scale_steps(), &NINETH_DEGREES) ,", ");
-    println!("{}", NamedChord::from_chord(&chord_from_intervals(A4, &HALF_DIMINISHED_SEVENTH_TETRAD)).as_string());
+    println!("{}", NamedChord::from_chord(&chord_from_intervals(A4, &MAJOR_SEVENTH_TETRAD)).as_string());
+    for chord in scale_chords(&ionian_scale_steps(), 3){
+        print!("{}, ", NamedChord::from_chord(&chord).as_string());
+    }
 }
 
 fn test1(){

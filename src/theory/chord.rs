@@ -217,3 +217,32 @@ pub fn intervals_from_chord(chord: &Chord) -> Chord{
     }
     intervals
 }
+
+pub fn scale_chords(scale: &Scale, size: usize) -> Vec<Chord>{
+    let len = scale.len();
+    let mut chords = Vec::new();
+    for (i, root) in note_iter(0, scale).enumerate().take(len){
+        let mut chord = Vec::new();
+        for note in note_iter(0, scale).skip(i).step_by(2).take(size){
+            chord.push(note);
+        }
+        chords.push(chord);
+    }
+    chords
+}
+
+pub fn scale_chords_intervals(scale: &Scale, size: usize) -> Vec<Chord>{
+    let chords_notes = scale_chords(scale, size);
+    map(&chords_notes, &intervals_from_chord)
+}
+
+pub fn map<T,F>(inp: &[T], f: &F) -> Vec<T>
+    where
+        F: Fn(&T) -> T,
+{
+    let mut res = Vec::new();
+    for x in inp{
+        res.push(f(x));
+    }
+    res
+}
