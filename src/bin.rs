@@ -11,9 +11,12 @@ fn test2(){
     print_notes(&chord_from_intervals(A4, &MINOR_TRIAD), ", ");
     print_notes(&chord_from_scale(A4, &ionian_scale_steps(), &NINETH_DEGREES) ,", ");
     println!("{}", NamedChord::from_chord(&chord_from_intervals(A4, &MAJOR_SEVENTH_TETRAD)).as_string());
-    for chord in scale_chords(&ionian_scale_steps(), 3){
-        print!("{}, ", NamedChord::from_chord(&chord).as_string());
+    for mode in 0..7{
+        print_chords(&scale_chords(&mode_of_scale(ionian_scale_steps(), mode), 3), ",\t");
     }
+    print_chords(&scale_chords(&mode_of_scale(satie_scale(), 0), 3), ",\t");
+    print_chords(&scale_chords(&mode_of_scale(greek_dorian_chromatic(), 0), 3), ",\t");
+    print_chords(&scale_chords(&mode_of_scale(greek_dorian(), 0), 3), ",\t");
 }
 
 fn test1(){

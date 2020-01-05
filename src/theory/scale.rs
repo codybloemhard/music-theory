@@ -30,7 +30,7 @@ quarter,quarter,major third,whole,quarter,quarter,major third.
 1/4 + 1/4 + 2 + 1 + 1/4 + 1/4 + 2 = 6 whole tones = 12 semitones = 1 octave
 https://en.wikipedia.org/wiki/Dorian_mode
 */
-pub fn greek_dorian_enharmonic() -> Scale{
+pub fn greek_dorian() -> Scale{
     vec![QUAD,QUAD,MAJOR_THIRD,WHOLE,QUAD,QUAD,MAJOR_THIRD]
 }
 
@@ -59,7 +59,7 @@ pub fn next_mode(mut scale: Scale) -> Scale{
 }
 
 pub fn mode_of_scale(mut scale: Scale, mut mode: Mode) -> Scale{
-    mode = mode % 7;
+    mode = mode % scale.len() as u8;
     for _ in 0..mode{
         scale = next_mode(scale)
     }

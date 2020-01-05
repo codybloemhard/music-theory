@@ -218,6 +218,19 @@ pub fn intervals_from_chord(chord: &Chord) -> Chord{
     intervals
 }
 
+pub fn chord_as_string(chord: &Chord) -> String{
+    NamedChord::from_chord(chord).as_string()
+}
+
+pub fn print_chords(chords: &[Chord], sep: &str){
+    let len = chords.len();
+    if len <= 0 { return; }
+    for chord in chords.iter().take(len - 1){
+        print!("{}{}", chord_as_string(chord), sep);
+    }
+    println!("{}", chord_as_string(&chords[len - 1]));
+}
+
 pub fn scale_chords(scale: &Scale, size: usize) -> Vec<Chord>{
     let len = scale.len();
     let mut chords = Vec::new();
