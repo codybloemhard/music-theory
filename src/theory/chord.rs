@@ -172,31 +172,30 @@ impl NamedChord{
         }
     }
 
-    pub fn as_string(&self) -> String{
-        let root = NamedNote::from_note(self.root()).to_string_name_sharp();
+    pub fn decorate_quality(&self, basestr: String) -> String{
         let mut lowercase = String::new();
-        for c in root.chars(){
+        for c in basestr.chars(){
             for l in c.to_lowercase(){
                 lowercase.push(l);
             }
         }
         match self{
-            Self::Power(_) => format!("{}!", root),
-            Self::Major(_) => format!("{}", root),
+            Self::Power(_) => format!("{}!", basestr),
+            Self::Major(_) => format!("{}", basestr),
             Self::Minor(_) => format!("{}", lowercase),
-            Self::Augmented(_) => format!("{}+", root),
-            Self::Diminished(_) => format!("{}o", root),
-            Self::MajorSixth(_) => format!("{}maj6", root),
-            Self::MinorSixth(_) => format!("{}min6", root),
-            Self::DominantSeventh(_) => format!("{}dom7", root),
-            Self::AugmentedSeventh(_) => format!("{}+7", root),
-            Self::MajorSeventh(_) => format!("{}∆", root),
-            Self::MinorSeventh(_) => format!("{}-", root),
-            Self::MinorMajorSeventh(_) => format!("{}min(maj7)", root),
-            Self::DiminishedSeventh(_) => format!("{}o7", root),
-            Self::HalfDiminishedSeventh(_) => format!("{}ø7", root),
+            Self::Augmented(_) => format!("{}+", basestr),
+            Self::Diminished(_) => format!("{}o", basestr),
+            Self::MajorSixth(_) => format!("{}maj6", basestr),
+            Self::MinorSixth(_) => format!("{}min6", basestr),
+            Self::DominantSeventh(_) => format!("{}dom7", basestr),
+            Self::AugmentedSeventh(_) => format!("{}+7", basestr),
+            Self::MajorSeventh(_) => format!("{}∆", basestr),
+            Self::MinorSeventh(_) => format!("{}-", basestr),
+            Self::MinorMajorSeventh(_) => format!("{}min(maj7)", basestr),
+            Self::DiminishedSeventh(_) => format!("{}o7", basestr),
+            Self::HalfDiminishedSeventh(_) => format!("{}ø7", basestr),
             Self::Arbitrary(ch) => {
-                let mut st = format!("{}", root);
+                let mut st = format!("{}", basestr);
                 let intervals = intervals_from_chord(ch);
                 for interval in intervals.iter().skip(1){
                     st.push_str(&format!("{}", interval_name_short(*interval)));
@@ -204,6 +203,11 @@ impl NamedChord{
                 st
             }
         }
+    }
+    
+    pub fn as_string(&self) -> String{
+        let root = NamedNote::from_note(self.root()).to_string_name_sharp();
+        self.decorate_quality(root)
     }
 }
 
