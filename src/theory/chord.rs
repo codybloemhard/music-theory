@@ -204,7 +204,7 @@ impl NamedChord{
             }
         }
     }
-    
+
     pub fn as_string(&self) -> String{
         let root = NamedNote::from_note(self.root()).to_string_name_sharp();
         self.decorate_quality(root)
@@ -235,6 +235,15 @@ pub fn print_chords(chords: &[Chord], sep: &str){
     println!("{}", chord_as_string(&chords[len - 1]));
 }
 
+pub fn print_strings(strs: &[String], sep: &str){
+    let len = strs.len();
+    if len <= 0 { return; }
+    for s in strs.iter().take(len - 1){
+        print!("{}{}", s, sep);
+    }
+    println!("{}", strs[len - 1]);
+}
+
 pub fn scale_chords(scale: &Scale, size: usize) -> Vec<Chord>{
     let len = scale.len();
     let mut chords = Vec::new();
@@ -246,6 +255,16 @@ pub fn scale_chords(scale: &Scale, size: usize) -> Vec<Chord>{
         chords.push(chord);
     }
     chords
+}
+
+pub fn strs_scale_chords_roman(scale: &Scale, size: usize) -> Vec<String>{
+    let chords = scale_chords(scale, size);
+    let roman_numerals = vec!["I".to_string(), "II".to_string(), "III".to_string(), "IV".to_string(), "V".to_string(), "VI".to_string(), "VII".to_string()];
+    let mut res = Vec::new();
+    for i in 0..std::cmp::min(chords.len(), roman_numerals.len()){
+        res.push(NamedChord::from_chord(&chords[i]).decorate_quality(roman_numerals[i].clone()));
+    }
+    res
 }
 
 pub fn scale_chords_intervals(scale: &Scale, size: usize) -> Vec<Chord>{
