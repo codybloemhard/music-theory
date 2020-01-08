@@ -1,6 +1,7 @@
 use super::note::*;
 use super::interval::*;
 use super::scale::*;
+use crate::utils::roman_numerals::to_roman_num;
 
 type Chord = Vec<Note>;
 
@@ -259,10 +260,9 @@ pub fn scale_chords(scale: &Scale, size: usize) -> Vec<Chord>{
 
 pub fn strs_scale_chords_roman(scale: &Scale, size: usize) -> Vec<String>{
     let chords = scale_chords(scale, size);
-    let roman_numerals = vec!["I".to_string(), "II".to_string(), "III".to_string(), "IV".to_string(), "V".to_string(), "VI".to_string(), "VII".to_string()];
     let mut res = Vec::new();
-    for i in 0..std::cmp::min(chords.len(), roman_numerals.len()){
-        res.push(NamedChord::from_chord(&chords[i]).decorate_quality(roman_numerals[i].clone()));
+    for i in 0..chords.len(){
+        res.push(NamedChord::from_chord(&chords[i]).decorate_quality(to_roman_num(i + 1)));
     }
     res
 }
