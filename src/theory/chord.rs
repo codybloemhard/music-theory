@@ -5,6 +5,9 @@ use crate::utils::roman_numerals::to_roman_num;
 
 type Chord = Vec<Note>;
 
+pub const NUM_SUPS: [char; 10] = ['⁰', 'ⁱ', '²', '³', '⁴', '⁵', '⁶', '⁷', '⁸', '⁹'];
+pub const NUM_SUBS: [char; 10] = ['₀', '₁', '₂', '₃', '₄', '₅', '₆', '₇', '₈', '₉'];
+
 pub const MAJOR_DYAD: [Note; 1] = [MAJOR_THIRD];
 pub const MINOR_DYAD: [Note; 1] = [MINOR_THIRD];
 pub const POWER_DYAD: [Note; 1] = [PERFECT_FIFTH];
@@ -147,6 +150,11 @@ impl NamedChord{
         }
     }
 
+    pub fn from_intervals(base: Note, intervals: &[Note]) -> Self{
+        let chord = chord_from_intervals(base, intervals);
+        Self::from_chord(&chord)
+    }
+
     pub fn root(&self) -> Note{
         *match self{
             Self::Power(r) => r,
@@ -173,7 +181,7 @@ impl NamedChord{
         }
     }
 
-    pub fn decorate_quality(&self, basestr: String) -> String{
+    pub fn base_quality(&self, basestr: String) -> String{
         let mut lowercase = String::new();
         for c in basestr.chars(){
             for l in c.to_lowercase(){
@@ -195,6 +203,12 @@ impl NamedChord{
             Self::MinorMajorSeventh(_) => format!("{}min(maj7)", basestr),
             Self::DiminishedSeventh(_) => format!("{}o7", basestr),
             Self::HalfDiminishedSeventh(_) => format!("{}ø7", basestr),
+            Self::Arbitrary(_) => String::new(),
+        }
+    }
+
+    pub fn spelled_out_quality(&self, basestr: String) -> String{
+        match self{
             Self::Arbitrary(ch) => {
                 let mut st = format!("{}", basestr);
                 let intervals = intervals_from_chord(ch);
@@ -202,8 +216,45 @@ impl NamedChord{
                     st.push_str(&format!("{}", interval_name_short(*interval)));
                 }
                 st
-            }
+            },
+            _ => String::new(),
         }
+    }
+
+    pub fn equal_spaced_quality(&self, mut basestr: String) -> String{
+        let notes = self.to_chord();
+        let len = notes.len();
+        if len <= 0{
+            String::new()
+        }else if len == 1{
+            basestr
+        }else if len <= 9{
+            let mut last = notes[1];
+            let leap = last - notes[0];
+            let mut ok = true;
+            for n in notes.iter().skip(2){
+                if leap != n - last{
+                    ok = false;
+                    break;
+                }
+                last = *n;
+            }
+            if ok && leap > 0 && leap < 10{
+                basestr.push(NUM_SUBS[leap as usize]);
+                basestr.push(NUM_SUPS[len]);
+                basestr
+            }else{
+                String::new()
+            }
+            
+        }else{
+            String::new()
+        }
+    }
+
+    pub fn decorate_quality(&self, basestr: String) -> String{
+        let decoration = self.base_quality(basestr);
+        decoration
     }
 
     pub fn as_string(&self) -> String{

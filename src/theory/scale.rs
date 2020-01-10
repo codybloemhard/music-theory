@@ -45,6 +45,10 @@ pub fn satie_scale() -> Scale{
     vec![WHOLE,SEMI,MINOR_THIRD,SEMI,WHOLE,MINOR_THIRD]
 }
 
+pub fn chromatic_scale() -> Scale{
+    vec![SEMI,SEMI,SEMI,SEMI,SEMI,SEMI,SEMI,SEMI,SEMI,SEMI,SEMI,SEMI]
+}
+
 pub fn next_mode(mut scale: Scale) -> Scale{
     let len = scale.len();
     if len == 0{
