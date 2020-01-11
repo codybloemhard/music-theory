@@ -33,6 +33,16 @@ pub fn chord_from_intervals(base: Note, intervals: &[Note]) -> Chord{
     chord
 }
 
+pub fn chord_from_equal_spacing(base: Note, interval: Note, size: usize) -> Chord{
+    let mut chord = vec![base];
+    let mut last = base;
+    for _ in 0..size{
+        last += interval;
+        chord.push(last);
+    }
+    chord
+}
+
 pub const TRIAD_DEGREES: [usize; 2] = [3, 5];
 pub const SEVENTH_DEGREES: [usize; 3] = [3, 5, 7];
 pub const NINETH_DEGREES: [usize; 4] = [3, 5, 7, 9];
@@ -246,20 +256,35 @@ impl NamedChord{
             }else{
                 String::new()
             }
-            
         }else{
             String::new()
         }
     }
 
-    pub fn decorate_quality(&self, basestr: String) -> String{
-        let decoration = self.base_quality(basestr);
+    pub fn add_sus2_quality(&self) -> String{
+        let mut chord = self.to_chord();
+        remove_items(&mut chord, &MINOR_SECOND);
+        String::new()
+    }
+
+    pub fn extended_quality(&self, mut basestr: String) -> String{
+        String::new()
+    }
+
+    pub fn decorate_quality_single(&self, basestr: String) -> String{
+        let mut decoration = self.base_quality(basestr.clone());
+        if &decoration == ""{
+            decoration = self.equal_spaced_quality(basestr.clone());
+        }
+        if &decoration == ""{
+            decoration = self.spelled_out_quality(basestr)
+        }
         decoration
     }
 
     pub fn as_string(&self) -> String{
         let root = NamedNote::from_note(self.root()).to_string_name_sharp();
-        self.decorate_quality(root)
+        self.decorate_quality_single(root)
     }
 }
 
@@ -313,7 +338,7 @@ pub fn strs_scale_chords_roman(scale: &Scale, size: usize) -> Vec<String>{
     let chords = scale_chords(scale, size);
     let mut res = Vec::new();
     for i in 0..chords.len(){
-        res.push(NamedChord::from_chord(&chords[i]).decorate_quality(to_roman_num(i + 1)));
+        res.push(NamedChord::from_chord(&chords[i]).decorate_quality_single(to_roman_num(i + 1)));
     }
     res
 }
@@ -332,4 +357,19 @@ pub fn map<T,F>(inp: &[T], f: &F) -> Vec<T>
         res.push(f(x));
     }
     res
+}
+
+pub fn remove_items<T>(vec: &mut Vec<T>, item: &T)
+    where
+        T: std::cmp::PartialEq        
+{
+    let mut indicis = Vec::new();
+    for (i,x) in vec.iter().enumerate(){
+        if x == item{
+            indicis.push(i);
+        }
+    }
+    for ind in indicis{
+        vec.remove(ind);
+    }
 }

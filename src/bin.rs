@@ -24,7 +24,7 @@ fn test2(){
         print!("{},", to_roman_num(x));
     }
     println!("");
-    println!("{}", NamedChord::from_intervals(A4, &vec![4,8,12]).equal_spaced_quality("A".to_string()));
+    println!("{}", NamedChord::from_chord(&chord_from_equal_spacing(A4, 3, 6)).equal_spaced_quality("A".to_string()));
 }
 
 fn test1(){
