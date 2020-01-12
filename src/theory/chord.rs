@@ -70,6 +70,29 @@ pub fn chord_from_scale(base: Note, scale: &Scale, degrees: &[usize]) -> Chord{
     chord
 }
 
+pub fn same_intervals(inters: &Chord, blueprint: &[Note]) -> bool{
+    if inters.len() != blueprint.len() + 1{
+        return false;
+    }
+    let len = inters.len();
+    for i in 1..len{
+        if inters[i] != blueprint[i - 1]{
+            return false;
+        }
+    }
+    true
+}
+
+pub fn has_intervals(inters: &Chord, blueprint: &[Note]) -> bool{
+    let len = inters.len();
+    for note in blueprint{
+        if !inters.contains(note){
+            return false;
+        }
+    }
+    true
+}
+
 pub enum NamedChord{
     Arbitrary(Chord),
     Power(Note),
@@ -110,18 +133,6 @@ impl NamedChord{
     }
 
     pub fn from_chord(chord: &Chord) -> Self{
-        fn same_intervals(inters: &Chord, blueprint: &[Note]) -> bool{
-            if inters.len() != blueprint.len() + 1{
-                return false;
-            }
-            let len = inters.len();
-            for i in 1..len{
-                if inters[i] != blueprint[i - 1]{
-                    return false;
-                }
-            }
-            true
-        }
         if chord.len() == 0{
             return Self::Arbitrary(Vec::new());
         }
@@ -261,13 +272,33 @@ impl NamedChord{
         }
     }
 
-    pub fn add_sus2_quality(&self) -> String{
-        let mut chord = self.to_chord();
-        remove_items(&mut chord, &MINOR_SECOND);
-        String::new()
+    pub fn get_base_chord(chord: &Chord) -> Self{
+        if chord.is_empty(){
+            return Self::from_chord(chord);
+        }
+        let root = chord[0];
+        let intervals = &intervals_from_chord(chord);
+        let all_bases = vec![MAJOR_DYAD.to_vec(),MINOR_DYAD.to_vec(),POWER_DYAD.to_vec(),MAJOR_TRIAD.to_vec(),MINOR_TRIAD.to_vec(),AUGMENTED_TRIAD.to_vec(),DIMINISHED_TRIAD.to_vec(),
+                                MAJOR_SIXTH_TETRAD.to_vec(),MINOR_SIXTH_TETRAD.to_vec(),DOMINANT_SEVENTH_TETRAD.to_vec(),AUGMENTED_SEVENTH_TETRAD.to_vec(),
+                                MAJOR_SEVENTH_TETRAD.to_vec(),MINOR_SEVENTH_TETRAD.to_vec(),MINOR_MAJOR_SEVENTH_TETRAD.to_vec(),
+                                DIMINISHED_SEVENTH_TETRAD.to_vec(),HALF_DIMINISHED_SEVENTH_TETRAD.to_vec()];
+        let mut biggest = 0;
+        let mut pattern = Vec::new();
+        for base in all_bases{
+            if has_intervals(intervals, &base){
+                let size = base.len();
+                if size > biggest{
+                    biggest = size;
+                    pattern = base.clone();
+                }
+            }
+        }
+        Self::from_intervals(root, &pattern)
     }
 
     pub fn extended_quality(&self, mut basestr: String) -> String{
+        let base_chord = Self::get_base_chord(&self.to_chord());
+        
         String::new()
     }
 
@@ -372,4 +403,24 @@ pub fn remove_items<T>(vec: &mut Vec<T>, item: &T)
     for ind in indicis{
         vec.remove(ind);
     }
+}
+
+pub fn split_vec_if_exist<T>(vec: &mut Vec<T>, items: &Vec<T>) -> Vec<T>
+    where
+        T: std::cmp::PartialEq + std::marker::Copy
+{
+    let mut indi = Vec::new();
+    let mut splitted = Vec::new();
+    for (i,x) in vec.iter().enumerate(){
+        if items.contains(x){
+            indi.push(i);
+            if !splitted.contains(x){
+                splitted.push(*x);
+            }
+        }
+    }
+    for ind in indi{
+        vec.remove(ind);
+    }
+    splitted
 }
