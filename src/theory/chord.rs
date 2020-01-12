@@ -296,10 +296,36 @@ impl NamedChord{
         Self::from_intervals(root, &pattern)
     }
 
+    pub fn base_chord(&self) -> Self{
+        Self::get_base_chord(&self.to_chord())
+    }
+
     pub fn extended_quality(&self, mut basestr: String) -> String{
-        let base_chord = Self::get_base_chord(&self.to_chord());
+        let mut with_m3 = self.to_chord();
+        if !(with_m3.contains(&MINOR_THIRD) || with_m3.contains(&MAJOR_THIRD)){
+            with_m3.push(MINOR_THIRD);
+            with_m3.sort();
+        }
+        let base_chord = Self::get_base_chord(&with_m3);
         
-        String::new()
+        print_notes(&base_chord.to_chord(), ", ");
+        
+        let (not_in_chord, not_in_base) = both_differences(&self.to_chord(), &base_chord.to_chord());
+        let mut attrs = Vec::new();
+        if not_in_chord.contains(&MINOR_THIRD){ // sus chord
+            if not_in_base.contains(&PERFECT_FOURTH){
+                attrs.push(String::from("_sus4"));
+            }else if not_in_base.contains(&MAJOR_SECOND){
+                attrs.push(String::from("_sus2"));
+            }else if not_in_base.contains(&MINOR_SECOND){
+                attrs.push(String::from("_sus2♭"));
+            }
+        }
+        let mut res = base_chord.as_string();
+        for attr in attrs{
+            res.push_str(&attr);
+        }
+        res
     }
 
     pub fn decorate_quality_single(&self, basestr: String) -> String{
@@ -405,22 +431,21 @@ pub fn remove_items<T>(vec: &mut Vec<T>, item: &T)
     }
 }
 
-pub fn split_vec_if_exist<T>(vec: &mut Vec<T>, items: &Vec<T>) -> Vec<T>
+pub fn both_differences<T>(a: &Vec<T>, b: &Vec<T>) -> (Vec<T>,Vec<T>)
     where
         T: std::cmp::PartialEq + std::marker::Copy
 {
-    let mut indi = Vec::new();
-    let mut splitted = Vec::new();
-    for (i,x) in vec.iter().enumerate(){
-        if items.contains(x){
-            indi.push(i);
-            if !splitted.contains(x){
-                splitted.push(*x);
-            }
+    let mut notina = Vec::new();
+    let mut notinb = Vec::new();
+    for x in a{
+        if !b.contains(x){
+            notinb.push(*x);
         }
     }
-    for ind in indi{
-        vec.remove(ind);
+    for x in b{
+        if !a.contains(x){
+            notina.push(*x);
+        }
     }
-    splitted
+    (notina, notinb)
 }

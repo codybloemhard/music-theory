@@ -25,6 +25,8 @@ fn test2(){
     }
     println!("");
     println!("{}", NamedChord::from_chord(&chord_from_equal_spacing(A4, 3, 6)).equal_spaced_quality("A".to_string()));
+    println!("{}", NamedChord::from_intervals(A4, &vec![MAJOR_THIRD,PERFECT_FOURTH,PERFECT_FIFTH]).base_chord().as_string());
+    println!("{}", NamedChord::from_intervals(A4, &vec![MAJOR_THIRD,PERFECT_FIFTH]).extended_quality(String::from("A")));
 }
 
 fn test1(){
