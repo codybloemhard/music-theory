@@ -304,7 +304,7 @@ impl NamedChord{
     pub fn extended_quality(&self, mut basestr: String) -> String{
         let mut with_m3 = self.to_chord();
         if with_m3.len() <= 1{
-            return self.as_string();
+            return self.as_string_basic();
         }
         let root = with_m3[0];
         if !(with_m3.contains(&MINOR_THIRD) || with_m3.contains(&MAJOR_THIRD)){
@@ -317,17 +317,17 @@ impl NamedChord{
         add_note(&mut not_in_chord, -root);
         add_note(&mut not_in_base, -root);
         
-        let mut res = base_chord.as_string();
+        let mut res = base_chord.as_string_basic();
         let mut attrs = Vec::new();
         let sus_type = if not_in_chord.contains(&MAJOR_THIRD){ // sus chord
             if not_in_base.contains(&PERFECT_FOURTH){
-                attrs.push(String::from("_sus4"));
+                attrs.push(String::from("sus♮4"));
                 4
             }else if not_in_base.contains(&MAJOR_SECOND){
-                attrs.push(String::from("_sus2"));
+                attrs.push(String::from("sus♮2"));
                 2
             }else if not_in_base.contains(&MINOR_SECOND){
-                attrs.push(String::from("_sus2♭"));
+                attrs.push(String::from("sus♭2"));
                 1
             }else { 0 }
         }else { 0 };
@@ -339,7 +339,7 @@ impl NamedChord{
             }else if inter == PERFECT_FOURTH && sus_type == 4{
                 continue;
             }
-            attrs.push(format!("_add{}", to_chord_interval(inter)));
+            attrs.push(to_chord_interval(inter));
         }
         for attr in attrs{
             res.push_str(&attr);
@@ -353,7 +353,22 @@ impl NamedChord{
             decoration = self.equal_spaced_quality(basestr.clone());
         }
         if &decoration == ""{
-            decoration = self.spelled_out_quality(basestr)
+            decoration = self.extended_quality(basestr.clone());
+        }
+        if &decoration == ""{
+            decoration = self.spelled_out_quality(basestr);
+        }
+        decoration
+    }
+
+    pub fn as_string_basic(&self) -> String{
+        let root = NamedNote::from_note(self.root()).to_string_name_sharp();
+        let mut decoration = self.base_quality(root.clone());
+        if &decoration == ""{
+            decoration = self.equal_spaced_quality(root.clone());
+        }
+        if &decoration == ""{
+            decoration = self.spelled_out_quality(root);
         }
         decoration
     }
