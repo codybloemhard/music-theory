@@ -302,26 +302,39 @@ impl NamedChord{
 
     pub fn extended_quality(&self, mut basestr: String) -> String{
         let mut with_m3 = self.to_chord();
+        if with_m3.len() <= 1{
+            return self.as_string();
+        }
+        let root = with_m3[0];
         if !(with_m3.contains(&MINOR_THIRD) || with_m3.contains(&MAJOR_THIRD)){
-            with_m3.push(MINOR_THIRD);
+            with_m3.push(root + MAJOR_THIRD);
             with_m3.sort();
         }
         let base_chord = Self::get_base_chord(&with_m3);
         
-        print_notes(&base_chord.to_chord(), ", ");
+        let (mut not_in_chord, mut not_in_base) = both_differences(&self.to_chord(), &base_chord.to_chord());
+        add_note(&mut not_in_chord, -root);
+        add_note(&mut not_in_base, -root);
         
-        let (not_in_chord, not_in_base) = both_differences(&self.to_chord(), &base_chord.to_chord());
+        let mut res = base_chord.as_string();
         let mut attrs = Vec::new();
-        if not_in_chord.contains(&MINOR_THIRD){ // sus chord
+        let sus_type = if not_in_chord.contains(&MAJOR_THIRD){ // sus chord
             if not_in_base.contains(&PERFECT_FOURTH){
                 attrs.push(String::from("_sus4"));
+                4
             }else if not_in_base.contains(&MAJOR_SECOND){
                 attrs.push(String::from("_sus2"));
+                2
             }else if not_in_base.contains(&MINOR_SECOND){
                 attrs.push(String::from("_sus2♭"));
-            }
-        }
-        let mut res = base_chord.as_string();
+                1
+            }else { 0 }
+        }else { 0 };
+        /* for inter in not_in_base{
+            if inter == MINOR_SECOND && sus_type == 1{
+                continue;
+            }else if inter == MAJOR_SECOND && sus_type
+        } */
         for attr in attrs{
             res.push_str(&attr);
         }
@@ -448,4 +461,10 @@ pub fn both_differences<T>(a: &Vec<T>, b: &Vec<T>) -> (Vec<T>,Vec<T>)
         }
     }
     (notina, notinb)
+}
+
+pub fn add_note(notes: &mut Vec<Note>, note: Note){
+    for x in notes{
+        *x += note;
+    }
 }
