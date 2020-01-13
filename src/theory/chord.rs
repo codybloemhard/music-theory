@@ -2,6 +2,7 @@ use super::note::*;
 use super::interval::*;
 use super::scale::*;
 use crate::utils::roman_numerals::to_roman_num;
+use crate::utils::misc::*;
 
 type Chord = Vec<Note>;
 
@@ -421,55 +422,4 @@ pub fn strs_scale_chords_roman(scale: &Scale, size: usize) -> Vec<String>{
 pub fn scale_chords_intervals(scale: &Scale, size: usize) -> Vec<Chord>{
     let chords_notes = scale_chords(scale, size);
     map(&chords_notes, &intervals_from_chord)
-}
-
-pub fn map<T,F>(inp: &[T], f: &F) -> Vec<T>
-    where
-        F: Fn(&T) -> T,
-{
-    let mut res = Vec::new();
-    for x in inp{
-        res.push(f(x));
-    }
-    res
-}
-
-pub fn remove_items<T>(vec: &mut Vec<T>, item: &T)
-    where
-        T: std::cmp::PartialEq        
-{
-    let mut indicis = Vec::new();
-    for (i,x) in vec.iter().enumerate(){
-        if x == item{
-            indicis.push(i);
-        }
-    }
-    for ind in indicis{
-        vec.remove(ind);
-    }
-}
-
-pub fn both_differences<T>(a: &Vec<T>, b: &Vec<T>) -> (Vec<T>,Vec<T>)
-    where
-        T: std::cmp::PartialEq + std::marker::Copy
-{
-    let mut notina = Vec::new();
-    let mut notinb = Vec::new();
-    for x in a{
-        if !b.contains(x){
-            notinb.push(*x);
-        }
-    }
-    for x in b{
-        if !a.contains(x){
-            notina.push(*x);
-        }
-    }
-    (notina, notinb)
-}
-
-pub fn add_note(notes: &mut Vec<Note>, note: Note){
-    for x in notes{
-        *x += note;
-    }
 }
