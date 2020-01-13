@@ -131,3 +131,21 @@ pub fn interval_name_augdim_short(interval: Note) -> String{
         string
     }
 }
+
+pub fn to_chord_interval(interval: Note) -> String{
+    match interval{
+        MINOR_SECOND => "2♭",
+        MAJOR_SECOND => "2",
+        MINOR_THIRD => "3♭",
+        MAJOR_THIRD => "3",
+        PERFECT_FOURTH => "4",
+        TRITONE => "o",
+        PERFECT_FIFTH => "5",
+        MINOR_SIXTH => "+",
+        MAJOR_SIXTH => "6",
+        MINOR_SEVENTH => "7♭",
+        MAJOR_SEVENTH => "7",
+        PERFECT_OCTAVE => "8",
+        _ => "",
+    }.to_string()
+}

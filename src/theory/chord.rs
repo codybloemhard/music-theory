@@ -330,11 +330,16 @@ impl NamedChord{
                 1
             }else { 0 }
         }else { 0 };
-        /* for inter in not_in_base{
+        for inter in not_in_base{
             if inter == MINOR_SECOND && sus_type == 1{
                 continue;
-            }else if inter == MAJOR_SECOND && sus_type
-        } */
+            }else if inter == MAJOR_SECOND && sus_type == 2{
+                continue;
+            }else if inter == PERFECT_FOURTH && sus_type == 4{
+                continue;
+            }
+            attrs.push(format!("_add{}", to_chord_interval(inter)));
+        }
         for attr in attrs{
             res.push_str(&attr);
         }
