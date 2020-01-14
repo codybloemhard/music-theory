@@ -279,7 +279,7 @@ impl NamedChord{
         }
         let root = chord[0];
         let intervals = &intervals_from_chord(chord);
-        let all_bases = vec![MAJOR_DYAD.to_vec(),MINOR_DYAD.to_vec(),POWER_DYAD.to_vec(),MAJOR_TRIAD.to_vec(),MINOR_TRIAD.to_vec(),AUGMENTED_TRIAD.to_vec(),DIMINISHED_TRIAD.to_vec(),
+        let all_bases = vec![POWER_DYAD.to_vec(),MAJOR_TRIAD.to_vec(),MINOR_TRIAD.to_vec(),AUGMENTED_TRIAD.to_vec(),DIMINISHED_TRIAD.to_vec(),
                                 MAJOR_SIXTH_TETRAD.to_vec(),MINOR_SIXTH_TETRAD.to_vec(),DOMINANT_SEVENTH_TETRAD.to_vec(),AUGMENTED_SEVENTH_TETRAD.to_vec(),
                                 MAJOR_SEVENTH_TETRAD.to_vec(),MINOR_SEVENTH_TETRAD.to_vec(),MINOR_MAJOR_SEVENTH_TETRAD.to_vec(),
                                 DIMINISHED_SEVENTH_TETRAD.to_vec(),HALF_DIMINISHED_SEVENTH_TETRAD.to_vec()];
@@ -301,10 +301,10 @@ impl NamedChord{
         Self::get_base_chord(&self.to_chord())
     }
 
-    pub fn extended_quality(&self, mut basestr: String) -> String{
+    pub fn extended_quality(&self, basestr: String) -> String{
         let mut with_m3 = self.to_chord();
         if with_m3.len() <= 1{
-            return self.as_string_basic();
+            return basestr;
         }
         let root = with_m3[0];
         if !(with_m3.contains(&MINOR_THIRD) || with_m3.contains(&MAJOR_THIRD)){
@@ -312,7 +312,13 @@ impl NamedChord{
             with_m3.sort();
         }
         let base_chord = Self::get_base_chord(&with_m3);
-        
+
+        print!("[");
+        for n in self.to_chord(){
+            print!("{},", NamedNote::from_note(n).as_string());
+        }
+        print!("]");
+
         let (mut not_in_chord, mut not_in_base) = both_differences(&self.to_chord(), &base_chord.to_chord());
         add_note(&mut not_in_chord, -root);
         add_note(&mut not_in_base, -root);
@@ -332,13 +338,10 @@ impl NamedChord{
             }else { 0 }
         }else { 0 };
         for inter in not_in_base{
-            if inter == MINOR_SECOND && sus_type == 1{
-                continue;
-            }else if inter == MAJOR_SECOND && sus_type == 2{
-                continue;
-            }else if inter == PERFECT_FOURTH && sus_type == 4{
-                continue;
-            }
+            if (inter == MINOR_SECOND && sus_type == 1)
+                || (inter == MAJOR_SECOND && sus_type == 2)
+                || (inter == PERFECT_FOURTH && sus_type == 4)
+            { continue; }
             attrs.push(to_chord_interval(inter));
         }
         for attr in attrs{
@@ -366,9 +369,6 @@ impl NamedChord{
         let mut decoration = self.base_quality(root.clone());
         if &decoration == ""{
             decoration = self.equal_spaced_quality(root.clone());
-        }
-        if &decoration == ""{
-            decoration = self.spelled_out_quality(root);
         }
         decoration
     }
