@@ -235,7 +235,7 @@ impl NamedChord{
                 let mut st = format!("{}", basestr);
                 let intervals = intervals_from_chord(ch);
                 for interval in intervals.iter().skip(1){
-                    st.push_str(&format!("{}", interval_name_short(*interval)));
+                    st.push_str(&format!("{}", to_chord_interval(*interval)));
                 }
                 st
             },
@@ -285,7 +285,10 @@ impl NamedChord{
                                 DIMINISHED_SEVENTH_TETRAD.to_vec(),HALF_DIMINISHED_SEVENTH_TETRAD.to_vec()];
         let mut biggest = 0;
         let mut pattern = Vec::new();
-        for base in all_bases{
+        for base in all_bases.iter().rev(){
+            if base == intervals{
+                return Self::from_intervals(root, &base);
+            }
             if has_intervals(intervals, &base){
                 let size = base.len();
                 if size > biggest{
@@ -312,11 +315,12 @@ impl NamedChord{
             with_m3.sort();
         }
         let base_chord = Self::get_base_chord(&with_m3);
-
+        
         print!("[");
-        for n in self.to_chord(){
-            print!("{},", NamedNote::from_note(n).as_string());
+        for n in intervals_from_chord(&self.to_chord()){
+            print!("{},", to_chord_interval(n));
         }
+        print!("({})", base_chord.as_string_basic());
         print!("]");
 
         let (mut not_in_chord, mut not_in_base) = both_differences(&self.to_chord(), &base_chord.to_chord());

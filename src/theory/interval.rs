@@ -134,6 +134,7 @@ pub fn interval_name_augdim_short(interval: Note) -> String{
 
 pub fn to_chord_interval(interval: Note) -> String{
     match interval{
+        0 => "R",
         MINOR_SECOND => "♭2",
         MAJOR_SECOND => "♮2",
         MINOR_THIRD => "♭3",
