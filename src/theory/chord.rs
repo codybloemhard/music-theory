@@ -14,8 +14,10 @@ pub const MINOR_DYAD: [Note; 1] = [MINOR_THIRD];
 pub const POWER_DYAD: [Note; 1] = [PERFECT_FIFTH];
 pub const MAJOR_TRIAD: [Note; 2] = [MAJOR_THIRD, PERFECT_FIFTH];
 pub const MINOR_TRIAD: [Note; 2] = [MINOR_THIRD, PERFECT_FIFTH];
-pub const AUGMENTED_TRIAD: [Note; 2] = [MAJOR_THIRD, AUGMENTED_FIFTH];
-pub const DIMINISHED_TRIAD: [Note; 2] = [MINOR_THIRD, DIMINISHED_FIFTH];
+pub const MINOR_AUGMENTED_TRIAD: [Note; 2] = [MINOR_THIRD, AUGMENTED_FIFTH];
+pub const MAJOR_AUGMENTED_TRIAD: [Note; 2] = [MAJOR_THIRD, AUGMENTED_FIFTH];
+pub const MINOR_DIMINISHED_TRIAD: [Note; 2] = [MINOR_THIRD, DIMINISHED_FIFTH];
+pub const MAJOR_DIMINISHED_TRIAD: [Note; 2] = [MAJOR_THIRD, DIMINISHED_FIFTH];
 pub const MAJOR_SIXTH_TETRAD: [Note; 3] = [MAJOR_THIRD, PERFECT_FIFTH, MAJOR_SIXTH];
 pub const MINOR_SIXTH_TETRAD: [Note; 3] = [MINOR_THIRD, PERFECT_FIFTH, MAJOR_SIXTH];
 pub const DOMINANT_SEVENTH_TETRAD: [Note; 3] = [MAJOR_THIRD, PERFECT_FIFTH, MINOR_SEVENTH];
@@ -85,7 +87,6 @@ pub fn same_intervals(inters: &Chord, blueprint: &[Note]) -> bool{
 }
 
 pub fn has_intervals(inters: &Chord, blueprint: &[Note]) -> bool{
-    let len = inters.len();
     for note in blueprint{
         if !inters.contains(note){
             return false;
@@ -99,8 +100,10 @@ pub enum NamedChord{
     Power(Note),
     Major(Note),
     Minor(Note),
-    Augmented(Note),
-    Diminished(Note),
+    MinorAugmented(Note),
+    MajorAugmented(Note),
+    MinorDiminished(Note),
+    MajorDiminished(Note),
     MajorSixth(Note),
     MinorSixth(Note),
     DominantSeventh(Note),
@@ -119,8 +122,10 @@ impl NamedChord{
             Self::Power(n) => chord_from_intervals(*n, &POWER_DYAD),
             Self::Major(n) => chord_from_intervals(*n, &MAJOR_TRIAD),
             Self::Minor(n) => chord_from_intervals(*n, &MINOR_TRIAD),
-            Self::Augmented(n) => chord_from_intervals(*n, &AUGMENTED_TRIAD),
-            Self::Diminished(n) => chord_from_intervals(*n, &DIMINISHED_TRIAD),
+            Self::MinorAugmented(n) => chord_from_intervals(*n, &MINOR_AUGMENTED_TRIAD),
+            Self::MajorAugmented(n) => chord_from_intervals(*n, &MAJOR_AUGMENTED_TRIAD),
+            Self::MinorDiminished(n) => chord_from_intervals(*n, &MINOR_DIMINISHED_TRIAD),
+            Self::MajorDiminished(n) => chord_from_intervals(*n, &MAJOR_DIMINISHED_TRIAD),
             Self::MajorSixth(n) => chord_from_intervals(*n, &MAJOR_SIXTH_TETRAD),
             Self::MinorSixth(n) => chord_from_intervals(*n, &MINOR_SIXTH_TETRAD),
             Self::DominantSeventh(n) => chord_from_intervals(*n, &DOMINANT_SEVENTH_TETRAD),
@@ -145,10 +150,14 @@ impl NamedChord{
             Self::Major(root)
         }else if same_intervals(intervals, &MINOR_TRIAD){
             Self::Minor(root)
-        }else if same_intervals(intervals, &AUGMENTED_TRIAD){
-            Self::Augmented(root)
-        }else if same_intervals(intervals, &DIMINISHED_TRIAD){
-            Self::Diminished(root)
+        }else if same_intervals(intervals, &MINOR_AUGMENTED_TRIAD){
+            Self::MinorAugmented(root)
+        }else if same_intervals(intervals, &MAJOR_AUGMENTED_TRIAD){
+            Self::MajorAugmented(root)
+        }else if same_intervals(intervals, &MINOR_DIMINISHED_TRIAD){
+            Self::MinorDiminished(root)
+        }else if same_intervals(intervals, &MAJOR_DIMINISHED_TRIAD){
+            Self::MajorDiminished(root)
         }else if same_intervals(intervals, &MAJOR_SIXTH_TETRAD){
             Self::MajorSixth(root)
         }else if same_intervals(intervals, &MINOR_SIXTH_TETRAD){
@@ -182,8 +191,10 @@ impl NamedChord{
             Self::Power(r) => r,
             Self::Major(r) => r,
             Self::Minor(r) => r,
-            Self::Augmented(r) => r,
-            Self::Diminished(r) => r,
+            Self::MinorAugmented(r) => r,
+            Self::MajorAugmented(r) => r,
+            Self::MinorDiminished(r) => r,
+            Self::MajorDiminished(r) => r,
             Self::MajorSixth(r) => r,
             Self::MinorSixth(r) => r,
             Self::DominantSeventh(r) => r,
@@ -214,8 +225,10 @@ impl NamedChord{
             Self::Power(_) => format!("{}!", basestr),
             Self::Major(_) => format!("{}", basestr),
             Self::Minor(_) => format!("{}", lowercase),
-            Self::Augmented(_) => format!("{}+", basestr),
-            Self::Diminished(_) => format!("{}o", basestr),
+            Self::MinorAugmented(_) => format!("{}+", lowercase),
+            Self::MajorAugmented(_) => format!("{}+", basestr),
+            Self::MinorDiminished(_) => format!("{}o", lowercase),
+            Self::MajorDiminished(_) => format!("{}o", basestr),
             Self::MajorSixth(_) => format!("{}maj6", basestr),
             Self::MinorSixth(_) => format!("{}min6", basestr),
             Self::DominantSeventh(_) => format!("{}dom7", basestr),
@@ -232,11 +245,12 @@ impl NamedChord{
     pub fn spelled_out_quality(&self, basestr: String) -> String{
         match self{
             Self::Arbitrary(ch) => {
-                let mut st = format!("{}", basestr);
+                let mut st = format!("{}[", basestr);
                 let intervals = intervals_from_chord(ch);
                 for interval in intervals.iter().skip(1){
                     st.push_str(&format!("{}", to_chord_interval(*interval)));
                 }
+                st.push_str(&"]");
                 st
             },
             _ => String::new(),
@@ -273,21 +287,23 @@ impl NamedChord{
         }
     }
 
-    pub fn get_base_chord(chord: &Chord) -> Self{
+    pub fn get_base_chord(chord: &Chord) -> Option<Self>{
         if chord.is_empty(){
-            return Self::from_chord(chord);
+            return Option::None;
         }
         let root = chord[0];
         let intervals = &intervals_from_chord(chord);
-        let all_bases = vec![POWER_DYAD.to_vec(),MAJOR_TRIAD.to_vec(),MINOR_TRIAD.to_vec(),AUGMENTED_TRIAD.to_vec(),DIMINISHED_TRIAD.to_vec(),
-                                MAJOR_SIXTH_TETRAD.to_vec(),MINOR_SIXTH_TETRAD.to_vec(),DOMINANT_SEVENTH_TETRAD.to_vec(),AUGMENTED_SEVENTH_TETRAD.to_vec(),
-                                MAJOR_SEVENTH_TETRAD.to_vec(),MINOR_SEVENTH_TETRAD.to_vec(),MINOR_MAJOR_SEVENTH_TETRAD.to_vec(),
-                                DIMINISHED_SEVENTH_TETRAD.to_vec(),HALF_DIMINISHED_SEVENTH_TETRAD.to_vec()];
+        let all_bases = vec![POWER_DYAD.to_vec(),MAJOR_TRIAD.to_vec(),MINOR_TRIAD.to_vec(),
+            MINOR_AUGMENTED_TRIAD.to_vec(),MAJOR_AUGMENTED_TRIAD.to_vec(),
+            MINOR_DIMINISHED_TRIAD.to_vec(), MAJOR_DIMINISHED_TRIAD.to_vec(),
+            MAJOR_SIXTH_TETRAD.to_vec(),MINOR_SIXTH_TETRAD.to_vec(),DOMINANT_SEVENTH_TETRAD.to_vec(),AUGMENTED_SEVENTH_TETRAD.to_vec(),
+            MAJOR_SEVENTH_TETRAD.to_vec(),MINOR_SEVENTH_TETRAD.to_vec(),MINOR_MAJOR_SEVENTH_TETRAD.to_vec(),
+            DIMINISHED_SEVENTH_TETRAD.to_vec(),HALF_DIMINISHED_SEVENTH_TETRAD.to_vec()];
         let mut biggest = 0;
         let mut pattern = Vec::new();
         for base in all_bases.iter().rev(){
             if base == intervals{
-                return Self::from_intervals(root, &base);
+                return Option::Some(Self::from_intervals(root, &base));
             }
             if has_intervals(intervals, &base){
                 let size = base.len();
@@ -297,10 +313,13 @@ impl NamedChord{
                 }
             }
         }
-        Self::from_intervals(root, &pattern)
+        if pattern.is_empty(){
+            return Option::None;
+        }
+        Option::Some(Self::from_intervals(root, &pattern))
     }
 
-    pub fn base_chord(&self) -> Self{
+    pub fn base_chord(&self) -> Option<Self>{
         Self::get_base_chord(&self.to_chord())
     }
 
@@ -315,18 +334,24 @@ impl NamedChord{
             with_m3.sort();
         }
         let base_chord = Self::get_base_chord(&with_m3);
-        
+        if base_chord.is_none(){
+            return String::new();
+        }
+        let base_chord = base_chord.unwrap();
+
         print!("[");
         for n in intervals_from_chord(&self.to_chord()){
             print!("{},", to_chord_interval(n));
         }
+
         print!("({})", base_chord.as_string_basic());
         print!("]");
 
-        let (mut not_in_chord, mut not_in_base) = both_differences(&self.to_chord(), &base_chord.to_chord());
+        let (mut not_in_chord, mut not_in_base) =
+            both_differences(&self.to_chord(), &base_chord.to_chord());
         add_note(&mut not_in_chord, -root);
         add_note(&mut not_in_base, -root);
-        
+
         let mut res = base_chord.as_string_basic();
         let mut attrs = Vec::new();
         let sus_type = if not_in_chord.contains(&MAJOR_THIRD){ // sus chord
