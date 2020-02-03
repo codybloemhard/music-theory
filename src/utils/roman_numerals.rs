@@ -36,3 +36,48 @@ impl Iterator for RomanNumeralIter{
         Some(res)
     }
 }
+
+#[cfg(test)]
+mod tests{
+    use super::*;
+    #[test]
+    fn test_roman0(){
+        assert_eq!(to_roman_num(0), "");
+    }
+    #[test]
+    fn test_roman1(){
+        assert_eq!(to_roman_num(1), "I")
+    }
+    #[test]
+    fn test_roman2(){
+        assert_eq!(to_roman_num(2), "II")
+    }
+    #[test]
+    fn test_roman3(){
+        assert_eq!(to_roman_num(3), "III")
+    }
+    #[test]
+    fn test_roman4(){
+        assert_eq!(to_roman_num(4), "IV")
+    }
+    #[test]
+    fn test_roman5(){
+        assert_eq!(to_roman_num(5), "V")
+    }
+    #[test]
+    fn test_roman6(){
+        assert_eq!(to_roman_num(37), "XXXVII")
+    }
+    #[test]
+    fn test_roman7(){
+        assert_eq!(to_roman_num(666), "DCLXVI")
+    }
+    #[test]
+    fn test_roman8(){
+        assert_eq!(to_roman_num(1998), "MCMXCVIII")
+    }
+    #[test]
+    fn test_roman9(){
+        assert_eq!(to_roman_num(12345), "MMMMMMMMMMMMCCCXLV")
+    }
+}

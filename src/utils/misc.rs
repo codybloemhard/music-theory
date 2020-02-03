@@ -13,7 +13,7 @@ pub fn map<T,F>(inp: &[T], f: &F) -> Vec<T>
 
 pub fn remove_items<T>(vec: &mut Vec<T>, item: &T)
     where
-        T: std::cmp::PartialEq        
+        T: std::cmp::PartialEq
 {
     let mut indicis = Vec::new();
     for (i,x) in vec.iter().enumerate(){

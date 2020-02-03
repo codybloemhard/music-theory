@@ -18,9 +18,6 @@ fn test2(){
     }
     print_chords(&scale_chords(&mode_of_scale(satie_scale(), 0), 3), ",\t");
     print_chords(&scale_chords(&mode_of_scale(greek_dorian_chromatic(), 0), 3), ",\t");
-    for x in vec![1,2,3,4,5,36,2012,1996]{
-        print!("{},", to_roman_num(x));
-    }
     println!("");
     println!("{}", NamedChord::from_chord(&chord_from_equal_spacing(A4, 3, 6)).equal_spaced_quality("A".to_string()));
     println!("{}", NamedChord::from_intervals(A4, &vec![MAJOR_THIRD,PERFECT_FOURTH,PERFECT_FIFTH]).base_chord().unwrap().as_string());
