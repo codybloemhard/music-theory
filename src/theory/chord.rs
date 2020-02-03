@@ -214,20 +214,28 @@ impl NamedChord{
         }
     }
 
-    pub fn base_quality(&self, basestr: String) -> String{
+    pub fn base_quality(&self, basestr: String, lower: bool) -> String{
         let mut lowercase = String::new();
         for c in basestr.chars(){
             for l in c.to_lowercase(){
                 lowercase.push(l);
             }
         }
+        let mut minorcase = String::new();
+        minorcase.push_str(&basestr);
+        minorcase.push_str("m");
+        let minorstr = if lower{
+            lowercase
+        }else{
+            minorcase
+        };
         match self{
             Self::Power(_) => format!("{}!", basestr),
             Self::Major(_) => format!("{}", basestr),
-            Self::Minor(_) => format!("{}", lowercase),
-            Self::MinorAugmented(_) => format!("{}+", lowercase),
+            Self::Minor(_) => format!("{}", minorstr),
+            Self::MinorAugmented(_) => format!("{}+", minorstr),
             Self::MajorAugmented(_) => format!("{}+", basestr),
-            Self::MinorDiminished(_) => format!("{}o", lowercase),
+            Self::MinorDiminished(_) => format!("{}o", minorstr),
             Self::MajorDiminished(_) => format!("{}o", basestr),
             Self::MajorSixth(_) => format!("{}maj6", basestr),
             Self::MinorSixth(_) => format!("{}min6", basestr),
@@ -323,7 +331,7 @@ impl NamedChord{
         Self::get_base_chord(&self.to_chord())
     }
 
-    pub fn extended_quality(&self, basestr: String) -> String{
+    pub fn extended_quality(&self, basestr: String, lower: bool) -> String{
         let mut with_m3 = self.to_chord();
         if with_m3.len() <= 1{
             return basestr;
@@ -339,38 +347,27 @@ impl NamedChord{
         }
         let base_chord = base_chord.unwrap();
 
-        print!("[");
-        for n in intervals_from_chord(&self.to_chord()){
-            print!("{},", to_chord_interval(n));
-        }
-
-        print!("({})", base_chord.as_string_basic());
-        print!("]");
-
         let (mut not_in_chord, mut not_in_base) =
             both_differences(&self.to_chord(), &base_chord.to_chord());
         add_note(&mut not_in_chord, -root);
         add_note(&mut not_in_base, -root);
 
-        let mut res = base_chord.as_string_basic();
+        let mut res = base_chord.as_string_basic(lower);
         let mut attrs = Vec::new();
         let sus_type = if not_in_chord.contains(&MAJOR_THIRD){ // sus chord
             if not_in_base.contains(&PERFECT_FOURTH){
                 attrs.push(String::from("sus♮4"));
-                4
+                PERFECT_FOURTH
             }else if not_in_base.contains(&MAJOR_SECOND){
                 attrs.push(String::from("sus♮2"));
-                2
+                MAJOR_SECOND
             }else if not_in_base.contains(&MINOR_SECOND){
                 attrs.push(String::from("sus♭2"));
-                1
+                MINOR_SECOND
             }else { 0 }
         }else { 0 };
         for inter in not_in_base{
-            if (inter == MINOR_SECOND && sus_type == 1)
-                || (inter == MAJOR_SECOND && sus_type == 2)
-                || (inter == PERFECT_FOURTH && sus_type == 4)
-            { continue; }
+            if (inter == sus_type) { continue; }
             attrs.push(to_chord_interval(inter));
         }
         for attr in attrs{
@@ -379,13 +376,13 @@ impl NamedChord{
         res
     }
 
-    pub fn decorate_quality_single(&self, basestr: String) -> String{
-        let mut decoration = self.base_quality(basestr.clone());
+    pub fn decorate_quality_single(&self, basestr: String, lower: bool) -> String{
+        let mut decoration = self.base_quality(basestr.clone(), lower);
         if &decoration == ""{
             decoration = self.equal_spaced_quality(basestr.clone());
         }
         if &decoration == ""{
-            decoration = self.extended_quality(basestr.clone());
+            decoration = self.extended_quality(basestr.clone(), lower);
         }
         if &decoration == ""{
             decoration = self.spelled_out_quality(basestr);
@@ -393,9 +390,9 @@ impl NamedChord{
         decoration
     }
 
-    pub fn as_string_basic(&self) -> String{
+    pub fn as_string_basic(&self, lower: bool) -> String{
         let root = NamedNote::from_note(self.root()).to_string_name_sharp();
-        let mut decoration = self.base_quality(root.clone());
+        let mut decoration = self.base_quality(root.clone(), lower);
         if &decoration == ""{
             decoration = self.equal_spaced_quality(root.clone());
         }
@@ -404,7 +401,7 @@ impl NamedChord{
 
     pub fn as_string(&self) -> String{
         let root = NamedNote::from_note(self.root()).to_string_name_sharp();
-        self.decorate_quality_single(root)
+        self.decorate_quality_single(root, false)
     }
 }
 
@@ -458,7 +455,7 @@ pub fn strs_scale_chords_roman(scale: &Scale, size: usize) -> Vec<String>{
     let chords = scale_chords(scale, size);
     let mut res = Vec::new();
     for i in 0..chords.len(){
-        res.push(NamedChord::from_chord(&chords[i]).decorate_quality_single(to_roman_num(i + 1)));
+        res.push(NamedChord::from_chord(&chords[i]).decorate_quality_single(to_roman_num(i + 1), true));
     }
     res
 }
