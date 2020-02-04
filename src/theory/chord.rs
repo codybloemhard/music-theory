@@ -519,4 +519,16 @@ mod tests{
             NamedChord::from_intervals(A4, &vec![MAJOR_THIRD,DIMINISHED_FIFTH]).as_string(),
             "Ao");
     }
+    #[test]
+    fn test_chord_as_string6(){
+        assert_eq!(
+            NamedChord::from_chord(&chord_from_equal_spacing(A4, PERFECT_FOURTH, 3)).as_string(),
+            "A♮4⁴");
+    }
+    #[test]
+    fn test_equal_spaced_chord0(){
+        assert_eq!(
+            chord_from_equal_spacing(A4, MINOR_THIRD, 3),
+            chord_from_intervals(A4, &vec![MINOR_THIRD,2*MINOR_THIRD,3*MINOR_THIRD]));
+    }
 }
