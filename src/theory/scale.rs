@@ -23,7 +23,7 @@ pub const SUB_TONIC: Note = 6;
 pub fn ionian_scale_steps() -> Scale{
     vec![WHOLE,WHOLE,SEMI,WHOLE,WHOLE,WHOLE,SEMI]
 }
-/* 
+/*
 Old Greek Dorian mode.
 A 7 note scale in a octave of 2 four-note segments separated by a whole tone.
 quarter,quarter,major third,whole,quarter,quarter,major third.
@@ -52,7 +52,7 @@ pub fn chromatic_scale() -> Scale{
 pub fn next_mode(mut scale: Scale) -> Scale{
     let len = scale.len();
     if len == 0{
-        panic!("panic: Scales cannot have 0 steps!");
+        return scale;
     }
     let head = scale[0];
     for i in 0..len - 1{

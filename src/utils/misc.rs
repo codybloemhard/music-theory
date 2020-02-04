@@ -11,21 +11,6 @@ pub fn map<T,F>(inp: &[T], f: &F) -> Vec<T>
     res
 }
 
-pub fn remove_items<T>(vec: &mut Vec<T>, item: &T)
-    where
-        T: std::cmp::PartialEq
-{
-    let mut indicis = Vec::new();
-    for (i,x) in vec.iter().enumerate(){
-        if x == item{
-            indicis.push(i);
-        }
-    }
-    for ind in indicis{
-        vec.remove(ind);
-    }
-}
-
 pub fn both_differences<T>(a: &Vec<T>, b: &Vec<T>) -> (Vec<T>,Vec<T>)
     where
         T: std::cmp::PartialEq + std::marker::Copy
@@ -48,5 +33,14 @@ pub fn both_differences<T>(a: &Vec<T>, b: &Vec<T>) -> (Vec<T>,Vec<T>)
 pub fn add_note(notes: &mut Vec<Note>, note: Note){
     for x in notes{
         *x += note;
+    }
+}
+
+#[cfg(test)]
+mod tests{
+    use super::*;
+    #[test]
+    pub fn test_map(){
+        assert_eq!(map(&vec![2,3,4], &|x| x + 1), vec![3,4,5]);
     }
 }

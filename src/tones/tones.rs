@@ -15,7 +15,7 @@ pub fn smooth_pass(smoothing: f32) -> impl Fn(f32,f32) -> f32{
 pub fn arg_id(a: f32, _: f32) -> f32 { a }
 pub fn pass_id(_: f32, new: f32) -> f32 { new }
 
-pub fn tone_to_track<F0,F1,F2,F3>(track: &mut Track, start: usize, duration: usize, 
+pub fn tone_to_track<F0,F1,F2,F3>(track: &mut Track, start: usize, duration: usize,
     vol: f32, mut pan: f32, mut start_vol: f32, mut hz: f32,
     tonef: &F0, panf: &F1, volf: &F2, hzf: &F3)
     where
@@ -42,7 +42,7 @@ pub fn tone_to_track<F0,F1,F2,F3>(track: &mut Track, start: usize, duration: usi
     }
 }
 
-pub fn tone_to_track_stereo<F0,F1,F2,F3>(track: &mut Track, start: usize, duration: usize, 
+pub fn tone_to_track_stereo<F0,F1,F2,F3>(track: &mut Track, start: usize, duration: usize,
     vol: f32, mut start_vol: f32, mut hz: f32,
     tonef: &F0, volf: &F1, hzf: &F2, pass: &F3)
     where
@@ -99,5 +99,5 @@ pub fn spread<Func>(n: u8, detune: f32, defocus: f32, sample: Func) -> impl Fn(f
         }
         let div = (n + 1) as f32;
         (cl / div, cr / div)
-    } 
+    }
 }

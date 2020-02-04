@@ -71,7 +71,7 @@ impl NamedNote{
             _ => 0,
         }
     }
-    
+
     pub fn to_note(self) -> Note{
         let x = match self{
             NamedNote::MicroTonal(n) => n,
@@ -179,4 +179,13 @@ pub fn print_notes(vec: &Vec<Note>, seperator: &str){
         print!("{}{}", NamedNote::from_note(vec[i]).as_string(), seperator);
     }
     println!("{}", NamedNote::from_note(vec[lenm1]).as_string());
+}
+
+#[cfg(test)]
+mod tests{
+    use super::*;
+    #[test]
+    fn test_to_pitch(){
+        assert_eq!(to_pitch(NamedNote::A(4).to_note()), 440.0);
+    }
 }

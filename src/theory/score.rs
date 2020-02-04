@@ -207,7 +207,7 @@ We want an extra eighth note in the next bar.
 Notate [5*2 + 1]/[4 * 2] = 11/8.
 But the 8th is now the beat, if we want the quarter note to be the same lenght,
 we need to do tempo =/ 2;
-And i don't feel like doing that. 
+And i don't feel like doing that.
 */
 
 pub struct Bar{

@@ -95,6 +95,13 @@ pub fn has_intervals(inters: &Chord, blueprint: &[Note]) -> bool{
     true
 }
 
+pub enum ChordStyle{
+    SpelledOut,
+    Base,
+    EqualSpaced,
+    Extended,
+}
+
 pub enum NamedChord{
     Arbitrary(Chord),
     Power(Note),
@@ -390,6 +397,16 @@ impl NamedChord{
         decoration
     }
 
+    pub fn as_string_style(&self, style: ChordStyle, lower: bool) -> String{
+        let root = NamedNote::from_note(self.root()).to_string_name_sharp();
+        match style{
+            ChordStyle::SpelledOut => self.spelled_out_quality(root),
+            ChordStyle::Base => self.base_quality(root, lower),
+            ChordStyle::EqualSpaced => self.equal_spaced_quality(root),
+            ChordStyle::Extended => self.extended_quality(root, lower),
+        }
+    }
+
     pub fn as_string_basic(&self, lower: bool) -> String{
         let root = NamedNote::from_note(self.root()).to_string_name_sharp();
         let mut decoration = self.base_quality(root.clone(), lower);
@@ -463,4 +480,45 @@ pub fn strs_scale_chords_roman(scale: &Scale, size: usize) -> Vec<String>{
 pub fn scale_chords_intervals(scale: &Scale, size: usize) -> Vec<Chord>{
     let chords_notes = scale_chords(scale, size);
     map(&chords_notes, &intervals_from_chord)
+}
+
+#[cfg(test)]
+mod tests{
+    use super::*;
+    #[test]
+    fn test_chord_as_string0(){
+        assert_eq!(
+            NamedChord::from_intervals(A4, &vec![MAJOR_THIRD,PERFECT_FIFTH]).as_string(),
+            "A");
+    }
+    #[test]
+    fn test_chord_as_string1(){
+        assert_eq!(
+            NamedChord::from_intervals(A4, &vec![MINOR_THIRD,PERFECT_FIFTH]).as_string(),
+            "Am");
+    }
+    #[test]
+    fn test_chord_as_string2(){
+        assert_eq!(
+            NamedChord::from_intervals(A4, &vec![MAJOR_SECOND,PERFECT_FIFTH]).as_string(),
+            "Asus♮2");
+    }
+    #[test]
+    fn test_chord_as_string3(){
+        assert_eq!(
+            NamedChord::from_intervals(A4, &vec![MINOR_SECOND,MAJOR_SECOND,PERFECT_FOURTH,PERFECT_FIFTH]).as_string(),
+            "Asus♮4♭2♮2");
+    }
+    #[test]
+    fn test_chord_as_string4(){
+        assert_eq!(
+            NamedChord::from_intervals(A4, &vec![MINOR_THIRD,AUGMENTED_FIFTH]).as_string(),
+            "Am+");
+    }
+    #[test]
+    fn test_chord_as_string5(){
+        assert_eq!(
+            NamedChord::from_intervals(A4, &vec![MAJOR_THIRD,DIMINISHED_FIFTH]).as_string(),
+            "Ao");
+    }
 }
