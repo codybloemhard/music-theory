@@ -275,10 +275,8 @@ impl NamedChord{
     pub fn equal_spaced_quality(&self, mut basestr: String) -> String{
         let notes = self.to_chord();
         let len = notes.len();
-        if len <= 0{
+        if len <= 1{
             String::new()
-        }else if len == 1{
-            basestr
         }else if len <= 9{
             let mut last = notes[1];
             let leap = last - notes[0];
@@ -290,8 +288,8 @@ impl NamedChord{
                 }
                 last = *n;
             }
-            if ok && leap > 0 && leap < 10{
-                basestr.push(NUM_SUBS[leap as usize]);
+            if ok && len > 0 && len < 10{
+                basestr.push_str(&to_chord_interval(leap));
                 basestr.push(NUM_SUPS[len]);
                 basestr
             }else{

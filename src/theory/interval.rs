@@ -133,6 +133,11 @@ pub fn interval_name_augdim_short(interval: Note) -> String{
 }
 
 pub fn to_chord_interval(interval: Note) -> String{
+    let s13 = SEMI * 13; let s14 = SEMI * 14;
+    let s15 = SEMI * 15; let s16 = SEMI * 16;
+    let s17 = SEMI * 17; let s18 = SEMI * 18;
+    let s19 = SEMI * 19; let s20 = SEMI * 20;
+    let s21 = SEMI * 21; let s22 = SEMI * 22;
     match interval{
         0 => "R",
         MINOR_SECOND => "♭2",
@@ -147,16 +152,16 @@ pub fn to_chord_interval(interval: Note) -> String{
         MINOR_SEVENTH => "♭7",
         MAJOR_SEVENTH => "♮7",
         PERFECT_OCTAVE => "♮8",
-        13 => "♭9",
-        14 => "♮9",
-        15 => "♯9",
-        16 => "♭11",
-        17 => "♮11",
-        18 => "♯11",
-        19 => "^5",
-        20 => "♭13",
-        21 => "♮13",
-        22 => "♯13",
+        s13 => "♭9",
+        s14 => "♮9",
+        s15 => "♯9",
+        s16 => "♭11",
+        s17 => "♮11",
+        s18 => "♯11",
+        s19 => "^5",
+        s20 => "♭13",
+        s21 => "♮13",
+        s22 => "♯13",
         _ => "",
     }.to_string()
 }
