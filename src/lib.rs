@@ -7,6 +7,7 @@ pub mod constants;
 pub mod mathh;
 pub mod theory;
 pub mod utils;
+pub mod libr;
 
 #[cfg(test)]
 mod tests {

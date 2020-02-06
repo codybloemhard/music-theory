@@ -4,14 +4,6 @@ use super::interval::*;
 pub type Scale = Vec<Note>;
 pub type Mode = u8;
 
-pub const IONIAN: Mode = 0;
-pub const DORIAN: Mode = 1;
-pub const PHRYGIAN: Mode = 2;
-pub const LYDIAN: Mode = 3;
-pub const MIXOLYDIAN: Mode = 4;
-pub const AEOLIAN: Mode = 5;
-pub const LOCRIAN: Mode = 6;
-
 pub const TONIC: Note = 0;
 pub const SUPER_TONIC: Note = 1;
 pub const MEDIANT: Note = 2;
@@ -19,35 +11,6 @@ pub const SUB_DOMINANT: Note = 3;
 pub const DOMINANT: Note = 4;
 pub const SUB_MEDIANT: Note = 5;
 pub const SUB_TONIC: Note = 6;
-
-pub fn ionian_scale_steps() -> Scale{
-    vec![WHOLE,WHOLE,SEMI,WHOLE,WHOLE,WHOLE,SEMI]
-}
-/*
-Old Greek Dorian mode.
-A 7 note scale in a octave of 2 four-note segments separated by a whole tone.
-quarter,quarter,major third,whole,quarter,quarter,major third.
-1/4 + 1/4 + 2 + 1 + 1/4 + 1/4 + 2 = 6 whole tones = 12 semitones = 1 octave
-https://en.wikipedia.org/wiki/Dorian_mode
-*/
-pub fn greek_dorian() -> Scale{
-    vec![QUAD,QUAD,MAJOR_THIRD,WHOLE,QUAD,QUAD,MAJOR_THIRD]
-}
-
-pub fn greek_dorian_chromatic() -> Scale{
-    vec![SEMI,SEMI,MINOR_THIRD,WHOLE,SEMI,SEMI,MINOR_THIRD]
-}
-/*
-A,B,C,D#,E,F#,A
-2 + 1 + 3 + 1 + 2 + 3 = 12
-*/
-pub fn satie_scale() -> Scale{
-    vec![WHOLE,SEMI,MINOR_THIRD,SEMI,WHOLE,MINOR_THIRD]
-}
-
-pub fn chromatic_scale() -> Scale{
-    vec![SEMI,SEMI,SEMI,SEMI,SEMI,SEMI,SEMI,SEMI,SEMI,SEMI,SEMI,SEMI]
-}
 
 pub fn next_mode(mut scale: Scale) -> Scale{
     let len = scale.len();
@@ -78,11 +41,6 @@ pub fn scale_notes(scale: &Scale, mut note: Note) -> Vec<Note>{
         vec.push(note);
     }
     vec
-}
-
-pub fn ionian_mode(note: Note, mode: Mode) -> Vec<Note>{
-    let scale = mode_of_scale(ionian_scale_steps(), mode);
-    scale_notes(&scale, note)
 }
 
 pub fn notes_of_mode(note: Note, scale: Scale, mode: Mode) -> Vec<Note>{

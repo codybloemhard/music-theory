@@ -2,6 +2,7 @@ extern crate music_gen;
 use music_gen::tones::*;
 use music_gen::theory::*;
 use music_gen::utils::*;
+use music_gen::libr::scales::*;
 
 fn main(){
     test2();
@@ -10,11 +11,11 @@ fn main(){
 fn test2(){
     print_notes(&chord_from_intervals(0, &MAJOR_TRIAD), ", ");
     print_notes(&chord_from_intervals(A4, &MINOR_TRIAD), ", ");
-    print_notes(&chord_from_scale(A4, &ionian_scale_steps(), &NINETH_DEGREES) ,", ");
+    print_notes(&chord_from_scale(A4, &Ionian::steps(), &NINETH_DEGREES) ,", ");
     println!("{}", NamedChord::from_chord(&chord_from_intervals(A4, &MAJOR_SEVENTH_TETRAD)).as_string());
     for mode in 0..7{
-        //print_chords(&scale_chords(&mode_of_scale(ionian_scale_steps(), mode), 4), ",\t");
-        print_strings(&strs_scale_chords_roman(&mode_of_scale(ionian_scale_steps(), mode), 3), ",\t");
+        //print_chords(&scale_chords(&mode_of_scale(&Ionian::steps(), mode), 4), ",\t");
+        print_strings(&strs_scale_chords_roman(&mode_of_scale(Ionian::steps(), mode), 3), ",\t");
     }
     print_chords(&scale_chords(&mode_of_scale(satie_scale(), 0), 3), ",\t");
     print_chords(&scale_chords(&mode_of_scale(greek_dorian_chromatic(), 0), 3), ",\t");
