@@ -372,7 +372,7 @@ impl NamedChord{
             }else { 0 }
         }else { 0 };
         for inter in not_in_base{
-            if (inter == sus_type) { continue; }
+            if inter == sus_type { continue; }
             attrs.push(to_chord_interval(inter));
         }
         for attr in attrs{
@@ -456,7 +456,7 @@ pub fn print_strings(strs: &[String], sep: &str){
 pub fn scale_chords(scale: &Scale, size: usize) -> Vec<Chord>{
     let len = scale.len();
     let mut chords = Vec::new();
-    for (i, root) in note_iter(0, scale).enumerate().take(len){
+    for (i, _) in note_iter(0, scale).enumerate().take(len){
         let mut chord = Vec::new();
         for note in note_iter(0, scale).skip(i).step_by(2).take(size){
             chord.push(note);

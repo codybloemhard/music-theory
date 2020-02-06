@@ -1,21 +1,20 @@
 extern crate music_gen;
 use music_gen::tones::*;
 use music_gen::theory::*;
-use music_gen::utils::*;
 use music_gen::libr::scales::*;
 
 fn main(){
-    test2();
+    _test2();
 }
 
-fn test2(){
+fn _test2(){
     print_notes(&chord_from_intervals(0, &MAJOR_TRIAD), ", ");
     print_notes(&chord_from_intervals(A4, &MINOR_TRIAD), ", ");
-    print_notes(&chord_from_scale(A4, &Ionian::steps(), &NINETH_DEGREES) ,", ");
+    print_notes(&chord_from_scale(A4, &ionian::steps(), &NINETH_DEGREES) ,", ");
     println!("{}", NamedChord::from_chord(&chord_from_intervals(A4, &MAJOR_SEVENTH_TETRAD)).as_string());
     for mode in 0..7{
-        //print_chords(&scale_chords(&mode_of_scale(&Ionian::steps(), mode), 4), ",\t");
-        print_strings(&strs_scale_chords_roman(&mode_of_scale(Ionian::steps(), mode), 3), ",\t");
+        //print_chords(&scale_chords(&mode_of_scale(&ionian::steps(), mode), 4), ",\t");
+        print_strings(&strs_scale_chords_roman(&mode_of_scale(ionian::steps(), mode), 3), ",\t");
     }
     print_chords(&scale_chords(&mode_of_scale(satie_scale(), 0), 3), ",\t");
     print_chords(&scale_chords(&mode_of_scale(greek_dorian_chromatic(), 0), 3), ",\t");
@@ -28,7 +27,7 @@ fn test2(){
     println!("{}", NamedChord::from_intervals(A4, &vec![MINOR_SECOND,MAJOR_SECOND,PERFECT_FOURTH,PERFECT_FIFTH]).extended_quality(String::from("A"), false));
 }
 
-fn test1(){
+fn _test1(){
     let sr = 44100;
     let mut track = music_gen::tones::Track::new(sr, 2);
     let tonef = &spread(6, 1.003, 0.0, sine_sample);
@@ -52,7 +51,7 @@ fn test1(){
     track.render("test.wav");
 }
 
-fn test0(){
+fn _test0(){
     //let scale = ionian_mode(NamedNote::A(4).to_note(), AEOLIAN);
     let scale = notes_of_mode(NamedNote::A(3).to_note(), satie_scale(), 0);
     print_notes(&scale, "\t");

@@ -33,6 +33,17 @@ pub const AUGMENTED_SIXTH: Note = SEMI * 10;
 pub const DIMINISHED_OCTAVE: Note = SEMI * 11;
 pub const AUGMENTED_SEVENTH: Note = SEMI * 12;
 
+pub const S13: Note = SEMI * 13;
+pub const S14: Note = SEMI * 14;
+pub const S15: Note = SEMI * 15;
+pub const S16: Note = SEMI * 16;
+pub const S17: Note = SEMI * 17;
+pub const S18: Note = SEMI * 18;
+pub const S19: Note = SEMI * 19;
+pub const S20: Note = SEMI * 20;
+pub const S21: Note = SEMI * 21;
+pub const S22: Note = SEMI * 22;
+
 pub const SILENT: Note = -1;
 pub const CARRY_ON: Note = -2;
 
@@ -133,11 +144,6 @@ pub fn interval_name_augdim_short(interval: Note) -> String{
 }
 
 pub fn to_chord_interval(interval: Note) -> String{
-    let s13 = SEMI * 13; let s14 = SEMI * 14;
-    let s15 = SEMI * 15; let s16 = SEMI * 16;
-    let s17 = SEMI * 17; let s18 = SEMI * 18;
-    let s19 = SEMI * 19; let s20 = SEMI * 20;
-    let s21 = SEMI * 21; let s22 = SEMI * 22;
     match interval{
         0 => "R",
         MINOR_SECOND => "♭2",
@@ -152,16 +158,16 @@ pub fn to_chord_interval(interval: Note) -> String{
         MINOR_SEVENTH => "♭7",
         MAJOR_SEVENTH => "♮7",
         PERFECT_OCTAVE => "♮8",
-        s13 => "♭9",
-        s14 => "♮9",
-        s15 => "♯9",
-        s16 => "♭11",
-        s17 => "♮11",
-        s18 => "♯11",
-        s19 => "^5",
-        s20 => "♭13",
-        s21 => "♮13",
-        s22 => "♯13",
+        S13 => "♭9",
+        S14 => "♮9",
+        S15 => "♯9",
+        S16 => "♭11",
+        S17 => "♮11",
+        S18 => "♯11",
+        S19 => "^5",
+        S20 => "♭13",
+        S21 => "♮13",
+        S22 => "♯13",
         _ => "",
     }.to_string()
 }

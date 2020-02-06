@@ -1,7 +1,7 @@
-use crate::theory::scale::{Scale,Mode};
+use crate::theory::scale::{Scale};
 use crate::theory::interval::*;
 
-pub mod Ionian{
+pub mod ionian{
     use crate::theory::scale::{Scale,Mode};
     use crate::theory::interval::*;
 

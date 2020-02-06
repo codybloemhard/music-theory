@@ -1,5 +1,4 @@
 use super::note::*;
-use super::interval::*;
 
 pub type Scale = Vec<Note>;
 pub type Mode = u8;
