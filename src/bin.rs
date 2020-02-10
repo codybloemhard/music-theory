@@ -16,8 +16,8 @@ fn _test2(){
         //print_chords(&scale_chords(&mode_of_scale(&ionian::steps(), mode), 4), ",\t");
         print_strings(&strs_scale_chords_roman(&mode_of_scale(ionian::steps(), mode), 3), ",\t");
     }
-    print_chords(&scale_chords(&mode_of_scale(satie_scale(), 0), 3), ",\t");
-    print_chords(&scale_chords(&mode_of_scale(greek_dorian_chromatic(), 0), 3), ",\t");
+    print_chords(&scale_chords(&mode_of_scale(miscellaneous_scales::satie_scale_steps(), 0), 3), ",\t");
+    print_chords(&scale_chords(&mode_of_scale(miscellaneous_scales::greek_dorian_chromatic_steps(), 0), 3), ",\t");
     println!("");
     println!("{}", NamedChord::from_chord(&chord_from_equal_spacing(A4, PERFECT_FOURTH, 3)).equal_spaced_quality("A".to_string()));
     println!("{}", NamedChord::from_intervals(A4, &vec![PERFECT_FOURTH,PERFECT_FOURTH*2,PERFECT_FOURTH*3]).equal_spaced_quality("A".to_string()));
@@ -53,7 +53,7 @@ fn _test1(){
 
 fn _test0(){
     //let scale = ionian_mode(NamedNote::A(4).to_note(), AEOLIAN);
-    let scale = notes_of_mode(NamedNote::A(3).to_note(), satie_scale(), 0);
+    let scale = notes_of_mode(NamedNote::A(3).to_note(), miscellaneous_scales::satie_scale_steps(), 0);
     print_notes(&scale, "\t");
     let sr = 44100;
     let mut track = music_gen::tones::Track::new(sr, 2);
