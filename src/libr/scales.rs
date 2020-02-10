@@ -117,3 +117,27 @@ pub mod harmonic_minor{
         }
     }
 }
+
+pub mod harmonic_major{
+    use crate::theory::scale::{Scale,Mode};
+    use crate::theory::interval::*;
+    use super::ScaleObj;
+
+    pub fn steps() -> Scale{
+        vec![WHOLE,WHOLE,SEMI,WHOLE,SEMI,MINOR_THIRD,SEMI]
+    }
+
+    pub fn obj() -> ScaleObj{
+        ScaleObj{
+            steps: steps(),
+            fam_name: String::from("Harmonic Major"),
+            modes: vec![String::from("Harmonic Major"),
+                        String::from("Dorian ♭5"),
+                        String::from("Super Phrygian"),
+                        String::from("Lydian Diminished"),
+                        String::from("Mixolydian ♭9"),
+                        String::from("Lydian Augmented #2"),
+                        String::from("Locrian ♭♭7")]
+        }
+    }
+}
