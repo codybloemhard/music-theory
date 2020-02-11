@@ -60,8 +60,8 @@ pub mod ionian{
 }
 
 pub mod miscellaneous_scales{
-    use crate::theory::scale::{Scale,Mode};
     use crate::theory::interval::*;
+    use crate::theory::scale::{Scale};
 
     /*
     Old Greek Dorian mode.
@@ -88,14 +88,10 @@ pub mod miscellaneous_scales{
     pub fn chromatic_scale_steps() -> Scale{
         vec![SEMI,SEMI,SEMI,SEMI,SEMI,SEMI,SEMI,SEMI,SEMI,SEMI,SEMI,SEMI]
     }
-
-    pub fn mode_name(mode: Mode) -> String{
-        String::from("unnamed")
-    }
 }
 
 pub mod harmonic_minor{
-    use crate::theory::scale::{Scale,Mode};
+    use crate::theory::scale::{Scale};
     use crate::theory::interval::*;
     use super::ScaleObj;
 
@@ -119,7 +115,7 @@ pub mod harmonic_minor{
 }
 
 pub mod harmonic_major{
-    use crate::theory::scale::{Scale,Mode};
+    use crate::theory::scale::{Scale};
     use crate::theory::interval::*;
     use super::ScaleObj;
 
