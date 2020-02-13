@@ -14,15 +14,15 @@ fn _test2(){
     print_notes(&chord_from_scale(A4, &ionian::steps(), &NINETH_DEGREES) ,", ");
     println!("{}", NamedChord::from_chord(&chord_from_intervals(A4, &MAJOR_SEVENTH_TETRAD)).as_string());
     for mode in 0..7{
-        print_even(&strs_scale_chords_roman(&mode_of_scale(ionian::steps(), mode), 3), 8, "\n");
+        print_even(&strs_scale_chords_roman(&mode_of_scale(ionian::steps(), mode), 4), 8, "\n");
     }
     println!();
     for mode in 0..7{
-        print_even(&strs_scale_chords_roman(&mode_of_scale(harmonic_minor::steps(), mode), 3), 8, "\n");
+        print_even(&strs_scale_chords_roman(&mode_of_scale(harmonic_minor::steps(), mode), 4), 8, "\n");
     }
     println!();
     for mode in 0..7{
-        print_even(&strs_scale_chords_roman(&mode_of_scale(harmonic_major::steps(), mode), 3), 8, "\n");
+        print_even(&strs_scale_chords_roman(&mode_of_scale(harmonic_major::steps(), mode), 4), 8, "\n");
     }
     println!();
     print_chords(&scale_chords(&mode_of_scale(miscellaneous_scales::satie_scale_steps(), 0), 3), ",\t");
