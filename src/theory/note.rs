@@ -174,6 +174,7 @@ pub fn to_pitch(note: Note) -> f32{
 }
 
 pub fn print_notes(vec: &Vec<Note>, seperator: &str){
+    if vec.is_empty() { return; }
     let lenm1 = vec.len() - 1;
     for i in 0..lenm1{
         print!("{}{}", NamedNote::from_note(vec[i]).as_string(), seperator);

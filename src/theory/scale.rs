@@ -1,4 +1,5 @@
 use super::note::*;
+use super::interval::{PERFECT_OCTAVE};
 
 pub type Scale = Vec<Note>;
 pub type Mode = u8;
@@ -45,6 +46,27 @@ pub fn scale_notes(scale: &Scale, mut note: Note) -> Vec<Note>{
 pub fn notes_of_mode(note: Note, scale: Scale, mode: Mode) -> Vec<Note>{
     let scale = mode_of_scale(scale, mode);
     scale_notes(&scale, note)
+}
+
+pub fn notes_to_octave_scale(notes: &Scale) -> Scale{
+    let mut res = Vec::new();
+    if notes.is_empty(){ return res; }
+    let mut last = notes[0];
+    let mut sum = 0;
+    for note in notes.iter().skip(1){
+        let diff = note - last;
+        res.push(diff);
+        last = *note;
+        sum += diff;
+    }
+    if sum > PERFECT_OCTAVE{
+        return Vec::new();
+    }
+    if sum == PERFECT_OCTAVE{
+        return res;
+    }
+    res.push(PERFECT_OCTAVE - sum);
+    res
 }
 
 pub struct ScaleIterator<'a>{

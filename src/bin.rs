@@ -36,6 +36,7 @@ fn _test2(){
     println!("{}", NamedChord::from_intervals(A4, &vec![MINOR_THIRD,PERFECT_FIFTH]).extended_quality(String::from("A"), false));
     println!("{}", NamedChord::from_intervals(A4, &vec![MINOR_SECOND,PERFECT_FIFTH]).extended_quality(String::from("A"), false));
     println!("{}", NamedChord::from_intervals(A4, &vec![MINOR_SECOND,MAJOR_SECOND,PERFECT_FOURTH,PERFECT_FIFTH]).extended_quality(String::from("A"), false));
+    print_notes(&notes_to_octave_scale(&vec![0, MAJOR_SECOND,MAJOR_THIRD,PERFECT_FOURTH,PERFECT_FIFTH,MAJOR_SIXTH,MAJOR_SEVENTH]), ",");
 }
 
 fn _test1(){
