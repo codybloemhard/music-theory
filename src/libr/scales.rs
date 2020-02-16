@@ -27,6 +27,10 @@ impl ScaleObj{
     }
 }
 
+pub fn get_all_scale_objs() -> Vec<ScaleObj>{
+    vec![ionian::obj(), harmonic_minor::obj(), harmonic_major::obj()]
+}
+
 pub mod ionian{
     use crate::theory::scale::{Scale,Mode};
     use crate::theory::interval::*;

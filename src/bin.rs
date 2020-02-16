@@ -3,6 +3,7 @@ use music_gen::tones::*;
 use music_gen::theory::*;
 use music_gen::libr::scales::*;
 use music_gen::libr::infos::*;
+use music_gen::query::*;
 
 fn main(){
     _test2();
@@ -36,7 +37,8 @@ fn _test2(){
     println!("{}", NamedChord::from_intervals(A4, &vec![MINOR_THIRD,PERFECT_FIFTH]).extended_quality(String::from("A"), false));
     println!("{}", NamedChord::from_intervals(A4, &vec![MINOR_SECOND,PERFECT_FIFTH]).extended_quality(String::from("A"), false));
     println!("{}", NamedChord::from_intervals(A4, &vec![MINOR_SECOND,MAJOR_SECOND,PERFECT_FOURTH,PERFECT_FIFTH]).extended_quality(String::from("A"), false));
-    print_notes(&notes_to_octave_scale(&vec![0, MAJOR_SECOND,MAJOR_THIRD,PERFECT_FOURTH,PERFECT_FIFTH,MAJOR_SIXTH,MAJOR_SEVENTH]), ",");
+    println!("{}", find_scale(&vec![NamedNote::E(4).to_note(),NamedNote::F(4).to_note(),NamedNote::Gs(4).to_note(),
+        NamedNote::A(5).to_note(),NamedNote::B(5).to_note(),NamedNote::C(5).to_note(),NamedNote::D(5).to_note()]));
 }
 
 fn _test1(){

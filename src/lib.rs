@@ -8,6 +8,7 @@ pub mod mathh;
 pub mod theory;
 pub mod utils;
 pub mod libr;
+pub mod query;
 
 #[cfg(test)]
 mod tests {

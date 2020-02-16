@@ -69,6 +69,21 @@ pub fn notes_to_octave_scale(notes: &Scale) -> Scale{
     res
 }
 
+pub fn mode_nr_of_scale(input: &Scale, scale: Scale) -> Option<usize>{
+    if input.len() != scale.len() {
+        return Option::None;
+    }
+    let mut mode = scale;
+    let len = mode.len();
+    for i in 0..=len{
+        if &mode == input{
+            return Option::Some(i);
+        }
+        mode = next_mode(mode);
+    }
+    Option::None
+}
+
 pub struct ScaleIterator<'a>{
     scale: &'a Scale,
     current: usize,
