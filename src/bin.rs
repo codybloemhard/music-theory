@@ -39,6 +39,9 @@ fn _test2(){
     println!("{}", NamedChord::from_intervals(A4, &vec![MINOR_SECOND,MAJOR_SECOND,PERFECT_FOURTH,PERFECT_FIFTH]).extended_quality(String::from("A"), false));
     println!("{}", find_scale(&vec![NamedNote::E(4).to_note(),NamedNote::F(4).to_note(),NamedNote::Gs(4).to_note(),
         NamedNote::A(5).to_note(),NamedNote::B(5).to_note(),NamedNote::C(5).to_note(),NamedNote::D(5).to_note()]));
+    for named in &ucns_to_named_ordered(&vec![E,Fs,Gs,B,C,Cs,E], 3){
+        print!("{}, ", named.to_string());
+    }
 }
 
 fn _test1(){

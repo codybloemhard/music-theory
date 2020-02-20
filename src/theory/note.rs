@@ -6,6 +6,70 @@ pub const A4: Note = 5760;
 pub type Note = i32;
 pub type Rank = u16;
 
+pub const A: UCN = UCN::A;
+pub const As: UCN = UCN::As;
+pub const B: UCN = UCN::B;
+pub const C: UCN = UCN::C;
+pub const Cs: UCN = UCN::Cs;
+pub const D: UCN = UCN::D;
+pub const Ds: UCN = UCN::Ds;
+pub const E: UCN = UCN::E;
+pub const F: UCN = UCN::F;
+pub const Fs: UCN = UCN::Fs;
+pub const G: UCN = UCN::G;
+pub const Gs: UCN = UCN::Gs;
+
+#[derive(Clone,Copy)]
+pub enum UCN{ // unranked chromatic note for ez writing down shit
+    A, As, B, C, Cs, D, Ds, E, F, Fs, G, Gs,
+}
+
+impl UCN{
+    pub fn to_named(self, rank: Rank) -> NamedNote{
+        match self{
+            UCN::A  => NamedNote::A(rank),
+            UCN::As => NamedNote::As(rank),
+            UCN::B  => NamedNote::B(rank),
+            UCN::C  => NamedNote::C(rank),
+            UCN::Cs => NamedNote::Cs(rank),
+            UCN::D  => NamedNote::D(rank),
+            UCN::Ds => NamedNote::Ds(rank),
+            UCN::E  => NamedNote::E(rank),
+            UCN::F  => NamedNote::F(rank),
+            UCN::Fs => NamedNote::Fs(rank),
+            UCN::G  => NamedNote::G(rank),
+            UCN::Gs => NamedNote::Gs(rank),
+        }
+    }
+
+    pub fn to_note(self, rank: Rank) -> Note{
+        self.to_named(rank).to_note()
+    }
+}
+
+pub fn ucns_to_named_ordered(ucns: &Vec<UCN>, starting_rank: Rank) -> Vec<NamedNote>{
+    if ucns.is_empty() { return Vec::new(); }
+    let mut rank = starting_rank;
+    let start_note = ucns[0].to_named(rank);
+    let mut res = vec![start_note];
+    let mut last = start_note.to_note();
+    for ucn in ucns.iter().skip(1){
+        let note = ucn.to_named(rank);
+        let note_val = note.to_note();
+        let diff = note_val - last;
+        if diff > 0{
+            last = note_val;
+            res.push(note);
+            continue;
+        }
+        rank += 1;
+        let new_note = ucn.to_named(rank);
+        last = new_note.to_note();
+        res.push(new_note);
+    }
+    res
+}
+
 #[derive(Clone,Copy)]
 pub enum NamedNote{
     A(Rank), As(Rank), B(Rank), C(Rank), Cs(Rank), D(Rank), Ds(Rank), E(Rank), F(Rank), Fs(Rank), G(Rank), Gs(Rank), MicroTonal(Note)
