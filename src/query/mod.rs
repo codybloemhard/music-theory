@@ -17,14 +17,21 @@ pub fn find_scale(scale: &Scale) -> Option<ModeObj>{
     Option::None
 }
 
-pub fn find_scale_subseq(scale: &Scale) -> String{
+pub fn find_scale_subseq(scale: &Scale) -> Vec<ModeObj>{
     let scales = get_all_scale_objs();
+    let mut res = Vec::new();
     for sc in scales{
         for (i,mode) in sc.steps.clone().mode_iter().enumerate(){
             if mode.has_seq(scale){
-                return sc.get_mode_name(i as u8);
+                res.push(
+                    ModeObj{
+                        steps: mode,
+                        fam_name: sc.family_name(),
+                        mode_name: sc.get_mode_name(i as u8),
+                    }
+                );
             }
         }
     }
-    String::from("unnamed")
+    res
 }

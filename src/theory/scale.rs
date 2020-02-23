@@ -69,6 +69,18 @@ pub fn notes_to_octave_scale(notes: &Scale) -> Scale{
     res
 }
 
+pub fn notes_to_steps(chord: &Scale) -> Scale{
+    if chord.is_empty() { return Vec::new(); }
+    let mut last = chord[0];
+    let mut intervals = Vec::new();
+    for note in chord.iter().skip(1){
+        let diff = note - last;
+        intervals.push(diff);
+        last = *note;
+    }
+    intervals
+}
+
 pub fn mode_nr_of_scale(input: &Scale, scale: Scale) -> Option<(usize,Scale)>{
     if input.len() != scale.len() {
         return Option::None;

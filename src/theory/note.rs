@@ -1,5 +1,7 @@
 use std::convert::TryInto;
 use super::interval::*;
+use fnrs::Func;
+use super::scale::{Scale,notes_to_steps};
 
 pub const A4: Note = 5760;
 
@@ -24,6 +26,8 @@ pub enum UCN{ // unranked chromatic note for ez writing down shit
     A, As, B, C, Cs, D, Ds, E, F, Fs, G, Gs,
 }
 
+pub type UCNS = Vec<UCN>;
+
 impl UCN{
     pub fn to_named(self, rank: Rank) -> NamedNote{
         match self{
@@ -47,7 +51,7 @@ impl UCN{
     }
 }
 
-pub fn ucns_to_named_ordered(ucns: &Vec<UCN>, starting_rank: Rank) -> Vec<NamedNote>{
+pub fn ucns_to_named(ucns: &UCNS, starting_rank: Rank) -> Vec<NamedNote>{
     if ucns.is_empty() { return Vec::new(); }
     let mut rank = starting_rank;
     let start_note = ucns[0].to_named(rank);
@@ -68,6 +72,22 @@ pub fn ucns_to_named_ordered(ucns: &Vec<UCN>, starting_rank: Rank) -> Vec<NamedN
         res.push(new_note);
     }
     res
+}
+
+pub fn ucns_to_notes(ucns: &UCNS, starting_rank: Rank) -> Scale{
+    let named = ucns_to_named(ucns, starting_rank);
+    // TODO: Make this possible
+    // named.map(&|n| n.to_note())
+    let mut res = Vec::new();
+    for n in named{
+        res.push(n.to_note());
+    }
+    res
+}
+
+pub fn ucns_to_steps(ucns: &UCNS) -> Scale{
+    let notes = ucns_to_notes(ucns, 0);
+    notes_to_steps(&notes)
 }
 
 #[derive(Clone,Copy)]
