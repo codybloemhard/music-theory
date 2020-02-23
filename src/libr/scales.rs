@@ -1,5 +1,4 @@
 use crate::theory::scale::{Scale,Mode};
-use crate::theory::interval::*;
 
 pub struct ScaleObj{
     pub steps: Scale,
@@ -29,6 +28,18 @@ impl ScaleObj{
 
 pub fn get_all_scale_objs() -> Vec<ScaleObj>{
     vec![ionian::obj(), harmonic_minor::obj(), harmonic_major::obj()]
+}
+
+pub struct ModeObj{
+    pub steps: Scale,
+    pub fam_name: String,
+    pub mode_name: String,
+}
+
+impl std::fmt::Display for ModeObj{
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result{
+        write!(f, "{}, mode of {}", self.mode_name, self.fam_name)
+    }
 }
 
 pub mod ionian{

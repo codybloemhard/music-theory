@@ -1,4 +1,5 @@
 now:
+use rotate_left for modes and write tests.
 queries
 short:
 chord strings: standard vs own

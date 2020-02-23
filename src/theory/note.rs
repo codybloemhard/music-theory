@@ -7,17 +7,17 @@ pub type Note = i32;
 pub type Rank = u16;
 
 pub const A: UCN = UCN::A;
-pub const As: UCN = UCN::As;
+pub const AS: UCN = UCN::As;
 pub const B: UCN = UCN::B;
 pub const C: UCN = UCN::C;
-pub const Cs: UCN = UCN::Cs;
+pub const CS: UCN = UCN::Cs;
 pub const D: UCN = UCN::D;
-pub const Ds: UCN = UCN::Ds;
+pub const DS: UCN = UCN::Ds;
 pub const E: UCN = UCN::E;
 pub const F: UCN = UCN::F;
-pub const Fs: UCN = UCN::Fs;
+pub const FS: UCN = UCN::Fs;
 pub const G: UCN = UCN::G;
-pub const Gs: UCN = UCN::Gs;
+pub const GS: UCN = UCN::Gs;
 
 #[derive(Clone,Copy)]
 pub enum UCN{ // unranked chromatic note for ez writing down shit

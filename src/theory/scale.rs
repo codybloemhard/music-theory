@@ -69,7 +69,7 @@ pub fn notes_to_octave_scale(notes: &Scale) -> Scale{
     res
 }
 
-pub fn mode_nr_of_scale(input: &Scale, scale: Scale) -> Option<usize>{
+pub fn mode_nr_of_scale(input: &Scale, scale: Scale) -> Option<(usize,Scale)>{
     if input.len() != scale.len() {
         return Option::None;
     }
@@ -77,7 +77,7 @@ pub fn mode_nr_of_scale(input: &Scale, scale: Scale) -> Option<usize>{
     let len = mode.len();
     for i in 0..=len{
         if &mode == input{
-            return Option::Some(i);
+            return Option::Some((i, mode));
         }
         mode = next_mode(mode);
     }
@@ -110,5 +110,38 @@ pub fn note_iter(root: Note, scale: &Scale) -> ScaleIterator{
         current: 0,
         len: scale.len(),
         root,
+    }
+}
+
+pub struct ModeIterator{
+    scale: Scale,
+    current: usize,
+    len: usize,
+}
+//TODO: return references
+impl Iterator for ModeIterator{
+    type Item = Scale;
+    fn next(&mut self) -> Option<Scale>{
+        if self.current >= self.len{
+            return Option::None;
+        }
+        self.scale.rotate_right(1);
+        self.current += 1;
+        Option::Some(self.scale.clone())
+    }
+}
+
+pub trait ModeIteratorSpawner{
+    fn mode_iter(self) -> ModeIterator;
+}
+
+impl ModeIteratorSpawner for Scale{
+    fn mode_iter(self) -> ModeIterator{
+        let len = self.len();
+        ModeIterator{
+            scale: self,
+            current: 0,
+            len: len,
+        }
     }
 }

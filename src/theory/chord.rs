@@ -1,3 +1,4 @@
+use fnrs::Func;
 use super::note::*;
 use super::interval::*;
 use super::scale::*;
@@ -354,8 +355,8 @@ impl NamedChord{
 
         let (mut not_in_chord, mut not_in_base) =
             both_differences(&self.to_chord(), &base_chord.to_chord());
-        add_note(&mut not_in_chord, -root);
-        add_note(&mut not_in_base, -root);
+        not_in_chord.map_mut(&|note| note - root);
+        not_in_base.map_mut(&|note| note - root);
 
         let mut res = base_chord.as_string_basic(lower);
         let mut attrs = Vec::new();
@@ -477,7 +478,7 @@ pub fn strs_scale_chords_roman(scale: &Scale, size: usize) -> Vec<String>{
 
 pub fn scale_chords_intervals(scale: &Scale, size: usize) -> Vec<Chord>{
     let chords_notes = scale_chords(scale, size);
-    map(&chords_notes, &intervals_from_chord)
+    fnrs::map(&chords_notes, &intervals_from_chord)
 }
 
 #[cfg(test)]

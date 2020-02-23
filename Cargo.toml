@@ -16,3 +16,4 @@ path = "src/bin.rs"
 
 [dependencies]
 hound = "3.4.0"
+fnrs = "0.1.0"
