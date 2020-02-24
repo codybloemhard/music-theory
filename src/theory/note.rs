@@ -1,7 +1,6 @@
 use std::convert::TryInto;
 use super::interval::*;
-use fnrs::Func;
-use super::scale::{Scale,notes_to_steps};
+use super::scale::{notes_to_steps};
 
 pub const A4: Note = 5760;
 
@@ -11,32 +10,13 @@ pub type Rank = u16;
 /// Keep collections of notes distinct.
 /// It's all the same with different interpretation.
 /// Once, it was all just ```Vec<Note>``` with different types such as ```type Scale = Vec<Note>```.
-/// This enum provides us with compile time checks.
+/// This provides us with compile time checks.
 /// Interchanging the versions now only can be done explicitly.
-/// It will also make the code more self documenting.
-pub enum Notes{
-    Steps(Vec<Note>),
-    Scale(Vec<Note>),
-    Chord(Vec<Note>),
-}
 
-impl Notes{
-    pub fn inner(self) -> Vec<Note>{
-        match self{
-            Self::Steps(x) => x,
-            Self::Scale(x) => x,
-            Self::Chord(x) => x,
-        }
-    }
-
-    pub fn to_steps(self) -> Self{
-        Self::Steps(self.inner())
-    }
-
-    pub fn to_scale(self) -> Self{
-        Self::Scale(self.inner())
-    }
-}
+pub type Notes = Vec<Note>;
+pub struct Steps(pub Vec<Note>);
+pub struct Scale(pub Vec<Note>);
+pub struct Chord(pub Vec<Note>);
 
 pub const A: UCN = UCN::A;
 pub const AS: UCN = UCN::As;
@@ -104,7 +84,7 @@ pub fn ucns_to_named(ucns: &UCNS, starting_rank: Rank) -> Vec<NamedNote>{
     res
 }
 
-pub fn ucns_to_notes(ucns: &UCNS, starting_rank: Rank) -> Scale{
+pub fn ucns_to_notes(ucns: &UCNS, starting_rank: Rank) -> Notes{
     let named = ucns_to_named(ucns, starting_rank);
     // TODO: Make this possible
     // named.map(&|n| n.to_note())
@@ -115,7 +95,7 @@ pub fn ucns_to_notes(ucns: &UCNS, starting_rank: Rank) -> Scale{
     res
 }
 
-pub fn ucns_to_steps(ucns: &UCNS) -> Scale{
+pub fn ucns_to_steps(ucns: &UCNS) -> Notes{
     let notes = ucns_to_notes(ucns, 0);
     notes_to_steps(&notes)
 }
@@ -287,13 +267,13 @@ pub fn to_pitch(note: Note) -> f32{
     (2.0f32).powf(x as f32 / PERFECT_OCTAVE as f32) * 440.0
 }
 
-pub fn print_notes(vec: &Vec<Note>, seperator: &str){
-    if vec.is_empty() { return; }
-    let lenm1 = vec.len() - 1;
+pub fn print_notes(scale: &Notes, seperator: &str){
+    if scale.is_empty() { return; }
+    let lenm1 = scale.len() - 1;
     for i in 0..lenm1{
-        print!("{}{}", NamedNote::from_note(vec[i]).as_string(), seperator);
+        print!("{}{}", NamedNote::from_note(scale[i]).as_string(), seperator);
     }
-    println!("{}", NamedNote::from_note(vec[lenm1]).as_string());
+    println!("{}", NamedNote::from_note(scale[lenm1]).as_string());
 }
 
 #[cfg(test)]

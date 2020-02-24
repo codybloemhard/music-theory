@@ -1,7 +1,6 @@
 use super::note::*;
 use super::interval::{PERFECT_OCTAVE};
 
-pub type Scale = Vec<Note>;
 pub type Mode = u8;
 
 pub const TONIC: Note = 0;
@@ -12,7 +11,7 @@ pub const DOMINANT: Note = 4;
 pub const SUB_MEDIANT: Note = 5;
 pub const SUB_TONIC: Note = 6;
 
-pub fn next_mode(mut scale: Scale) -> Scale{
+pub fn next_mode(mut scale: Notes) -> Notes{
     let len = scale.len();
     if len == 0{
         return scale;
@@ -25,7 +24,7 @@ pub fn next_mode(mut scale: Scale) -> Scale{
     scale
 }
 
-pub fn mode_of_scale(mut scale: Scale, mut mode: Mode) -> Scale{
+pub fn mode_of_scale(mut scale: Notes, mut mode: Mode) -> Notes{
     mode = mode % scale.len() as u8;
     for _ in 0..mode{
         scale = next_mode(scale)
@@ -33,7 +32,7 @@ pub fn mode_of_scale(mut scale: Scale, mut mode: Mode) -> Scale{
     scale
 }
 
-pub fn scale_notes(scale: &Scale, mut note: Note) -> Vec<Note>{
+pub fn scale_notes(scale: &Notes, mut note: Note) -> Vec<Note>{
     let mut vec = Vec::new();
     vec.push(note);
     for step in scale{
@@ -43,12 +42,12 @@ pub fn scale_notes(scale: &Scale, mut note: Note) -> Vec<Note>{
     vec
 }
 
-pub fn notes_of_mode(note: Note, scale: Scale, mode: Mode) -> Vec<Note>{
+pub fn notes_of_mode(note: Note, scale: Notes, mode: Mode) -> Vec<Note>{
     let scale = mode_of_scale(scale, mode);
     scale_notes(&scale, note)
 }
 
-pub fn notes_to_octave_scale(notes: &Scale) -> Scale{
+pub fn notes_to_octave_scale(notes: &Notes) -> Notes{
     let mut res = Vec::new();
     if notes.is_empty(){ return res; }
     let mut last = notes[0];
@@ -69,7 +68,7 @@ pub fn notes_to_octave_scale(notes: &Scale) -> Scale{
     res
 }
 
-pub fn notes_to_steps(chord: &Scale) -> Scale{
+pub fn notes_to_steps(chord: &Notes) -> Notes{
     if chord.is_empty() { return Vec::new(); }
     let mut last = chord[0];
     let mut intervals = Vec::new();
@@ -81,7 +80,7 @@ pub fn notes_to_steps(chord: &Scale) -> Scale{
     intervals
 }
 
-pub fn mode_nr_of_scale(input: &Scale, scale: Scale) -> Option<(usize,Scale)>{
+pub fn mode_nr_of_scale(input: &Notes, scale: Notes) -> Option<(usize,Notes)>{
     if input.len() != scale.len() {
         return Option::None;
     }
@@ -97,7 +96,7 @@ pub fn mode_nr_of_scale(input: &Scale, scale: Scale) -> Option<(usize,Scale)>{
 }
 
 pub struct ScaleIterator<'a>{
-    scale: &'a Scale,
+    scale: &'a Notes,
     current: usize,
     len: usize,
     root: Note,
@@ -116,7 +115,7 @@ impl<'a> Iterator for ScaleIterator<'a>{
     }
 }
 
-pub fn note_iter(root: Note, scale: &Scale) -> ScaleIterator{
+pub fn note_iter(root: Note, scale: &Notes) -> ScaleIterator{
     ScaleIterator{
         scale,
         current: 0,
@@ -126,14 +125,14 @@ pub fn note_iter(root: Note, scale: &Scale) -> ScaleIterator{
 }
 
 pub struct ModeIterator{
-    scale: Scale,
+    scale: Notes,
     current: usize,
     len: usize,
 }
 //TODO: return references
 impl Iterator for ModeIterator{
-    type Item = Scale;
-    fn next(&mut self) -> Option<Scale>{
+    type Item = Notes;
+    fn next(&mut self) -> Option<Notes>{
         if self.current >= self.len{
             return Option::None;
         }
@@ -147,7 +146,7 @@ pub trait ModeIteratorSpawner{
     fn mode_iter(self) -> ModeIterator;
 }
 
-impl ModeIteratorSpawner for Scale{
+impl ModeIteratorSpawner for Notes{
     fn mode_iter(self) -> ModeIterator{
         let len = self.len();
         ModeIterator{

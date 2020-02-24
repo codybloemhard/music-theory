@@ -1,5 +1,4 @@
-use crate::theory::scale::{Mode};
-use crate::theory::note::Notes;
+use crate::theory::scale::{Notes,Mode};
 
 pub struct ScaleObj{
     pub steps: Notes,
@@ -112,7 +111,7 @@ pub mod harmonic_minor{
     use crate::theory::interval::*;
     use super::ScaleObj;
 
-    pub fn steps() -> Notes{
+    pub fn steps() -> Scale{
         vec![WHOLE,SEMI,WHOLE,WHOLE,SEMI,MINOR_THIRD,SEMI]
     }
 
@@ -132,11 +131,11 @@ pub mod harmonic_minor{
 }
 
 pub mod harmonic_major{
-    use crate::theory::note::Notes;
+    use crate::theory::scale::{Scale};
     use crate::theory::interval::*;
     use super::ScaleObj;
 
-    pub fn steps() -> Notes{
+    pub fn steps() -> Scale{
         vec![WHOLE,WHOLE,SEMI,WHOLE,SEMI,MINOR_THIRD,SEMI]
     }
 

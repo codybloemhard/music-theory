@@ -5,8 +5,6 @@ use super::scale::*;
 use crate::utils::roman_numerals::to_roman_num;
 use crate::utils::misc::*;
 
-type Chord = Vec<Note>;
-
 pub const NUM_SUPS: [char; 10] = ['⁰', 'ⁱ', '²', '³', '⁴', '⁵', '⁶', '⁷', '⁸', '⁹'];
 pub const NUM_SUBS: [char; 10] = ['₀', '₁', '₂', '₃', '₄', '₅', '₆', '₇', '₈', '₉'];
 
@@ -29,7 +27,7 @@ pub const MINOR_MAJOR_SEVENTH_TETRAD: [Note; 3] = [MINOR_THIRD, PERFECT_FIFTH, M
 pub const DIMINISHED_SEVENTH_TETRAD: [Note; 3] = [MINOR_THIRD, DIMINISHED_FIFTH, DIMINISHED_SEVENTH];
 pub const HALF_DIMINISHED_SEVENTH_TETRAD: [Note; 3] = [MINOR_THIRD, DIMINISHED_FIFTH, MINOR_SEVENTH];
 
-pub fn chord_from_intervals(base: Note, intervals: &[Note]) -> Chord{
+pub fn chord_from_intervals(base: Note, intervals: &[Note]) -> Notes{
     let mut chord = vec![base];
     for interval in intervals{
         chord.push(base + interval);
@@ -37,7 +35,7 @@ pub fn chord_from_intervals(base: Note, intervals: &[Note]) -> Chord{
     chord
 }
 
-pub fn chord_from_equal_spacing(base: Note, interval: Note, size: usize) -> Chord{
+pub fn chord_from_equal_spacing(base: Note, interval: Note, size: usize) -> Notes{
     let mut chord = vec![base];
     let mut last = base;
     for _ in 0..size{
@@ -53,7 +51,7 @@ pub const NINETH_DEGREES: [usize; 4] = [3, 5, 7, 9];
 pub const ELEVENTH_DEGREES: [usize; 5] = [3, 5, 7, 9, 11];
 pub const THIRTEENTH_DEGREES: [usize; 6] = [3, 5, 7, 9, 11, 13];
 
-pub fn chord_from_scale(base: Note, scale: &Scale, degrees: &[usize]) -> Chord{
+pub fn chord_from_scale(base: Note, scale: &Notes, degrees: &[usize]) -> Notes{
     let slen = scale.len();
     let mut chord = vec![base];
     let mut i = 1;
@@ -74,7 +72,7 @@ pub fn chord_from_scale(base: Note, scale: &Scale, degrees: &[usize]) -> Chord{
     chord
 }
 
-pub fn same_intervals(inters: &Chord, blueprint: &[Note]) -> bool{
+pub fn same_intervals(inters: &Notes, blueprint: &[Note]) -> bool{
     if inters.len() != blueprint.len() + 1{
         return false;
     }
@@ -87,7 +85,7 @@ pub fn same_intervals(inters: &Chord, blueprint: &[Note]) -> bool{
     true
 }
 
-pub fn has_intervals(inters: &Chord, blueprint: &[Note]) -> bool{
+pub fn has_intervals(inters: &Notes, blueprint: &[Note]) -> bool{
     for note in blueprint{
         if !inters.contains(note){
             return false;
@@ -104,7 +102,7 @@ pub enum ChordStyle{
 }
 
 pub enum NamedChord{
-    Arbitrary(Chord),
+    Arbitrary(Notes),
     Power(Note),
     Major(Note),
     Minor(Note),
@@ -124,7 +122,7 @@ pub enum NamedChord{
 }
 
 impl NamedChord{
-    pub fn to_chord(&self) -> Chord{
+    pub fn to_chord(&self) -> Notes{
         match self{
             Self::Arbitrary(chord) => chord.clone(),
             Self::Power(n) => chord_from_intervals(*n, &POWER_DYAD),
@@ -146,7 +144,7 @@ impl NamedChord{
         }
     }
 
-    pub fn from_chord(chord: &Chord) -> Self{
+    pub fn from_chord(chord: &Notes) -> Self{
         if chord.len() == 0{
             return Self::Arbitrary(Vec::new());
         }
@@ -301,7 +299,7 @@ impl NamedChord{
         }
     }
 
-    pub fn get_base_chord(chord: &Chord) -> Option<Self>{
+    pub fn get_base_chord(chord: &Notes) -> Option<Self>{
         if chord.is_empty(){
             return Option::None;
         }
@@ -421,7 +419,7 @@ impl NamedChord{
     }
 }
 
-pub fn intervals_from_chord(chord: &Chord) -> Chord{
+pub fn intervals_from_chord(chord: &Notes) -> Notes{
     if chord.is_empty() { return Vec::new(); }
     let root = chord[0];
     let mut intervals = vec![0];
@@ -432,11 +430,11 @@ pub fn intervals_from_chord(chord: &Chord) -> Chord{
     intervals
 }
 
-pub fn chord_as_string(chord: &Chord) -> String{
+pub fn chord_as_string(chord: &Notes) -> String{
     NamedChord::from_chord(chord).as_string()
 }
 
-pub fn print_chords(chords: &[Chord], sep: &str){
+pub fn print_chords(chords: &[Notes], sep: &str){
     let len = chords.len();
     if len <= 0 { return; }
     for chord in chords.iter().take(len - 1){
@@ -454,7 +452,7 @@ pub fn print_strings(strs: &[String], sep: &str){
     println!("{}", strs[len - 1]);
 }
 
-pub fn scale_chords(scale: &Scale, size: usize) -> Vec<Chord>{
+pub fn scale_chords(scale: &Notes, size: usize) -> Vec<Notes>{
     let len = scale.len();
     let mut chords = Vec::new();
     for (i, _) in note_iter(0, scale).enumerate().take(len){
@@ -467,7 +465,7 @@ pub fn scale_chords(scale: &Scale, size: usize) -> Vec<Chord>{
     chords
 }
 
-pub fn strs_scale_chords_roman(scale: &Scale, size: usize) -> Vec<String>{
+pub fn strs_scale_chords_roman(scale: &Notes, size: usize) -> Vec<String>{
     let chords = scale_chords(scale, size);
     let mut res = Vec::new();
     for i in 0..chords.len(){
@@ -476,7 +474,7 @@ pub fn strs_scale_chords_roman(scale: &Scale, size: usize) -> Vec<String>{
     res
 }
 
-pub fn scale_chords_intervals(scale: &Scale, size: usize) -> Vec<Chord>{
+pub fn scale_chords_intervals(scale: &Notes, size: usize) -> Vec<Notes>{
     let chords_notes = scale_chords(scale, size);
     fnrs::map(&chords_notes, &intervals_from_chord)
 }
