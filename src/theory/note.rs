@@ -8,6 +8,36 @@ pub const A4: Note = 5760;
 pub type Note = i32;
 pub type Rank = u16;
 
+/// Keep collections of notes distinct.
+/// It's all the same with different interpretation.
+/// Once, it was all just ```Vec<Note>``` with different types such as ```type Scale = Vec<Note>```.
+/// This enum provides us with compile time checks.
+/// Interchanging the versions now only can be done explicitly.
+/// It will also make the code more self documenting.
+pub enum Notes{
+    Steps(Vec<Note>),
+    Scale(Vec<Note>),
+    Chord(Vec<Note>),
+}
+
+impl Notes{
+    pub fn inner(self) -> Vec<Note>{
+        match self{
+            Self::Steps(x) => x,
+            Self::Scale(x) => x,
+            Self::Chord(x) => x,
+        }
+    }
+
+    pub fn to_steps(self) -> Self{
+        Self::Steps(self.inner())
+    }
+
+    pub fn to_scale(self) -> Self{
+        Self::Scale(self.inner())
+    }
+}
+
 pub const A: UCN = UCN::A;
 pub const AS: UCN = UCN::As;
 pub const B: UCN = UCN::B;
