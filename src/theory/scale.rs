@@ -24,7 +24,7 @@ pub fn next_mode(mut scale: Notes) -> Notes{
     scale
 }
 
-pub fn mode_of_scale(mut scale: Notes, mut mode: Mode) -> Notes{
+pub fn mode_of(mut scale: Notes, mut mode: Mode) -> Notes{
     mode = mode % scale.len() as u8;
     for _ in 0..mode{
         scale = next_mode(scale)
@@ -32,19 +32,55 @@ pub fn mode_of_scale(mut scale: Notes, mut mode: Mode) -> Notes{
     scale
 }
 
-pub fn scale_notes(scale: &Notes, mut note: Note) -> Vec<Note>{
-    let mut vec = Vec::new();
-    vec.push(note);
-    for step in scale{
-        note += *step as Note;
-        vec.push(note);
-    }
-    vec
+pub trait ModeTrait{
+    fn next_mode(self) -> Self;
+    fn mode(self, mode: Mode) -> Self;
 }
 
-pub fn notes_of_mode(note: Note, scale: Notes, mode: Mode) -> Vec<Note>{
-    let scale = mode_of_scale(scale, mode);
-    scale_notes(&scale, note)
+impl ModeTrait for Scale{
+    fn next_mode(self) -> Self{
+        Scale(next_mode(self.0))
+    }
+
+    fn mode(self, mode: Mode) -> Self{
+        Scale(mode_of(self.0, mode))
+    }
+}
+
+impl ModeTrait for Steps{
+    fn next_mode(self) -> Self{
+        Steps(next_mode(self.0))
+    }
+
+    fn mode(self, mode: Mode) -> Self{
+        Steps(mode_of(self.0, mode))
+    }
+}
+
+pub trait StepsTrait{
+    fn to_scale(&self, note: Note) -> Scale;
+    fn as_scale(self, note: Note) -> Scale;
+    fn as_mode(self, note: Note, mode: Mode) -> Scale;
+}
+
+impl StepsTrait for Steps{
+    fn to_scale(&self, mut note: Note) -> Scale{
+        let mut vec = Vec::new();
+        vec.push(note);
+        for step in &self.0{
+            note += *step as Note;
+            vec.push(note);
+        }
+        Scale(vec)
+    }
+
+    fn as_scale(self, note: Note) -> Scale{
+        self.to_scale(note)
+    }
+
+    fn as_mode(self, note: Note, mode: Mode) -> Scale{
+        self.mode(mode).as_scale(note)
+    }
 }
 
 pub fn notes_to_octave_scale(notes: &Notes) -> Notes{
@@ -66,18 +102,6 @@ pub fn notes_to_octave_scale(notes: &Notes) -> Notes{
     }
     res.push(PERFECT_OCTAVE - sum);
     res
-}
-
-pub fn notes_to_steps(chord: &Notes) -> Notes{
-    if chord.is_empty() { return Vec::new(); }
-    let mut last = chord[0];
-    let mut intervals = Vec::new();
-    for note in chord.iter().skip(1){
-        let diff = note - last;
-        intervals.push(diff);
-        last = *note;
-    }
-    intervals
 }
 
 pub fn mode_nr_of_scale(input: &Notes, scale: Notes) -> Option<(usize,Notes)>{

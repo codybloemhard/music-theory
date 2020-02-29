@@ -43,7 +43,7 @@ fn _test2(){
         print!("{}, ", named.to_string());
     }
     println!();
-    for modeobj in find_scale_subseq(&ucns_to_steps(&vec![F,GS,A,B,C])){
+    for modeobj in find_scale_subseq(&ucns_to_steps(&vec![F,GS,A,B,C]).0){
         println!("{}", modeobj);
     }
 }

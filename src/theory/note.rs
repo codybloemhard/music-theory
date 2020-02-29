@@ -1,6 +1,5 @@
 use std::convert::TryInto;
 use super::interval::*;
-use super::scale::{notes_to_steps};
 
 pub const A4: Note = 5760;
 
@@ -17,6 +16,42 @@ pub type Notes = Vec<Note>;
 pub struct Steps(pub Vec<Note>);
 pub struct Scale(pub Vec<Note>);
 pub struct Chord(pub Vec<Note>);
+
+impl Steps{
+    pub fn empty() -> Self{
+        Steps(Vec::new())
+    }
+}
+
+impl Scale{
+    pub fn empty() -> Self{
+        Scale(Vec::new())
+    }
+}
+
+impl Chord{
+    pub fn empty() -> Self{
+        Chord(Vec::new())
+    }
+}
+
+pub trait IntoSteps{
+    fn to_steps(self) -> Steps;
+}
+
+impl IntoSteps for Scale{
+    fn to_steps(self) -> Steps{
+        if self.0.is_empty() { return Steps::empty(); }
+        let mut last = self.0[0];
+        let mut intervals = Vec::new();
+        for note in self.0.iter().skip(1){
+            let diff = note - last;
+            intervals.push(diff);
+            last = *note;
+        }
+        Steps(intervals)
+    }
+}
 
 pub const A: UCN = UCN::A;
 pub const AS: UCN = UCN::As;
@@ -84,7 +119,7 @@ pub fn ucns_to_named(ucns: &UCNS, starting_rank: Rank) -> Vec<NamedNote>{
     res
 }
 
-pub fn ucns_to_notes(ucns: &UCNS, starting_rank: Rank) -> Notes{
+pub fn ucns_to_notes(ucns: &UCNS, starting_rank: Rank) -> Scale{
     let named = ucns_to_named(ucns, starting_rank);
     // TODO: Make this possible
     // named.map(&|n| n.to_note())
@@ -92,12 +127,12 @@ pub fn ucns_to_notes(ucns: &UCNS, starting_rank: Rank) -> Notes{
     for n in named{
         res.push(n.to_note());
     }
-    res
+    Scale(res)
 }
 
-pub fn ucns_to_steps(ucns: &UCNS) -> Notes{
+pub fn ucns_to_steps(ucns: &UCNS) -> Steps{
     let notes = ucns_to_notes(ucns, 0);
-    notes_to_steps(&notes)
+    notes.to_steps()
 }
 
 #[derive(Clone,Copy)]
