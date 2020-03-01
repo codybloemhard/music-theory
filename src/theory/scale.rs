@@ -33,11 +33,16 @@ pub fn mode_of(mut scale: Notes, mut mode: Mode) -> Notes{
 }
 
 pub trait ModeTrait{
+    fn next_mode_mut(&mut self);
     fn next_mode(self) -> Self;
     fn mode(self, mode: Mode) -> Self;
 }
 
 impl ModeTrait for Scale{
+    fn next_mode_mut(&mut self){
+        self.0.rotate_right(1);
+    }
+
     fn next_mode(self) -> Self{
         Scale(next_mode(self.0))
     }
@@ -48,6 +53,10 @@ impl ModeTrait for Scale{
 }
 
 impl ModeTrait for Steps{
+    fn next_mode_mut(&mut self){
+        self.0.rotate_right(1);
+    }
+
     fn next_mode(self) -> Self{
         Steps(next_mode(self.0))
     }
@@ -148,30 +157,31 @@ pub fn note_iter(root: Note, scale: &Notes) -> ScaleIterator{
     }
 }
 
-pub struct ModeIterator{
-    scale: Notes,
+pub struct ModeIterator<T: ModeTrait + NoteSequence>{
+    scale: T,
     current: usize,
     len: usize,
 }
 //TODO: return references
-impl Iterator for ModeIterator{
-    type Item = Notes;
-    fn next(&mut self) -> Option<Notes>{
+impl<T: std::clone::Clone + ModeTrait + NoteSequence>
+    Iterator for ModeIterator<T>{
+    type Item = T;
+    fn next(&mut self) -> Option<T>{
         if self.current >= self.len{
             return Option::None;
         }
-        self.scale.rotate_right(1);
+        self.scale.next_mode_mut();
         self.current += 1;
         Option::Some(self.scale.clone())
     }
 }
 
-pub trait ModeIteratorSpawner{
-    fn mode_iter(self) -> ModeIterator;
+pub trait ModeIteratorSpawner<T: ModeTrait + NoteSequence>{
+    fn mode_iter(self) -> ModeIterator<T>;
 }
 
-impl ModeIteratorSpawner for Notes{
-    fn mode_iter(self) -> ModeIterator{
+impl<T: ModeTrait + NoteSequence> ModeIteratorSpawner<T> for T{
+    fn mode_iter(self) -> ModeIterator<T>{
         let len = self.len();
         ModeIterator{
             scale: self,

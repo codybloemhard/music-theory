@@ -13,8 +13,11 @@ pub type Rank = u16;
 /// Interchanging the versions now only can be done explicitly.
 
 pub type Notes = Vec<Note>;
+#[derive(Clone)]
 pub struct Steps(pub Vec<Note>);
+#[derive(Clone)]
 pub struct Scale(pub Vec<Note>);
+#[derive(Clone)]
 pub struct Chord(pub Vec<Note>);
 
 impl Steps{
@@ -32,6 +35,28 @@ impl Scale{
 impl Chord{
     pub fn empty() -> Self{
         Chord(Vec::new())
+    }
+}
+
+pub trait NoteSequence{
+    fn len(&self) -> usize;
+}
+
+impl NoteSequence for Steps{
+    fn len(&self) -> usize{
+        self.0.len()
+    }
+}
+
+impl NoteSequence for Scale{
+    fn len(&self) -> usize{
+        self.0.len()
+    }
+}
+
+impl NoteSequence for Chord{
+    fn len(&self) -> usize{
+        self.0.len()
     }
 }
 

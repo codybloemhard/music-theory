@@ -1,14 +1,14 @@
 use crate::theory::scale::{Mode};
-use crate::theory::note::Notes;
+use crate::theory::note::{Steps};
 
 pub struct ScaleObj{
-    pub steps: Notes,
+    pub steps: Steps,
     pub fam_name: String,
     pub modes: Vec<String>,
 }
 
 impl ScaleObj{
-    pub fn clone_steps(&self) -> Notes{
+    pub fn clone_steps(&self) -> Steps{
         self.steps.clone()
     }
 
@@ -17,7 +17,7 @@ impl ScaleObj{
     }
 
     pub fn get_mode_name(&self, mode: Mode) -> String{
-        let m = mode as usize % self.steps.len();
+        let m = mode as usize % self.steps.0.len();
         let name = self.modes[m].clone();
         if name.is_empty(){
             String::from("unnamed")
@@ -32,7 +32,7 @@ pub fn get_all_scale_objs() -> Vec<ScaleObj>{
 }
 
 pub struct ModeObj{
-    pub steps: Notes,
+    pub steps: Steps,
     pub fam_name: String,
     pub mode_name: String,
 }
@@ -44,7 +44,7 @@ impl std::fmt::Display for ModeObj{
 }
 
 pub mod ionian{
-    use crate::theory::note::Notes;
+    use crate::theory::note::{Steps};
     use crate::theory::scale::Mode;
     use crate::theory::interval::*;
     use super::ScaleObj;
@@ -57,8 +57,8 @@ pub mod ionian{
     pub const AEOLIAN: Mode = 5;
     pub const LOCRIAN: Mode = 6;
 
-    pub fn steps() -> Notes{
-        vec![WHOLE,WHOLE,SEMI,WHOLE,WHOLE,WHOLE,SEMI]
+    pub fn steps() -> Steps{
+        Steps(vec![WHOLE,WHOLE,SEMI,WHOLE,WHOLE,WHOLE,SEMI])
     }
 
     pub fn obj() -> ScaleObj{
@@ -78,7 +78,7 @@ pub mod ionian{
 
 pub mod miscellaneous_scales{
     use crate::theory::interval::*;
-    use crate::theory::note::Notes;
+    use crate::theory::note::{Notes};
 
     /*
     Old Greek Dorian mode.
@@ -108,12 +108,12 @@ pub mod miscellaneous_scales{
 }
 
 pub mod harmonic_minor{
-    use crate::theory::note::Notes;
+    use crate::theory::note::{Steps};
     use crate::theory::interval::*;
     use super::ScaleObj;
 
-    pub fn steps() -> Notes{
-        vec![WHOLE,SEMI,WHOLE,WHOLE,SEMI,MINOR_THIRD,SEMI]
+    pub fn steps() -> Steps{
+        Steps(vec![WHOLE,SEMI,WHOLE,WHOLE,SEMI,MINOR_THIRD,SEMI])
     }
 
     pub fn obj() -> ScaleObj{
@@ -132,12 +132,12 @@ pub mod harmonic_minor{
 }
 
 pub mod harmonic_major{
-    use crate::theory::note::Notes;
+    use crate::theory::note::{Steps};
     use crate::theory::interval::*;
     use super::ScaleObj;
 
-    pub fn steps() -> Notes{
-        vec![WHOLE,WHOLE,SEMI,WHOLE,SEMI,MINOR_THIRD,SEMI]
+    pub fn steps() -> Steps{
+        Steps(vec![WHOLE,WHOLE,SEMI,WHOLE,SEMI,MINOR_THIRD,SEMI])
     }
 
     pub fn obj() -> ScaleObj{
