@@ -70,6 +70,8 @@ pub trait StepsTrait{
     fn to_scale(&self, note: Note) -> Scale;
     fn as_scale(self, note: Note) -> Scale;
     fn as_mode(self, note: Note, mode: Mode) -> Scale;
+    fn mode_nr_of_this(self, mode: &Self) -> Option<(usize,Self)>
+        where Self: std::marker::Sized;
 }
 
 impl StepsTrait for Steps{
@@ -89,6 +91,20 @@ impl StepsTrait for Steps{
 
     fn as_mode(self, note: Note, mode: Mode) -> Scale{
         self.mode(mode).as_scale(note)
+    }
+
+    fn mode_nr_of_this(mut self, mode: &Steps) -> Option<(usize,Steps)>{
+        if mode.len() != self.len() {
+            return Option::None;
+        }
+        let len = self.len();
+        for i in 0..=len{
+            if self.0 == mode.0{
+                return Option::Some((i, self));
+            }
+            self.next_mode_mut();
+        }
+        Option::None
     }
 }
 
@@ -111,21 +127,6 @@ pub fn notes_to_octave_scale(notes: &Notes) -> Notes{
     }
     res.push(PERFECT_OCTAVE - sum);
     res
-}
-
-pub fn mode_nr_of_scale(input: &Notes, scale: Notes) -> Option<(usize,Notes)>{
-    if input.len() != scale.len() {
-        return Option::None;
-    }
-    let mut mode = scale;
-    let len = mode.len();
-    for i in 0..=len{
-        if &mode == input{
-            return Option::Some((i, mode));
-        }
-        mode = next_mode(mode);
-    }
-    Option::None
 }
 
 pub struct ScaleIterator<'a>{

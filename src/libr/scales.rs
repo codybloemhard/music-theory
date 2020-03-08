@@ -78,7 +78,7 @@ pub mod ionian{
 
 pub mod miscellaneous_scales{
     use crate::theory::interval::*;
-    use crate::theory::note::{Notes};
+    use crate::theory::note::{Steps};
 
     /*
     Old Greek Dorian mode.
@@ -87,23 +87,23 @@ pub mod miscellaneous_scales{
     1/4 + 1/4 + 2 + 1 + 1/4 + 1/4 + 2 = 6 whole tones = 12 semitones = 1 octave
     https://en.wikipedia.org/wiki/Dorian_mode
     */
-    pub fn greek_dorian_steps() -> Notes{
-        vec![QUAD,QUAD,MAJOR_THIRD,WHOLE,QUAD,QUAD,MAJOR_THIRD]
+    pub fn greek_dorian_steps() -> Steps{
+        Steps(vec![QUAD,QUAD,MAJOR_THIRD,WHOLE,QUAD,QUAD,MAJOR_THIRD])
     }
 
-    pub fn greek_dorian_chromatic_steps() -> Notes{
-        vec![SEMI,SEMI,MINOR_THIRD,WHOLE,SEMI,SEMI,MINOR_THIRD]
+    pub fn greek_dorian_chromatic_steps() -> Steps{
+        Steps(vec![SEMI,SEMI,MINOR_THIRD,WHOLE,SEMI,SEMI,MINOR_THIRD])
     }
     /*
     A,B,C,D#,E,F#,A
     2 + 1 + 3 + 1 + 2 + 3 = 12
     */
-    pub fn satie_scale_steps() -> Notes{
-        vec![WHOLE,SEMI,MINOR_THIRD,SEMI,WHOLE,MINOR_THIRD]
+    pub fn satie_scale_steps() -> Steps{
+        Steps(vec![WHOLE,SEMI,MINOR_THIRD,SEMI,WHOLE,MINOR_THIRD])
     }
 
-    pub fn chromatic_scale_steps() -> Notes{
-        vec![SEMI,SEMI,SEMI,SEMI,SEMI,SEMI,SEMI,SEMI,SEMI,SEMI,SEMI,SEMI]
+    pub fn chromatic_scale_steps() -> Steps{
+        Steps(vec![SEMI,SEMI,SEMI,SEMI,SEMI,SEMI,SEMI,SEMI,SEMI,SEMI,SEMI,SEMI])
     }
 }
 
