@@ -102,7 +102,8 @@ impl StepsTrait for Steps{
             if self.0 == mode.0{
                 return Option::Some((i, self));
             }
-            self.next_mode_mut();
+            // self.next_mode_mut();
+            self = self.next_mode();
         }
         Option::None
     }
