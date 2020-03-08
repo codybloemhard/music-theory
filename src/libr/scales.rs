@@ -35,11 +35,12 @@ pub struct ModeObj{
     pub steps: Steps,
     pub fam_name: String,
     pub mode_name: String,
+    pub mode_nr: usize,
 }
 
 impl std::fmt::Display for ModeObj{
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result{
-        write!(f, "{}, mode of {}", self.mode_name, self.fam_name)
+        write!(f, "{}, {}ᵉ mode of {}", self.mode_name, self.mode_nr + 1, self.fam_name)
     }
 }
 

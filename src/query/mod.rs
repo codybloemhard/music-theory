@@ -12,6 +12,7 @@ pub fn find_scale(scale: &Notes) -> Option<ModeObj>{
                 steps: msteps,
                 fam_name: sc.family_name(),
                 mode_name: sc.get_mode_name(mode as u8),
+                mode_nr: mode,
             });
         }
     }
@@ -29,6 +30,7 @@ pub fn find_scale_subseq(scale: &Notes) -> Vec<ModeObj>{
                         steps: mode,
                         fam_name: sc.family_name(),
                         mode_name: sc.get_mode_name(i as u8),
+                        mode_nr: i,
                     }
                 );
             }
