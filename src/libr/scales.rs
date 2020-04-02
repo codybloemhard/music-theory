@@ -28,7 +28,8 @@ impl ScaleObj{
 }
 
 pub fn get_all_scale_objs() -> Vec<ScaleObj>{
-    vec![ionian::obj(), harmonic_minor::obj(), harmonic_major::obj()]
+    vec![ionian::obj(), harmonic_minor::obj(), harmonic_major::obj(),
+    byzantine::obj(), hungarian_major::obj(), neapolitan_minor::obj(), neapolitan_major::obj()]
 }
 
 pub struct ModeObj{
@@ -150,8 +151,106 @@ pub mod harmonic_major{
                         String::from("Super Phrygian"),
                         String::from("Lydian Diminished"),
                         String::from("Mixolydian ♭9"),
-                        String::from("Lydian Augmented #2"),
+                        String::from("Lydian Augmented ♯2"),
                         String::from("Locrian ♭♭7")]
         }
     }
 }
+
+pub mod byzantine{
+    use crate::theory::note::{Steps};
+    use crate::theory::interval::*;
+    use super::ScaleObj;
+
+    pub fn steps() -> Steps{
+        Steps(vec![SEMI,MINOR_THIRD,SEMI,WHOLE,SEMI,MINOR_THIRD,SEMI])
+    }
+
+    pub fn obj() -> ScaleObj{
+        ScaleObj{
+            steps: steps(),
+            fam_name: String::from("Byzantine"),
+            modes: vec![String::from("Byzantine"),
+                        String::from("Lydian ♯2 ♯6"),
+                        String::from("Ultra Phrygian"),
+                        String::from("Hungarian Minor"),
+                        String::from("Oriental"),
+                        String::from("Ionian ♯2 ♯5"),
+                        String::from("Locrian ♭♭3 ♭♭7")]
+        }
+    }
+}
+
+pub mod hungarian_major{
+    use crate::theory::note::{Steps};
+    use crate::theory::interval::*;
+    use super::ScaleObj;
+
+    pub fn steps() -> Steps{
+        Steps(vec![MINOR_THIRD,SEMI,WHOLE,SEMI,WHOLE,SEMI,WHOLE])
+    }
+
+    pub fn obj() -> ScaleObj{
+        ScaleObj{
+            steps: steps(),
+            fam_name: String::from("Hungarian Major"),
+            modes: vec![String::from("Hungarian Major"),
+                        String::from("Super Locrian Diminished ♭6"),
+                        String::from("Harmonic Minor ♭5"),
+                        String::from("Super Locarian ♮6"),
+                        String::from("Melodic Minor ♯5"),
+                        String::from("Dorian ♭2 ♯4"),
+                        String::from("Lydian Augmented ♯3")]
+        }
+    }
+}
+
+pub mod neapolitan_minor{
+    use crate::theory::note::{Steps};
+    use crate::theory::interval::*;
+    use super::ScaleObj;
+
+    pub fn steps() -> Steps{
+        Steps(vec![SEMI,WHOLE,WHOLE,WHOLE,SEMI,MINOR_THIRD,SEMI])
+    }
+
+    pub fn obj() -> ScaleObj{
+        ScaleObj{
+            steps: steps(),
+            fam_name: String::from("Neapolitan Minor"),
+            modes: vec![String::from("Neapolitan Minor"),
+                        String::from("Lydian ♯6"),
+                        String::from("Mixolydian Augmented"),
+                        String::from("Lydian Minor"),
+                        String::from("Locrian ♮3"),
+                        String::from("Ionian ♯2"),
+                        String::from("Super Locrian Diminished ♭3")]
+        }
+    }
+}
+
+
+pub mod neapolitan_major{
+    use crate::theory::note::{Steps};
+    use crate::theory::interval::*;
+    use super::ScaleObj;
+
+    pub fn steps() -> Steps{
+        Steps(vec![SEMI,WHOLE,WHOLE,WHOLE,WHOLE,WHOLE,SEMI])
+    }
+
+    pub fn obj() -> ScaleObj{
+        ScaleObj{
+            steps: steps(),
+            fam_name: String::from("Neapolitan Major"),
+            modes: vec![String::from("Neapolitan Major"),
+                        String::from("Lydian Augmented ♯6"),
+                        String::from("Lydian Augmented ♭7"),
+                        String::from("Lydian Dominant ♭6"),
+                        String::from("Mixolydian ♭5 ♭6"),
+                        String::from("locrian ♮2 ♭4"),
+                        String::from("Super locrian ♭♭3")]
+        }
+    }
+}
+

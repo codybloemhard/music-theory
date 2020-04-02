@@ -16,15 +16,15 @@ fn _test2(){
     println!("{}", NamedChord::from_chord(&chord_from_intervals(A4, &MAJOR_SEVENTH_TETRAD)).as_string());
     let mut lines = Vec::new();
     for mode in 0..7{
-        lines.push(strs_scale_chords_roman(&ionian::steps().mode(mode).0, 4))
+        lines.push(strs_scale_chords_roman(&ionian::steps().mode(mode).0, 3))
     }
     lines.push(vec![]);
     for mode in 0..7{
-        lines.push(strs_scale_chords_roman(&harmonic_minor::steps().mode(mode).0, 4));
+        lines.push(strs_scale_chords_roman(&harmonic_minor::steps().mode(mode).0, 3));
     }
     lines.push(vec![]);
     for mode in 0..7{
-        lines.push(strs_scale_chords_roman(&harmonic_major::steps().mode(mode).0, 4));
+        lines.push(strs_scale_chords_roman(&harmonic_major::steps().mode(mode).0, 3));
     }
     print_even_grid_auto(&lines, "\n");
     println!();
