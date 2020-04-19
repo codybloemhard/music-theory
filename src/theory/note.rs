@@ -19,6 +19,8 @@ pub struct Steps(pub Vec<Note>);
 pub struct Scale(pub Vec<Note>);
 #[derive(Clone)]
 pub struct Chord(pub Vec<Note>);
+#[derive(Clone)]
+pub struct Relative(pub Vec<Note>);
 
 impl Steps{
     pub fn empty() -> Self{
@@ -35,6 +37,12 @@ impl Scale{
 impl Chord{
     pub fn empty() -> Self{
         Chord(Vec::new())
+    }
+}
+
+impl Relative{
+    pub fn empty(len: usize) -> Self{
+        Relative(vec![0; len])
     }
 }
 
@@ -55,6 +63,12 @@ impl NoteSequence for Scale{
 }
 
 impl NoteSequence for Chord{
+    fn len(&self) -> usize{
+        self.0.len()
+    }
+}
+
+impl NoteSequence for Relative{
     fn len(&self) -> usize{
         self.0.len()
     }

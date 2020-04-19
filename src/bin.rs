@@ -37,22 +37,16 @@ fn _test2(){
     println!("{}", NamedChord::from_intervals(A4, &vec![MINOR_THIRD,PERFECT_FIFTH]).extended_quality(String::from("A"), false));
     println!("{}", NamedChord::from_intervals(A4, &vec![MINOR_SECOND,PERFECT_FIFTH]).extended_quality(String::from("A"), false));
     println!("{}", NamedChord::from_intervals(A4, &vec![MINOR_SECOND,MAJOR_SECOND,PERFECT_FOURTH,PERFECT_FIFTH]).extended_quality(String::from("A"), false));
-    println!("{}", find_scale(&ucns_to_notes(&vec![C,CS,E,F,G,GS,AS], 3).0).unwrap());
-    println!("{}", find_scale(&harmonic_minor::steps().as_mode(A4, 0).0).unwrap());
-    println!("{}", find_scale(&harmonic_minor::steps().as_mode(A4, 1).0).unwrap());
-    println!("{}", find_scale(&harmonic_minor::steps().as_mode(A4, 2).0).unwrap());
-    println!("{}", find_scale(&harmonic_minor::steps().as_mode(A4, 3).0).unwrap());
-    println!("{}", find_scale(&harmonic_minor::steps().as_mode(A4, 4).0).unwrap());
-    println!("{}", find_scale(&harmonic_minor::steps().as_mode(A4, 5).0).unwrap());
-    println!("{}", find_scale(&harmonic_minor::steps().as_mode(A4, 6).0).unwrap());
-    println!("{}", find_scale(&harmonic_minor::steps().as_mode(A4, 7).0).unwrap());
-    for named in &ucns_to_named(&vec![E,FS,GS,B,C,CS,E], 3){
+    for named in &ucns_to_named(&vec![C,CS,E,F,G,GS,AS], 3){
         print!("{}, ", named.to_string());
     }
     println!();
-    for modeobj in find_scale_subseq(&ucns_to_steps(&vec![F,GS,A,B,C]).0){
+    println!("{}", find_scale(&ucns_to_notes(&vec![C,CS,E,F,G,GS,AS], 3).0).unwrap());
+    println!("\n");
+    for modeobj in find_scale_subseq(&ucns_to_steps(&vec![A,B,C,D]).0){
         println!("{}", modeobj);
     }
+    println!("{:?}", ionian::steps().mode(ionian::LYDIAN).to_relative(&ionian::steps()).unwrap().0);
 }
 
 fn _test1(){
