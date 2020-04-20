@@ -1,6 +1,14 @@
 use crate::libr::scales::{get_all_scale_objs,ionian};
 use crate::theory::scale::StepsTrait;
 use crate::theory::scale::RelativeTrait;
+use crate::theory::chord::strs_scale_chords_roman;
+
+pub fn print_splitted(strings: &Vec<String>, split: &str, end: &str){
+    for s in strings{
+        print!("{}{}", s, split);
+    }
+    print!("{}", end);
+}
 
 pub fn print_even(strings: &Vec<String>, spaces: usize, end: &str){
     for string in strings{
@@ -58,8 +66,14 @@ pub fn print_scales(){
     for sobj in objs{
         println!("{}", sobj.family_name());
         for mode in sobj.get_modes(){
-            print!("{}: {}: ", mode.mode_nr, mode.mode_name);
-            println!("{}", mode.steps.to_relative(&ionian::steps()).unwrap().string_ionian_rel());
+            println!("{}: {}", mode.mode_nr, mode.mode_name);
+            println!("\t{}", mode.steps.to_relative(&ionian::steps()).unwrap().string_ionian_rel());
+            let c3 = strs_scale_chords_roman(&mode.steps.0, 3);
+            let c4 = strs_scale_chords_roman(&mode.steps.0, 4);
+            print!("\t");
+            print_splitted(&c3, ", ", "\n");
+            print!("\t");
+            print_splitted(&c4, ", ", "\n");
         }
     }
 }
