@@ -245,7 +245,7 @@ impl NamedChord{
             Self::MajorDiminished(_) => format!("{}o", basestr),
             Self::MajorSixth(_) => format!("{}maj6", basestr),
             Self::MinorSixth(_) => format!("{}min6", basestr),
-            Self::DominantSeventh(_) => format!("{}dom7", basestr),
+            Self::DominantSeventh(_) => format!("{}7", basestr),
             Self::AugmentedSeventh(_) => format!("{}+7", basestr),
             Self::MajorSeventh(_) => format!("{}∆", basestr),
             Self::MinorSeventh(_) => format!("{}-", basestr),
