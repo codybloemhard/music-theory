@@ -171,3 +171,11 @@ pub fn to_chord_interval(interval: Note) -> String{
         _ => "",
     }.to_string()
 }
+
+pub fn to_relative_interval_non_nat(interval: Note) -> String{
+    let mut res = String::new();
+    let i = interval / SEMI;
+    if i < 0 { for _ in 0..-i{ res.push_str("♭"); } }
+    else if i > 0 { for _ in 0..i{ res.push_str("♯") } }
+    res
+}

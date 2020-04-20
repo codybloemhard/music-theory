@@ -46,7 +46,7 @@ fn _test2(){
     for modeobj in find_scale_subseq(&ucns_to_steps(&vec![A,B,C,D]).0){
         println!("{}", modeobj);
     }
-    println!("{:?}", ionian::steps().mode(ionian::LYDIAN).to_relative(&ionian::steps()).unwrap().0);
+    print_scales();
 }
 
 fn _test1(){

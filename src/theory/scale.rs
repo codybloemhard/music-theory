@@ -1,5 +1,6 @@
 use super::note::*;
 use super::interval::{PERFECT_OCTAVE};
+use crate::theory::interval::to_relative_interval_non_nat;
 
 pub type Mode = u8;
 
@@ -40,7 +41,7 @@ pub trait ModeTrait{
 
 impl ModeTrait for Scale{
     fn next_mode_mut(&mut self){
-        self.0.rotate_right(1);
+        self.0.rotate_left(1);
     }
 
     fn next_mode(self) -> Self{
@@ -54,7 +55,7 @@ impl ModeTrait for Scale{
 
 impl ModeTrait for Steps{
     fn next_mode_mut(&mut self){
-        self.0.rotate_right(1);
+        self.0.rotate_left(1);
     }
 
     fn next_mode(self) -> Self{
@@ -124,6 +125,26 @@ impl StepsTrait for Steps{
     }
 }
 
+pub trait RelativeTrait{
+    fn string_ionian_rel(&self) -> String;
+}
+
+impl RelativeTrait for Relative{
+    fn string_ionian_rel(&self) -> String{
+        if self.0.len() != 7{
+            String::from("Not a Ionian relative!")
+        }else{
+            let mut res = String::new();
+            for i in 1..=7{
+                let prefix = to_relative_interval_non_nat(self.0[i - 1]);
+                res.push_str(&prefix);
+                res.push_str(&format!("{} ", i));
+            }
+            res
+        }
+    }
+}
+
 pub fn notes_to_octave_scale(notes: &Notes) -> Notes{
     let mut res = Vec::new();
     if notes.is_empty(){ return res; }
@@ -187,9 +208,10 @@ impl<T: std::clone::Clone + ModeTrait + NoteSequence>
         if self.current >= self.len{
             return Option::None;
         }
+        let res = self.scale.clone();
         self.scale.next_mode_mut();
         self.current += 1;
-        Option::Some(self.scale.clone())
+        Option::Some(res)
     }
 }
 

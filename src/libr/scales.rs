@@ -1,5 +1,6 @@
 use crate::theory::scale::{Mode};
 use crate::theory::note::{Steps};
+use crate::theory::scale::ModeIteratorSpawner;
 
 pub struct ScaleObj{
     pub steps: Steps,
@@ -24,6 +25,22 @@ impl ScaleObj{
         }else{
             name
         }
+    }
+
+    pub fn get_modes(self) -> Vec<ModeObj>{
+        let fname = self.family_name();
+        let mut res = Vec::new();
+        for (i,mode) in self.clone_steps().mode_iter().enumerate(){
+            res.push(
+                ModeObj{
+                    steps: mode,
+                    fam_name: fname.clone(),
+                    mode_name: self.get_mode_name(i as u8),
+                    mode_nr: i,
+                }
+            );
+        }
+        res
     }
 }
 

@@ -1,3 +1,7 @@
+use crate::libr::scales::{get_all_scale_objs,ionian};
+use crate::theory::scale::StepsTrait;
+use crate::theory::scale::RelativeTrait;
+
 pub fn print_even(strings: &Vec<String>, spaces: usize, end: &str){
     for string in strings{
         let len = string.chars().count();
@@ -49,6 +53,13 @@ pub fn print_even_grid_auto(lines: &Vec<Vec<String>>, end: &str){
     print_even_grid(lines, longest + 1, end);
 }
 
-// pub fn print_scale_obj_modes(obj: &ScaleObj){
-//
-// }
+pub fn print_scales(){
+    let objs = get_all_scale_objs();
+    for sobj in objs{
+        println!("{}", sobj.family_name());
+        for mode in sobj.get_modes(){
+            print!("{}: {}: ", mode.mode_nr, mode.mode_name);
+            println!("{}", mode.steps.to_relative(&ionian::steps()).unwrap().string_ionian_rel());
+        }
+    }
+}
