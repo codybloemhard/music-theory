@@ -1,4 +1,4 @@
-use fnrs::Func;
+use fnrs::MutFunc;
 use super::note::*;
 use super::interval::*;
 use super::scale::*;
@@ -353,8 +353,8 @@ impl NamedChord{
 
         let (mut not_in_chord, mut not_in_base) =
             both_differences(&self.to_chord(), &base_chord.to_chord());
-        not_in_chord.map_mut(&|note| note - root);
-        not_in_base.map_mut(&|note| note - root);
+        not_in_chord.mmap(|note| *note -= root);
+        not_in_base.mmap(|note| *note -= root);
 
         let mut res = base_chord.as_string_basic(lower);
         let mut attrs = Vec::new();
