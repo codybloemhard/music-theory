@@ -285,13 +285,13 @@ pub mod enigmatic_major{
         ScaleObj{
             steps: steps(),
             fam_name: String::from("Enigmatic Major"),
-            modes: vec![String::from(""),
-                        String::from(""),
-                        String::from(""),
-                        String::from(""),
-                        String::from(""),
-                        String::from(""),
-                        String::from("")]
+            modes: vec![String::from("Enigmatic Major"),
+                        String::from("Araboth*"),
+                        String::from("Lydian ♭6 ♭♭7*"),
+                        String::from("Greed*"),
+                        String::from("Heresy*"),
+                        String::from("Fraud*"),
+                        String::from("Gluttony*")]
         }
     }
 }
@@ -309,13 +309,13 @@ pub mod enigmatic_minor{
         ScaleObj{
             steps: steps(),
             fam_name: String::from("Enigmatic Minor"),
-            modes: vec![String::from(""),
-                        String::from(""),
-                        String::from(""),
-                        String::from(""),
-                        String::from(""),
-                        String::from(""),
-                        String::from("")]
+            modes: vec![String::from("Enigmatic Minor"),
+                        String::from("Ma'on*"),
+                        String::from("Mixolidian Augmented ♯2 ♯♯4*"),
+                        String::from("Tamaha prabha*"),
+                        String::from("Ionian ♯2 ♭5 ♭6*"),
+                        String::from("Dutch Scale*"),
+                        String::from("Dhuma prabha*")]
         }
     }
 }
