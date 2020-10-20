@@ -1,4 +1,4 @@
-use crate::theory::note::{Notes,Steps};
+use crate::theory::note::{Notes,Steps,Scale,Note};
 use crate::theory::scale::{notes_to_octave_scale,StepsTrait,ModeIteratorSpawner};
 use fnrs::Sequence;
 use crate::libr::scales::{get_all_scale_objs, ModeObj};
@@ -38,3 +38,12 @@ pub fn find_scale_subseq(scale: &Notes) -> Vec<ModeObj>{
     }
     res
 }
+
+// pub fn find_scale_subset(scale: &Scale) -> Vec<(Note,ModeObj)>{
+//     let scales = get_all_scale_objs();
+//     let mut res = Vec::new();
+//     for sc in scales{
+//         for (i,mode) in sc.steps.clone().mode_iter().enumerate(){
+//         }
+//     }
+// }

@@ -46,7 +46,9 @@ impl ScaleObj{
 
 pub fn get_all_scale_objs() -> Vec<ScaleObj>{
     vec![ionian::obj(), harmonic_minor::obj(), harmonic_major::obj(),
-    byzantine::obj(), hungarian_major::obj(), neapolitan_minor::obj(), neapolitan_major::obj()]
+    byzantine::obj(), hungarian_major::obj(),
+    neapolitan_minor::obj(), neapolitan_major::obj(),
+    enigmatic_major::obj(), enigmatic_minor::obj()]
 }
 
 pub struct ModeObj{
@@ -246,7 +248,6 @@ pub mod neapolitan_minor{
     }
 }
 
-
 pub mod neapolitan_major{
     use crate::theory::note::{Steps};
     use crate::theory::interval::*;
@@ -271,3 +272,50 @@ pub mod neapolitan_major{
     }
 }
 
+pub mod enigmatic_major{
+    use crate::theory::note::{Steps};
+    use crate::theory::interval::*;
+    use super::ScaleObj;
+
+    pub fn steps() -> Steps{
+        Steps(vec![SEMI,MINOR_THIRD,WHOLE,WHOLE,WHOLE,SEMI,SEMI])
+    }
+
+    pub fn obj() -> ScaleObj{
+        ScaleObj{
+            steps: steps(),
+            fam_name: String::from("Enigmatic Major"),
+            modes: vec![String::from(""),
+                        String::from(""),
+                        String::from(""),
+                        String::from(""),
+                        String::from(""),
+                        String::from(""),
+                        String::from("")]
+        }
+    }
+}
+
+pub mod enigmatic_minor{
+    use crate::theory::note::{Steps};
+    use crate::theory::interval::*;
+    use super::ScaleObj;
+
+    pub fn steps() -> Steps{
+        Steps(vec![SEMI,WHOLE,MINOR_THIRD,SEMI,MINOR_THIRD,SEMI,SEMI])
+    }
+
+    pub fn obj() -> ScaleObj{
+        ScaleObj{
+            steps: steps(),
+            fam_name: String::from("Enigmatic Minor"),
+            modes: vec![String::from(""),
+                        String::from(""),
+                        String::from(""),
+                        String::from(""),
+                        String::from(""),
+                        String::from(""),
+                        String::from("")]
+        }
+    }
+}

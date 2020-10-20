@@ -45,6 +45,7 @@ fn _test2(){
     println!("\n");
     for modeobj in find_scale_subseq(&ucns_to_steps(&vec![A,B,C,D]).0){
         println!("{}", modeobj);
+        println!("{:?}", modeobj.steps.0);
     }
     print_scales();
 }
