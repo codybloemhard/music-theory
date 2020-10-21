@@ -92,43 +92,6 @@ impl IntoSteps for Scale{
     }
 }
 
-pub fn to_ucn(note: Note) -> UCN{
-    if note % SEMI == 0 {
-        let inrank = (note / SEMI) % 12;
-        match inrank{
-            0 => UCN::A,
-            1 => UCN::As,
-            2 => UCN::B,
-            3 => UCN::C,
-            4 => UCN::Cs,
-            5 => UCN::D,
-            6 => UCN::Ds,
-            7 => UCN::E,
-            8 => UCN::F,
-            9 => UCN::Fs,
-            10 => UCN::G,
-            11 => UCN::Gs,
-            _ => { panic!("to_ucn: should never happen!"); }
-        }
-    } else { // This is a microtonal note
-        panic!("to_ucn: microtonal input");
-    }
-}
-
-pub trait IntoUCNS{
-    fn to_ucns(self) -> UCNS;
-}
-
-impl IntoUCNS for Scale{
-    fn to_ucns(self) -> UCNS{
-        let mut res = Vec::new();
-        for n in self.0{
-            res.push(to_ucn(n));
-        }
-        res
-    }
-}
-
 pub const A: UCN = UCN::A;
 pub const AS: UCN = UCN::As;
 pub const B: UCN = UCN::B;
@@ -169,6 +132,55 @@ impl UCN{
 
     pub fn to_note(self, rank: Rank) -> Note{
         self.to_named(rank).to_note()
+    }
+}
+
+impl std::fmt::Display for UCN{
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result{
+        write!(f, "{}", self.to_named(0).to_string_name())
+    }
+}
+
+impl PartialEq for UCN{
+    fn eq(&self, other: &Self) -> bool{
+        self.to_note(0) == other.to_note(0)
+    }
+}
+
+pub fn to_ucn(note: Note) -> UCN{
+    if note % SEMI == 0 {
+        let inrank = (note / SEMI) % 12;
+        match inrank{
+            0 => UCN::A,
+            1 => UCN::As,
+            2 => UCN::B,
+            3 => UCN::C,
+            4 => UCN::Cs,
+            5 => UCN::D,
+            6 => UCN::Ds,
+            7 => UCN::E,
+            8 => UCN::F,
+            9 => UCN::Fs,
+            10 => UCN::G,
+            11 => UCN::Gs,
+            _ => { panic!("to_ucn: should never happen!"); }
+        }
+    } else { // This is a microtonal note
+        panic!("to_ucn: microtonal input");
+    }
+}
+
+pub trait IntoUCNS{
+    fn to_ucns(self) -> UCNS;
+}
+
+impl IntoUCNS for Scale{
+    fn to_ucns(self) -> UCNS{
+        let mut res = Vec::new();
+        for n in self.0{
+            res.push(to_ucn(n));
+        }
+        res
     }
 }
 

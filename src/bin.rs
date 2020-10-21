@@ -48,6 +48,10 @@ fn _test2(){
         println!("{:?}", modeobj.steps.0);
     }
     print_scales();
+    println!("Scales which are an superset to {{A,C,D♯,E}}");
+    for (tonic,modeobj) in find_scale_superset(vec![A,C,DS,E], true){
+        println!("{} {}", tonic, modeobj);
+    }
 }
 
 fn _test1(){
