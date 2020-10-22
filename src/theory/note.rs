@@ -74,11 +74,11 @@ impl NoteSequence for Relative{
     }
 }
 
-pub trait IntoSteps{
+pub trait ToSteps{
     fn to_steps(self) -> Steps;
 }
 
-impl IntoSteps for Scale{
+impl ToSteps for Scale{
     fn to_steps(self) -> Steps{
         if self.0.is_empty() { return Steps::empty(); }
         let mut last = self.0[0];
@@ -218,9 +218,11 @@ pub fn ucns_to_notes(ucns: &UCNS, starting_rank: Rank) -> Scale{
     Scale(res)
 }
 
-pub fn ucns_to_steps(ucns: &UCNS) -> Steps{
-    let notes = ucns_to_notes(ucns, 0);
-    notes.to_steps()
+impl ToSteps for UCNS{
+    fn to_steps(self) -> Steps{
+        let notes = ucns_to_notes(&self, 0);
+        notes.to_steps()
+    }
 }
 
 #[derive(Clone,Copy)]

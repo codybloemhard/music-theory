@@ -43,13 +43,22 @@ fn _test2(){
     println!();
     println!("{}", find_scale(&ucns_to_notes(&vec![C,CS,E,F,G,GS,AS], 3).0).unwrap());
     println!("\n");
-    for modeobj in find_scale_subseq(&ucns_to_steps(&vec![A,B,C,D]).0){
+    for modeobj in find_scale_subseq(&vec![A,B,C,D].to_steps().0){
         println!("{}", modeobj);
     }
     print_scales();
-    println!("Scales which are an superset to {{A,C,D♯,E}}");
-    for (tonic,modeobj) in find_scale_superset(vec![A,C,DS,E], true){
+    let subset = vec![C,E,G,B];
+    print!("Scales which are an superset to {{");
+    for n in &subset{
+        print!("{}, ", n);
+    }
+    println!("}}");
+    for (tonic,modeobj) in find_scale_superset(subset.clone(), true){
         println!("{} {}", tonic, modeobj);
+    }
+    println!("And the strict chordscales: ");
+    for modeobj in find_chordscales(subset.to_steps()){
+        println!("{}", modeobj);
     }
 }
 
