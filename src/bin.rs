@@ -43,7 +43,7 @@ fn _test2(){
     println!();
     println!("{}", find_scale(&ucns_to_notes(&vec![C,CS,E,F,G,GS,AS], 3).0).unwrap());
     println!("\n");
-    for modeobj in find_scale_subseq(&vec![A,B,C,D].to_steps().0){
+    for modeobj in find_scale_subseq(&vec![A,B,C,D].as_steps().0){
         println!("{}", modeobj);
     }
     print_scales();
@@ -57,7 +57,7 @@ fn _test2(){
         println!("{} {}", tonic, modeobj);
     }
     println!("And the strict chordscales: ");
-    for modeobj in find_chordscales(subset.to_steps()){
+    for modeobj in find_chordscales(subset.as_steps()){
         println!("{}", modeobj);
     }
 }

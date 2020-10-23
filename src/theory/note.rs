@@ -74,22 +74,20 @@ impl NoteSequence for Relative{
     }
 }
 
-pub trait ToSteps{
-    fn to_steps(self) -> Steps;
+pub trait ToScale{
+    fn to_scale(&self, note: Note) -> Scale;
 }
 
-impl ToSteps for Scale{
-    fn to_steps(self) -> Steps{
-        if self.0.is_empty() { return Steps::empty(); }
-        let mut last = self.0[0];
-        let mut intervals = Vec::new();
-        for note in self.0.iter().skip(1){
-            let diff = note - last;
-            intervals.push(diff);
-            last = *note;
-        }
-        Steps(intervals)
-    }
+pub trait AsScale{
+    fn as_scale(self, note: Note) -> Scale;
+}
+
+pub trait AsSteps{
+    fn as_steps(self) -> Steps;
+}
+
+pub trait AsUCNS{
+    fn as_ucns(self) -> UCNS;
 }
 
 pub const A: UCN = UCN::A;
@@ -147,7 +145,7 @@ impl PartialEq for UCN{
     }
 }
 
-pub fn to_ucn(note: Note) -> UCN{
+pub fn as_ucn(note: Note) -> UCN{
     if note % SEMI == 0 {
         let inrank = (note / SEMI) % 12;
         match inrank{
@@ -170,15 +168,11 @@ pub fn to_ucn(note: Note) -> UCN{
     }
 }
 
-pub trait IntoUCNS{
-    fn to_ucns(self) -> UCNS;
-}
-
-impl IntoUCNS for Scale{
-    fn to_ucns(self) -> UCNS{
+impl AsUCNS for Scale{
+    fn as_ucns(self) -> UCNS{
         let mut res = Vec::new();
         for n in self.0{
-            res.push(to_ucn(n));
+            res.push(as_ucn(n));
         }
         res
     }
@@ -218,10 +212,10 @@ pub fn ucns_to_notes(ucns: &UCNS, starting_rank: Rank) -> Scale{
     Scale(res)
 }
 
-impl ToSteps for UCNS{
-    fn to_steps(self) -> Steps{
+impl AsSteps for UCNS{
+    fn as_steps(self) -> Steps{
         let notes = ucns_to_notes(&self, 0);
-        notes.to_steps()
+        notes.as_steps()
     }
 }
 

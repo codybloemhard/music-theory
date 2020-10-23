@@ -12,6 +12,38 @@ pub const DOMINANT: Note = 4;
 pub const SUB_MEDIANT: Note = 5;
 pub const SUB_TONIC: Note = 6;
 
+impl AsSteps for Scale{
+    fn as_steps(self) -> Steps{
+        if self.0.is_empty() { return Steps::empty(); }
+        let mut last = self.0[0];
+        let mut intervals = Vec::new();
+        for note in self.0.iter().skip(1){
+            let diff = note - last;
+            intervals.push(diff);
+            last = *note;
+        }
+        Steps(intervals)
+    }
+}
+
+impl ToScale for Steps{
+    fn to_scale(&self, mut note: Note) -> Scale{
+        let mut vec = Vec::new();
+        vec.push(note);
+        for step in &self.0{
+            note += *step as Note;
+            vec.push(note);
+        }
+        Scale(vec)
+    }
+}
+
+impl AsScale for Steps{
+    fn as_scale(self, note: Note) -> Scale{
+        self.to_scale(note)
+    }
+}
+
 pub fn next_mode(mut scale: Notes) -> Notes{
     let len = scale.len();
     if len == 0{
@@ -68,8 +100,6 @@ impl ModeTrait for Steps{
 }
 
 pub trait StepsTrait{
-    fn to_scale(&self, note: Note) -> Scale;
-    fn as_scale(self, note: Note) -> Scale;
     fn as_mode(self, note: Note, mode: Mode) -> Scale;
     fn mode_nr_of_this(self, mode: &Self) -> Option<(usize,Self)>
         where Self: std::marker::Sized;
@@ -77,20 +107,6 @@ pub trait StepsTrait{
 }
 
 impl StepsTrait for Steps{
-    fn to_scale(&self, mut note: Note) -> Scale{
-        let mut vec = Vec::new();
-        vec.push(note);
-        for step in &self.0{
-            note += *step as Note;
-            vec.push(note);
-        }
-        Scale(vec)
-    }
-
-    fn as_scale(self, note: Note) -> Scale{
-        self.to_scale(note)
-    }
-
     fn as_mode(self, note: Note, mode: Mode) -> Scale{
         self.mode(mode).as_scale(note)
     }
