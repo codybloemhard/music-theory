@@ -82,12 +82,32 @@ pub trait AsScale{
     fn as_scale(self, note: Note) -> Scale;
 }
 
+impl<T: ToScale> AsScale for T{
+    fn as_scale(self, note: Note) -> Scale{
+        self.to_scale(note)
+    }
+}
+
 pub trait AsSteps{
     fn as_steps(self) -> Steps;
 }
 
 pub trait AsUCNS{
     fn as_ucns(self) -> UCNS;
+}
+
+pub trait ToRelative{
+    fn to_relative(&self, reference: &Steps) -> Option<Relative>;
+}
+
+pub trait AsRelative{
+    fn as_relative(self, reference: &Steps) -> Option<Relative>;
+}
+
+impl<T: ToRelative> AsRelative for T{
+    fn as_relative(self, reference: &Steps) -> Option<Relative>{
+        self.to_relative(reference)
+    }
 }
 
 pub const A: UCN = UCN::A;

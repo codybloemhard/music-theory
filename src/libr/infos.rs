@@ -1,6 +1,6 @@
 use crate::libr::scales::{get_all_scale_objs,ionian};
-use crate::theory::scale::StepsTrait;
 use crate::theory::scale::RelativeTrait;
+use crate::theory::note::{ToRelative};
 use crate::theory::chord::strs_scale_chords_roman;
 
 pub fn print_splitted(strings: &Vec<String>, split: &str, end: &str){

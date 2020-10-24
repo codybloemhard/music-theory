@@ -38,12 +38,6 @@ impl ToScale for Steps{
     }
 }
 
-impl AsScale for Steps{
-    fn as_scale(self, note: Note) -> Scale{
-        self.to_scale(note)
-    }
-}
-
 pub fn next_mode(mut scale: Notes) -> Notes{
     let len = scale.len();
     if len == 0{
@@ -99,11 +93,26 @@ impl ModeTrait for Steps{
     }
 }
 
+impl ToRelative for Steps{
+    fn to_relative(&self, reference: &Steps) -> Option<Relative>{
+        if self.0.len() != reference.0.len() { return None; }
+        if self.0.len() == 0 { return None; }
+        let mut acc_a = 0;
+        let mut acc_b = 0;
+        let mut res = Vec::new();
+        for i in 0..self.0.len(){
+            res.push(acc_a - acc_b);
+            acc_a += self.0[i];
+            acc_b += reference.0[i];
+        }
+        Some(Relative(res))
+    }
+}
+
 pub trait StepsTrait{
     fn as_mode(self, note: Note, mode: Mode) -> Scale;
     fn mode_nr_of_this(self, mode: &Self) -> Option<(usize,Self)>
         where Self: std::marker::Sized;
-    fn to_relative(&self, reference: &Steps) -> Option<Relative>;
 }
 
 impl StepsTrait for Steps{
@@ -124,20 +133,6 @@ impl StepsTrait for Steps{
             self = self.next_mode();
         }
         Option::None
-    }
-
-    fn to_relative(&self, reference: &Steps) -> Option<Relative>{
-        if self.0.len() != reference.0.len() { return None; }
-        if self.0.len() == 0 { return None; }
-        let mut acc_a = 0;
-        let mut acc_b = 0;
-        let mut res = Vec::new();
-        for i in 0..self.0.len(){
-            res.push(acc_a - acc_b);
-            acc_a += self.0[i];
-            acc_b += reference.0[i];
-        }
-        Some(Relative(res))
     }
 }
 
