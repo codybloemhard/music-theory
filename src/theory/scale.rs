@@ -156,12 +156,12 @@ impl RelativeTrait for Relative{
     }
 }
 
-pub fn notes_to_octave_scale(notes: &Notes) -> Notes{
+pub fn notes_to_octave_scale(scale: &Scale) -> Notes{
     let mut res = Vec::new();
-    if notes.is_empty(){ return res; }
-    let mut last = notes[0];
+    if scale.0.is_empty(){ return res; }
+    let mut last = scale.0[0];
     let mut sum = 0;
-    for note in notes.iter().skip(1){
+    for note in scale.0.iter().skip(1){
         let diff = note - last;
         res.push(diff);
         last = *note;

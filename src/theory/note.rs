@@ -221,21 +221,22 @@ pub fn ucns_to_named(ucns: &UCNS, starting_rank: Rank) -> Vec<NamedNote>{
     res
 }
 
-pub fn ucns_to_notes(ucns: &UCNS, starting_rank: Rank) -> Scale{
-    let named = ucns_to_named(ucns, starting_rank);
-    // TODO: Make this possible
-    // named.map(&|n| n.to_note())
-    let mut res = Vec::new();
-    for n in named{
-        res.push(n.to_note());
+impl ToScale for UCNS{
+    fn to_scale(&self, rank: Note) -> Scale{
+        let named = ucns_to_named(self, rank as Rank);
+        // TODO: Make this possible
+        // named.map(&|n| n.to_note())
+        let mut res = Vec::new();
+        for n in named{
+            res.push(n.to_note());
+        }
+        Scale(res)
     }
-    Scale(res)
 }
 
 impl AsSteps for UCNS{
     fn as_steps(self) -> Steps{
-        let notes = ucns_to_notes(&self, 0);
-        notes.as_steps()
+        self.to_scale(0).as_steps()
     }
 }
 

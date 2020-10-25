@@ -1,10 +1,10 @@
-use crate::theory::note::{Notes,Steps,AsUCNS,UCNS,UCN,NoteSequence,ToScale,AsScale};
+use crate::theory::note::{Steps,Scale,AsUCNS,UCNS,UCN,NoteSequence,ToScale,AsScale};
 use crate::theory::scale::{notes_to_octave_scale,StepsTrait,ModeIteratorSpawner};
 use crate::theory::interval::{SEMI};
 use fnrs::Sequence;
 use crate::libr::scales::{get_all_scale_objs, ModeObj};
 
-pub fn find_scale(scale: &Notes) -> Option<ModeObj>{
+pub fn find_scale(scale: &Scale) -> Option<ModeObj>{
     let steps = Steps(notes_to_octave_scale(scale));
     let scales = get_all_scale_objs();
     for sc in scales{
@@ -20,12 +20,12 @@ pub fn find_scale(scale: &Notes) -> Option<ModeObj>{
     Option::None
 }
 
-pub fn find_scale_subseq(scale: &Notes) -> Vec<ModeObj>{
+pub fn find_scale_superseq(scale: &Steps) -> Vec<ModeObj>{
     let scales = get_all_scale_objs();
     let mut res = Vec::new();
     for sc in scales{
         for (i,mode) in sc.steps.clone().mode_iter().enumerate(){
-            if mode.0.has_seq(scale){
+            if mode.0.has_seq(&scale.0){
                 res.push(
                     ModeObj{
                         steps: mode,

@@ -41,9 +41,9 @@ fn _test2(){
         print!("{}, ", named.to_string());
     }
     println!();
-    println!("{}", find_scale(&ucns_to_notes(&vec![C,CS,E,F,G,GS,AS], 3).0).unwrap());
+    println!("{}", find_scale(&vec![C,CS,E,F,G,GS,AS].as_scale(0)).unwrap());
     println!("\n");
-    for modeobj in find_scale_subseq(&vec![A,B,C,D].as_steps().0){
+    for modeobj in find_scale_superseq(&vec![A,B,C,D].as_steps()){
         println!("{}", modeobj);
     }
     print_scales();
