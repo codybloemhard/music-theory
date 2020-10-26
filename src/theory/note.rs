@@ -20,7 +20,9 @@ pub struct Scale(pub Vec<Note>);
 #[derive(Clone)]
 pub struct Chord(pub Vec<Note>);
 #[derive(Clone)]
-pub struct Relative(pub Vec<Note>);
+pub enum RelativeNote { Flat(Note), Sharp(Note), Natural, Blank }
+#[derive(Clone)]
+pub struct Relative(pub Vec<RelativeNote>);
 
 impl Steps{
     pub fn empty() -> Self{
@@ -42,7 +44,7 @@ impl Chord{
 
 impl Relative{
     pub fn empty(len: usize) -> Self{
-        Relative(vec![0; len])
+        Relative(vec![RelativeNote::Natural; len])
     }
 }
 
@@ -107,6 +109,23 @@ pub trait AsRelative{
 impl<T: ToRelative> AsRelative for T{
     fn as_relative(self, reference: &Steps) -> Option<Relative>{
         self.to_relative(reference)
+    }
+}
+
+impl ToString for RelativeNote{
+    fn to_string(&self) -> String{
+        let mut res = String::new();
+        match self{
+            RelativeNote::Natural => {  },
+            RelativeNote::Blank => { res.push_str("?"); },
+            RelativeNote::Sharp(i) => {
+                for _ in 0..*i{ res.push_str("♯"); }
+            },
+            RelativeNote::Flat(i) => {
+                for _ in 0..*i{ res.push_str("♭"); }
+            }
+        }
+        res
     }
 }
 

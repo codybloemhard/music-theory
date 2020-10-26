@@ -1,6 +1,5 @@
 use super::note::*;
-use super::interval::{PERFECT_OCTAVE};
-use crate::theory::interval::to_relative_interval_non_nat;
+use super::interval::{PERFECT_OCTAVE,SEMI};
 
 pub type Mode = u8;
 
@@ -101,7 +100,11 @@ impl ToRelative for Steps{
         let mut acc_b = 0;
         let mut res = Vec::new();
         for i in 0..self.0.len(){
-            res.push(acc_a - acc_b);
+            let diff = (acc_a - acc_b) / SEMI;
+            let rn = if diff > 0 { RelativeNote::Sharp(diff) }
+            else if diff < 0 { RelativeNote::Flat(-diff) }
+            else { RelativeNote::Natural };
+            res.push(rn);
             acc_a += self.0[i];
             acc_b += reference.0[i];
         }
@@ -147,7 +150,7 @@ impl RelativeTrait for Relative{
         }else{
             let mut res = String::new();
             for i in 1..=7{
-                let prefix = to_relative_interval_non_nat(self.0[i - 1]);
+                let prefix = self.0[i - 1].to_string();
                 res.push_str(&prefix);
                 res.push_str(&format!("{} ", i));
             }

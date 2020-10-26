@@ -100,3 +100,4 @@ pub fn find_chordscales(scale: Steps) -> Vec<ModeObj>{
     }
     res
 }
+// Finds all the scales with the given relative properties
