@@ -1,8 +1,8 @@
-use crate::theory::note::{Steps,Scale,AsUCNS,UCNS,UCN,NoteSequence,ToScale,AsScale};
+use crate::theory::note::{Steps,Scale,Relative,RelativeNote,AsUCNS,UCNS,UCN,NoteSequence,ToScale,AsScale,ToRelative};
 use crate::theory::scale::{notes_to_octave_scale,StepsTrait,ModeIteratorSpawner};
 use crate::theory::interval::{SEMI};
 use fnrs::Sequence;
-use crate::libr::scales::{get_all_scale_objs, ModeObj};
+use crate::libr::scales::{get_all_scale_objs, ModeObj,ionian};
 
 pub fn find_scale(scale: &Scale) -> Option<ModeObj>{
     let steps = Steps(notes_to_octave_scale(scale));
@@ -101,3 +101,28 @@ pub fn find_chordscales(scale: Steps) -> Vec<ModeObj>{
     res
 }
 // Finds all the scales with the given relative properties
+pub fn find_scale_from_ionian_relative(rel: Relative) -> Vec<ModeObj>{
+    let scales = get_all_scale_objs();
+    let mut res = Vec::new();
+    for sc in scales{
+        'outer: for (i,mode) in sc.steps.clone().mode_iter().enumerate(){
+            let rl = mode.to_relative(&ionian::steps()).unwrap();
+            if rel.len() != rl.len() { continue; }
+            for (i,rn) in rel.0.iter().enumerate(){
+                match rn{
+                    RelativeNote::Blank => { continue; },
+                    _ => { if rn != &rl.0[i] { continue 'outer; } }
+                }
+            }
+            res.push(
+                ModeObj{
+                    steps: mode.clone(),
+                    fam_name: sc.family_name(),
+                    mode_name: sc.get_mode_name(i as u8),
+                    mode_nr: i,
+                }
+            );
+        }
+    }
+    res
+}

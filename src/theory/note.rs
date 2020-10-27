@@ -19,8 +19,14 @@ pub struct Steps(pub Vec<Note>);
 pub struct Scale(pub Vec<Note>);
 #[derive(Clone)]
 pub struct Chord(pub Vec<Note>);
-#[derive(Clone)]
+#[derive(PartialEq,Copy,Clone)]
 pub enum RelativeNote { Flat(Note), Sharp(Note), Natural, Blank }
+pub const RN_BLANK: RelativeNote = RelativeNote::Blank;
+pub const RN_NAT: RelativeNote = RelativeNote::Natural;
+pub const RN_S: RelativeNote = RelativeNote::Sharp(1);
+pub const RN_SS: RelativeNote = RelativeNote::Sharp(2);
+pub const RN_B: RelativeNote = RelativeNote::Flat(1);
+pub const RN_BB: RelativeNote = RelativeNote::Flat(2);
 #[derive(Clone)]
 pub struct Relative(pub Vec<RelativeNote>);
 

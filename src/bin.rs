@@ -60,6 +60,13 @@ fn _test2(){
     for modeobj in find_chordscales(subset.as_steps()){
         println!("{}", modeobj);
     }
+    let res = find_scale_from_ionian_relative(Relative(vec![
+        RN_NAT, RN_BLANK, RN_B, RN_S, RN_BLANK, RN_BLANK, RN_BLANK,
+    ]));
+    println!("-------");
+    for modeobj in res{
+        println!("{}", modeobj);
+    }
 }
 
 fn _test1(){
