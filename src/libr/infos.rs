@@ -68,8 +68,8 @@ pub fn print_scales(){
         for mode in sobj.get_modes(){
             println!("{}: {}", mode.mode_nr, mode.mode_name);
             println!("\t{}", mode.steps.to_relative(&ionian::steps()).unwrap().string_ionian_rel());
-            let c3 = strs_scale_chords_roman(&mode.steps.0, 3);
-            let c4 = strs_scale_chords_roman(&mode.steps.0, 4);
+            let c3 = strs_scale_chords_roman(&mode.steps, 3);
+            let c4 = strs_scale_chords_roman(&mode.steps, 4);
             print!("\t");
             print_splitted(&c3, ", ", "\n");
             print!("\t");
