@@ -1,9 +1,7 @@
-use fnrs::MutFunc;
 use super::note::*;
 use super::interval::*;
 use super::scale::*;
 use crate::utils::roman_numerals::to_roman_num;
-use crate::utils::misc::*;
 
 pub const NUM_SUPS: [char; 10] = ['⁰', 'ⁱ', '²', '³', '⁴', '⁵', '⁶', '⁷', '⁸', '⁹'];
 pub const NUM_SUBS: [char; 10] = ['₀', '₁', '₂', '₃', '₄', '₅', '₆', '₇', '₈', '₉'];
@@ -50,7 +48,7 @@ pub const HALF_DIMINISHED_SEVENTH_TETRAD: &'static [Note] = &[MINOR_THIRD, DIMIN
         //     Self::MinorSeventh(_) => format!("{}-", basestr),
         //     Self::MinorMajorSeventh(_) => format!("{}min(maj7)", basestr),
         //     Self::DiminishedSeventh(_) => format!("{}o7", basestr),
-        //     Self::HalfDiminishedSeventh(_) => format!("{}ø7", basestr),
+        //     Self::HalfDiminishedSeventh(_) => format!("{}ø", basestr),
         //     Self::Arbitrary(_) => String::new(),
         // }
 
@@ -92,8 +90,48 @@ impl Chord{
             presence[i] = self.0.contains(&((i + 1) as Note * SEMI));
         }
         let has = |inter: Note| presence[((inter - 1) / SEMI) as usize];
-        if has(MINOR_THIRD) { minorstr }
-        else { basestr }
+        let (mut name,majort,minort) = if has(MINOR_THIRD) { (minorstr,false,true) }
+        else if has(MAJOR_THIRD) { (basestr,true,false) }
+        else { (basestr,false,false) };
+        let majort = majort && has(PERFECT_FIFTH);
+        let minort = minort && has(PERFECT_FIFTH);
+        if !has(MINOR_THIRD) && !has(MAJOR_THIRD){
+            if has(PERFECT_FOURTH) { name.push_str("sus4"); }
+            else if has(MAJOR_SECOND) { name.push_str("sus2"); }
+        }
+        let is_diminished = if has(MINOR_THIRD) && has(DIMINISHED_FIFTH) && !minort{ true }
+        else { false };
+        let is_augmented = if has(MAJOR_THIRD) && has(AUGMENTED_FIFTH) && !majort{ true }
+        else { false };
+        let seventh = if is_diminished && has(DIMINISHED_SEVENTH){
+            name.push_str("o7"); true
+        }
+        else if is_diminished && has(MINOR_SEVENTH){
+            name.push_str("ø"); true
+        }
+        else if is_augmented && has(MINOR_SEVENTH){
+            name.push_str("+7"); true
+        }
+        else if majort && has(MAJOR_SEVENTH){
+            name.push_str("∆"); true
+        }
+        else if majort && has(MINOR_SEVENTH){
+            name.push_str("7"); true
+        }
+        else if minort && has(MINOR_SEVENTH){
+            name.push_str("-"); true
+        }
+        else if minort && has(MAJOR_SEVENTH){
+            name.push_str("min(maj7)"); true
+        }
+        else {
+            if is_diminished { name.push_str("o"); }
+            if is_augmented { name.push_str("+"); }
+            false
+        };
+        // else if
+        // else if !has(MINOR_SEVENTH) && !has(MAJOR_SEVENTH) && !(is_diminished &&)
+        name
     }
 
     pub fn as_string(&self) -> String{
