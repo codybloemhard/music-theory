@@ -31,29 +31,29 @@ pub const HALF_DIMINISHED_SEVENTH_TETRAD: &'static [Note] = &[MINOR_THIRD, DIMIN
 //     (false, "", MINOR_TRIAD),
 //     (true, "+", MAJOR_AUGMENTED_TRIAD),
 //     (false, "o", MINOR_DIMINISHED_TRIAD),
-//     (true, "maj6", MAJOR_SIXTH_TETRAD),
-//     (true, "")
+//     (true, "6", MAJOR_SIXTH_TETRAD),
+//     (true, "6")
 // ];
-//
-//         match self{
-//             Self::Power(_) => format!("{}!", basestr),
-//             Self::Major(_) => format!("{}", basestr),
-//             Self::Minor(_) => format!("{}", minorstr),
-//             Self::MinorAugmented(_) => format!("{}+", minorstr),
-//             Self::MajorAugmented(_) => format!("{}+", basestr),
-//             Self::MinorDiminished(_) => format!("{}o", minorstr),
-//             Self::MajorDiminished(_) => format!("{}o", basestr),
-//             Self::MajorSixth(_) => format!("{}maj6", basestr),
-//             Self::MinorSixth(_) => format!("{}min6", basestr),
-//             Self::DominantSeventh(_) => format!("{}7", basestr),
-//             Self::AugmentedSeventh(_) => format!("{}+7", basestr),
-//             Self::MajorSeventh(_) => format!("{}∆", basestr),
-//             Self::MinorSeventh(_) => format!("{}-", basestr),
-//             Self::MinorMajorSeventh(_) => format!("{}min(maj7)", basestr),
-//             Self::DiminishedSeventh(_) => format!("{}o7", basestr),
-//             Self::HalfDiminishedSeventh(_) => format!("{}ø7", basestr),
-//             Self::Arbitrary(_) => String::new(),
-//         }
+
+        // match self{
+        //     Self::Major(_) => format!("{}", basestr),
+        //     Self::Minor(_) => format!("{}", minorstr),
+        //     Self::MinorAugmented(_) => format!("{}+", minorstr),
+        //     Self::MajorAugmented(_) => format!("{}+", basestr),
+        //     Self::MinorDiminished(_) => format!("{}o", minorstr),
+        //     Self::MajorDiminished(_) => format!("{}o", basestr),
+        //     Self::MajorSixth(_) => format!("{}maj6", basestr),
+        //     Self::MinorSixth(_) => format!("{}min6", basestr),
+        //     Self::DominantSeventh(_) => format!("{}7", basestr),
+        //     Self::AugmentedSeventh(_) => format!("{}+7", basestr),
+        //     Self::MajorSeventh(_) => format!("{}∆", basestr),
+        //     Self::MinorSeventh(_) => format!("{}-", basestr),
+        //     Self::MinorMajorSeventh(_) => format!("{}min(maj7)", basestr),
+        //     Self::DiminishedSeventh(_) => format!("{}o7", basestr),
+        //     Self::HalfDiminishedSeventh(_) => format!("{}ø7", basestr),
+        //     Self::Arbitrary(_) => String::new(),
+        // }
+
 impl Chord{
     pub fn new(intervals: &[Note]) -> Self{
         Chord(intervals.to_owned())
@@ -87,7 +87,13 @@ impl Chord{
         }else{
             minorcase
         };
-        basestr
+        let mut presence = [false; 11];
+        for i in 0..11{
+            presence[i] = self.0.contains(&((i + 1) as Note * SEMI));
+        }
+        let has = |inter: Note| presence[((inter - 1) / SEMI) as usize];
+        if has(MINOR_THIRD) { minorstr }
+        else { basestr }
     }
 
     pub fn as_string(&self) -> String{
@@ -116,17 +122,6 @@ impl RootedChord{
 
 }
 
-pub fn intervals_from_chord(chord: &Notes) -> Notes{
-    if chord.is_empty() { return Vec::new(); }
-    let root = chord[0];
-    let mut intervals = vec![0];
-    for note in chord.iter().skip(1){
-        let diff = note - root;
-        intervals.push(diff);
-    }
-    intervals
-}
-
 pub fn print_chords(chords: &[Chord], sep: &str){
     let len = chords.len();
     if len <= 0 { return; }
@@ -144,7 +139,7 @@ pub fn scale_chords(steps: &Steps, chord_size: usize) -> Vec<Chord>{
         for note in note_iter(0, &steps.0).skip(i).step_by(2).take(chord_size){
             chord.push(note);
         }
-        chords.push(Chord(chord));
+        chords.push(Scale(chord).as_chord());
     }
     chords
 }
@@ -157,11 +152,6 @@ pub fn strs_scale_chords_roman(steps: &Steps, size: usize) -> Vec<String>{
     }
     res
 }
-
-// pub fn scale_chords_intervals(steps: &Steps, size: usize) -> Vec<Notes>{
-//     let chords_notes = scale_chords(steps, size);
-//     fnrs::map(&chords_notes, &intervals_from_chord)
-// }
 
 #[cfg(test)]
 mod tests{

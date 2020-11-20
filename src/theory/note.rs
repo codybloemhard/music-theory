@@ -118,6 +118,20 @@ impl<T: ToRelative> AsRelative for T{
     }
 }
 
+pub trait ToChord{
+    fn to_chord(&self) -> Chord;
+}
+
+pub trait AsChord{
+    fn as_chord(self) -> Chord;
+}
+
+impl<T: ToChord> AsChord for T{
+    fn as_chord(self) -> Chord{
+        self.to_chord()
+    }
+}
+
 impl ToString for RelativeNote{
     fn to_string(&self) -> String{
         let mut res = String::new();
