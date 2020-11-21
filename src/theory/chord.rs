@@ -15,42 +15,33 @@ pub const MAJOR_DIMINISHED_TRIAD: &'static [Note] = &[MAJOR_THIRD, DIMINISHED_FI
 pub const MAJOR_SIXTH_TETRAD: &'static [Note] = &[MAJOR_THIRD, PERFECT_FIFTH, MAJOR_SIXTH];
 pub const MINOR_SIXTH_TETRAD: &'static [Note] = &[MINOR_THIRD, PERFECT_FIFTH, MAJOR_SIXTH];
 pub const DOMINANT_SEVENTH_TETRAD: &'static [Note] = &[MAJOR_THIRD, PERFECT_FIFTH, MINOR_SEVENTH];
-pub const AUGMENTED_SEVENTH_TETRAD: &'static [Note] = &[MAJOR_THIRD, AUGMENTED_FIFTH, MINOR_SEVENTH];
 pub const MAJOR_SEVENTH_TETRAD: &'static [Note] = &[MAJOR_THIRD, PERFECT_FIFTH, MAJOR_SEVENTH];
 pub const MINOR_SEVENTH_TETRAD: &'static [Note] = &[MINOR_THIRD, PERFECT_FIFTH, MINOR_SEVENTH];
 pub const MINOR_MAJOR_SEVENTH_TETRAD: &'static [Note] = &[MINOR_THIRD, PERFECT_FIFTH, MAJOR_SEVENTH];
-pub const DIMINISHED_SEVENTH_TETRAD: &'static [Note] = &[MINOR_THIRD, DIMINISHED_FIFTH, DIMINISHED_SEVENTH];
 pub const HALF_DIMINISHED_SEVENTH_TETRAD: &'static [Note] = &[MINOR_THIRD, DIMINISHED_FIFTH, MINOR_SEVENTH];
+pub const DIMINISHED_SEVENTH_TETRAD: &'static [Note] = &[MINOR_THIRD, DIMINISHED_FIFTH, DIMINISHED_SEVENTH];
+pub const AUGMENTED_SEVENTH_TETRAD: &'static [Note] = &[MAJOR_THIRD, AUGMENTED_FIFTH, MINOR_SEVENTH];
 
-// pub type ChordBook = &[(bool,&str,&'static [Note])];
-//
-// pub const STD_CHORD_BOOK: ChordBook = &[
-//     (true, "", MAJOR_TRIAD),
-//     (false, "", MINOR_TRIAD),
-//     (true, "+", MAJOR_AUGMENTED_TRIAD),
-//     (false, "o", MINOR_DIMINISHED_TRIAD),
-//     (true, "6", MAJOR_SIXTH_TETRAD),
-//     (true, "6")
-// ];
+// (pattern, name, major base string?, extended collection?)
+pub type ChordBook = &'static [(&'static [Note],&'static str,bool,bool)];
 
-        // match self{
-        //     Self::Major(_) => format!("{}", basestr),
-        //     Self::Minor(_) => format!("{}", minorstr),
-        //     Self::MinorAugmented(_) => format!("{}+", minorstr),
-        //     Self::MajorAugmented(_) => format!("{}+", basestr),
-        //     Self::MinorDiminished(_) => format!("{}o", minorstr),
-        //     Self::MajorDiminished(_) => format!("{}o", basestr),
-        //     Self::MajorSixth(_) => format!("{}maj6", basestr),
-        //     Self::MinorSixth(_) => format!("{}min6", basestr),
-        //     Self::DominantSeventh(_) => format!("{}7", basestr),
-        //     Self::AugmentedSeventh(_) => format!("{}+7", basestr),
-        //     Self::MajorSeventh(_) => format!("{}∆", basestr),
-        //     Self::MinorSeventh(_) => format!("{}-", basestr),
-        //     Self::MinorMajorSeventh(_) => format!("{}min(maj7)", basestr),
-        //     Self::DiminishedSeventh(_) => format!("{}o7", basestr),
-        //     Self::HalfDiminishedSeventh(_) => format!("{}ø", basestr),
-        //     Self::Arbitrary(_) => String::new(),
-        // }
+pub const STD_CHORD_BOOK: ChordBook = &[
+    (MAJOR_TRIAD, "", true, false),
+    (MINOR_TRIAD, "", false, false),
+    (MINOR_AUGMENTED_TRIAD, "+", false, true),
+    (MAJOR_AUGMENTED_TRIAD, "+", true, false),
+    (MINOR_DIMINISHED_TRIAD, "o", false, false),
+    (MAJOR_DIMINISHED_TRIAD, "o", true, true),
+    (MINOR_SIXTH_TETRAD, "6", false, false),
+    (MAJOR_SIXTH_TETRAD, "6", true, false),
+    (DOMINANT_SEVENTH_TETRAD, "7", true, false),
+    (MAJOR_SEVENTH_TETRAD, "∆", true, false),
+    (MINOR_SEVENTH_TETRAD, "-", false, false),
+    (MINOR_MAJOR_SEVENTH_TETRAD, "min(maj7)", true, false),
+    (HALF_DIMINISHED_SEVENTH_TETRAD, "o7", false, false),
+    (DIMINISHED_SEVENTH_TETRAD, "ø", false, false),
+    (AUGMENTED_SEVENTH_TETRAD, "+7", true, false),
+];
 
 impl Chord{
     pub fn new(intervals: &[Note]) -> Self{
@@ -85,69 +76,15 @@ impl Chord{
         }else{
             minorcase
         };
-        let mut presence = [false; 11];
-        for i in 0..11{
-            presence[i] = self.0.contains(&((i + 1) as Note * SEMI));
+        let sname = |major_base| if major_base { basestr } else { minorstr };
+        for (pattern,postfix,majorstr,ext) in STD_CHORD_BOOK{
+            if pattern != &self.0 { continue; }
+            if *ext { continue; } // TODO: use
+            let mut name = sname(*majorstr);
+            name.push_str(postfix);
+            return name
         }
-        let mut used = Vec::new();
-        let mut has = |inter: Note, add: bool| { if add { used.push(inter); } presence[((inter - 1) / SEMI) as usize] };
-        let (mut name,majort,minort) = if has(MINOR_THIRD, true) { (minorstr,false,true) }
-        else if has(MAJOR_THIRD, true) { (basestr,true,false) }
-        else { (basestr,false,false) };
-        let majort = majort && has(PERFECT_FIFTH, true);
-        let minort = minort && has(PERFECT_FIFTH, true);
-        if !has(MINOR_THIRD, false) && !has(MAJOR_THIRD, false){
-            if has(PERFECT_FOURTH, true) { name.push_str("sus4"); }
-            else if has(MAJOR_SECOND, true) { name.push_str("sus2"); }
-        }
-        let is_diminished = if has(MINOR_THIRD, true) && has(DIMINISHED_FIFTH, true) && !minort{ true }
-        else { false };
-        let is_augmented = if has(MAJOR_THIRD, true) && has(AUGMENTED_FIFTH, true) && !majort{ true }
-        else { false };
-        let seventh = if is_diminished && has(DIMINISHED_SEVENTH, true){
-            name.push_str("o7"); true
-        }
-        else if is_diminished && has(MINOR_SEVENTH, true){
-            name.push_str("ø"); true
-        }
-        else if is_augmented && has(MINOR_SEVENTH, true){
-            name.push_str("+7"); true
-        }
-        else if majort && has(MAJOR_SEVENTH, true){
-            name.push_str("∆"); true
-        }
-        else if majort && has(MINOR_SEVENTH, true){
-            name.push_str("7"); true
-        }
-        else if minort && has(MINOR_SEVENTH, true){
-            name.push_str("-"); true
-        }
-        else if minort && has(MAJOR_SEVENTH, true){
-            name.push_str("min(maj7)"); true
-        }
-        else {
-            if is_diminished { name.push_str("o"); }
-            if is_augmented { name.push_str("+"); }
-            false
-        };
-        let sixth = if !seventh && (minort || majort) && has(MAJOR_SIXTH, true){
-            name.push_str("6"); true
-        }
-        else { false };
-        let mut extensions = Vec::new();
-        for interval in &self.0{
-            if !used.contains(interval){
-                extensions.push(interval);
-            }
-        }
-        if extensions.len() > 0{
-            name.push_str("(");
-            for interval in extensions{
-                name.push_str(&interval_chord_extension(*interval));
-            }
-            name.push_str(")");
-        }
-        name
+        "X".to_string()
     }
 
     pub fn as_string(&self) -> String{
