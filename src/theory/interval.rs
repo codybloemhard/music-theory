@@ -143,7 +143,7 @@ pub fn interval_name_augdim_short(interval: Note) -> String{
     }
 }
 
-pub fn to_chord_interval(interval: Note) -> String{
+pub fn interval_chord_extension(interval: Note) -> String{
     match interval{
         0 => "R",
         MINOR_SECOND => "♭2",
@@ -151,20 +151,20 @@ pub fn to_chord_interval(interval: Note) -> String{
         MINOR_THIRD => "♭3",
         MAJOR_THIRD => "♮3",
         PERFECT_FOURTH => "♮4",
-        TRITONE => "o",
+        TRITONE => "♭5",
         PERFECT_FIFTH => "♮5",
-        MINOR_SIXTH => "+",
+        MINOR_SIXTH => "♭6",
         MAJOR_SIXTH => "♮6",
         MINOR_SEVENTH => "♭7",
         MAJOR_SEVENTH => "♮7",
-        PERFECT_OCTAVE => "♮8",
+        PERFECT_OCTAVE => "",
         S13 => "♭9",
         S14 => "♮9",
         S15 => "♯9",
         S16 => "♭11",
         S17 => "♮11",
         S18 => "♯11",
-        S19 => "^5",
+        S19 => "♮12",
         S20 => "♭13",
         S21 => "♮13",
         S22 => "♯13",

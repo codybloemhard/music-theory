@@ -29,7 +29,7 @@ impl ToChord for Scale{
     fn to_chord(&self) -> Chord{
         if self.0.is_empty() { return Chord(Vec::new()); }
         let root = self.0[0];
-        let mut intervals = vec![0];
+        let mut intervals = vec![];
         for note in self.0.iter().skip(1){
             let diff = note - root;
             intervals.push(diff);

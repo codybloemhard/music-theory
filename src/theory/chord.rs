@@ -89,39 +89,40 @@ impl Chord{
         for i in 0..11{
             presence[i] = self.0.contains(&((i + 1) as Note * SEMI));
         }
-        let has = |inter: Note| presence[((inter - 1) / SEMI) as usize];
-        let (mut name,majort,minort) = if has(MINOR_THIRD) { (minorstr,false,true) }
-        else if has(MAJOR_THIRD) { (basestr,true,false) }
+        let mut used = Vec::new();
+        let mut has = |inter: Note, add: bool| { if add { used.push(inter); } presence[((inter - 1) / SEMI) as usize] };
+        let (mut name,majort,minort) = if has(MINOR_THIRD, true) { (minorstr,false,true) }
+        else if has(MAJOR_THIRD, true) { (basestr,true,false) }
         else { (basestr,false,false) };
-        let majort = majort && has(PERFECT_FIFTH);
-        let minort = minort && has(PERFECT_FIFTH);
-        if !has(MINOR_THIRD) && !has(MAJOR_THIRD){
-            if has(PERFECT_FOURTH) { name.push_str("sus4"); }
-            else if has(MAJOR_SECOND) { name.push_str("sus2"); }
+        let majort = majort && has(PERFECT_FIFTH, true);
+        let minort = minort && has(PERFECT_FIFTH, true);
+        if !has(MINOR_THIRD, false) && !has(MAJOR_THIRD, false){
+            if has(PERFECT_FOURTH, true) { name.push_str("sus4"); }
+            else if has(MAJOR_SECOND, true) { name.push_str("sus2"); }
         }
-        let is_diminished = if has(MINOR_THIRD) && has(DIMINISHED_FIFTH) && !minort{ true }
+        let is_diminished = if has(MINOR_THIRD, true) && has(DIMINISHED_FIFTH, true) && !minort{ true }
         else { false };
-        let is_augmented = if has(MAJOR_THIRD) && has(AUGMENTED_FIFTH) && !majort{ true }
+        let is_augmented = if has(MAJOR_THIRD, true) && has(AUGMENTED_FIFTH, true) && !majort{ true }
         else { false };
-        let seventh = if is_diminished && has(DIMINISHED_SEVENTH){
+        let seventh = if is_diminished && has(DIMINISHED_SEVENTH, true){
             name.push_str("o7"); true
         }
-        else if is_diminished && has(MINOR_SEVENTH){
+        else if is_diminished && has(MINOR_SEVENTH, true){
             name.push_str("ø"); true
         }
-        else if is_augmented && has(MINOR_SEVENTH){
+        else if is_augmented && has(MINOR_SEVENTH, true){
             name.push_str("+7"); true
         }
-        else if majort && has(MAJOR_SEVENTH){
+        else if majort && has(MAJOR_SEVENTH, true){
             name.push_str("∆"); true
         }
-        else if majort && has(MINOR_SEVENTH){
+        else if majort && has(MINOR_SEVENTH, true){
             name.push_str("7"); true
         }
-        else if minort && has(MINOR_SEVENTH){
+        else if minort && has(MINOR_SEVENTH, true){
             name.push_str("-"); true
         }
-        else if minort && has(MAJOR_SEVENTH){
+        else if minort && has(MAJOR_SEVENTH, true){
             name.push_str("min(maj7)"); true
         }
         else {
@@ -129,8 +130,23 @@ impl Chord{
             if is_augmented { name.push_str("+"); }
             false
         };
-        // else if
-        // else if !has(MINOR_SEVENTH) && !has(MAJOR_SEVENTH) && !(is_diminished &&)
+        let sixth = if !seventh && (minort || majort) && has(MAJOR_SIXTH, true){
+            name.push_str("6"); true
+        }
+        else { false };
+        let mut extensions = Vec::new();
+        for interval in &self.0{
+            if !used.contains(interval){
+                extensions.push(interval);
+            }
+        }
+        if extensions.len() > 0{
+            name.push_str("(");
+            for interval in extensions{
+                name.push_str(&interval_chord_extension(*interval));
+            }
+            name.push_str(")");
+        }
         name
     }
 
