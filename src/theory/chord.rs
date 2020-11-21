@@ -12,6 +12,11 @@ pub const MINOR_AUGMENTED_TRIAD: &'static [Note] = &[MINOR_THIRD, AUGMENTED_FIFT
 pub const MAJOR_AUGMENTED_TRIAD: &'static [Note] = &[MAJOR_THIRD, AUGMENTED_FIFTH];
 pub const MINOR_DIMINISHED_TRIAD: &'static [Note] = &[MINOR_THIRD, DIMINISHED_FIFTH];
 pub const MAJOR_DIMINISHED_TRIAD: &'static [Note] = &[MAJOR_THIRD, DIMINISHED_FIFTH];
+pub const SUS2_TRIAD: &'static [Note] = &[MAJOR_SECOND,PERFECT_FIFTH];
+pub const SUS4_TRIAD: &'static [Note] = &[PERFECT_FOURTH,PERFECT_FIFTH];
+pub const PHRYGIAN_TRIAD: &'static [Note] = &[MINOR_SECOND,PERFECT_FIFTH];
+pub const LYDIAN_TRIAD: &'static [Note] = &[AUGMENTED_FOURTH,PERFECT_FIFTH];
+pub const LOCRIAN_TRIAD: &'static [Note] = &[MINOR_SECOND,DIMINISHED_FIFTH];
 pub const MAJOR_SIXTH_TETRAD: &'static [Note] = &[MAJOR_THIRD, PERFECT_FIFTH, MAJOR_SIXTH];
 pub const MINOR_SIXTH_TETRAD: &'static [Note] = &[MINOR_THIRD, PERFECT_FIFTH, MAJOR_SIXTH];
 pub const DOMINANT_SEVENTH_TETRAD: &'static [Note] = &[MAJOR_THIRD, PERFECT_FIFTH, MINOR_SEVENTH];
@@ -32,6 +37,11 @@ pub const STD_CHORD_BOOK: ChordBook = &[
     (MAJOR_AUGMENTED_TRIAD, "+", true, false),
     (MINOR_DIMINISHED_TRIAD, "o", false, false),
     (MAJOR_DIMINISHED_TRIAD, "o", true, true),
+    (SUS2_TRIAD, "sus2", true, false),
+    (SUS4_TRIAD, "sus4", true, false),
+    (PHRYGIAN_TRIAD, "phrygian", true, false),
+    (LYDIAN_TRIAD, "lydian", true, false),
+    (LOCRIAN_TRIAD, "locian", true, false),
     (MINOR_SIXTH_TETRAD, "6", false, false),
     (MAJOR_SIXTH_TETRAD, "6", true, false),
     (DOMINANT_SEVENTH_TETRAD, "7", true, false),
