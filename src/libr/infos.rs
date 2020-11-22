@@ -1,7 +1,7 @@
 use crate::libr::scales::{get_all_scale_objs,ionian};
 use crate::theory::scale::RelativeTrait;
 use crate::theory::note::{ToRelative};
-use crate::theory::chord::strs_scale_chords_roman;
+use crate::theory::chord::{strs_scale_chords_roman,ChordStyling};
 
 pub fn print_splitted(strings: &Vec<String>, split: &str, end: &str){
     for s in strings{
@@ -61,15 +61,15 @@ pub fn print_even_grid_auto(lines: &Vec<Vec<String>>, end: &str){
     print_even_grid(lines, longest + 1, end);
 }
 
-pub fn print_scales(){
+pub fn print_scales(styling: ChordStyling){
     let objs = get_all_scale_objs();
     for sobj in objs{
         println!("{}", sobj.family_name());
         for mode in sobj.get_modes(){
             println!("{}: {}", mode.mode_nr, mode.mode_name);
             println!("\t{}", mode.steps.to_relative(&ionian::steps()).unwrap().string_ionian_rel());
-            let c3 = strs_scale_chords_roman(&mode.steps, 3);
-            let c4 = strs_scale_chords_roman(&mode.steps, 4);
+            let c3 = strs_scale_chords_roman(&mode.steps, 3, styling);
+            let c4 = strs_scale_chords_roman(&mode.steps, 4, styling);
             print!("\t");
             print_splitted(&c3, ", ", "\n");
             print!("\t");

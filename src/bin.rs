@@ -9,7 +9,7 @@ fn main(){
 }
 
 fn _test2(){
-    println!("{}", RootedChord::from_intervals(A4,&MAJOR_SEVENTH_TETRAD).as_string(true));
+    println!("{}", RootedChord::from_intervals(A4,&MAJOR_SEVENTH_CHORD).as_string(true,ChordStyling::Std));
     for named in &ucns_to_named(&vec![C,CS,E,F,G,GS,AS], 3){
         print!("{}, ", named.to_string());
     }
@@ -19,7 +19,7 @@ fn _test2(){
     for modeobj in find_scale_superseq(&vec![A,B,C,D].as_steps()){
         println!("{}", modeobj);
     }
-    print_scales();
+    print_scales(ChordStyling::Extended);
     let subset = vec![C,E,G,B];
     print!("Scales which are an superset to {{");
     for n in &subset{
