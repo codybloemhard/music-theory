@@ -42,8 +42,8 @@ pub const STD_CHORD_BOOK: ChordBook = &[
     (MAJOR_AUGMENTED, "+", true, false),
     (MINOR_DIMINISHED, "°", false, false),
     (MAJOR_DIMINISHED, "°", true, true),
-    (SUS2, "sus2", true, false),
-    (SUS4, "sus4", true, false),
+    // (SUS2, "sus2", true, false),
+    // (SUS4, "sus4", true, false),
     (SUPER_SUS, "ssus", true, true),
     (PHRYGIAN, "phry", true, false),
     (LYDIAN, "lyd", true, false),
@@ -115,6 +115,37 @@ impl Chord{
             let mut name = sname(*majorstr);
             name.push_str(postfix);
             return name
+        }
+        let mut name: String;
+        'outer: for (pattern,postfix,majorstr,ext) in STD_CHORD_BOOK{
+            if *ext && style == ChordStyling::Std { continue; }
+            let mut is_susable = false;
+            for int in *pattern{
+                if (int == &MINOR_THIRD || int == &MAJOR_THIRD){
+                    if is_susable { continue 'outer; }
+                    is_susable = true;
+                }
+            }
+            if !is_susable { continue 'outer; }
+            let mut is_sus2 = false;
+            let mut is_sus4 = false;
+            for int in &self.0{
+                if int == &MINOR_THIRD || int == &MAJOR_THIRD { continue 'outer; }
+                if int == &MAJOR_SECOND {
+                    if is_sus4 { continue 'outer; }
+                    is_sus2 = true;
+                }
+                if int == &PERFECT_FOURTH {
+                    if is_sus2 { continue 'outer; }
+                    is_sus4 = true;
+                }
+            }
+            if !(is_sus2 || is_sus4) { continue; }
+            name = sname(*majorstr);
+            name.push_str(postfix);
+            if is_sus2 { name.push_str("sus2"); }
+            if is_sus4 { name.push_str("sus4"); }
+            return name;
         }
         return spelled_out(basestr);
     }
