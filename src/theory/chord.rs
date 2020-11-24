@@ -42,8 +42,6 @@ pub const STD_CHORD_BOOK: ChordBook = &[
     (MAJOR_AUGMENTED, "+", true, false),
     (MINOR_DIMINISHED, "°", false, false),
     (MAJOR_DIMINISHED, "°", true, true),
-    // (SUS2, "sus2", true, false),
-    // (SUS4, "sus4", true, false),
     (SUPER_SUS, "ssus", true, true),
     (PHRYGIAN, "phry", true, false),
     (LYDIAN, "lyd", true, false),
@@ -129,44 +127,36 @@ impl Chord{
             name = sname(*majorstr);
             name.push_str(postfix);
         }
-        if baselen > 0 {
+        let ext_name = |bl,mut name: String|{
+            if bl >= self.0.len() { return name; }
             name.push_str("(");
-            self.0.iter().skip(baselen).for_each(|int|name.push_str(&interval_chord_extension(*int)));
+            self.0.iter().skip(bl).for_each(|int|name.push_str(&interval_chord_extension(*int)));
             name.push_str(")");
-            return name;
+            name
+        };
+        if baselen > 0 { return ext_name(baselen,name); }
+        baselen = 0;
+        for (pattern,postfix,_,ext) in STD_CHORD_BOOK{
+            if *ext && style == ChordStyling::Std { continue; }
+            if self.0.len() < pattern.len() { continue; }
+            if baselen >= pattern.len() { continue; }
+            let base = self.0.iter().take(pattern.len()).map(|x|*x).collect::<Vec<Note>>();
+            let res = pattern.iter().zip(base.iter()).fold(10, |res,(ba,se)|{
+                if res == 0 { 0 }
+                else {
+                    if se == ba { 10 }
+                    else if se == &MAJOR_SECOND && (ba == &MINOR_THIRD || ba == &MAJOR_THIRD) { 2 }
+                    else if se == &PERFECT_FOURTH && (ba == &MINOR_THIRD || ba == &MAJOR_THIRD) { 4 }
+                    else { 0 }.min(res)
+                }
+            });
+            if res == 0 || res == 10 { continue; }
+            baselen = pattern.len();
+            name = sname(true);
+            name.push_str(postfix);
+            name.push_str(&format!("sus{}", res));
         }
-        // let mut sussize = 0;
-        // 'outer: for (pattern,postfix,majorstr,ext) in STD_CHORD_BOOK{
-        //     if *ext && style == ChordStyling::Std { continue; }
-        //     let mut is_susable = false;
-        //     for int in *pattern{
-        //         if (int == &MINOR_THIRD || int == &MAJOR_THIRD){
-        //             if is_susable { continue 'outer; }
-        //             is_susable = true;
-        //         }
-        //     }
-        //     if !is_susable { continue 'outer; }
-        //     let mut is_sus2 = false;
-        //     let mut is_sus4 = false;
-        //     for int in &self.0{
-        //         if int == &MINOR_THIRD || int == &MAJOR_THIRD { continue 'outer; }
-        //         if int == &MAJOR_SECOND {
-        //             if is_sus4 { continue 'outer; }
-        //             is_sus2 = true;
-        //         }
-        //         if int == &PERFECT_FOURTH {
-        //             if is_sus2 { continue 'outer; }
-        //             is_sus4 = true;
-        //         }
-        //     }
-        //     if !(is_sus2 || is_sus4) || sussize >= pattern.len() { continue; }
-        //     sussize = pattern.len();
-        //     name = sname(majorstr.clone());
-        //     name.push_str(postfix);
-        //     if is_sus2 { name.push_str("sus2"); }
-        //     if is_sus4 { name.push_str("sus4"); }
-        // }
-        // if sussize > 0 { return name; }
+        if baselen > 0 { return ext_name(baselen,name); }
         return spelled_out(basestr);
     }
 
