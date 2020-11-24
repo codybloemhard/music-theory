@@ -58,8 +58,8 @@ pub const STD_CHORD_BOOK: ChordBook = &[
     (MINOR_SEVENTH_CHORD, "-", false, false),
     (DOMINANT_SEVENTH, "7", true, false),
     (MINOR_MAJOR_SEVENTH, "-(maj7)", true, false),
-    (HALF_DIMINISHED_SEVENTH, "°7", false, false),
-    (DIMINISHED_SEVENTH_CHORD, "ø", false, false),
+    (HALF_DIMINISHED_SEVENTH, "ø", false, false),
+    (DIMINISHED_SEVENTH_CHORD, "°7", false, false),
     (AUGMENTED_SEVENTH_CHORD, "+7", true, false),
 ];
 
@@ -108,7 +108,7 @@ impl Chord{
         minorcase.push_str("m");
         let minorstr = if lower{ lowercase }
         else{ minorcase };
-        let sname = |major_base| if major_base { basestr.clone() } else { minorstr };
+        let sname = |major_base| if major_base { basestr.clone() } else { minorstr.clone() };
         for (pattern,postfix,majorstr,ext) in STD_CHORD_BOOK{
             if pattern != &self.0 { continue; }
             if *ext && style == ChordStyling::Std { continue; }
@@ -116,37 +116,57 @@ impl Chord{
             name.push_str(postfix);
             return name
         }
-        let mut name: String;
-        'outer: for (pattern,postfix,majorstr,ext) in STD_CHORD_BOOK{
+        let mut name = String::new();
+        // first base chords
+        let mut baselen = 0;
+        for (pattern,postfix,majorstr,ext) in STD_CHORD_BOOK{
             if *ext && style == ChordStyling::Std { continue; }
-            let mut is_susable = false;
-            for int in *pattern{
-                if (int == &MINOR_THIRD || int == &MAJOR_THIRD){
-                    if is_susable { continue 'outer; }
-                    is_susable = true;
-                }
-            }
-            if !is_susable { continue 'outer; }
-            let mut is_sus2 = false;
-            let mut is_sus4 = false;
-            for int in &self.0{
-                if int == &MINOR_THIRD || int == &MAJOR_THIRD { continue 'outer; }
-                if int == &MAJOR_SECOND {
-                    if is_sus4 { continue 'outer; }
-                    is_sus2 = true;
-                }
-                if int == &PERFECT_FOURTH {
-                    if is_sus2 { continue 'outer; }
-                    is_sus4 = true;
-                }
-            }
-            if !(is_sus2 || is_sus4) { continue; }
+            if self.0.len() <= pattern.len() { continue; }
+            if baselen >= pattern.len() { continue; }
+            let base = self.0.iter().take(pattern.len()).map(|x|*x).collect::<Vec<Note>>();
+            if &base != pattern { continue; }
+            baselen = pattern.len();
             name = sname(*majorstr);
             name.push_str(postfix);
-            if is_sus2 { name.push_str("sus2"); }
-            if is_sus4 { name.push_str("sus4"); }
+        }
+        if baselen > 0 {
+            name.push_str("(");
+            self.0.iter().skip(baselen).for_each(|int|name.push_str(&interval_chord_extension(*int)));
+            name.push_str(")");
             return name;
         }
+        // let mut sussize = 0;
+        // 'outer: for (pattern,postfix,majorstr,ext) in STD_CHORD_BOOK{
+        //     if *ext && style == ChordStyling::Std { continue; }
+        //     let mut is_susable = false;
+        //     for int in *pattern{
+        //         if (int == &MINOR_THIRD || int == &MAJOR_THIRD){
+        //             if is_susable { continue 'outer; }
+        //             is_susable = true;
+        //         }
+        //     }
+        //     if !is_susable { continue 'outer; }
+        //     let mut is_sus2 = false;
+        //     let mut is_sus4 = false;
+        //     for int in &self.0{
+        //         if int == &MINOR_THIRD || int == &MAJOR_THIRD { continue 'outer; }
+        //         if int == &MAJOR_SECOND {
+        //             if is_sus4 { continue 'outer; }
+        //             is_sus2 = true;
+        //         }
+        //         if int == &PERFECT_FOURTH {
+        //             if is_sus2 { continue 'outer; }
+        //             is_sus4 = true;
+        //         }
+        //     }
+        //     if !(is_sus2 || is_sus4) || sussize >= pattern.len() { continue; }
+        //     sussize = pattern.len();
+        //     name = sname(majorstr.clone());
+        //     name.push_str(postfix);
+        //     if is_sus2 { name.push_str("sus2"); }
+        //     if is_sus4 { name.push_str("sus4"); }
+        // }
+        // if sussize > 0 { return name; }
         return spelled_out(basestr);
     }
 

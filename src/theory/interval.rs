@@ -18,6 +18,17 @@ pub const MINOR_SEVENTH: Note = SEMI * 10;
 pub const MAJOR_SEVENTH: Note = SEMI * 11;
 pub const PERFECT_OCTAVE: Note = SEMI * 12;
 
+pub const FLAT_NINETH: Note = SEMI * 13;
+pub const NINETH: Note = SEMI * 14;
+pub const SHARP_NINETH: Note = SEMI * 15;
+pub const FLAT_ELEVENTH: Note = SEMI * 16;
+pub const ELEVENTH: Note = SEMI * 17;
+pub const SHARP_ELEVENTH: Note = SEMI * 18;
+pub const TWELVETH: Note = SEMI * 19;
+pub const FLAT_THIRTEENTH: Note = SEMI * 20;
+pub const THIRTEENTH: Note = SEMI * 21;
+pub const SHARP_THIRTEENTH: Note = SEMI * 22;
+
 pub const DIMINISHED_SECOND: Note = 0;
 pub const AUGMENTED_UNISON: Note = SEMI;
 pub const DIMINISHED_THIRD: Note = WHOLE;
