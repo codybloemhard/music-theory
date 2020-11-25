@@ -1,5 +1,5 @@
 pub const RNVALS: [usize; 13] = [1000,900,500,400,100,90,50,40,10,9,5,4,1];
-pub const RNNAME: [&'static str; 13] = ["M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"];
+pub const RNNAME: [&str; 13] = ["M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"];
 
 pub fn to_roman_num(mut dec: usize) -> String{
     let mut res = String::new();

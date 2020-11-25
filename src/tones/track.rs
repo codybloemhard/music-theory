@@ -1,5 +1,4 @@
 use std::i16;
-use hound;
 
 pub struct Track{
     samples: Vec<f32>,
@@ -20,14 +19,16 @@ impl Track{
         self.samples.len() / self.channels
     }
 
+    pub fn is_empty(&self) -> bool{
+        self.samples.is_empty()
+    }
+
     pub fn sample_rate(&self) -> usize{
         self.sample_rate
     }
 
     pub fn enlongate(&mut self, extra: usize){
-        for _ in 0..extra*self.channels{
-            self.samples.push(0.0);
-        }
+        self.samples.resize(self.len() + (extra * self.channels), 0.0);
     }
 
     pub fn set_sample(&mut self, sample: f32, pos: usize, channel: usize){

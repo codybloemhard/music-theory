@@ -56,11 +56,16 @@ impl Relative{
 
 pub trait NoteSequence{
     fn len(&self) -> usize;
+    fn is_empty(&self) -> bool;
 }
 
 impl NoteSequence for Steps{
     fn len(&self) -> usize{
         self.0.len()
+    }
+
+    fn is_empty(&self) -> bool{
+        self.0.is_empty()
     }
 }
 
@@ -68,17 +73,29 @@ impl NoteSequence for Scale{
     fn len(&self) -> usize{
         self.0.len()
     }
+
+    fn is_empty(&self) -> bool{
+        self.0.is_empty()
+    }
 }
 
 impl NoteSequence for Chord{
     fn len(&self) -> usize{
         self.0.len()
     }
+
+    fn is_empty(&self) -> bool{
+        self.0.is_empty()
+    }
 }
 
 impl NoteSequence for Relative{
     fn len(&self) -> usize{
         self.0.len()
+    }
+
+    fn is_empty(&self) -> bool{
+        self.0.is_empty()
     }
 }
 
@@ -137,12 +154,12 @@ impl ToString for RelativeNote{
         let mut res = String::new();
         match self{
             RelativeNote::Natural => {  },
-            RelativeNote::Blank => { res.push_str("?"); },
+            RelativeNote::Blank => { res.push('?'); },
             RelativeNote::Sharp(i) => {
-                for _ in 0..*i{ res.push_str("♯"); }
+                for _ in 0..*i{ res.push('♯'); }
             },
             RelativeNote::Flat(i) => {
-                for _ in 0..*i{ res.push_str("♭"); }
+                for _ in 0..*i{ res.push('♭'); }
             }
         }
         res
@@ -237,7 +254,7 @@ impl AsUCNS for Scale{
     }
 }
 
-pub fn ucns_to_named(ucns: &UCNS, starting_rank: Rank) -> Vec<NamedNote>{
+pub fn ucns_to_named(ucns: &[UCN], starting_rank: Rank) -> Vec<NamedNote>{
     if ucns.is_empty() { return Vec::new(); }
     let mut rank = starting_rank;
     let start_note = ucns[0].to_named(rank);

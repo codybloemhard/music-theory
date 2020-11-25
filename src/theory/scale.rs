@@ -255,7 +255,7 @@ impl<T: ModeTrait + NoteSequence> ModeIteratorSpawner<T> for T{
         ModeIterator{
             scale: self,
             current: 0,
-            len: len,
+            len,
         }
     }
 }

@@ -6,33 +6,33 @@ use crate::utils::roman_numerals::to_roman_num;
 pub const NUM_SUPS: [char; 10] = ['⁰', 'ⁱ', '²', '³', '⁴', '⁵', '⁶', '⁷', '⁸', '⁹'];
 pub const NUM_SUBS: [char; 10] = ['₀', '₁', '₂', '₃', '₄', '₅', '₆', '₇', '₈', '₉'];
 
-pub const MAJOR: &'static [Note] = &[MAJOR_THIRD, PERFECT_FIFTH];
-pub const MINOR: &'static [Note] = &[MINOR_THIRD, PERFECT_FIFTH];
-pub const MINOR_AUGMENTED: &'static [Note] = &[MINOR_THIRD, AUGMENTED_FIFTH];
-pub const MAJOR_AUGMENTED: &'static [Note] = &[MAJOR_THIRD, AUGMENTED_FIFTH];
-pub const MINOR_DIMINISHED: &'static [Note] = &[MINOR_THIRD, DIMINISHED_FIFTH];
-pub const MAJOR_DIMINISHED: &'static [Note] = &[MAJOR_THIRD, DIMINISHED_FIFTH];
-pub const SUS2: &'static [Note] = &[MAJOR_SECOND,PERFECT_FIFTH];
-pub const SUS4: &'static [Note] = &[PERFECT_FOURTH,PERFECT_FIFTH];
-pub const SUPER_SUS: &'static [Note] = &[MAJOR_SECOND,PERFECT_FOURTH];
-pub const PHRYGIAN: &'static [Note] = &[MINOR_SECOND,PERFECT_FIFTH];
-pub const LYDIAN: &'static [Note] = &[AUGMENTED_FOURTH,PERFECT_FIFTH];
-pub const LOCRIAN2: &'static [Note] = &[MINOR_SECOND,DIMINISHED_FIFTH];
-pub const LOCRIAN4: &'static [Note] = &[PERFECT_FOURTH,DIMINISHED_FIFTH];
-pub const SUPER_LOCRIAN: &'static [Note] = &[MINOR_SECOND,PERFECT_FOURTH,DIMINISHED_FIFTH];
-pub const ITALIAN_SIXTH: &'static [Note] = &[MAJOR_THIRD,MINOR_SEVENTH];
-pub const FRENCH_SIXTH: &'static [Note] = &[MAJOR_THIRD,TRITONE,MINOR_SEVENTH];
-pub const MAJOR_SIXTH_CHORD: &'static [Note] = &[MAJOR_THIRD, PERFECT_FIFTH, MAJOR_SIXTH];
-pub const MINOR_SIXTH_CHORD: &'static [Note] = &[MINOR_THIRD, PERFECT_FIFTH, MAJOR_SIXTH];
-pub const MAJOR_SEVENTH_CHORD: &'static [Note] = &[MAJOR_THIRD, PERFECT_FIFTH, MAJOR_SEVENTH];
-pub const MINOR_SEVENTH_CHORD: &'static [Note] = &[MINOR_THIRD, PERFECT_FIFTH, MINOR_SEVENTH];
-pub const DOMINANT_SEVENTH: &'static [Note] = &[MAJOR_THIRD, PERFECT_FIFTH, MINOR_SEVENTH];
-pub const MINOR_MAJOR_SEVENTH: &'static [Note] = &[MINOR_THIRD, PERFECT_FIFTH, MAJOR_SEVENTH];
-pub const HALF_DIMINISHED_SEVENTH: &'static [Note] = &[MINOR_THIRD, DIMINISHED_FIFTH, MINOR_SEVENTH];
-pub const DIMINISHED_SEVENTH_CHORD: &'static [Note] = &[MINOR_THIRD, DIMINISHED_FIFTH, DIMINISHED_SEVENTH];
-pub const AUGMENTED_SEVENTH_CHORD: &'static [Note] = &[MAJOR_THIRD, AUGMENTED_FIFTH, MINOR_SEVENTH];
-pub const MU_CHORD: &'static [Note] = &[MAJOR_SECOND,MAJOR_THIRD,PERFECT_FIFTH];
-pub const SIX_NINE_CHORD: &'static [Note] = &[MAJOR_THIRD,PERFECT_FIFTH,MAJOR_SIXTH,NINETH];
+pub const MAJOR: &[Note] = &[MAJOR_THIRD, PERFECT_FIFTH];
+pub const MINOR: &[Note] = &[MINOR_THIRD, PERFECT_FIFTH];
+pub const MINOR_AUGMENTED: &[Note] = &[MINOR_THIRD, AUGMENTED_FIFTH];
+pub const MAJOR_AUGMENTED: &[Note] = &[MAJOR_THIRD, AUGMENTED_FIFTH];
+pub const MINOR_DIMINISHED: &[Note] = &[MINOR_THIRD, DIMINISHED_FIFTH];
+pub const MAJOR_DIMINISHED: &[Note] = &[MAJOR_THIRD, DIMINISHED_FIFTH];
+pub const SUS2: &[Note] = &[MAJOR_SECOND,PERFECT_FIFTH];
+pub const SUS4: &[Note] = &[PERFECT_FOURTH,PERFECT_FIFTH];
+pub const SUPER_SUS: &[Note] = &[MAJOR_SECOND,PERFECT_FOURTH];
+pub const PHRYGIAN: &[Note] = &[MINOR_SECOND,PERFECT_FIFTH];
+pub const LYDIAN: &[Note] = &[AUGMENTED_FOURTH,PERFECT_FIFTH];
+pub const LOCRIAN2: &[Note] = &[MINOR_SECOND,DIMINISHED_FIFTH];
+pub const LOCRIAN4: &[Note] = &[PERFECT_FOURTH,DIMINISHED_FIFTH];
+pub const SUPER_LOCRIAN: &[Note] = &[MINOR_SECOND,PERFECT_FOURTH,DIMINISHED_FIFTH];
+pub const ITALIAN_SIXTH: &[Note] = &[MAJOR_THIRD,MINOR_SEVENTH];
+pub const FRENCH_SIXTH: &[Note] = &[MAJOR_THIRD,TRITONE,MINOR_SEVENTH];
+pub const MAJOR_SIXTH_CHORD: &[Note] = &[MAJOR_THIRD, PERFECT_FIFTH, MAJOR_SIXTH];
+pub const MINOR_SIXTH_CHORD: &[Note] = &[MINOR_THIRD, PERFECT_FIFTH, MAJOR_SIXTH];
+pub const MAJOR_SEVENTH_CHORD: &[Note] = &[MAJOR_THIRD, PERFECT_FIFTH, MAJOR_SEVENTH];
+pub const MINOR_SEVENTH_CHORD: &[Note] = &[MINOR_THIRD, PERFECT_FIFTH, MINOR_SEVENTH];
+pub const DOMINANT_SEVENTH: &[Note] = &[MAJOR_THIRD, PERFECT_FIFTH, MINOR_SEVENTH];
+pub const MINOR_MAJOR_SEVENTH: &[Note] = &[MINOR_THIRD, PERFECT_FIFTH, MAJOR_SEVENTH];
+pub const HALF_DIMINISHED_SEVENTH: &[Note] = &[MINOR_THIRD, DIMINISHED_FIFTH, MINOR_SEVENTH];
+pub const DIMINISHED_SEVENTH_CHORD: &[Note] = &[MINOR_THIRD, DIMINISHED_FIFTH, DIMINISHED_SEVENTH];
+pub const AUGMENTED_SEVENTH_CHORD: &[Note] = &[MAJOR_THIRD, AUGMENTED_FIFTH, MINOR_SEVENTH];
+pub const MU_CHORD: &[Note] = &[MAJOR_SECOND,MAJOR_THIRD,PERFECT_FIFTH];
+pub const SIX_NINE_CHORD: &[Note] = &[MAJOR_THIRD,PERFECT_FIFTH,MAJOR_SIXTH,NINETH];
 
 // (pattern, name, major base string?, extended collection?)
 pub type ChordBook = &'static [(&'static [Note],&'static str,bool,bool)];
@@ -227,5 +227,4 @@ pub fn strs_scale_chords_roman(steps: &Steps, size: usize, styling: ChordStyling
 
 #[cfg(test)]
 mod tests{
-    use super::*;
 }

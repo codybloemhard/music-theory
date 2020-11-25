@@ -1,6 +1,5 @@
 use std::f32::consts::PI;
 use std::i16;
-use hound;
 
 pub mod tones;
 pub mod constants;
