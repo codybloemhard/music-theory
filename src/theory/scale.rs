@@ -1,5 +1,6 @@
 use super::note::*;
 use super::interval::{PERFECT_OCTAVE,SEMI};
+use std::cmp::Ordering;
 
 pub type Mode = u8;
 
@@ -64,7 +65,7 @@ pub fn next_mode(mut scale: Notes) -> Notes{
 }
 
 pub fn mode_of(mut scale: Notes, mut mode: Mode) -> Notes{
-    mode = mode % scale.len() as u8;
+    mode %= scale.len() as u8;
     for _ in 0..mode{
         scale = next_mode(scale)
     }
@@ -108,15 +109,17 @@ impl ModeTrait for Steps{
 impl ToRelative for Steps{
     fn to_relative(&self, reference: &Steps) -> Option<Relative>{
         if self.0.len() != reference.0.len() { return None; }
-        if self.0.len() == 0 { return None; }
+        if self.0.is_empty() { return None; }
         let mut acc_a = 0;
         let mut acc_b = 0;
         let mut res = Vec::new();
         for i in 0..self.0.len(){
             let diff = (acc_a - acc_b) / SEMI;
-            let rn = if diff > 0 { RelativeNote::Sharp(diff) }
-            else if diff < 0 { RelativeNote::Flat(-diff) }
-            else { RelativeNote::Natural };
+            let rn = match diff.cmp(&0){
+                Ordering::Greater => { RelativeNote::Sharp(diff) },
+                Ordering::Less => { RelativeNote::Flat(-diff) },
+                Ordering::Equal => { RelativeNote::Natural },
+            };
             res.push(rn);
             acc_a += self.0[i];
             acc_b += reference.0[i];
@@ -194,7 +197,7 @@ pub fn notes_to_octave_scale(scale: &Scale) -> Notes{
 }
 
 pub struct ScaleIterator<'a>{
-    scale: &'a Notes,
+    scale: &'a [Note],
     current: usize,
     len: usize,
     root: Note,
@@ -213,7 +216,7 @@ impl<'a> Iterator for ScaleIterator<'a>{
     }
 }
 
-pub fn note_iter(root: Note, scale: &Notes) -> ScaleIterator{
+pub fn note_iter(root: Note, scale: &[Note]) -> ScaleIterator{
     ScaleIterator{
         scale,
         current: 0,

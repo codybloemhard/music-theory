@@ -1,4 +1,4 @@
-pub fn both_differences<T>(a: &Vec<T>, b: &Vec<T>) -> (Vec<T>,Vec<T>)
+pub fn both_differences<T>(a: &[T], b: &[T]) -> (Vec<T>,Vec<T>)
     where
         T: std::cmp::PartialEq + std::marker::Copy
 {

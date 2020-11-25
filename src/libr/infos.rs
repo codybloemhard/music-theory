@@ -3,14 +3,14 @@ use crate::theory::scale::RelativeTrait;
 use crate::theory::note::{ToRelative};
 use crate::theory::chord::{strs_scale_chords_roman,ChordStyling};
 
-pub fn print_splitted(strings: &Vec<String>, split: &str, end: &str){
+pub fn print_splitted(strings: &[String], split: &str, end: &str){
     for s in strings{
         print!("{}{}", s, split);
     }
     print!("{}", end);
 }
 
-pub fn print_even(strings: &Vec<String>, spaces: usize, end: &str){
+pub fn print_even(strings: &[String], spaces: usize, end: &str){
     for string in strings{
         let len = string.chars().count();
         if len < spaces{
@@ -31,7 +31,7 @@ pub fn print_even(strings: &Vec<String>, spaces: usize, end: &str){
     print!("{}", end);
 }
 
-pub fn print_even_auto(strings: &Vec<String>, end: &str){
+pub fn print_even_auto(strings: &[String], end: &str){
     let mut longest = 0;
     for string in strings{
         let len = string.chars().count();
@@ -42,13 +42,13 @@ pub fn print_even_auto(strings: &Vec<String>, end: &str){
     print_even(strings, longest + 1, end);
 }
 
-pub fn print_even_grid(lines: &Vec<Vec<String>>, spaces: usize, end: &str){
+pub fn print_even_grid(lines: &[Vec<String>], spaces: usize, end: &str){
     for line in lines{
         print_even(line, spaces, end);
     }
 }
 
-pub fn print_even_grid_auto(lines: &Vec<Vec<String>>, end: &str){
+pub fn print_even_grid_auto(lines: &[Vec<String>], end: &str){
     let mut longest = 0;
     for line in lines{
         for string in line{

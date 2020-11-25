@@ -31,6 +31,8 @@ pub const MINOR_MAJOR_SEVENTH: &'static [Note] = &[MINOR_THIRD, PERFECT_FIFTH, M
 pub const HALF_DIMINISHED_SEVENTH: &'static [Note] = &[MINOR_THIRD, DIMINISHED_FIFTH, MINOR_SEVENTH];
 pub const DIMINISHED_SEVENTH_CHORD: &'static [Note] = &[MINOR_THIRD, DIMINISHED_FIFTH, DIMINISHED_SEVENTH];
 pub const AUGMENTED_SEVENTH_CHORD: &'static [Note] = &[MAJOR_THIRD, AUGMENTED_FIFTH, MINOR_SEVENTH];
+pub const MU_CHORD: &'static [Note] = &[MAJOR_SECOND,MAJOR_THIRD,PERFECT_FIFTH];
+pub const SIX_NINE_CHORD: &'static [Note] = &[MAJOR_THIRD,PERFECT_FIFTH,MAJOR_SIXTH,NINETH];
 
 // (pattern, name, major base string?, extended collection?)
 pub type ChordBook = &'static [(&'static [Note],&'static str,bool,bool)];
@@ -59,6 +61,8 @@ pub const STD_CHORD_BOOK: ChordBook = &[
     (HALF_DIMINISHED_SEVENTH, "ø", false, false),
     (DIMINISHED_SEVENTH_CHORD, "°7", false, false),
     (AUGMENTED_SEVENTH_CHORD, "+7", true, false),
+    (MU_CHORD, "μ", true, true),
+    (SIX_NINE_CHORD, "6/9", true, false),
 ];
 
 #[derive(PartialEq,Eq,Clone,Copy)]
@@ -83,13 +87,14 @@ impl Chord{
     }
 
     pub fn quality(&self, basestr: String, lower: bool, style: ChordStyling) -> String{
+        // Just print intervals
         let spelled_out = |basestr: String|{
             let mut spelled_out = basestr;
-            spelled_out.push_str("[");
+            spelled_out.push('[');
             for int in &self.0{
                 spelled_out.push_str(&interval_chord_extension(*int));
             }
-            spelled_out.push_str("]");
+            spelled_out.push(']');
             spelled_out
         };
         if style == ChordStyling::SpelledOut{
@@ -103,10 +108,11 @@ impl Chord{
         }
         let mut minorcase = String::new();
         minorcase.push_str(&basestr);
-        minorcase.push_str("m");
+        minorcase.push('m');
         let minorstr = if lower{ lowercase }
         else{ minorcase };
         let sname = |major_base| if major_base { basestr.clone() } else { minorstr.clone() };
+        // Find exact matches in the book
         for (pattern,postfix,majorstr,ext) in STD_CHORD_BOOK{
             if pattern != &self.0 { continue; }
             if *ext && style == ChordStyling::Std { continue; }
@@ -114,14 +120,14 @@ impl Chord{
             name.push_str(postfix);
             return name
         }
+        // Extended chords
         let mut name = String::new();
-        // first base chords
         let mut baselen = 0;
         for (pattern,postfix,majorstr,ext) in STD_CHORD_BOOK{
             if *ext && style == ChordStyling::Std { continue; }
             if self.0.len() <= pattern.len() { continue; }
             if baselen >= pattern.len() { continue; }
-            let base = self.0.iter().take(pattern.len()).map(|x|*x).collect::<Vec<Note>>();
+            let base = self.0.iter().take(pattern.len()).copied().collect::<Vec<Note>>();
             if &base != pattern { continue; }
             baselen = pattern.len();
             name = sname(*majorstr);
@@ -129,18 +135,19 @@ impl Chord{
         }
         let ext_name = |bl,mut name: String|{
             if bl >= self.0.len() { return name; }
-            name.push_str("(");
+            name.push('(');
             self.0.iter().skip(bl).for_each(|int|name.push_str(&interval_chord_extension(*int)));
-            name.push_str(")");
+            name.push(')');
             name
         };
         if baselen > 0 { return ext_name(baselen,name); }
+        //Sus chords, maybe extended
         baselen = 0;
         for (pattern,postfix,_,ext) in STD_CHORD_BOOK{
             if *ext && style == ChordStyling::Std { continue; }
             if self.0.len() < pattern.len() { continue; }
             if baselen >= pattern.len() { continue; }
-            let base = self.0.iter().take(pattern.len()).map(|x|*x).collect::<Vec<Note>>();
+            let base = self.0.iter().take(pattern.len()).copied().collect::<Vec<Note>>();
             let res = pattern.iter().zip(base.iter()).fold(10, |res,(ba,se)|{
                 if res == 0 { 0 }
                 else {
@@ -157,7 +164,8 @@ impl Chord{
             name.push_str(&format!("sus{}", res));
         }
         if baselen > 0 { return ext_name(baselen,name); }
-        return spelled_out(basestr);
+        // Default to spelling out
+        spelled_out(basestr)
     }
 
     pub fn as_string(&self, styling: ChordStyling) -> String{
@@ -188,7 +196,7 @@ impl RootedChord{
 
 pub fn print_chords(chords: &[Chord], sep: &str, styling: ChordStyling){
     let len = chords.len();
-    if len <= 0 { return; }
+    if len == 0 { return; }
     for chord in chords.iter().take(len - 1){
         print!("{}{}", chord.as_string(styling), sep);
     }

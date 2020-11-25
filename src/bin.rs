@@ -1,6 +1,6 @@
 extern crate music_gen;
 use music_gen::theory::*;
-use music_gen::libr::scales::*;
+// use music_gen::libr::scales::*;
 use music_gen::libr::infos::*;
 use music_gen::query::*;
 

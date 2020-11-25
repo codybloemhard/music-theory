@@ -393,10 +393,7 @@ impl NamedNote{
     }
 
     pub fn is_chromatic(self) -> bool{
-        match self{
-            Self::MicroTonal(_) => false,
-            _ => true,
-        }
+        !matches!(self, Self::MicroTonal(_))
     }
 
     pub fn as_string(self) -> String{
@@ -446,11 +443,11 @@ pub fn to_pitch(note: Note) -> f32{
     (2.0f32).powf(x as f32 / PERFECT_OCTAVE as f32) * 440.0
 }
 
-pub fn print_notes(scale: &Notes, seperator: &str){
+pub fn print_notes(scale: &[Note], seperator: &str){
     if scale.is_empty() { return; }
     let lenm1 = scale.len() - 1;
-    for i in 0..lenm1{
-        print!("{}{}", NamedNote::from_note(scale[i]).as_string(), seperator);
+    for note in scale.iter().take(lenm1){
+        print!("{}{}", NamedNote::from_note(*note).as_string(), seperator);
     }
     println!("{}", NamedNote::from_note(scale[lenm1]).as_string());
 }
@@ -460,6 +457,6 @@ mod tests{
     use super::*;
     #[test]
     fn test_to_pitch(){
-        assert_eq!(to_pitch(NamedNote::A(4).to_note()), 440.0);
+        assert_eq!(to_pitch(NamedNote::A(4).to_note()).round() as i32, 440);
     }
 }

@@ -27,6 +27,11 @@ impl RomanNumeralIter{
         }
     }
 }
+impl Default for RomanNumeralIter {
+    fn default() -> Self {
+        Self::new()
+    }
+}
 
 impl Iterator for RomanNumeralIter{
     type Item = String;

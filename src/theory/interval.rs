@@ -1,4 +1,5 @@
 use super::note::Note;
+use std::cmp::Ordering;
 
 pub const QUAD: Note = SEMI / 2;
 pub const SEMI: Note = 120;
@@ -186,7 +187,10 @@ pub fn interval_chord_extension(interval: Note) -> String{
 pub fn to_relative_interval_non_nat(interval: Note) -> String{
     let mut res = String::new();
     let i = interval / SEMI;
-    if i < 0 { for _ in 0..-i{ res.push_str("♭"); } }
-    else if i > 0 { for _ in 0..i{ res.push_str("♯") } }
+    match i.cmp(&0){
+        Ordering::Less => { for _ in 0..-i{ res.push_str("♭"); } },
+        Ordering::Greater => { for _ in 0..i{ res.push_str("♯") } },
+        Ordering::Equal => {  },
+    }
     res
 }
