@@ -9,7 +9,6 @@ fn main(){
 }
 
 fn _test2(){
-    println!("{}", RootedChord::from_intervals(A4,&[MAJOR_SECOND,PERFECT_FIFTH,MAJOR_SEVENTH,FLAT_NINETH,SHARP_ELEVENTH]).as_string(true,ChordStyling::Std));
     for named in &ucns_to_named(&[C,CS,E,F,G,GS,AS], 3){
         print!("{}, ", named.to_string());
     }
@@ -40,6 +39,7 @@ fn _test2(){
     for modeobj in res{
         println!("{}", modeobj);
     }
+    println!("{}", RootedChord::from_intervals(A4,&[MAJOR_SECOND,PERFECT_FIFTH,MAJOR_SEVENTH,FLAT_NINETH,SHARP_ELEVENTH]).as_string(true,ChordStyling::Std));
 }
 
 // fn _test1(){

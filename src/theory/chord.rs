@@ -227,4 +227,43 @@ pub fn strs_scale_chords_roman(steps: &Steps, size: usize, styling: ChordStyling
 
 #[cfg(test)]
 mod tests{
+    use super::*;
+    #[test]
+    fn test_chords_strings(){
+        assert_eq!(Chord::new(&[MAJOR_THIRD,PERFECT_FIFTH]).as_string(ChordStyling::Std), String::from("X"));
+        assert_eq!(Chord::new(&[MINOR_THIRD,PERFECT_FIFTH]).as_string(ChordStyling::Std), String::from("x"));
+        assert_eq!(Chord::new(&[MINOR_THIRD,DIMINISHED_FIFTH]).as_string(ChordStyling::Std), String::from("x°"));
+        assert_eq!(Chord::new(&[MAJOR_THIRD,DIMINISHED_FIFTH]).as_string(ChordStyling::Std), String::from("X[♮3♭5]"));
+        assert_eq!(Chord::new(&[MAJOR_THIRD,DIMINISHED_FIFTH]).as_string(ChordStyling::Extended), String::from("X°"));
+        assert_eq!(Chord::new(&[MINOR_THIRD]).as_string(ChordStyling::Std), String::from("X[♭3]"));
+        assert_eq!(Chord::new(&[MAJOR_SECOND,PERFECT_FIFTH]).as_string(ChordStyling::Std), String::from("Xsus2"));
+        assert_eq!(Chord::new(&[PERFECT_FOURTH,PERFECT_FIFTH]).as_string(ChordStyling::Std), String::from("Xsus4"));
+        assert_eq!(Chord::new(&[MAJOR_THIRD,AUGMENTED_FIFTH]).as_string(ChordStyling::Std), String::from("X+"));
+        assert_eq!(Chord::new(&[MINOR_THIRD,AUGMENTED_FIFTH]).as_string(ChordStyling::Std), String::from("X[♭3♭6]"));
+        assert_eq!(Chord::new(&[MINOR_THIRD,AUGMENTED_FIFTH]).as_string(ChordStyling::Extended), String::from("x+"));
+        assert_eq!(Chord::new(&[MAJOR_SECOND,PERFECT_FOURTH]).as_string(ChordStyling::Std), String::from("X[♮2♮4]"));
+        assert_eq!(Chord::new(&[MAJOR_SECOND,PERFECT_FOURTH]).as_string(ChordStyling::Extended), String::from("Xssus"));
+        assert_eq!(Chord::new(&[MINOR_SECOND,PERFECT_FIFTH]).as_string(ChordStyling::Std), String::from("Xphry"));
+        assert_eq!(Chord::new(&[AUGMENTED_FOURTH,PERFECT_FIFTH]).as_string(ChordStyling::Std), String::from("Xlyd"));
+        assert_eq!(Chord::new(&[MINOR_SECOND,DIMINISHED_FIFTH]).as_string(ChordStyling::Std), String::from("Xloc2"));
+        assert_eq!(Chord::new(&[PERFECT_FOURTH,DIMINISHED_FIFTH]).as_string(ChordStyling::Std), String::from("Xloc4"));
+        assert_eq!(Chord::new(&[MINOR_SECOND,PERFECT_FOURTH,DIMINISHED_FIFTH]).as_string(ChordStyling::Std), String::from("X[♭2♮4♭5]"));
+        assert_eq!(Chord::new(&[MINOR_SECOND,PERFECT_FOURTH,DIMINISHED_FIFTH]).as_string(ChordStyling::Extended), String::from("Xo"));
+        assert_eq!(Chord::new(&[MAJOR_THIRD,MINOR_SEVENTH]).as_string(ChordStyling::Std), String::from("Xit+6"));
+        assert_eq!(Chord::new(&[MAJOR_THIRD,TRITONE,MINOR_SEVENTH]).as_string(ChordStyling::Std), String::from("Xfr+6"));
+        assert_eq!(Chord::new(&[MAJOR_THIRD,PERFECT_FIFTH,MAJOR_SIXTH]).as_string(ChordStyling::Std), String::from("X6"));
+        assert_eq!(Chord::new(&[MINOR_THIRD,PERFECT_FIFTH,MAJOR_SIXTH]).as_string(ChordStyling::Std), String::from("x6"));
+        assert_eq!(Chord::new(&[MAJOR_THIRD,PERFECT_FIFTH,MAJOR_SEVENTH]).as_string(ChordStyling::Std), String::from("X∆"));
+        assert_eq!(Chord::new(&[MINOR_THIRD,PERFECT_FIFTH,MINOR_SEVENTH]).as_string(ChordStyling::Std), String::from("x-"));
+        assert_eq!(Chord::new(&[MAJOR_THIRD,PERFECT_FIFTH,MINOR_SEVENTH]).as_string(ChordStyling::Std), String::from("X7"));
+        assert_eq!(Chord::new(&[MINOR_THIRD,PERFECT_FIFTH,MAJOR_SEVENTH]).as_string(ChordStyling::Std), String::from("X-(maj7)"));
+        assert_eq!(Chord::new(&[MINOR_THIRD,DIMINISHED_FIFTH,MINOR_SEVENTH]).as_string(ChordStyling::Std), String::from("xø"));
+        assert_eq!(Chord::new(&[MINOR_THIRD,DIMINISHED_FIFTH,DIMINISHED_SEVENTH]).as_string(ChordStyling::Std), String::from("x°7"));
+        assert_eq!(Chord::new(&[MAJOR_THIRD,AUGMENTED_FIFTH,MINOR_SEVENTH]).as_string(ChordStyling::Std), String::from("X+7"));
+        assert_eq!(Chord::new(&[MAJOR_SECOND,MAJOR_THIRD,PERFECT_FIFTH]).as_string(ChordStyling::Std), String::from("X[♮2♮3♮5]"));
+        assert_eq!(Chord::new(&[MAJOR_SECOND,MAJOR_THIRD,PERFECT_FIFTH]).as_string(ChordStyling::Extended), String::from("Xμ"));
+        assert_eq!(Chord::new(&[MAJOR_THIRD,PERFECT_FIFTH,MAJOR_SIXTH,NINETH]).as_string(ChordStyling::Std), String::from("X6/9"));
+        assert_eq!(Chord::new(&[MAJOR_SECOND,PERFECT_FIFTH,MAJOR_SEVENTH,FLAT_NINETH,SHARP_ELEVENTH]).as_string(ChordStyling::Std), String::from("X∆sus2(♭9♯11)"));
+        assert_eq!(Chord::new(&[PERFECT_FOURTH,PERFECT_FIFTH,MINOR_SEVENTH,SHARP_NINETH,SHARP_THIRTEENTH]).as_string(ChordStyling::Std), String::from("X-sus4(♯9♯13)"));
+    }
 }
