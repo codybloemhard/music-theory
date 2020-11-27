@@ -40,6 +40,14 @@ fn _test2(){
         println!("{}", modeobj);
     }
     println!("{}", RootedChord::from_intervals(A4,&[MAJOR_SECOND,PERFECT_FIFTH,MAJOR_SEVENTH,FLAT_NINETH,SHARP_ELEVENTH]).as_string(true,ChordStyling::Std));
+    let subchords = Chord::new(MAJOR_SEVENTH_CHORD).as_sub_chords();
+    for sc in subchords{
+        println!("{}", sc.as_string(ChordStyling::Std));
+    }
+    let subchords = RootedChord::from_chord(A4, Chord::new(&[MINOR_THIRD,PERFECT_FIFTH,MINOR_SEVENTH,NINETH,ELEVENTH])).as_sub_chords();
+    for sc in subchords{
+        println!("{}", sc.as_string(true, ChordStyling::Std));
+    }
 }
 
 // fn _test1(){

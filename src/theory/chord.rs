@@ -1,3 +1,4 @@
+use std::collections::HashSet;
 use super::note::*;
 use super::interval::*;
 use super::scale::*;
@@ -68,6 +69,12 @@ pub const STD_CHORD_BOOK: ChordBook = &[
 #[derive(PartialEq,Eq,Clone,Copy)]
 pub enum ChordStyling{ Std, Extended, SpelledOut }
 
+fn bit_on(num: usize, bit: usize) -> bool{
+    let mut t = 1 << bit;
+    t &= num;
+    !(t == 0)
+}
+
 impl Chord{
     pub fn new(intervals: &[Note]) -> Self{
         Chord(intervals.to_owned())
@@ -84,6 +91,30 @@ impl Chord{
             }
         }
         true
+    }
+
+    pub fn to_sub_chords(&self) -> Vec<Chord>{
+        let scale = self.to_scale(0).0;
+        let mut sub_scales = HashSet::new();
+        let slen = scale.len();
+        let rlen = 2u32.pow(slen as u32) as usize;
+        for i in 0..rlen{
+            let mut subscale = Vec::new();
+            for j in 0..slen{
+                if bit_on(i,j){
+                    subscale.push(scale[j]);
+                }
+            }
+            if subscale.len() < 2 { continue; }
+            sub_scales.insert(Scale(subscale).as_chord());
+        }
+        let mut res = sub_scales.into_iter().collect::<Vec<Chord>>();
+        res.sort_by(|a,b| a.len().cmp(&b.len()).then(a.cmp(&b)));
+        res
+    }
+
+    pub fn as_sub_chords(self) -> Vec<Chord>{
+        self.to_sub_chords()
     }
 
     pub fn quality(&self, basestr: String, lower: bool, style: ChordStyling) -> String{
@@ -173,6 +204,16 @@ impl Chord{
     }
 }
 
+impl ToScale for Chord{
+    fn to_scale(&self, root: Note) -> Scale{
+        let mut scale = vec![root];
+        for int in &self.0{
+            scale.push(root + *int);
+        }
+        Scale(scale)
+    }
+}
+
 pub struct RootedChord{
     root: Note,
     chord: Chord,
@@ -187,11 +228,43 @@ impl RootedChord{
         Self{ root, chord: Chord::new(intervals) }
     }
 
+    fn to_scale(&self) -> Scale{
+        let mut scale = vec![self.root];
+        for int in &self.chord.0{
+            scale.push(self.root + *int);
+        }
+        Scale(scale)
+    }
+
+    pub fn to_sub_chords(&self) -> Vec<RootedChord>{
+        let scale = self.to_scale().0;
+        let mut sub_scales = Vec::new();
+        let slen = scale.len();
+        let rlen = 2u32.pow(slen as u32) as usize;
+        for i in 0..rlen{
+            let mut subscale = Vec::new();
+            for j in 0..slen{
+                if bit_on(i,j){
+                    subscale.push(scale[j]);
+                }
+            }
+            if subscale.len() < 2 { continue; }
+            let subroot = subscale[0];
+            let subchord = Scale(subscale).as_chord();
+            sub_scales.push(Self::from_chord(subroot, subchord));
+        }
+        sub_scales.sort_by(|a,b| a.chord.len().cmp(&b.chord.len()).then(a.root.cmp(&b.root)).then(a.chord.cmp(&b.chord)));
+        sub_scales
+    }
+
+    pub fn as_sub_chords(self) -> Vec<RootedChord>{
+        self.to_sub_chords()
+    }
+
     pub fn as_string(&self, lower: bool, styling: ChordStyling) -> String{
         let root = NamedNote::from_note(self.root).to_string_name_sharp();
         self.chord.quality(root, lower, styling)
     }
-
 }
 
 pub fn print_chords(chords: &[Chord], sep: &str, styling: ChordStyling){

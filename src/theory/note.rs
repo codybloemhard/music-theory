@@ -17,7 +17,7 @@ pub type Notes = Vec<Note>;
 pub struct Steps(pub Vec<Note>);
 #[derive(Clone)]
 pub struct Scale(pub Vec<Note>);
-#[derive(Clone)]
+#[derive(PartialEq,Eq,PartialOrd,Ord,Hash,Clone)]
 pub struct Chord(pub Vec<Note>);
 #[derive(PartialEq,Copy,Clone)]
 pub enum RelativeNote { Flat(Note), Sharp(Note), Natural, Blank }
