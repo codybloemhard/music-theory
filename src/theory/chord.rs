@@ -72,7 +72,7 @@ pub enum ChordStyling{ Std, Extended, SpelledOut }
 fn bit_on(num: usize, bit: usize) -> bool{
     let mut t = 1 << bit;
     t &= num;
-    !(t == 0)
+    t != 0
 }
 
 impl Chord{
@@ -100,9 +100,9 @@ impl Chord{
         let rlen = 2u32.pow(slen as u32) as usize;
         for i in 0..rlen{
             let mut subscale = Vec::new();
-            for j in 0..slen{
+            for (j,note) in scale.iter().enumerate().take(slen){
                 if bit_on(i,j){
-                    subscale.push(scale[j]);
+                    subscale.push(*note);
                 }
             }
             if subscale.len() < 2 { continue; }
@@ -113,7 +113,7 @@ impl Chord{
         res
     }
 
-    pub fn as_sub_chords(self) -> Vec<Chord>{
+    pub fn into_sub_chords(self) -> Vec<Chord>{
         self.to_sub_chords()
     }
 
@@ -247,9 +247,9 @@ impl RootedChord{
         let rlen = 2u32.pow(slen as u32) as usize;
         for i in 0..rlen{
             let mut subscale = Vec::new();
-            for j in 0..slen{
+            for (j,note) in scale.iter().enumerate().take(slen){
                 if bit_on(i,j){
-                    subscale.push(scale[j]);
+                    subscale.push(*note);
                 }
             }
             if subscale.len() < 2 { continue; }
@@ -261,7 +261,7 @@ impl RootedChord{
         sub_scales
     }
 
-    pub fn as_sub_chords(self) -> Vec<RootedChord>{
+    pub fn into_sub_chords(self) -> Vec<RootedChord>{
         self.to_sub_chords()
     }
 
