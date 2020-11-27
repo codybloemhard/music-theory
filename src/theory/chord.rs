@@ -166,9 +166,13 @@ impl Chord{
         }
         let ext_name = |bl,mut name: String|{
             if bl >= self.0.len() { return name; }
+            let ol = name.len();
             name.push('(');
             self.0.iter().skip(bl).for_each(|int|name.push_str(&interval_chord_extension(*int)));
             name.push(')');
+            if name.len() == ol + 2{
+                name.pop(); name.pop();
+            }
             name
         };
         if baselen > 0 { return ext_name(baselen,name); }

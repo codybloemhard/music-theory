@@ -176,7 +176,7 @@ pub fn interval_chord_extension(interval: Note) -> String{
         S16 => "♭11",
         S17 => "♮11",
         S18 => "♯11",
-        S19 => "♮12",
+        S19 => "",
         S20 => "♭13",
         S21 => "♮13",
         S22 => "♯13",
