@@ -103,34 +103,34 @@ pub trait ToScale{
     fn to_scale(&self, note: Note) -> Scale;
 }
 
-pub trait AsScale{
-    fn as_scale(self, note: Note) -> Scale;
+pub trait IntoScale{
+    fn into_scale(self, note: Note) -> Scale;
 }
 
-impl<T: ToScale> AsScale for T{
-    fn as_scale(self, note: Note) -> Scale{
+impl<T: ToScale> IntoScale for T{
+    fn into_scale(self, note: Note) -> Scale{
         self.to_scale(note)
     }
 }
 
-pub trait AsSteps{
-    fn as_steps(self) -> Steps;
+pub trait IntoSteps{
+    fn into_steps(self) -> Steps;
 }
 
-pub trait AsUCNS{
-    fn as_ucns(self) -> UCNS;
+pub trait IntoUCNS{
+    fn into_ucns(self) -> UCNS;
 }
 
 pub trait ToRelative{
     fn to_relative(&self, reference: &Steps) -> Option<Relative>;
 }
 
-pub trait AsRelative{
-    fn as_relative(self, reference: &Steps) -> Option<Relative>;
+pub trait IntoRelative{
+    fn into_relative(self, reference: &Steps) -> Option<Relative>;
 }
 
-impl<T: ToRelative> AsRelative for T{
-    fn as_relative(self, reference: &Steps) -> Option<Relative>{
+impl<T: ToRelative> IntoRelative for T{
+    fn into_relative(self, reference: &Steps) -> Option<Relative>{
         self.to_relative(reference)
     }
 }
@@ -139,12 +139,12 @@ pub trait ToChord{
     fn to_chord(&self) -> Chord;
 }
 
-pub trait AsChord{
-    fn as_chord(self) -> Chord;
+pub trait IntoChord{
+    fn into_chord(self) -> Chord;
 }
 
-impl<T: ToChord> AsChord for T{
-    fn as_chord(self) -> Chord{
+impl<T: ToChord> IntoChord for T{
+    fn into_chord(self) -> Chord{
         self.to_chord()
     }
 }
@@ -244,8 +244,8 @@ pub fn as_ucn(note: Note) -> UCN{
     }
 }
 
-impl AsUCNS for Scale{
-    fn as_ucns(self) -> UCNS{
+impl IntoUCNS for Scale{
+    fn into_ucns(self) -> UCNS{
         let mut res = Vec::new();
         for n in self.0{
             res.push(as_ucn(n));
@@ -290,9 +290,9 @@ impl ToScale for UCNS{
     }
 }
 
-impl AsSteps for UCNS{
-    fn as_steps(self) -> Steps{
-        self.to_scale(0).as_steps()
+impl IntoSteps for UCNS{
+    fn into_steps(self) -> Steps{
+        self.to_scale(0).into_steps()
     }
 }
 

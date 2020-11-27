@@ -12,8 +12,8 @@ pub const DOMINANT: Note = 4;
 pub const SUB_MEDIANT: Note = 5;
 pub const SUB_TONIC: Note = 6;
 
-impl AsSteps for Scale{
-    fn as_steps(self) -> Steps{
+impl IntoSteps for Scale{
+    fn into_steps(self) -> Steps{
         if self.0.is_empty() { return Steps::empty(); }
         let mut last = self.0[0];
         let mut intervals = Vec::new();
@@ -136,7 +136,7 @@ pub trait StepsTrait{
 
 impl StepsTrait for Steps{
     fn as_mode(self, note: Note, mode: Mode) -> Scale{
-        self.mode(mode).as_scale(note)
+        self.mode(mode).into_scale(note)
     }
 
     fn mode_nr_of_this(mut self, mode: &Steps) -> Option<(usize,Steps)>{

@@ -106,7 +106,7 @@ impl Chord{
                 }
             }
             if subscale.len() < 2 { continue; }
-            sub_scales.insert(Scale(subscale).as_chord());
+            sub_scales.insert(Scale(subscale).into_chord());
         }
         let mut res = sub_scales.into_iter().collect::<Vec<Chord>>();
         res.sort_by(|a,b| a.len().cmp(&b.len()).then(a.cmp(&b)));
@@ -254,7 +254,7 @@ impl RootedChord{
             }
             if subscale.len() < 2 { continue; }
             let subroot = subscale[0];
-            let subchord = Scale(subscale).as_chord();
+            let subchord = Scale(subscale).into_chord();
             sub_scales.push(Self::from_chord(subroot, subchord));
         }
         sub_scales.sort_by(|a,b| a.chord.len().cmp(&b.chord.len()).then(a.root.cmp(&b.root)).then(a.chord.cmp(&b.chord)));
@@ -288,7 +288,7 @@ pub fn scale_chords(steps: &Steps, chord_size: usize) -> Vec<Chord>{
         for note in note_iter(0, &steps.0).skip(i).step_by(2).take(chord_size){
             chord.push(note);
         }
-        chords.push(Scale(chord).as_chord());
+        chords.push(Scale(chord).into_chord());
     }
     chords
 }

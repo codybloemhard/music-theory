@@ -1,4 +1,4 @@
-use crate::theory::note::{Steps,Scale,Relative,RelativeNote,AsUCNS,UCNS,UCN,NoteSequence,ToScale,AsScale,ToRelative};
+use crate::theory::note::{Steps,Scale,Relative,RelativeNote,IntoUCNS,UCNS,UCN,NoteSequence,ToScale,IntoScale,ToRelative};
 use crate::theory::scale::{notes_to_octave_scale,StepsTrait,ModeIteratorSpawner};
 use crate::theory::interval::{SEMI};
 use fnrs::Sequence;
@@ -51,7 +51,7 @@ pub fn find_scale_superset(scale: UCNS, same_tonic: bool) -> Vec<(UCN,ModeObj)>{
             for tonic in 0..12{
                 let tonic_note = tonic * SEMI;
                 if same_tonic && tonic_note != target_tonic { continue; }
-                let notes = mode.clone().as_scale(tonic_note).as_ucns();
+                let notes = mode.clone().into_scale(tonic_note).into_ucns();
                 let mut has = true;
                 'outer: for a in &scale{
                     for b in &notes{
@@ -76,7 +76,7 @@ pub fn find_scale_superset(scale: UCNS, same_tonic: bool) -> Vec<(UCN,ModeObj)>{
 }
 // Finds all the scales where the input is the I chord
 pub fn find_chordscales(scale: Steps) -> Vec<ModeObj>{
-    let scale = scale.as_scale(0);
+    let scale = scale.into_scale(0);
     let scales = get_all_scale_objs();
     let mut res = Vec::new();
     for sc in scales{

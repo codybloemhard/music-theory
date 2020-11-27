@@ -13,9 +13,9 @@ fn _test2(){
         print!("{}, ", named.to_string());
     }
     println!();
-    println!("{}", find_scale(&vec![C,CS,E,F,G,GS,AS].as_scale(0)).unwrap());
+    println!("{}", find_scale(&vec![C,CS,E,F,G,GS,AS].into_scale(0)).unwrap());
     println!("\n");
-    for modeobj in find_scale_superseq(&vec![A,B,C,D].as_steps()){
+    for modeobj in find_scale_superseq(&vec![A,B,C,D].into_steps()){
         println!("{}", modeobj);
     }
     print_scales(ChordStyling::Extended);
@@ -29,7 +29,7 @@ fn _test2(){
         println!("{} {}", tonic, modeobj);
     }
     println!("And the strict chordscales: ");
-    for modeobj in find_chordscales(subset.as_steps()){
+    for modeobj in find_chordscales(subset.into_steps()){
         println!("{}", modeobj);
     }
     let res = find_scale_from_ionian_relative(Relative(vec![
@@ -40,7 +40,7 @@ fn _test2(){
         println!("{}", modeobj);
     }
     println!("{}", RootedChord::from_intervals(A4,&[MAJOR_SECOND,PERFECT_FIFTH,MAJOR_SEVENTH,FLAT_NINETH,SHARP_ELEVENTH]).as_string(true,ChordStyling::Std));
-    let subchords = RootedChord::from_chord(A4,ionian::obj().clone_steps().as_scale(0).as_chord()).into_sub_chords();
+    let subchords = RootedChord::from_chord(A4,ionian::obj().clone_steps().into_scale(0).into_chord()).into_sub_chords();
     for sc in subchords{
         let name = sc.as_string(true, ChordStyling::Std);
         if name.contains('[') { continue; }
