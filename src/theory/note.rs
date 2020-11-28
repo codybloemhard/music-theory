@@ -113,8 +113,18 @@ impl<T: ToScale> IntoScale for T{
     }
 }
 
+pub trait ToSteps{
+    fn to_steps(&self) -> Steps;
+}
+
 pub trait IntoSteps{
     fn into_steps(self) -> Steps;
+}
+
+impl<T: ToSteps> IntoSteps for T{
+    fn into_steps(self) -> Steps{
+        self.to_steps()
+    }
 }
 
 pub trait IntoUCNS{
@@ -211,6 +221,16 @@ impl UCN{
 
 impl std::fmt::Display for UCN{
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result{
+        write!(f, "{}", self.to_named(0).to_string_name())
+    }
+}
+
+impl std::fmt::Debug for UCN {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        // f.debug_struct("Point")
+        //  .field("x", &self.x)
+        //  .field("y", &self.y)
+        //  .finish()
         write!(f, "{}", self.to_named(0).to_string_name())
     }
 }

@@ -93,6 +93,16 @@ impl Chord{
         true
     }
 
+    pub fn normalized(mut self) -> Self{
+        if self.0.contains(&TWELVETH) && !self.0.contains(&PERFECT_FIFTH){
+            self.0.push(PERFECT_FIFTH);
+        }
+        Chord(self.0.into_iter()
+            .map(|i| i % (2*PERFECT_OCTAVE))
+            .filter(|i| i != &PERFECT_OCTAVE && i != &TWELVETH)
+            .collect::<Vec<_>>())
+    }
+
     pub fn to_sub_chords(&self) -> Vec<Chord>{
         let scale = self.to_scale(0).0;
         let mut sub_scales = HashSet::new();
@@ -218,9 +228,10 @@ impl ToScale for Chord{
     }
 }
 
+#[derive(PartialEq,Eq,Hash)]
 pub struct RootedChord{
-    root: Note,
-    chord: Chord,
+    pub root: Note,
+    pub chord: Chord,
 }
 
 impl RootedChord{
@@ -232,12 +243,25 @@ impl RootedChord{
         Self{ root, chord: Chord::new(intervals) }
     }
 
-    fn to_scale(&self) -> Scale{
+    pub fn from_scale(scale: Scale) -> Self{
+        if scale.is_empty() { Self{ root: 0, chord: Chord(Vec::new()) } }
+        else if scale.len() == 1 { Self{ root: scale.0[0], chord: Chord(Vec::new()) } }
+        else { Self::from_chord(scale.0[0], scale.into_chord()) }
+    }
+
+    pub fn to_scale(&self) -> Scale{
         let mut scale = vec![self.root];
         for int in &self.chord.0{
             scale.push(self.root + *int);
         }
         Scale(scale)
+    }
+
+    fn normalized(self) -> Self{
+        Self {
+            root: self.root % PERFECT_OCTAVE,
+            chord: self.chord.normalized(),
+        }
     }
 
     pub fn to_sub_chords(&self) -> Vec<RootedChord>{
@@ -300,6 +324,22 @@ pub fn strs_scale_chords_roman(steps: &Steps, size: usize, styling: ChordStyling
         res.push(chord.quality(to_roman_num(i + 1), true, styling));
     }
     res
+}
+
+pub fn scale_sub_chords(scale: Scale) -> Vec<RootedChord>{
+    if scale.len() < 3 { return Vec::new(); }
+    let steps = scale.to_steps();
+    let root = scale.0[0];
+    let mut sub_scales = HashSet::new();
+    let slen = scale.len();
+    for (i, _) in note_iter(root, &steps.0).enumerate().take(slen){
+        let lscale = note_iter(root, &steps.0).skip(i).take(slen).collect::<Vec<_>>();
+        let subchords = RootedChord::from_scale(Scale(lscale)).into_sub_chords();
+        sub_scales.extend(subchords.into_iter().map(|sc| sc.normalized()));
+    }
+    let mut sub_scales = sub_scales.into_iter().collect::<Vec<_>>();
+    sub_scales.sort_by(|a,b| a.chord.len().cmp(&b.chord.len()).then(a.root.cmp(&b.root)).then(a.chord.cmp(&b.chord)));
+    sub_scales
 }
 
 #[cfg(test)]

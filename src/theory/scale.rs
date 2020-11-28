@@ -12,8 +12,8 @@ pub const DOMINANT: Note = 4;
 pub const SUB_MEDIANT: Note = 5;
 pub const SUB_TONIC: Note = 6;
 
-impl IntoSteps for Scale{
-    fn into_steps(self) -> Steps{
+impl ToSteps for Scale{
+    fn to_steps(&self) -> Steps{
         if self.0.is_empty() { return Steps::empty(); }
         let mut last = self.0[0];
         let mut intervals = Vec::new();

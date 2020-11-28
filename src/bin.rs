@@ -39,12 +39,13 @@ fn _test2(){
     for modeobj in res{
         println!("{}", modeobj);
     }
-    println!("{}", RootedChord::from_intervals(A4,&[MAJOR_SECOND,PERFECT_FIFTH,MAJOR_SEVENTH,FLAT_NINETH,SHARP_ELEVENTH]).as_string(true,ChordStyling::Std));
-    let subchords = RootedChord::from_chord(A4,ionian::obj().clone_steps().into_scale(0).into_chord()).into_sub_chords();
+    println!("-------");
+    let subchords = scale_sub_chords(ionian::obj().clone_steps().into_scale(A4));
     for sc in subchords{
         let name = sc.as_string(true, ChordStyling::Std);
         if name.contains('[') { continue; }
-        println!("{}", name);
+        if name.contains('(') { continue; }
+        println!("{}: {:?}", name, sc.to_scale().into_ucns());
     }
 }
 
