@@ -342,6 +342,22 @@ pub fn scale_sub_chords(scale: Scale) -> Vec<RootedChord>{
     sub_scales
 }
 
+pub fn steps_sub_chords(steps: Steps) -> Vec<Vec<Chord>>{
+    let mut scale = steps.into_scale(0);
+    scale.0.pop();
+    let mut table = vec![0; 12];
+    for (i,note) in scale.0.iter().enumerate(){
+        table[(note / SEMI).max(0) as usize] = i;
+    }
+    let subs = scale_sub_chords(scale.clone());
+    let mut cells = vec![vec![]; scale.len()];
+    for s in subs.into_iter(){
+        let index = table[(s.root / SEMI).max(0) as usize];
+        cells[index].push(s.chord);
+    }
+    cells
+}
+
 #[cfg(test)]
 mod tests{
     use super::*;

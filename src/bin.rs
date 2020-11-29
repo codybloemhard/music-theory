@@ -3,6 +3,7 @@ use music_gen::theory::*;
 use music_gen::libr::scales::*;
 use music_gen::libr::infos::*;
 use music_gen::query::*;
+use music_gen::utils::to_roman_num;
 
 fn main(){
     test();
@@ -46,4 +47,16 @@ fn test(){
         .map(|(mut s,c)| { s.push_str(&format!(": {:?}", c.to_scale().into_ucns())); s })
         .collect::<Vec<_>>();
     print_to_grid_auto(&subchords, 80, 3);
+    println!("-------");
+    let subchords = steps_sub_chords(ionian::obj().clone_steps().mode(2));
+    let mut chordstrings = Vec::new();
+    for (i,cell) in subchords.into_iter().enumerate(){
+        let temp = cell.into_iter().map(|c| c.quality(to_roman_num(i + 1), true, ChordStyling::Extended))
+        .filter(|s| !s.contains('[') && !s.contains('(') && !s.is_empty())
+        .collect::<Vec<_>>();
+        for s in temp{
+            chordstrings.push(s);
+        }
+    }
+    print_to_grid_auto(&chordstrings, 80, 3);
 }
