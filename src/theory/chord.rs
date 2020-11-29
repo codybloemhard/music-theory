@@ -58,7 +58,7 @@ pub const STD_CHORD_BOOK: ChordBook = &[
     (MAJOR_SEVENTH_CHORD, "∆", true, false),
     (MINOR_SEVENTH_CHORD, "-", false, false),
     (DOMINANT_SEVENTH, "7", true, false),
-    (MINOR_MAJOR_SEVENTH, "-(maj7)", true, false),
+    (MINOR_MAJOR_SEVENTH, "-∆", true, false),
     (HALF_DIMINISHED_SEVENTH, "ø", false, false),
     (DIMINISHED_SEVENTH_CHORD, "°7", false, false),
     (AUGMENTED_SEVENTH_CHORD, "+7", true, false),

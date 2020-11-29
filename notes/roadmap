@@ -11,11 +11,8 @@ recognize inversions
 voicelead(smooth) consecutive chords
 generate next chord suggetions
 spaced out tones
-distortion
-noise
-overtones
 
 long:
-generate music
+generate music(midi)
 analyse music
 help compose music
