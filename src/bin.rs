@@ -40,12 +40,10 @@ fn test(){
         println!("{}", modeobj);
     }
     println!("-------");
-    let subchords = scale_sub_chords(ionian::obj().clone_steps().mode(6).into_scale(A4));
-    for sc in subchords{
-        let name = sc.as_string(true, ChordStyling::Extended);
-        if name.contains('[') { continue; }
-        if name.contains('(') { continue; }
-        println!("{}: {:?}", name, sc.to_scale().into_ucns());
-    }
+    let subchords = scale_sub_chords(ionian::obj().clone_steps().mode(6).into_scale(A4))
+        .into_iter().map(|c| (c.as_string(true, ChordStyling::Extended),c))
+        .filter(|(s,_)| !s.contains('[') && !s.contains('(') && !s.is_empty())
+        .map(|(mut s,c)| { s.push_str(&format!(": {:?}", c.to_scale().into_ucns())); s })
+        .collect::<Vec<_>>();
+    print_to_grid_auto(&subchords, 80, 3);
 }
-

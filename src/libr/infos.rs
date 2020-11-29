@@ -31,34 +31,24 @@ pub fn print_even(strings: &[String], spaces: usize, end: &str){
     print!("{}", end);
 }
 
-pub fn print_even_auto(strings: &[String], end: &str){
+pub fn print_to_grid_auto(strings: &[String], width: usize, padding: usize){
     let mut longest = 0;
     for string in strings{
         let len = string.chars().count();
-        if len > longest{
-            longest = len;
+        longest = longest.max(len);
+    }
+    let max = width / (longest + padding);
+    let mut count = 0;
+    let mut line = Vec::new();
+    for string in strings{
+        if count > max {
+            print_even(&line, longest + padding, "\n");
+            line.clear();
+            count = 0;
         }
+        line.push(string.clone());
+        count += 1;
     }
-    print_even(strings, longest + 1, end);
-}
-
-pub fn print_even_grid(lines: &[Vec<String>], spaces: usize, end: &str){
-    for line in lines{
-        print_even(line, spaces, end);
-    }
-}
-
-pub fn print_even_grid_auto(lines: &[Vec<String>], end: &str){
-    let mut longest = 0;
-    for line in lines{
-        for string in line{
-            let len =  string.chars().count();
-            if len > longest{
-                longest = len;
-            }
-        }
-    }
-    print_even_grid(lines, longest + 1, end);
 }
 
 pub fn print_scales(styling: ChordStyling){
