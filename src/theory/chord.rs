@@ -317,11 +317,33 @@ pub fn scale_chords(steps: &Steps, chord_size: usize) -> Vec<Chord>{
     chords
 }
 
+pub fn rooted_scale_chords(steps: &Steps, tonic: Note, chord_size: usize) -> Vec<RootedChord>{
+    let len = steps.len();
+    let mut chords = Vec::new();
+    for (i, _) in note_iter(tonic, &steps.0).enumerate().take(len){
+        let mut chord = Vec::new();
+        for note in note_iter(tonic, &steps.0).skip(i).step_by(2).take(chord_size){
+            chord.push(note);
+        }
+        chords.push(RootedChord::from_scale(Scale(chord)));
+    }
+    chords
+}
+
 pub fn strs_scale_chords_roman(steps: &Steps, size: usize, styling: ChordStyling) -> Vec<String>{
     let chords = scale_chords(steps, size);
     let mut res = Vec::new();
     for (i, chord) in chords.iter().enumerate(){
         res.push(chord.quality(to_roman_num(i + 1), true, styling));
+    }
+    res
+}
+
+pub fn strs_scale_chords(steps: &Steps, tonic: Note, size: usize, styling: ChordStyling) -> Vec<String>{
+    let chords = rooted_scale_chords(steps, tonic, size);
+    let mut res = Vec::new();
+    for chord in chords.iter(){
+        res.push(chord.as_string(true, styling));
     }
     res
 }

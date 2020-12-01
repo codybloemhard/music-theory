@@ -13,7 +13,7 @@ pub type Rank = u16;
 /// Interchanging the versions now only can be done explicitly.
 
 pub type Notes = Vec<Note>;
-#[derive(Clone)]
+#[derive(Clone,PartialEq,Eq,Hash)]
 pub struct Steps(pub Vec<Note>);
 #[derive(Clone)]
 pub struct Scale(pub Vec<Note>);
@@ -271,6 +271,44 @@ impl IntoUCNS for Scale{
             res.push(as_ucn(n));
         }
         res
+    }
+}
+
+impl IntoUCNS for String{
+    fn into_ucns(self) -> UCNS{
+        let mut lowercase = String::new();
+        for c in self.chars(){
+            for l in c.to_lowercase(){
+                lowercase.push(l);
+            }
+        }
+        fn str_to_ucn(s: &str) -> UCN{
+            match s{
+                "ab" => UCN::Gs,
+                "a" => UCN::A,
+                "as" => UCN::As,
+                "bb" => UCN::As,
+                "b" => UCN::B,
+                "bs" => UCN::C,
+                "cb" => UCN::B,
+                "c" => UCN::C,
+                "cs" => UCN::Cs,
+                "db" => UCN::Cs,
+                "d" => UCN::D,
+                "ds" => UCN::Ds,
+                "eb" => UCN::Ds,
+                "e" => UCN::E,
+                "es" => UCN::F,
+                "fb" => UCN::E,
+                "f" => UCN::F,
+                "fs" => UCN::Fs,
+                "gb" => UCN::Fs,
+                "g" => UCN::G,
+                "gs" => UCN::Gs,
+                _ => panic!("Could not parse your notes!"),
+            }
+        }
+        lowercase.split(',').into_iter().map(|s| str_to_ucn(&s)).collect::<Vec<_>>()
     }
 }
 

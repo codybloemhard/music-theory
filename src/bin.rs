@@ -6,16 +6,22 @@ use music_gen::query::*;
 use music_gen::utils::to_roman_num;
 
 fn main(){
-    test();
+    let args = lapp::parse_args("
+        -n, --notes (default '') comma seperated vector of notes
+        -t, --test testing output
+    ");
+    let notes = args.get_string("notes");
+    let test = args.get_bool("test");
+    if test { dotest(); }
+    if notes.len() > 0 { music_gen::notes_analysis(notes); }
 }
 
-fn test(){
+fn dotest(){
     for named in &ucns_to_named(&[C,CS,E,F,G,GS,AS], 3){
         print!("{}, ", named.to_string());
     }
     println!();
     println!("{}", find_scale(&vec![C,CS,E,F,G,GS,AS].into_scale(0)).unwrap());
-    println!("\n");
     for modeobj in find_scale_superseq(&vec![A,B,C,D].into_steps()){
         println!("{}", modeobj);
     }
@@ -48,10 +54,10 @@ fn test(){
         .collect::<Vec<_>>();
     print_to_grid_auto(&subchords, 80, 3);
     println!("-------");
-    let subchords = steps_sub_chords(ionian::obj().clone_steps().mode(2));
+    let subchords = steps_sub_chords(harmonic_minor::obj().clone_steps().mode(4));
     let mut chordstrings = Vec::new();
     for (i,cell) in subchords.into_iter().enumerate(){
-        let temp = cell.into_iter().map(|c| c.quality(to_roman_num(i + 1), true, ChordStyling::Extended))
+        let temp = cell.into_iter().map(|c| c.quality(to_roman_num(i + 1), true, ChordStyling::Std))
         .filter(|s| !s.contains('[') && !s.contains('(') && !s.is_empty())
         .collect::<Vec<_>>();
         for s in temp{
