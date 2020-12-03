@@ -1,4 +1,4 @@
-use crate::theory::note::{Steps,Scale,Relative,RelativeNote,IntoUCNS,UCNS,UCN,NoteSequence,ToScale,IntoScale,ToRelative};
+use crate::theory::note::{Steps,Scale,Relative,RelativeNote,IntoUCNS,UCNS,UCN,NoteSequence,ToScale,IntoScale,ToRelative,ToSteps};
 use crate::theory::scale::{notes_to_octave_scale,StepsTrait,ModeIteratorSpawner};
 use crate::theory::interval::{SEMI};
 use fnrs::Sequence;
@@ -20,7 +20,7 @@ pub fn find_scale(scale: &Scale) -> Option<ModeObj>{
     Option::None
 }
 
-pub fn find_scale_superseq(scale: &Steps) -> Vec<ModeObj>{
+pub fn find_steps_superseq(scale: &Steps) -> Vec<ModeObj>{
     let scales = get_all_scale_objs();
     let mut res = Vec::new();
     for sc in scales{
@@ -34,6 +34,33 @@ pub fn find_scale_superseq(scale: &Steps) -> Vec<ModeObj>{
                         mode_nr: i,
                     }
                 );
+            }
+        }
+    }
+    res
+}
+
+pub fn find_scale_superseq(scale: &Scale) -> Vec<(UCN,ModeObj)>{
+    let steps = scale.to_steps();
+    let ucns = scale.clone().into_ucns();
+    let scales = get_all_scale_objs();
+    let mut res = Vec::new();
+    for sc in scales{
+        for (i,mode) in sc.steps.clone().mode_iter().enumerate(){
+            if !mode.0.has_seq(&steps.0) { continue; }
+            for j in 0..12{
+                let tonic = j * SEMI;
+                let modescale = mode.clone().into_scale(tonic).into_ucns();
+                if modescale.has_seq(&ucns){
+                    res.push((modescale[0],
+                        ModeObj{
+                            steps: mode.clone(),
+                            fam_name: sc.family_name(),
+                            mode_name: sc.get_mode_name(i as u8),
+                            mode_nr: i,
+                        })
+                    );
+                }
             }
         }
     }

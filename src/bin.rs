@@ -7,13 +7,13 @@ use music_gen::utils::to_roman_num;
 
 fn main(){
     let args = lapp::parse_args("
-        -n, --notes (default '') comma seperated vector of notes
+        -c, --chord (default '') comma seperated vector of notes, interpreted as chord
         -t, --test testing output
     ");
-    let notes = args.get_string("notes");
+    let chord = args.get_string("chord");
     let test = args.get_bool("test");
     if test { dotest(); }
-    if notes.len() > 0 { music_gen::notes_analysis(notes); }
+    if !chord.is_empty() { music_gen::notes_analysis(chord); }
 }
 
 fn dotest(){
@@ -22,7 +22,7 @@ fn dotest(){
     }
     println!();
     println!("{}", find_scale(&vec![C,CS,E,F,G,GS,AS].into_scale(0)).unwrap());
-    for modeobj in find_scale_superseq(&vec![A,B,C,D].into_steps()){
+    for modeobj in find_steps_superseq(&vec![A,B,C,D].into_steps()){
         println!("{}", modeobj);
     }
     print_scales(ChordStyling::Extended);
