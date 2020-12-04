@@ -292,12 +292,12 @@ impl RootedChord{
     pub fn to_chordtone_wholetone_scale(&self) -> Scale{
         let mut res = Vec::new();
         let scale = self.to_scale();
-        if scale.is_empty() { return Scale(res); }
-        let root = scale.0[0];
-        for note in scale.0{
-            res.push(note);
-            if note - root + MAJOR_SECOND > PERFECT_OCTAVE { break; }
-            res.push(note + MAJOR_SECOND);
+        if scale.len() < 4 { return Scale(res); }
+        for (i,note) in scale.0.iter().enumerate().take(4){
+            res.push(*note);
+            let between = if scale.len() > i + 4 { scale.0[i + 4] }
+            else { *note + MAJOR_SECOND };
+            res.push(between);
         }
         Scale(res)
     }

@@ -31,7 +31,7 @@ pub fn notes_analysis(string: String){
     rchord
         .clone().into_sub_chords()
         .into_iter().map(|c| (c.as_string(true, ChordStyling::Extended),c))
-        .filter(|(s,_)| !s.contains('[') && !s.contains('(') && !s.is_empty())
+        .filter(|(s,_)| !s.contains('[') /* && !s.contains('(') */ && !s.is_empty())
         .map(|(mut s,c)| { s.push_str(&format!(": {:?}", c.to_scale().into_ucns())); s })
         .for_each(|s| { println!("{}", s); });
     println!("----------------------------------------");
