@@ -228,7 +228,7 @@ impl ToScale for Chord{
     }
 }
 
-#[derive(PartialEq,Eq,Hash)]
+#[derive(PartialEq,Eq,Hash,Clone)]
 pub struct RootedChord{
     pub root: Note,
     pub chord: Chord,
@@ -287,6 +287,19 @@ impl RootedChord{
 
     pub fn into_sub_chords(self) -> Vec<RootedChord>{
         self.to_sub_chords()
+    }
+
+    pub fn to_chordtone_wholetone_scale(&self) -> Scale{
+        let mut res = Vec::new();
+        let scale = self.to_scale();
+        if scale.is_empty() { return Scale(res); }
+        let root = scale.0[0];
+        for note in scale.0{
+            res.push(note);
+            if note - root + MAJOR_SECOND > PERFECT_OCTAVE { break; }
+            res.push(note + MAJOR_SECOND);
+        }
+        Scale(res)
     }
 
     pub fn as_string(&self, lower: bool, styling: ChordStyling) -> String{

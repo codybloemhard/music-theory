@@ -27,13 +27,29 @@ pub fn notes_analysis(string: String){
     println!("Your notes: {:?}", ucns);
     println!("----------------------------------------");
     println!("\tSubchords:");
-    RootedChord::from_scale(scale.clone()).into_sub_chords()
+    let rchord = RootedChord::from_scale(scale.clone());
+    rchord
+        .clone().into_sub_chords()
         .into_iter().map(|c| (c.as_string(true, ChordStyling::Extended),c))
         .filter(|(s,_)| !s.contains('[') && !s.contains('(') && !s.is_empty())
         .map(|(mut s,c)| { s.push_str(&format!(": {:?}", c.to_scale().into_ucns())); s })
         .for_each(|s| { println!("{}", s); });
     println!("----------------------------------------");
-    println!("\tStrict chordscales;");
+    println!("\tChordtone Wholetone Scale:");
+    let ctwts = rchord.to_chordtone_wholetone_scale();
+    let mo = find_scale(&ctwts);
+    if let Some(m) = mo{
+        included.insert(m.steps.clone());
+        println!("{} {}", ucns[0], m);
+    } else {
+        println!("{} unnamed", ucns[0]);
+    }
+    let ctwts = ctwts.into_steps();
+    print!("\t");
+    print_splitted(&strs_scale_chords(&ctwts, root, 3, ChordStyling::Extended), ", ", "\n");
+    print!("\t");
+    print_splitted(&strs_scale_chords(&ctwts, root, 4, ChordStyling::Extended), ", ", "\n");
+    println!("\tStrict chordscales:");
     for modeobj in find_chordscales(steps){
         if included.contains(&modeobj.steps) { continue; }
         included.insert(modeobj.steps.clone());
