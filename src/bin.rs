@@ -9,11 +9,17 @@ fn main(){
     let args = lapp::parse_args("
         -c, --chord (default '') comma seperated vector of notes, interpreted as chord
         -t, --test testing output
+        --chordstyling (default 'std') can be std, extended, spelled
     ");
     let chord = args.get_string("chord");
     let test = args.get_bool("test");
+    let style = match args.get_string("chordstyling").as_ref(){
+        "extended" => ChordStyling::Extended,
+        "spelled" => ChordStyling::SpelledOut,
+        _ => ChordStyling::Std,
+    };
     if test { dotest(); }
-    if !chord.is_empty() { music_gen::notes_analysis(chord); }
+    if !chord.is_empty() { music_gen::notes_analysis(chord, style); }
 }
 
 fn dotest(){

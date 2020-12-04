@@ -295,7 +295,7 @@ impl RootedChord{
         if scale.len() < 4 { return Scale(res); }
         for (i,note) in scale.0.iter().enumerate().take(4){
             res.push(*note);
-            let between = if scale.len() > i + 4 { scale.0[i + 4] }
+            let between = if scale.len() > i + 4 { scale.0[i + 4] - PERFECT_OCTAVE }
             else { *note + MAJOR_SECOND };
             res.push(between);
         }

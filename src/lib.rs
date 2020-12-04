@@ -18,7 +18,14 @@ mod tests {
     }
 }
 
-pub fn notes_analysis(string: String){
+pub fn print_step_chords(steps: &Steps, root: Note, styling: ChordStyling){
+    print!("\t");
+    print_splitted(&strs_scale_chords(steps, root, 3, styling), ", ", "\n");
+    print!("\t");
+    print_splitted(&strs_scale_chords(steps, root, 4, styling), ", ", "\n");
+}
+
+pub fn notes_analysis(string: String, styling: ChordStyling){
     let ucns = string.into_ucns();
     let scale = ucns.clone().into_scale(0);
     let root = scale.0[0];
@@ -44,20 +51,16 @@ pub fn notes_analysis(string: String){
     } else {
         println!("{} unnamed", ucns[0]);
     }
-    let ctwts = ctwts.into_steps();
-    print!("\t");
-    print_splitted(&strs_scale_chords(&ctwts, root, 3, ChordStyling::Extended), ", ", "\n");
-    print!("\t");
-    print_splitted(&strs_scale_chords(&ctwts, root, 4, ChordStyling::Extended), ", ", "\n");
+    if !ctwts.is_empty() {
+        let ctwts = ctwts.into_steps();
+        print_step_chords(&ctwts, root, styling);
+    }
     println!("\tStrict chordscales:");
     for modeobj in find_chordscales(steps){
         if included.contains(&modeobj.steps) { continue; }
         included.insert(modeobj.steps.clone());
         println!("{} {}", ucns[0], modeobj);
-        print!("\t");
-        print_splitted(&strs_scale_chords(&modeobj.steps, root, 3, ChordStyling::Extended), ", ", "\n");
-        print!("\t");
-        print_splitted(&strs_scale_chords(&modeobj.steps, root, 4, ChordStyling::Extended), ", ", "\n");
+        print_step_chords(&modeobj.steps, root, styling);
         // let subchords = scale_sub_chords(modeobj.steps.clone().into_scale(root))
         //     .into_iter().map(|c| (c.as_string(true, ChordStyling::Extended),c))
         //     .filter(|(s,_)| !s.contains('[') && !s.contains('(') && !s.is_empty())
@@ -71,10 +74,7 @@ pub fn notes_analysis(string: String){
         included.insert(modeobj.steps.clone());
         println!("{} {}", tonic, modeobj);
         let tonic = tonic.to_note(0);
-        print!("\t");
-        print_splitted(&strs_scale_chords(&modeobj.steps, tonic, 3, ChordStyling::Extended), ", ", "\n");
-        print!("\t");
-        print_splitted(&strs_scale_chords(&modeobj.steps, tonic, 4, ChordStyling::Extended), ", ", "\n");
+        print_step_chords(&modeobj.steps, tonic, styling);
     }
     println!("\tSupersets:");
     for (tonic,modeobj) in find_scale_superset(ucns, false){
@@ -82,10 +82,7 @@ pub fn notes_analysis(string: String){
         included.insert(modeobj.steps.clone());
         println!("{} {}", tonic, modeobj);
         let tonic = tonic.to_note(0);
-        print!("\t");
-        print_splitted(&strs_scale_chords(&modeobj.steps, tonic, 3, ChordStyling::Extended), ", ", "\n");
-        print!("\t");
-        print_splitted(&strs_scale_chords(&modeobj.steps, tonic, 4, ChordStyling::Extended), ", ", "\n");
+        print_step_chords(&modeobj.steps, tonic, styling);
     }
     println!("----------------------------------------");
 }
