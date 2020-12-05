@@ -308,6 +308,27 @@ impl RootedChord{
     }
 }
 
+#[derive(PartialEq,Eq,Hash,Clone)]
+pub struct RelativeChord{
+    pub root: Note,
+    pub chord: Chord,
+}
+
+impl RelativeChord{
+    pub fn from_chord(root: Note, chord: Chord) -> Self{
+        Self{ root, chord }
+    }
+
+    pub fn from_intervals(root: Note, intervals: &[Note]) -> Self{
+        Self{ root, chord: Chord::new(intervals) }
+    }
+
+    pub fn as_string(&self, lower: bool, styling: ChordStyling) -> String{
+        let root = format!("<X{}{}>", if self.root > 0 { "+" } else { "" }, self.root);
+        self.chord.quality(root, lower, styling)
+    }
+}
+
 pub fn print_chords(chords: &[Chord], sep: &str, styling: ChordStyling){
     let len = chords.len();
     if len == 0 { return; }
