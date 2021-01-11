@@ -272,33 +272,33 @@ impl IntoUCNS for String{
                 lowercase.push(l);
             }
         }
-        fn str_to_ucn(s: &str) -> UCN{
+        fn str_to_ucn(s: &str) -> Option<UCN>{
             match s{
-                "ab" => UCN::Gs,
-                "a" => UCN::A,
-                "as" => UCN::As,
-                "bb" => UCN::As,
-                "b" => UCN::B,
-                "bs" => UCN::C,
-                "cb" => UCN::B,
-                "c" => UCN::C,
-                "cs" => UCN::Cs,
-                "db" => UCN::Cs,
-                "d" => UCN::D,
-                "ds" => UCN::Ds,
-                "eb" => UCN::Ds,
-                "e" => UCN::E,
-                "es" => UCN::F,
-                "fb" => UCN::E,
-                "f" => UCN::F,
-                "fs" => UCN::Fs,
-                "gb" => UCN::Fs,
-                "g" => UCN::G,
-                "gs" => UCN::Gs,
-                _ => panic!("Could not parse your notes!"),
+                "ab" => Some(UCN::Gs),
+                "a" => Some(UCN::A),
+                "as" => Some(UCN::As),
+                "bb" => Some(UCN::As),
+                "b" => Some(UCN::B),
+                "bs" => Some(UCN::C),
+                "cb" => Some(UCN::B),
+                "c" => Some(UCN::C),
+                "cs" => Some(UCN::Cs),
+                "db" => Some(UCN::Cs),
+                "d" => Some(UCN::D),
+                "ds" => Some(UCN::Ds),
+                "eb" => Some(UCN::Ds),
+                "e" => Some(UCN::E),
+                "es" => Some(UCN::F),
+                "fb" => Some(UCN::E),
+                "f" => Some(UCN::F),
+                "fs" => Some(UCN::Fs),
+                "gb" => Some(UCN::Fs),
+                "g" => Some(UCN::G),
+                "gs" => Some(UCN::Gs),
+                _ => None,
             }
         }
-        lowercase.split(',').into_iter().map(|s| str_to_ucn(&s)).collect::<Vec<_>>()
+        lowercase.split(',').into_iter().map(|s| str_to_ucn(&s)).flatten().collect::<Vec<_>>()
     }
 }
 
