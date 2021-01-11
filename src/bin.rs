@@ -4,7 +4,7 @@ use music_gen::libr::scales::*;
 use music_gen::libr::infos::*;
 use music_gen::query::*;
 use music_gen::utils::to_roman_num;
-
+// jazzbøt
 fn main(){
     let args = lapp::parse_args("
         -c, --chord (default '') comma seperated vector of notes, interpreted as chord

@@ -21,8 +21,6 @@ pub const LYDIAN: &[Note] = &[AUGMENTED_FOURTH,PERFECT_FIFTH];
 pub const LOCRIAN2: &[Note] = &[MINOR_SECOND,DIMINISHED_FIFTH];
 pub const LOCRIAN4: &[Note] = &[PERFECT_FOURTH,DIMINISHED_FIFTH];
 pub const SUPER_LOCRIAN: &[Note] = &[MINOR_SECOND,PERFECT_FOURTH,DIMINISHED_FIFTH];
-pub const ITALIAN_SIXTH: &[Note] = &[MAJOR_THIRD,MINOR_SEVENTH];
-pub const FRENCH_SIXTH: &[Note] = &[MAJOR_THIRD,TRITONE,MINOR_SEVENTH];
 pub const MAJOR_SIXTH_CHORD: &[Note] = &[MAJOR_THIRD, PERFECT_FIFTH, MAJOR_SIXTH];
 pub const MINOR_SIXTH_CHORD: &[Note] = &[MINOR_THIRD, PERFECT_FIFTH, MAJOR_SIXTH];
 pub const MAJOR_SEVENTH_CHORD: &[Note] = &[MAJOR_THIRD, PERFECT_FIFTH, MAJOR_SEVENTH];
@@ -51,17 +49,15 @@ pub const STD_CHORD_BOOK: ChordBook = &[
     (LOCRIAN2, "loc2", true, false),
     (LOCRIAN4, "loc4", true, false),
     (SUPER_LOCRIAN, "o", true, true),
-    (ITALIAN_SIXTH, "it+6", true, false),
-    (FRENCH_SIXTH, "fr+6", true, false),
-    (MAJOR_SIXTH_CHORD, "6", true, false),
-    (MINOR_SIXTH_CHORD, "6", false, false),
+    (MAJOR_SIXTH_CHORD, "⁶", true, false),
+    (MINOR_SIXTH_CHORD, "⁶", false, false),
     (MAJOR_SEVENTH_CHORD, "∆", true, false),
     (MINOR_SEVENTH_CHORD, "-", false, false),
-    (DOMINANT_SEVENTH, "7", true, false),
+    (DOMINANT_SEVENTH, "⁷", true, false),
     (MINOR_MAJOR_SEVENTH, "-∆", true, false),
     (HALF_DIMINISHED_SEVENTH, "ø", false, false),
-    (DIMINISHED_SEVENTH_CHORD, "°7", false, false),
-    (AUGMENTED_SEVENTH_CHORD, "+7", true, false),
+    (DIMINISHED_SEVENTH_CHORD, "°⁷", false, false),
+    (AUGMENTED_SEVENTH_CHORD, "+⁷", true, false),
     (MU_CHORD, "μ", true, true),
     (SIX_NINE_CHORD, "6/9", true, false),
 ];
@@ -323,8 +319,12 @@ impl RelativeChord{
         Self{ root, chord: Chord::new(intervals) }
     }
 
+    pub fn from_template(semis: Note, intervals: &[Note]) -> Self{
+        Self{ root: semis * SEMI, chord: Chord::new(intervals) }
+    }
+
     pub fn as_string(&self, lower: bool, styling: ChordStyling) -> String{
-        let root = format!("<X{}{}>", if self.root > 0 { "+" } else { "" }, self.root);
+        let root = format!("<X{}{}>", if self.root > 0 { "+" } else { "" }, self.root / SEMI);
         self.chord.quality(root, lower, styling)
     }
 }
@@ -445,7 +445,7 @@ mod tests{
         assert_eq!(Chord::new(&[MAJOR_THIRD,PERFECT_FIFTH,MAJOR_SEVENTH]).as_string(ChordStyling::Std), String::from("X∆"));
         assert_eq!(Chord::new(&[MINOR_THIRD,PERFECT_FIFTH,MINOR_SEVENTH]).as_string(ChordStyling::Std), String::from("x-"));
         assert_eq!(Chord::new(&[MAJOR_THIRD,PERFECT_FIFTH,MINOR_SEVENTH]).as_string(ChordStyling::Std), String::from("X7"));
-        assert_eq!(Chord::new(&[MINOR_THIRD,PERFECT_FIFTH,MAJOR_SEVENTH]).as_string(ChordStyling::Std), String::from("X-(maj7)"));
+        assert_eq!(Chord::new(&[MINOR_THIRD,PERFECT_FIFTH,MAJOR_SEVENTH]).as_string(ChordStyling::Std), String::from("X-∆"));
         assert_eq!(Chord::new(&[MINOR_THIRD,DIMINISHED_FIFTH,MINOR_SEVENTH]).as_string(ChordStyling::Std), String::from("xø"));
         assert_eq!(Chord::new(&[MINOR_THIRD,DIMINISHED_FIFTH,DIMINISHED_SEVENTH]).as_string(ChordStyling::Std), String::from("x°7"));
         assert_eq!(Chord::new(&[MAJOR_THIRD,AUGMENTED_FIFTH,MINOR_SEVENTH]).as_string(ChordStyling::Std), String::from("X+7"));

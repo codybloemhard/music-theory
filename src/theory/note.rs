@@ -189,7 +189,7 @@ pub const FS: UCN = UCN::Fs;
 pub const G: UCN = UCN::G;
 pub const GS: UCN = UCN::Gs;
 
-#[derive(Clone,Copy)]
+#[derive(Clone,Copy,PartialEq,Eq,Hash)]
 pub enum UCN{ // unranked chromatic note for ez writing down shit
     A, As, B, C, Cs, D, Ds, E, F, Fs, G, Gs,
 }
@@ -227,17 +227,7 @@ impl std::fmt::Display for UCN{
 
 impl std::fmt::Debug for UCN {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        // f.debug_struct("Point")
-        //  .field("x", &self.x)
-        //  .field("y", &self.y)
-        //  .finish()
         write!(f, "{}", self.to_named(0).to_string_name())
-    }
-}
-
-impl PartialEq for UCN{
-    fn eq(&self, other: &Self) -> bool{
-        self.to_note(0) == other.to_note(0)
     }
 }
 
@@ -363,7 +353,8 @@ impl NamedNote{
     pub fn from_note(note: Note) -> Self{
         if note % SEMI == 0 { // This a a chromatic note
             let rank: Rank = (note / PERFECT_OCTAVE).max(0).try_into().unwrap();
-            let inrank = (note / SEMI) % 12;
+            let mut inrank = (note / SEMI) % 12;
+            if inrank < 0 { inrank += 12; }
             match inrank{
                 0 => NamedNote::A(rank),
                 1 => NamedNote::As(rank),
