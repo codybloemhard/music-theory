@@ -1,8 +1,13 @@
 [package]
-name = "music-gen"
+name = "music-theory-query"
 version = "0.1.0"
 authors = ["Cody Bloemhard <cblmhrd@live.nl>"]
 edition = "2018"
+description = "Music theory queries"
+readme = "README.md"
+license = "GPL-3.0"
+# keywords = ["text"]
+# categories = ["command-line-interface"]
 
 [lib]
 name = "music_gen"
@@ -15,6 +20,5 @@ path = "src/bin.rs"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-hound = "3.4.0"
 fnrs = "0.1.4"
 lapp = "0.4.0"
