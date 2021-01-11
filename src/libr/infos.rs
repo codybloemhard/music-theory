@@ -10,6 +10,16 @@ pub fn print_splitted(strings: &[String], split: &str, end: &str){
     print!("{}", end);
 }
 
+pub fn format_splitted(strings: &[String], split: &str, end: &str) -> String{
+    let mut string = String::new();
+    for s in strings{
+        let x = format!("{}{}", s, split);
+        string.push_str(&x);
+    }
+    string.push_str(&end.to_string());
+    string
+}
+
 pub fn print_even(strings: &[String], spaces: usize, end: &str){
     for string in strings{
         let len = string.chars().count();

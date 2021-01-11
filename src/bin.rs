@@ -19,7 +19,7 @@ fn main(){
         _ => ChordStyling::Std,
     };
     if test { dotest(); }
-    if !chord.is_empty() { music_gen::notes_analysis(chord, style); }
+    if !chord.is_empty() { println!("{}", music_gen::notes_analysis(chord, style)); }
 }
 
 fn dotest(){
