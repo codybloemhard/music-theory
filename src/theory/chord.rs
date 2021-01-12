@@ -99,7 +99,7 @@ impl Chord{
             .collect::<Vec<_>>())
     }
 
-    pub fn to_sub_chords(&self) -> Vec<Chord>{
+    pub fn to_subseq_chords(&self) -> Vec<Chord>{
         let scale = self.to_scale(0).0;
         let mut sub_scales = HashSet::new();
         let slen = scale.len();
@@ -119,8 +119,8 @@ impl Chord{
         res
     }
 
-    pub fn into_sub_chords(self) -> Vec<Chord>{
-        self.to_sub_chords()
+    pub fn into_subseq_chords(self) -> Vec<Chord>{
+        self.to_subseq_chords()
     }
 
     pub fn quality(&self, basestr: String, lower: bool, style: ChordStyling) -> String{
@@ -224,7 +224,7 @@ impl ToScale for Chord{
     }
 }
 
-#[derive(PartialEq,Eq,Hash,Clone)]
+#[derive(PartialEq,Eq,Hash,Clone,Default)]
 pub struct RootedChord{
     pub root: Note,
     pub chord: Chord,
@@ -260,7 +260,7 @@ impl RootedChord{
         }
     }
 
-    pub fn to_sub_chords(&self) -> Vec<RootedChord>{
+    pub fn to_subseq_chords(&self) -> Vec<RootedChord>{
         let scale = self.to_scale().0;
         let mut sub_scales = Vec::new();
         let slen = scale.len();
@@ -281,8 +281,8 @@ impl RootedChord{
         sub_scales
     }
 
-    pub fn into_sub_chords(self) -> Vec<RootedChord>{
-        self.to_sub_chords()
+    pub fn into_subseq_chords(self) -> Vec<RootedChord>{
+        self.to_subseq_chords()
     }
 
     pub fn to_chordtone_wholetone_scale(&self) -> Scale{
@@ -296,6 +296,31 @@ impl RootedChord{
             res.push(between);
         }
         Scale(res)
+    }
+
+    pub fn to_inversion(&self) -> RootedChord{
+        let mut scale = self.to_scale();
+        if scale.is_empty() { return RootedChord::default(); }
+        let mut root = scale.0[0];
+        if scale.len() == 1 { return RootedChord::from_intervals(root, &[]); }
+        let top = scale.0[scale.len() - 1];
+        while root < top {
+            root += PERFECT_OCTAVE;
+        }
+        scale.0.remove(0);
+        scale.0.push(root);
+        Self::from_scale(scale)
+    }
+
+    pub fn all_inversions(&self) -> Vec<RootedChord>{
+        let len = self.chord.len() + 1;
+        let mut inv = self.clone();
+        let mut res = Vec::new();
+        for _ in 0..len{
+            inv = inv.to_inversion();
+            res.push(inv.clone());
+        }
+        res
     }
 
     pub fn as_string(&self, lower: bool, styling: ChordStyling) -> String{
@@ -382,7 +407,7 @@ pub fn strs_scale_chords(steps: &Steps, tonic: Note, size: usize, styling: Chord
     res
 }
 
-pub fn scale_sub_chords(scale: Scale) -> Vec<RootedChord>{
+pub fn scale_subseq_chords(scale: Scale) -> Vec<RootedChord>{
     if scale.len() < 3 { return Vec::new(); }
     let steps = scale.to_steps();
     let root = scale.0[0];
@@ -390,7 +415,7 @@ pub fn scale_sub_chords(scale: Scale) -> Vec<RootedChord>{
     let slen = scale.len();
     for (i, _) in note_iter(root, &steps.0).enumerate().take(slen){
         let lscale = note_iter(root, &steps.0).skip(i).take(slen).collect::<Vec<_>>();
-        let subchords = RootedChord::from_scale(Scale(lscale)).into_sub_chords();
+        let subchords = RootedChord::from_scale(Scale(lscale)).into_subseq_chords();
         sub_scales.extend(subchords.into_iter().map(|sc| sc.normalized()));
     }
     let mut sub_scales = sub_scales.into_iter().collect::<Vec<_>>();
@@ -398,14 +423,14 @@ pub fn scale_sub_chords(scale: Scale) -> Vec<RootedChord>{
     sub_scales
 }
 
-pub fn steps_sub_chords(steps: Steps) -> Vec<Vec<Chord>>{
+pub fn steps_subseq_chords(steps: Steps) -> Vec<Vec<Chord>>{
     let mut scale = steps.into_scale(0);
     scale.0.pop();
     let mut table = vec![0; 12];
     for (i,note) in scale.0.iter().enumerate(){
         table[(note / SEMI).max(0) as usize] = i;
     }
-    let subs = scale_sub_chords(scale.clone());
+    let subs = scale_subseq_chords(scale.clone());
     let mut cells = vec![vec![]; scale.len()];
     for s in subs.into_iter(){
         let index = table[(s.root / SEMI).max(0) as usize];

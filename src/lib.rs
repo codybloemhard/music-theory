@@ -38,13 +38,25 @@ pub fn notes_analysis(input_string: String, styling: ChordStyling) -> String{
     let root = scale.0[0];
     let steps = ucns.clone().into_steps();
     let ctonic = ucns[0];
+    let rchord = RootedChord::from_scale(scale.clone());
     let mut included = HashSet::new();
     string.push_str(&format!("Your notes: {:?}\n", ucns));
     string.push_str(&"----------------------------------------\n".to_string());
+    string.push_str(&"\tInversions:\n");
+    let inversions = {
+        let mut inversions = rchord.all_inversions();
+        inversions.pop();
+        inversions
+    };
+    inversions
+        .into_iter().map(|c| (c.as_string(true, ChordStyling::Extended),c))
+        .filter(|(s,_)| !s.contains('[') && !s.is_empty())
+        .map(|(mut s,c)| { s.push_str(&format!(": {:?}", c.to_scale().into_ucns())); s })
+        .for_each(|s| { string.push_str(&format!("{}\n", s)); });
+    string.push_str(&"----------------------------------------\n".to_string());
     string.push_str(&"\tSubchords:\n");
-    let rchord = RootedChord::from_scale(scale.clone());
     rchord
-        .clone().into_sub_chords()
+        .clone().into_subseq_chords()
         .into_iter().map(|c| (c.as_string(true, ChordStyling::Extended),c))
         .filter(|(s,_)| !s.contains('[') /* && !s.contains('(') */ && !s.is_empty())
         .map(|(mut s,c)| { s.push_str(&format!(": {:?}", c.to_scale().into_ucns())); s })

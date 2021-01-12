@@ -53,14 +53,14 @@ fn dotest(){
         println!("{}", modeobj);
     }
     println!("-------");
-    let subchords = scale_sub_chords(ionian::obj().clone_steps().mode(6).into_scale(A4))
+    let subchords = scale_subseq_chords(ionian::obj().clone_steps().mode(6).into_scale(A4))
         .into_iter().map(|c| (c.as_string(true, ChordStyling::Extended),c))
         .filter(|(s,_)| !s.contains('[') && !s.contains('(') && !s.is_empty())
         .map(|(mut s,c)| { s.push_str(&format!(": {:?}", c.to_scale().into_ucns())); s })
         .collect::<Vec<_>>();
     print_to_grid_auto(&subchords, 80, 3);
     println!("-------");
-    let subchords = steps_sub_chords(harmonic_minor::obj().clone_steps().mode(4));
+    let subchords = steps_subseq_chords(harmonic_minor::obj().clone_steps().mode(4));
     let mut chordstrings = Vec::new();
     for (i,cell) in subchords.into_iter().enumerate(){
         let temp = cell.into_iter().map(|c| c.quality(to_roman_num(i + 1), true, ChordStyling::Std))
