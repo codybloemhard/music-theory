@@ -1,9 +1,9 @@
-extern crate music_gen;
-use music_gen::theory::*;
-use music_gen::libr::scales::*;
-use music_gen::libr::infos::*;
-use music_gen::query::*;
-use music_gen::utils::to_roman_num;
+extern crate music_theory;
+use music_theory::theory::*;
+use music_theory::libr::scales::*;
+use music_theory::libr::infos::*;
+use music_theory::query::*;
+use music_theory::utils::to_roman_num;
 // jazzbøt
 fn main(){
     let args = lapp::parse_args("
@@ -19,7 +19,7 @@ fn main(){
         _ => ChordStyling::Std,
     };
     if test { dotest(); }
-    if !chord.is_empty() { println!("{}", music_gen::notes_analysis(chord, style)); }
+    if !chord.is_empty() { println!("{}", music_theory::notes_analysis(chord, style)); }
 }
 
 fn dotest(){

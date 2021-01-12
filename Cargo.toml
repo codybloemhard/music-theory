@@ -10,7 +10,7 @@ license = "GPL-3.0"
 # categories = ["command-line-interface"]
 
 [lib]
-name = "music_gen"
+name = "music_theory"
 path = "src/lib.rs"
 
 [[bin]]
