@@ -31,7 +31,18 @@ pub fn print_step_chords(steps: &Steps, root: Note, styling: ChordStyling) -> St
 }
 
 pub fn notes_analysis(input_string: String, styling: ChordStyling) -> String{
-    let ucns = input_string.into_ucns();
+    let ucns = {
+        let ucns = input_string.into_ucns();
+        let mut hm = HashSet::new();
+        let mut res = Vec::new();
+        for ucn in ucns{
+            if !hm.contains(&ucn){
+                hm.insert(ucn);
+                res.push(ucn);
+            }
+        }
+        res
+    };
     if ucns.is_empty() { return String::from("Could not parse notes!"); }
     let mut string = String::new();
     let scale = ucns.clone().into_scale(0);
