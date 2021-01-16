@@ -276,29 +276,29 @@ impl IntoUCNS for String{
             match s{
                 "ab" => Some(UCN::Gs),
                 "a" => Some(UCN::A),
-                "as" => Some(UCN::As),
+                "a#" => Some(UCN::As),
                 "bb" => Some(UCN::As),
                 "b" => Some(UCN::B),
-                "bs" => Some(UCN::C),
+                "b#" => Some(UCN::C),
                 "cb" => Some(UCN::B),
                 "c" => Some(UCN::C),
-                "cs" => Some(UCN::Cs),
+                "c#" => Some(UCN::Cs),
                 "db" => Some(UCN::Cs),
                 "d" => Some(UCN::D),
-                "ds" => Some(UCN::Ds),
+                "d#" => Some(UCN::Ds),
                 "eb" => Some(UCN::Ds),
                 "e" => Some(UCN::E),
-                "es" => Some(UCN::F),
+                "e#" => Some(UCN::F),
                 "fb" => Some(UCN::E),
                 "f" => Some(UCN::F),
-                "fs" => Some(UCN::Fs),
+                "f#" => Some(UCN::Fs),
                 "gb" => Some(UCN::Fs),
                 "g" => Some(UCN::G),
-                "gs" => Some(UCN::Gs),
+                "g#" => Some(UCN::Gs),
                 _ => None,
             }
         }
-        lowercase.split(',').into_iter().map(|s| str_to_ucn(&s)).flatten().collect::<Vec<_>>()
+        lowercase.split(',').into_iter().map(|s| str_to_ucn(&s.chars().map(|c| match c { '♯' => '#', '♭' => 'b', x => x }).collect::<String>())).flatten().collect::<Vec<_>>()
     }
 }
 
