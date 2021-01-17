@@ -3,7 +3,7 @@ use music_theory::theory::*;
 use music_theory::libr::scales::*;
 use music_theory::libr::infos::*;
 use music_theory::query::*;
-use music_theory::utils::to_roman_num;
+use music_theory::utils::*;
 // jazzbøt
 fn main(){
     let args = lapp::parse_args("
@@ -71,4 +71,17 @@ fn dotest(){
         }
     }
     print_to_grid_auto(&chordstrings, 80, 3);
+    let aminorchord = RootedChord::from_intervals(A4, &MINOR).to_scale();
+    let mut seq = SequenceWalker::from(&aminorchord.0).with_current(A4);
+    for _ in 0..10{
+        let n = seq.current_next();
+        print!("({},{})", n, NamedNote::from_note(n).to_string_name_sharp());
+    }
+    println!();
+    seq = seq.with_current(A4);
+    for _ in 0..10{
+        let n = seq.current_prev();
+        print!("({},{})", n, NamedNote::from_note(n).to_string_name_sharp());
+    }
+    println!();
 }
