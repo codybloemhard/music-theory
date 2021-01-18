@@ -19,7 +19,13 @@ fn main(){
         _ => ChordStyling::Std,
     };
     if test { dotest(); }
-    if !chord.is_empty() { println!("{}", music_theory::notes_analysis(chord, style)); }
+    if !chord.is_empty() {
+        let res = music_theory::notes_analysis(chord, style);
+        for (header, content) in res{
+            println!("\t{}", header);
+            println!("{}", content);
+        }
+    }
 }
 
 fn dotest(){
@@ -71,17 +77,4 @@ fn dotest(){
         }
     }
     print_to_grid_auto(&chordstrings, 80, 3);
-    let aminorchord = RootedChord::from_intervals(A4, &MINOR).to_scale();
-    let mut seq = SequenceWalker::from(&aminorchord.0).with_current(A4);
-    for _ in 0..10{
-        let n = seq.current_next();
-        print!("({},{})", n, NamedNote::from_note(n).to_string_name_sharp());
-    }
-    println!();
-    seq = seq.with_current(A4);
-    for _ in 0..10{
-        let n = seq.current_prev();
-        print!("({},{})", n, NamedNote::from_note(n).to_string_name_sharp());
-    }
-    println!();
 }
