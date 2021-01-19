@@ -49,7 +49,7 @@ pub fn notes_analysis(input_string: String, styling: ChordStyling) -> Vec<(Strin
     if ucns.is_empty() { return res; }
     let mut string = String::new();
     let scale = ucns.clone().into_scale(0);
-    // let root = scale.0[0];
+    let root = scale.0[0];
     let steps = ucns.clone().into_steps();
     let ctonic = ucns[0];
     let rchord = RootedChord::from_scale(scale.clone());
@@ -77,7 +77,8 @@ pub fn notes_analysis(input_string: String, styling: ChordStyling) -> Vec<(Strin
     let mo = find_scale(&ctwts);
     if let Some(m) = mo{
         included.insert((ctonic, m.steps.clone()));
-        string.push_str(&format!("{} {}\n", ctonic, m));
+        let spelled_out = m.steps.to_scale(root);
+        string.push_str(&format!("{} {}: {:?}\n", ctonic, m, spelled_out.0));
     }
     // if !ctwts.is_empty() {
     //     let ctwts = ctwts.into_steps();

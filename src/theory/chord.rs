@@ -324,7 +324,7 @@ impl RootedChord{
     }
 
     pub fn as_string(&self, lower: bool, styling: ChordStyling) -> String{
-        let root = NamedNote::from_note(self.root).to_string_name_sharp();
+        let root = NamedNote::from_note(self.root).to_string_name();
         self.chord.quality(root, lower, styling)
     }
 }

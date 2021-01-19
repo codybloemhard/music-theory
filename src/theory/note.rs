@@ -191,7 +191,7 @@ pub const GS: UCN = UCN::Gs;
 
 #[derive(Clone,Copy,PartialEq,Eq,Hash)]
 pub enum UCN{ // unranked chromatic note for ez writing down shit
-    A, As, B, C, Cs, D, Ds, E, F, Fs, G, Gs,
+    Ab, A, As, Bb, B, Bs, Cb, C, Cs, Db, D, Ds, Eb, E, Es, Fb, F, Fs, Gb, G, Gs,
 }
 
 pub type UCNS = Vec<UCN>;
@@ -199,16 +199,25 @@ pub type UCNS = Vec<UCN>;
 impl UCN{
     pub fn to_named(self, rank: Rank) -> NamedNote{
         match self{
+            UCN::Ab => NamedNote::Ab(rank),
             UCN::A  => NamedNote::A(rank),
             UCN::As => NamedNote::As(rank),
+            UCN::Bb => NamedNote::Bb(rank),
             UCN::B  => NamedNote::B(rank),
+            UCN::Bs => NamedNote::Bs(rank),
+            UCN::Cb => NamedNote::Cb(rank),
             UCN::C  => NamedNote::C(rank),
             UCN::Cs => NamedNote::Cs(rank),
+            UCN::Db => NamedNote::Db(rank),
             UCN::D  => NamedNote::D(rank),
             UCN::Ds => NamedNote::Ds(rank),
+            UCN::Eb => NamedNote::Eb(rank),
             UCN::E  => NamedNote::E(rank),
+            UCN::Es => NamedNote::Es(rank),
+            UCN::Fb => NamedNote::Fb(rank),
             UCN::F  => NamedNote::F(rank),
             UCN::Fs => NamedNote::Fs(rank),
+            UCN::Gb => NamedNote::Gb(rank),
             UCN::G  => NamedNote::G(rank),
             UCN::Gs => NamedNote::Gs(rank),
         }
@@ -274,25 +283,25 @@ impl IntoUCNS for String{
         }
         fn str_to_ucn(s: &str) -> Option<UCN>{
             match s{
-                "ab" => Some(UCN::Gs),
+                "ab" => Some(UCN::Ab),
                 "a" => Some(UCN::A),
                 "a#" => Some(UCN::As),
-                "bb" => Some(UCN::As),
+                "bb" => Some(UCN::Bb),
                 "b" => Some(UCN::B),
-                "b#" => Some(UCN::C),
-                "cb" => Some(UCN::B),
+                "b#" => Some(UCN::Bs),
+                "cb" => Some(UCN::Cb),
                 "c" => Some(UCN::C),
                 "c#" => Some(UCN::Cs),
-                "db" => Some(UCN::Cs),
+                "db" => Some(UCN::Db),
                 "d" => Some(UCN::D),
                 "d#" => Some(UCN::Ds),
-                "eb" => Some(UCN::Ds),
+                "eb" => Some(UCN::Eb),
                 "e" => Some(UCN::E),
-                "e#" => Some(UCN::F),
-                "fb" => Some(UCN::E),
+                "e#" => Some(UCN::Es),
+                "fb" => Some(UCN::Fb),
                 "f" => Some(UCN::F),
                 "f#" => Some(UCN::Fs),
-                "gb" => Some(UCN::Fs),
+                "gb" => Some(UCN::Gb),
                 "g" => Some(UCN::G),
                 "g#" => Some(UCN::Gs),
                 _ => None,
@@ -346,7 +355,8 @@ impl IntoSteps for UCNS{
 
 #[derive(Clone,Copy)]
 pub enum NamedNote{
-    A(Rank), As(Rank), B(Rank), C(Rank), Cs(Rank), D(Rank), Ds(Rank), E(Rank), F(Rank), Fs(Rank), G(Rank), Gs(Rank), MicroTonal(Note)
+    Ab(Rank), A(Rank), As(Rank), Bb(Rank), B(Rank), Bs(Rank), Cb(Rank), C(Rank), Cs(Rank), Db(Rank), D(Rank), Ds(Rank), Eb(Rank), E(Rank), Es(Rank),
+        Fb(Rank), F(Rank), Fs(Rank), Gb(Rank), G(Rank), Gs(Rank), MicroTonal(Note)
 }
 
 impl NamedNote{
@@ -377,16 +387,25 @@ impl NamedNote{
 
     pub fn rank(self) -> Rank{
         match self{
+            NamedNote::Ab(r)    => r,
             NamedNote::A(r)     => r,
             NamedNote::As(r)    => r,
+            NamedNote::Bb(r)    => r,
             NamedNote::B(r)     => r,
+            NamedNote::Bs(r)    => r,
+            NamedNote::Cb(r)    => r,
             NamedNote::C(r)     => r,
             NamedNote::Cs(r)    => r,
+            NamedNote::Db(r)    => r,
             NamedNote::D(r)     => r,
             NamedNote::Ds(r)    => r,
+            NamedNote::Eb(r)    => r,
             NamedNote::E(r)     => r,
+            NamedNote::Es(r)    => r,
+            NamedNote::Fb(r)    => r,
             NamedNote::F(r)     => r,
             NamedNote::Fs(r)    => r,
+            NamedNote::Gb(r)    => r,
             NamedNote::G(r)     => r,
             NamedNote::Gs(r)    => r,
             NamedNote::MicroTonal(n) => (n / 1440) as Rank,
@@ -395,16 +414,25 @@ impl NamedNote{
 
     pub fn chromatic_to_index(self) -> Note{
         match self{
+            NamedNote::Ab(_)    => 11,
             NamedNote::A(_)     => 0,
             NamedNote::As(_)    => 1,
+            NamedNote::Bb(_)    => 1,
             NamedNote::B(_)     => 2,
+            NamedNote::Bs(_)    => 3,
+            NamedNote::Cb(_)    => 2,
             NamedNote::C(_)     => 3,
             NamedNote::Cs(_)    => 4,
+            NamedNote::Db(_)    => 4,
             NamedNote::D(_)     => 5,
             NamedNote::Ds(_)    => 6,
+            NamedNote::Eb(_)    => 6,
             NamedNote::E(_)     => 7,
+            NamedNote::Es(_)    => 8,
+            NamedNote::Fb(_)    => 7,
             NamedNote::F(_)     => 8,
             NamedNote::Fs(_)    => 9,
+            NamedNote::Gb(_)    => 9,
             NamedNote::G(_)     => 10,
             NamedNote::Gs(_)    => 11,
             _ => 0,
@@ -424,34 +452,25 @@ impl NamedNote{
 
     pub fn to_string_name(self) -> String{
         match self{
-            NamedNote::A(_)     => "A",
-            NamedNote::As(_)    => "A♯/B♭",
-            NamedNote::B(_)     => "B",
-            NamedNote::C(_)     => "C",
-            NamedNote::Cs(_)    => "C♯/D♭",
-            NamedNote::D(_)     => "D",
-            NamedNote::Ds(_)    => "D♯/E♭",
-            NamedNote::E(_)     => "E",
-            NamedNote::F(_)     => "F",
-            NamedNote::Fs(_)    => "F♯/G♭",
-            NamedNote::G(_)     => "G",
-            NamedNote::Gs(_)    => "G♯/A♭",
-            NamedNote::MicroTonal(_) => "X",
-        }.to_string()
-    }
-
-    pub fn to_string_name_sharp(self) -> String{
-        match self{
+            NamedNote::Ab(_)    => "A♭",
             NamedNote::A(_)     => "A",
             NamedNote::As(_)    => "A♯",
+            NamedNote::Bb(_)    => "B♭",
             NamedNote::B(_)     => "B",
+            NamedNote::Bs(_)    => "B♯",
+            NamedNote::Cb(_)    => "C♭",
             NamedNote::C(_)     => "C",
             NamedNote::Cs(_)    => "C♯",
+            NamedNote::Db(_)    => "D♭",
             NamedNote::D(_)     => "D",
             NamedNote::Ds(_)    => "D♯",
+            NamedNote::Eb(_)    => "E♭",
             NamedNote::E(_)     => "E",
+            NamedNote::Es(_)    => "E♯",
+            NamedNote::Fb(_)    => "F♭",
             NamedNote::F(_)     => "F",
             NamedNote::Fs(_)    => "F♯",
+            NamedNote::Gb(_)    => "G♭",
             NamedNote::G(_)     => "G",
             NamedNote::Gs(_)    => "G♯",
             NamedNote::MicroTonal(_) => "X",
