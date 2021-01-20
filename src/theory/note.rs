@@ -1,5 +1,6 @@
 use std::convert::TryInto;
 use super::interval::*;
+use std::collections::{ HashMap, HashSet };
 
 pub const A4: Note = 5760;
 
@@ -223,6 +224,58 @@ impl UCN{
         }
     }
 
+    pub fn to_base_letter(&self) -> char{
+        match self{
+            UCN::Ab => 'a',
+            UCN::A  => 'a',
+            UCN::As => 'a',
+            UCN::Bb => 'b',
+            UCN::B  => 'b',
+            UCN::Bs => 'b',
+            UCN::Cb => 'c',
+            UCN::C  => 'c',
+            UCN::Cs => 'c',
+            UCN::Db => 'd',
+            UCN::D  => 'd',
+            UCN::Ds => 'd',
+            UCN::Eb => 'e',
+            UCN::E  => 'e',
+            UCN::Es => 'e',
+            UCN::Fb => 'f',
+            UCN::F  => 'f',
+            UCN::Fs => 'f',
+            UCN::Gb => 'g',
+            UCN::G  => 'g',
+            UCN::Gs => 'g',
+        }
+    }
+
+    pub fn to_alternative(&self) -> Option<Self>{
+        match self{
+            UCN::Ab => Some(UCN::Gs),
+            UCN::A  => None,
+            UCN::As => Some(UCN::Bb),
+            UCN::Bb => Some(UCN::As),
+            UCN::B  => None,
+            UCN::Bs => Some(UCN::Cb),
+            UCN::Cb => Some(UCN::Bs),
+            UCN::C  => None,
+            UCN::Cs => Some(UCN::Db),
+            UCN::Db => Some(UCN::Cs),
+            UCN::D  => None,
+            UCN::Ds => Some(UCN::Eb),
+            UCN::Eb => Some(UCN::Ds),
+            UCN::E  => None,
+            UCN::Es => Some(UCN::Fb),
+            UCN::Fb => Some(UCN::Es),
+            UCN::F  => None,
+            UCN::Fs => Some(UCN::Gb),
+            UCN::Gb => Some(UCN::Fs),
+            UCN::G  => None,
+            UCN::Gs => Some(UCN::Ab),
+        }
+    }
+
     pub fn to_note(self, rank: Rank) -> Note{
         self.to_named(rank).to_note()
     }
@@ -271,6 +324,32 @@ impl IntoUCNS for Scale{
         }
         res
     }
+}
+
+pub fn scale_to_ucns_enharmonic(scale: &Scale, ucns: &[UCN]) -> UCNS{
+    let mut map = HashMap::new();
+    let mut set = HashSet::new();
+    for ucn in ucns{
+        map.insert(ucn.to_named(0).chromatic_to_index(), ucn);
+        set.insert(ucn.to_base_letter());
+    }
+    let mut res = Vec::new();
+    for n in &scale.0{
+        let ucn = as_ucn(*n);
+        let ucn = if let Some(ucn_fixed) = map.get(&ucn.to_named(0).chromatic_to_index()){
+            **ucn_fixed
+        } else {
+            let base_letter = ucn.to_base_letter();
+            if set.contains(&base_letter){
+                ucn.to_alternative().expect("Expect: scale_to_ucns_enharmonic")
+            } else {
+                set.insert(base_letter);
+                ucn
+            }
+        };
+        res.push(ucn);
+    }
+    res
 }
 
 impl IntoUCNS for String{

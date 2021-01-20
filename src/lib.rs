@@ -78,7 +78,7 @@ pub fn notes_analysis(input_string: String, styling: ChordStyling) -> Vec<(Strin
     if let Some(m) = mo{
         included.insert((ctonic, m.steps.clone()));
         let spelled_out = m.steps.to_scale(root);
-        string.push_str(&format!("{} {}: {:?}\n", ctonic, m, spelled_out.0));
+        string.push_str(&format!("{} {}: {:?}\n", ctonic, m, scale_to_ucns_enharmonic(&spelled_out, &ucns)));
     }
     // if !ctwts.is_empty() {
     //     let ctwts = ctwts.into_steps();
