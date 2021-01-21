@@ -128,8 +128,8 @@ impl<T: ToSteps> IntoSteps for T{
     }
 }
 
-pub trait IntoUCNS{
-    fn into_ucns(self) -> UCNS;
+pub trait IntoPCs{
+    fn into_pcs(self) -> PCs;
 }
 
 pub trait ToRelative{
@@ -167,237 +167,153 @@ impl ToString for RelativeNote{
             RelativeNote::Natural => {  },
             RelativeNote::Blank => { res.push('?'); },
             RelativeNote::Sharp(i) => {
-                for _ in 0..*i{ res.push('♯'); }
+                for _ in 0..*i { res.push('♯'); }
             },
             RelativeNote::Flat(i) => {
-                for _ in 0..*i{ res.push('♭'); }
+                for _ in 0..*i { res.push('♭'); }
             }
         }
         res
     }
 }
 
-pub const A: UCN = UCN::A;
-pub const AS: UCN = UCN::As;
-pub const B: UCN = UCN::B;
-pub const C: UCN = UCN::C;
-pub const CS: UCN = UCN::Cs;
-pub const D: UCN = UCN::D;
-pub const DS: UCN = UCN::Ds;
-pub const E: UCN = UCN::E;
-pub const F: UCN = UCN::F;
-pub const FS: UCN = UCN::Fs;
-pub const G: UCN = UCN::G;
-pub const GS: UCN = UCN::Gs;
+pub const A:  PC = PC(0);
+pub const AS: PC = PC(1);
+pub const B:  PC = PC(2);
+pub const C:  PC = PC(3);
+pub const CS: PC = PC(4);
+pub const D:  PC = PC(5);
+pub const DS: PC = PC(6);
+pub const E:  PC = PC(7);
+pub const F:  PC = PC(8);
+pub const FS: PC = PC(9);
+pub const G:  PC = PC(10);
+pub const GS: PC = PC(11);
 
 #[derive(Clone,Copy,PartialEq,Eq,Hash)]
-pub enum UCN{ // unranked chromatic note for ez writing down shit
-    Ab, A, As, Bb, B, Bs, Cb, C, Cs, Db, D, Ds, Eb, E, Es, Fb, F, Fs, Gb, G, Gs,
-}
+pub struct PC(Note); // PitchClass
 
-pub type UCNS = Vec<UCN>;
+pub type PCs = Vec<PC>;
 
-impl UCN{
+impl PC{
     pub fn to_named(self, rank: Rank) -> NamedNote{
-        match self{
-            UCN::Ab => NamedNote::Ab(rank),
-            UCN::A  => NamedNote::A(rank),
-            UCN::As => NamedNote::As(rank),
-            UCN::Bb => NamedNote::Bb(rank),
-            UCN::B  => NamedNote::B(rank),
-            UCN::Bs => NamedNote::Bs(rank),
-            UCN::Cb => NamedNote::Cb(rank),
-            UCN::C  => NamedNote::C(rank),
-            UCN::Cs => NamedNote::Cs(rank),
-            UCN::Db => NamedNote::Db(rank),
-            UCN::D  => NamedNote::D(rank),
-            UCN::Ds => NamedNote::Ds(rank),
-            UCN::Eb => NamedNote::Eb(rank),
-            UCN::E  => NamedNote::E(rank),
-            UCN::Es => NamedNote::Es(rank),
-            UCN::Fb => NamedNote::Fb(rank),
-            UCN::F  => NamedNote::F(rank),
-            UCN::Fs => NamedNote::Fs(rank),
-            UCN::Gb => NamedNote::Gb(rank),
-            UCN::G  => NamedNote::G(rank),
-            UCN::Gs => NamedNote::Gs(rank),
-        }
-    }
-
-    pub fn to_base_letter(&self) -> char{
-        match self{
-            UCN::Ab => 'a',
-            UCN::A  => 'a',
-            UCN::As => 'a',
-            UCN::Bb => 'b',
-            UCN::B  => 'b',
-            UCN::Bs => 'b',
-            UCN::Cb => 'c',
-            UCN::C  => 'c',
-            UCN::Cs => 'c',
-            UCN::Db => 'd',
-            UCN::D  => 'd',
-            UCN::Ds => 'd',
-            UCN::Eb => 'e',
-            UCN::E  => 'e',
-            UCN::Es => 'e',
-            UCN::Fb => 'f',
-            UCN::F  => 'f',
-            UCN::Fs => 'f',
-            UCN::Gb => 'g',
-            UCN::G  => 'g',
-            UCN::Gs => 'g',
-        }
-    }
-
-    pub fn to_alternative(&self) -> Option<Self>{
-        match self{
-            UCN::Ab => Some(UCN::Gs),
-            UCN::A  => None,
-            UCN::As => Some(UCN::Bb),
-            UCN::Bb => Some(UCN::As),
-            UCN::B  => None,
-            UCN::Bs => Some(UCN::Cb),
-            UCN::Cb => Some(UCN::Bs),
-            UCN::C  => None,
-            UCN::Cs => Some(UCN::Db),
-            UCN::Db => Some(UCN::Cs),
-            UCN::D  => None,
-            UCN::Ds => Some(UCN::Eb),
-            UCN::Eb => Some(UCN::Ds),
-            UCN::E  => None,
-            UCN::Es => Some(UCN::Fb),
-            UCN::Fb => Some(UCN::Es),
-            UCN::F  => None,
-            UCN::Fs => Some(UCN::Gb),
-            UCN::Gb => Some(UCN::Fs),
-            UCN::G  => None,
-            UCN::Gs => Some(UCN::Ab),
+        match self.0{
+            0  => NamedNote::A(rank),
+            1  => NamedNote::As(rank),
+            2  => NamedNote::B(rank),
+            3  => NamedNote::C(rank),
+            4  => NamedNote::Cs(rank),
+            5  => NamedNote::D(rank),
+            6  => NamedNote::Ds(rank),
+            7  => NamedNote::E(rank),
+            8  => NamedNote::F(rank),
+            9  => NamedNote::Fs(rank),
+            10 => NamedNote::G(rank),
+            11 => NamedNote::Gs(rank),
+            _ => panic!("PC::to_named: should never happen!"),
         }
     }
 
     pub fn to_note(self, rank: Rank) -> Note{
-        self.to_named(rank).to_note()
+        self.0 + (rank as Note * PERFECT_OCTAVE)
     }
 }
 
-impl std::fmt::Display for UCN{
+impl std::fmt::Display for PC{
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result{
         write!(f, "{}", self.to_named(0).to_string_name())
     }
 }
 
-impl std::fmt::Debug for UCN {
+impl std::fmt::Debug for PC {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}", self.to_named(0).to_string_name())
     }
 }
 
-pub fn as_ucn(note: Note) -> UCN{
+pub fn as_pc(note: Note) -> PC{
     if note % SEMI == 0 {
         let inrank = (note / SEMI) % 12;
-        match inrank{
-            0 => UCN::A,
-            1 => UCN::As,
-            2 => UCN::B,
-            3 => UCN::C,
-            4 => UCN::Cs,
-            5 => UCN::D,
-            6 => UCN::Ds,
-            7 => UCN::E,
-            8 => UCN::F,
-            9 => UCN::Fs,
-            10 => UCN::G,
-            11 => UCN::Gs,
-            _ => { panic!("to_ucn: should never happen!"); }
-        }
+        if inrank >= 12 { panic!("as_pc: should never happen!"); }
+        PC(inrank)
     } else { // This is a microtonal note
         panic!("to_ucn: microtonal input");
     }
 }
 
-impl IntoUCNS for Scale{
-    fn into_ucns(self) -> UCNS{
+impl IntoPCs for Scale{
+    fn into_pcs(self) -> PCs{
         let mut res = Vec::new();
         for n in self.0{
-            res.push(as_ucn(n));
+            res.push(as_pc(n));
         }
         res
     }
 }
 
-pub fn scale_to_ucns_enharmonic(scale: &Scale, ucns: &[UCN]) -> UCNS{
-    let mut map = HashMap::new();
-    let mut set = HashSet::new();
-    for ucn in ucns{
-        map.insert(ucn.to_named(0).chromatic_to_index(), ucn);
-        set.insert(ucn.to_base_letter());
-    }
-    let mut res = Vec::new();
-    for n in &scale.0{
-        let ucn = as_ucn(*n);
-        let ucn = if let Some(ucn_fixed) = map.get(&ucn.to_named(0).chromatic_to_index()){
-            **ucn_fixed
-        } else {
-            let base_letter = ucn.to_base_letter();
-            if set.contains(&base_letter){
-                ucn.to_alternative().expect("Expect: scale_to_ucns_enharmonic")
-            } else {
-                set.insert(base_letter);
-                ucn
-            }
-        };
-        res.push(ucn);
-    }
-    res
-}
+// pub fn scale_to_ucns_enharmonic(scale: &Scale, ucns: &[UCN]) -> UCNS{
+//     let mut map = HashMap::new();
+//     let mut set = HashSet::new();
+//     for ucn in ucns{
+//         map.insert(ucn.to_named(0).chromatic_to_index(), ucn);
+//         set.insert(ucn.to_base_letter());
+//     }
+//     let mut res = Vec::new();
+//     for n in &scale.0{
+//         let ucn = as_ucn(*n);
+//         let ucn = if let Some(ucn_fixed) = map.get(&ucn.to_named(0).chromatic_to_index()){
+//             **ucn_fixed
+//         } else {
+//             let base_letter = ucn.to_base_letter();
+//             if set.contains(&base_letter){
+//                 ucn.to_alternative().expect("Expect: scale_to_ucns_enharmonic")
+//             } else {
+//                 set.insert(base_letter);
+//                 ucn
+//             }
+//         };
+//         res.push(ucn);
+//     }
+//     res
+// }
 
-impl IntoUCNS for String{
-    fn into_ucns(self) -> UCNS{
+impl IntoPCs for String{
+    fn into_pcs(self) -> PCs{
         let mut lowercase = String::new();
         for c in self.chars(){
             for l in c.to_lowercase(){
                 lowercase.push(l);
             }
         }
-        fn str_to_ucn(s: &str) -> Option<UCN>{
+        fn str_to_pc(s: &str) -> Option<PC>{
             match s{
-                "ab" => Some(UCN::Ab),
-                "a" => Some(UCN::A),
-                "a#" => Some(UCN::As),
-                "bb" => Some(UCN::Bb),
-                "b" => Some(UCN::B),
-                "b#" => Some(UCN::Bs),
-                "cb" => Some(UCN::Cb),
-                "c" => Some(UCN::C),
-                "c#" => Some(UCN::Cs),
-                "db" => Some(UCN::Db),
-                "d" => Some(UCN::D),
-                "d#" => Some(UCN::Ds),
-                "eb" => Some(UCN::Eb),
-                "e" => Some(UCN::E),
-                "e#" => Some(UCN::Es),
-                "fb" => Some(UCN::Fb),
-                "f" => Some(UCN::F),
-                "f#" => Some(UCN::Fs),
-                "gb" => Some(UCN::Gb),
-                "g" => Some(UCN::G),
-                "g#" => Some(UCN::Gs),
+                "a"  => Some(PC(0)),
+                "a#" => Some(PC(1)),
+                "b"  => Some(PC(2)),
+                "c"  => Some(PC(3)),
+                "c#" => Some(PC(4)),
+                "d"  => Some(PC(5)),
+                "d#" => Some(PC(6)),
+                "e"  => Some(PC(7)),
+                "f"  => Some(PC(8)),
+                "f#" => Some(PC(9)),
+                "g"  => Some(PC(10)),
+                "g#" => Some(PC(11)),
                 _ => None,
             }
         }
-        lowercase.split(',').into_iter().map(|s| str_to_ucn(&s.chars().map(|c| match c { '♯' => '#', '♭' => 'b', x => x }).collect::<String>())).flatten().collect::<Vec<_>>()
+        lowercase.split(',').into_iter().map(|s| str_to_pc(&s.chars().map(|c| match c { '♯' => '#', '♭' => 'b', x => x }).collect::<String>())).flatten().collect::<Vec<_>>()
     }
 }
 
-pub fn ucns_to_named(ucns: &[UCN], starting_rank: Rank) -> Vec<NamedNote>{
-    if ucns.is_empty() { return Vec::new(); }
+pub fn pcs_to_named(pcs: &[PC], starting_rank: Rank) -> Vec<NamedNote>{
+    if pcs.is_empty() { return Vec::new(); }
     let mut rank = starting_rank;
-    let start_note = ucns[0].to_named(rank);
+    let start_note = pcs[0].to_named(rank);
     let mut res = vec![start_note];
     let mut last = start_note.to_note();
-    for ucn in ucns.iter().skip(1){
-        let note = ucn.to_named(rank);
+    for pc in pcs.iter().skip(1){
+        let note = pc.to_named(rank);
         let note_val = note.to_note();
         let diff = note_val - last;
         if diff > 0{
@@ -406,16 +322,16 @@ pub fn ucns_to_named(ucns: &[UCN], starting_rank: Rank) -> Vec<NamedNote>{
             continue;
         }
         rank += 1;
-        let new_note = ucn.to_named(rank);
+        let new_note = pc.to_named(rank);
         last = new_note.to_note();
         res.push(new_note);
     }
     res
 }
 
-impl ToScale for UCNS{
+impl ToScale for PCs{
     fn to_scale(&self, rank: Note) -> Scale{
-        let named = ucns_to_named(self, rank as Rank);
+        let named = pcs_to_named(self, rank as Rank);
         // TODO: Make this possible
         // named.map(&|n| n.to_note())
         let mut res = Vec::new();
@@ -426,7 +342,7 @@ impl ToScale for UCNS{
     }
 }
 
-impl IntoSteps for UCNS{
+impl IntoSteps for PCs{
     fn into_steps(self) -> Steps{
         self.to_scale(0).into_steps()
     }
@@ -434,8 +350,7 @@ impl IntoSteps for UCNS{
 
 #[derive(Clone,Copy)]
 pub enum NamedNote{
-    Ab(Rank), A(Rank), As(Rank), Bb(Rank), B(Rank), Bs(Rank), Cb(Rank), C(Rank), Cs(Rank), Db(Rank), D(Rank), Ds(Rank), Eb(Rank), E(Rank), Es(Rank),
-        Fb(Rank), F(Rank), Fs(Rank), Gb(Rank), G(Rank), Gs(Rank), MicroTonal(Note)
+    A(Rank), As(Rank), B(Rank), C(Rank), Cs(Rank), D(Rank), Ds(Rank), E(Rank), F(Rank), Fs(Rank), G(Rank), Gs(Rank), MicroTonal(Note)
 }
 
 impl NamedNote{
@@ -466,25 +381,16 @@ impl NamedNote{
 
     pub fn rank(self) -> Rank{
         match self{
-            NamedNote::Ab(r)    => r,
             NamedNote::A(r)     => r,
             NamedNote::As(r)    => r,
-            NamedNote::Bb(r)    => r,
             NamedNote::B(r)     => r,
-            NamedNote::Bs(r)    => r,
-            NamedNote::Cb(r)    => r,
             NamedNote::C(r)     => r,
             NamedNote::Cs(r)    => r,
-            NamedNote::Db(r)    => r,
             NamedNote::D(r)     => r,
             NamedNote::Ds(r)    => r,
-            NamedNote::Eb(r)    => r,
             NamedNote::E(r)     => r,
-            NamedNote::Es(r)    => r,
-            NamedNote::Fb(r)    => r,
             NamedNote::F(r)     => r,
             NamedNote::Fs(r)    => r,
-            NamedNote::Gb(r)    => r,
             NamedNote::G(r)     => r,
             NamedNote::Gs(r)    => r,
             NamedNote::MicroTonal(n) => (n / 1440) as Rank,
@@ -493,25 +399,16 @@ impl NamedNote{
 
     pub fn chromatic_to_index(self) -> Note{
         match self{
-            NamedNote::Ab(_)    => 11,
             NamedNote::A(_)     => 0,
             NamedNote::As(_)    => 1,
-            NamedNote::Bb(_)    => 1,
             NamedNote::B(_)     => 2,
-            NamedNote::Bs(_)    => 3,
-            NamedNote::Cb(_)    => 2,
             NamedNote::C(_)     => 3,
             NamedNote::Cs(_)    => 4,
-            NamedNote::Db(_)    => 4,
             NamedNote::D(_)     => 5,
             NamedNote::Ds(_)    => 6,
-            NamedNote::Eb(_)    => 6,
             NamedNote::E(_)     => 7,
-            NamedNote::Es(_)    => 8,
-            NamedNote::Fb(_)    => 7,
             NamedNote::F(_)     => 8,
             NamedNote::Fs(_)    => 9,
-            NamedNote::Gb(_)    => 9,
             NamedNote::G(_)     => 10,
             NamedNote::Gs(_)    => 11,
             _ => 0,
@@ -531,25 +428,16 @@ impl NamedNote{
 
     pub fn to_string_name(self) -> String{
         match self{
-            NamedNote::Ab(_)    => "A♭",
             NamedNote::A(_)     => "A",
             NamedNote::As(_)    => "A♯",
-            NamedNote::Bb(_)    => "B♭",
             NamedNote::B(_)     => "B",
-            NamedNote::Bs(_)    => "B♯",
-            NamedNote::Cb(_)    => "C♭",
             NamedNote::C(_)     => "C",
             NamedNote::Cs(_)    => "C♯",
-            NamedNote::Db(_)    => "D♭",
             NamedNote::D(_)     => "D",
             NamedNote::Ds(_)    => "D♯",
-            NamedNote::Eb(_)    => "E♭",
             NamedNote::E(_)     => "E",
-            NamedNote::Es(_)    => "E♯",
-            NamedNote::Fb(_)    => "F♭",
             NamedNote::F(_)     => "F",
             NamedNote::Fs(_)    => "F♯",
-            NamedNote::Gb(_)    => "G♭",
             NamedNote::G(_)     => "G",
             NamedNote::Gs(_)    => "G♯",
             NamedNote::MicroTonal(_) => "X",

@@ -1,4 +1,4 @@
-use crate::theory::note::{Steps,Scale,Relative,RelativeNote,IntoUCNS,UCNS,UCN,NoteSequence,ToScale,IntoScale,ToRelative,ToSteps};
+use crate::theory::note::{Steps,Scale,Relative,RelativeNote,IntoPCs,PCs,PC,NoteSequence,ToScale,IntoScale,ToRelative,ToSteps};
 use crate::theory::scale::{notes_to_octave_scale,StepsTrait,ModeIteratorSpawner};
 use crate::theory::interval::{SEMI};
 use fnrs::Sequence;
@@ -40,9 +40,9 @@ pub fn find_steps_superseq(scale: &Steps) -> Vec<ModeObj>{
     res
 }
 
-pub fn find_scale_superseq(scale: &Scale) -> Vec<(UCN,ModeObj)>{
+pub fn find_scale_superseq(scale: &Scale) -> Vec<(PC,ModeObj)>{
     let steps = scale.to_steps();
-    let ucns = scale.clone().into_ucns();
+    let pcs = scale.clone().into_pcs();
     let scales = get_all_scale_objs();
     let mut res = Vec::new();
     for sc in scales{
@@ -50,8 +50,8 @@ pub fn find_scale_superseq(scale: &Scale) -> Vec<(UCN,ModeObj)>{
             if !mode.0.has_seq(&steps.0) { continue; }
             for j in 0..12{
                 let tonic = j * SEMI;
-                let modescale = mode.clone().into_scale(tonic).into_ucns();
-                if modescale.has_seq(&ucns){
+                let modescale = mode.clone().into_scale(tonic).into_pcs();
+                if modescale.has_seq(&pcs){
                     res.push((modescale[0],
                         ModeObj{
                             steps: mode.clone(),
@@ -69,7 +69,7 @@ pub fn find_scale_superseq(scale: &Scale) -> Vec<(UCN,ModeObj)>{
 // Finds all the scales that are a super set of the set of notes given.
 // When same_tonic == true, it only gives scales that have the same note as the
 // first note in the set(ordered set shortly) as the tonic.
-pub fn find_scale_superset(scale: UCNS, same_tonic: bool) -> Vec<(UCN,ModeObj)>{
+pub fn find_scale_superset(scale: PCs, same_tonic: bool) -> Vec<(PC,ModeObj)>{
     let target_tonic = scale[0].to_note(0);
     let scales = get_all_scale_objs();
     let mut res = Vec::new();
@@ -78,7 +78,7 @@ pub fn find_scale_superset(scale: UCNS, same_tonic: bool) -> Vec<(UCN,ModeObj)>{
             for tonic in 0..12{
                 let tonic_note = tonic * SEMI;
                 if same_tonic && tonic_note != target_tonic { continue; }
-                let notes = mode.clone().into_scale(tonic_note).into_ucns();
+                let notes = mode.clone().into_scale(tonic_note).into_pcs();
                 let mut has = true;
                 'outer: for a in &scale{
                     for b in &notes{

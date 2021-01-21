@@ -29,7 +29,7 @@ fn main(){
 }
 
 fn dotest(){
-    for named in &ucns_to_named(&[C,CS,E,F,G,GS,AS], 3){
+    for named in &pcs_to_named(&[C,CS,E,F,G,GS,AS], 3){
         print!("{}, ", named.to_string());
     }
     println!();
@@ -62,7 +62,7 @@ fn dotest(){
     let subchords = scale_subseq_chords(ionian::obj().clone_steps().mode(6).into_scale(A4))
         .into_iter().map(|c| (c.as_string(true, ChordStyling::Extended),c))
         .filter(|(s,_)| !s.contains('[') && !s.contains('(') && !s.is_empty())
-        .map(|(mut s,c)| { s.push_str(&format!(": {:?}", c.to_scale().into_ucns())); s })
+        .map(|(mut s,c)| { s.push_str(&format!(": {:?}", c.to_scale().into_pcs())); s })
         .collect::<Vec<_>>();
     print_to_grid_auto(&subchords, 80, 3);
     println!("-------");

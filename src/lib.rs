@@ -33,28 +33,28 @@ pub fn print_step_chords(steps: &Steps, root: Note, styling: ChordStyling) -> St
 
 // return (header,content)
 pub fn notes_analysis(input_string: String, styling: ChordStyling) -> Vec<(String, String)>{
-    let ucns = {
-        let ucns = input_string.into_ucns();
+    let pcs = {
+        let pcs = input_string.into_pcs();
         let mut hm = HashSet::new();
         let mut res = Vec::new();
-        for ucn in ucns{
-            if !hm.contains(&ucn){
-                hm.insert(ucn);
-                res.push(ucn);
+        for pc in pcs{
+            if !hm.contains(&pc){
+                hm.insert(pc);
+                res.push(pc);
             }
         }
         res
     };
     let mut res = Vec::new();
-    if ucns.is_empty() { return res; }
+    if pcs.is_empty() { return res; }
     let mut string = String::new();
-    let scale = ucns.clone().into_scale(0);
+    let scale = pcs.clone().into_scale(0);
     let root = scale.0[0];
-    let steps = ucns.clone().into_steps();
-    let ctonic = ucns[0];
+    let steps = pcs.clone().into_steps();
+    let ctonic = pcs[0];
     let rchord = RootedChord::from_scale(scale.clone());
     let mut included = HashSet::new();
-    res.push(("Input".to_string(), format!("Your notes: {:?}\n", ucns)));
+    res.push(("Input".to_string(), format!("Your notes: {:?}\n", pcs)));
     let inversions = {
         let mut inversions = rchord.all_inversions();
         inversions.pop();
@@ -63,14 +63,14 @@ pub fn notes_analysis(input_string: String, styling: ChordStyling) -> Vec<(Strin
     inversions
         .into_iter().map(|c| (c.as_string(true, styling),c))
         .filter(|(s,_)| !s.contains('[') && !s.is_empty())
-        .map(|(mut s,c)| { s.push_str(&format!(": {:?}", c.to_scale().into_ucns())); s })
+        .map(|(mut s,c)| { s.push_str(&format!(": {:?}", c.to_scale().into_pcs())); s })
         .for_each(|s| { string.push_str(&format!("{}\n", s)); });
     res.push(("Inversions".to_string(), mem::replace(&mut string, String::new())));
     rchord
         .clone().into_subseq_chords()
         .into_iter().map(|c| (c.as_string(true, styling),c))
         .filter(|(s,_)| !s.contains('[') /* && !s.contains('(') */ && !s.is_empty())
-        .map(|(mut s,c)| { s.push_str(&format!(": {:?}", c.to_scale().into_ucns())); s })
+        .map(|(mut s,c)| { s.push_str(&format!(": {:?}", c.to_scale().into_pcs())); s })
         .for_each(|s| { string.push_str(&format!("{}\n", s)); });
     res.push(("SubChords".to_string(), mem::replace(&mut string, String::new())));
     let ctwts = rchord.to_chordtone_wholetone_scale();
@@ -78,7 +78,7 @@ pub fn notes_analysis(input_string: String, styling: ChordStyling) -> Vec<(Strin
     if let Some(m) = mo{
         included.insert((ctonic, m.steps.clone()));
         let spelled_out = m.steps.to_scale(root);
-        string.push_str(&format!("{} {}: {:?}\n", ctonic, m, scale_to_ucns_enharmonic(&spelled_out, &ucns)));
+        string.push_str(&format!("{} {}: {:?}\n", ctonic, m, spelled_out.0)); // scale_to_pcs(&spelled_out, &pcs)));
     }
     // if !ctwts.is_empty() {
     //     let ctwts = ctwts.into_steps();
@@ -100,7 +100,7 @@ pub fn notes_analysis(input_string: String, styling: ChordStyling) -> Vec<(Strin
         // string.push_str(&print_step_chords(&modeobj.steps, tonic, styling));
     }
     res.push(("Supersequences".to_string(), mem::replace(&mut string, String::new())));
-    for (tonic,modeobj) in find_scale_superset(ucns, false){
+    for (tonic,modeobj) in find_scale_superset(pcs, false){
         if included.contains(&(tonic, modeobj.steps.clone())) { continue; }
         included.insert((tonic, modeobj.steps.clone()));
         string.push_str(&format!("{} {}\n", tonic, modeobj));
