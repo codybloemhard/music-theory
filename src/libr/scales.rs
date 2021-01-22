@@ -103,17 +103,6 @@ pub mod miscellaneous_scales{
     use crate::theory::interval::*;
     use crate::theory::note::{Steps};
 
-    /*
-    Old Greek Dorian mode.
-    A 7 note scale in a octave of 2 four-note segments separated by a whole tone.
-    quarter,quarter,major third,whole,quarter,quarter,major third.
-    1/4 + 1/4 + 2 + 1 + 1/4 + 1/4 + 2 = 6 whole tones = 12 semitones = 1 octave
-    https://en.wikipedia.org/wiki/Dorian_mode
-    */
-    pub fn greek_dorian_steps() -> Steps{
-        Steps(vec![QUAD,QUAD,MAJOR_THIRD,WHOLE,QUAD,QUAD,MAJOR_THIRD])
-    }
-
     pub fn greek_dorian_chromatic_steps() -> Steps{
         Steps(vec![SEMI,SEMI,MINOR_THIRD,WHOLE,SEMI,SEMI,MINOR_THIRD])
     }

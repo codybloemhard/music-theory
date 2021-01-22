@@ -1,11 +1,10 @@
 use super::note::Note;
 use std::cmp::Ordering;
 
-pub const QUAD: Note = SEMI / 2;
-pub const SEMI: Note = 120;
+pub const SEMI: Note = 1;
 pub const WHOLE: Note = SEMI * 2;
 
-pub const PERFECT_UNISON: Note = 0;
+pub const UNISON: Note = 0;
 pub const MINOR_SECOND: Note = SEMI;
 pub const MAJOR_SECOND: Note = WHOLE;
 pub const MINOR_THIRD: Note = SEMI * 3;
@@ -17,7 +16,7 @@ pub const MINOR_SIXTH: Note =  SEMI * 8;
 pub const MAJOR_SIXTH: Note = SEMI * 9;
 pub const MINOR_SEVENTH: Note = SEMI * 10;
 pub const MAJOR_SEVENTH: Note = SEMI * 11;
-pub const PERFECT_OCTAVE: Note = SEMI * 12;
+pub const OCTAVE: Note = SEMI * 12;
 
 pub const FLAT_NINETH: Note = SEMI * 13;
 pub const NINETH: Note = SEMI * 14;
@@ -61,7 +60,7 @@ pub const CARRY_ON: Note = -2;
 
 pub fn interval_name(interval: Note) -> String{
     let string = match interval{
-        PERFECT_UNISON => "Perfect Unison",
+        UNISON => "Perfect Unison",
         MINOR_SECOND => "Minor Second",
         MAJOR_SECOND => "Major Second",
         MINOR_THIRD => "Minor Third",
@@ -73,7 +72,7 @@ pub fn interval_name(interval: Note) -> String{
         MAJOR_SIXTH => "Major Sixth",
         MINOR_SEVENTH => "Minor Seventh",
         MAJOR_SEVENTH => "Major Seventh",
-        PERFECT_OCTAVE => "Perfect Octave",
+        OCTAVE => "Perfect Octave",
         _ => "",
     }.to_string();
     if string.is_empty(){
@@ -85,7 +84,7 @@ pub fn interval_name(interval: Note) -> String{
 
 pub fn interval_name_short(interval: Note) -> String{
     let string = match interval{
-        PERFECT_UNISON => "P1",
+        UNISON => "P1",
         MINOR_SECOND => "m2",
         MAJOR_SECOND => "M2",
         MINOR_THIRD => "m3",
@@ -97,7 +96,7 @@ pub fn interval_name_short(interval: Note) -> String{
         MAJOR_SIXTH => "M6",
         MINOR_SEVENTH => "m7",
         MAJOR_SEVENTH  => "M7",
-        PERFECT_OCTAVE => "P8",
+        OCTAVE => "P8",
         _ => "",
     }.to_string();
     if string.is_empty(){
@@ -109,7 +108,7 @@ pub fn interval_name_short(interval: Note) -> String{
 
 pub fn interval_name_augdim(interval: Note) -> String{
     let string = match interval{
-        PERFECT_UNISON => "Diminished Second",
+        UNISON => "Diminished Second",
         MINOR_SECOND => "Augmented Unison",
         MAJOR_SECOND => "Diminished Third",
         MINOR_THIRD => "Augmented Second",
@@ -121,7 +120,7 @@ pub fn interval_name_augdim(interval: Note) -> String{
         MAJOR_SIXTH => "Diminished Seventh",
         MINOR_SEVENTH => "Augmented Sixth",
         MAJOR_SEVENTH => "Diminished Octave",
-        PERFECT_OCTAVE => "Augmented Seventh",
+        OCTAVE => "Augmented Seventh",
         _ => "",
     }.to_string();
     if string.is_empty(){
@@ -133,7 +132,7 @@ pub fn interval_name_augdim(interval: Note) -> String{
 
 pub fn interval_name_augdim_short(interval: Note) -> String{
     let string = match interval{
-        PERFECT_UNISON => "d2",
+        UNISON => "d2",
         MINOR_SECOND => "A1",
         MAJOR_SECOND => "d3",
         MINOR_THIRD => "A2",
@@ -145,7 +144,7 @@ pub fn interval_name_augdim_short(interval: Note) -> String{
         MAJOR_SIXTH => "d7",
         MINOR_SEVENTH => "A6",
         MAJOR_SEVENTH => "d8",
-        PERFECT_OCTAVE => "A7",
+        OCTAVE => "A7",
         _ => "",
     }.to_string();
     if string.is_empty(){
@@ -169,7 +168,7 @@ pub fn interval_chord_extension(interval: Note) -> String{
         MAJOR_SIXTH => "♮6",
         MINOR_SEVENTH => "♭7",
         MAJOR_SEVENTH => "♮7",
-        PERFECT_OCTAVE => "",
+        OCTAVE => "",
         S13 => "♭9",
         S14 => "♮9",
         S15 => "♯9",

@@ -29,7 +29,7 @@ fn main(){
 }
 
 fn dotest(){
-    for named in &pcs_to_named(&[C,CS,E,F,G,GS,AS], 3){
+    for named in vec![C,CS,E,F,G,GS,AS].to_nameds(3) {
         print!("{}, ", named.to_string());
     }
     println!();

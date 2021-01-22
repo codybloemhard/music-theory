@@ -94,8 +94,8 @@ impl Chord{
             self.0.push(PERFECT_FIFTH);
         }
         Chord(self.0.into_iter()
-            .map(|i| i % (2*PERFECT_OCTAVE))
-            .filter(|i| i != &PERFECT_OCTAVE && i != &TWELVETH)
+            .map(|i| i % (2*OCTAVE))
+            .filter(|i| i != &OCTAVE && i != &TWELVETH)
             .collect::<Vec<_>>())
     }
 
@@ -255,7 +255,7 @@ impl RootedChord{
 
     fn normalized(self) -> Self{
         Self {
-            root: self.root % PERFECT_OCTAVE,
+            root: self.root % OCTAVE,
             chord: self.chord.normalized(),
         }
     }
@@ -291,7 +291,7 @@ impl RootedChord{
         if scale.len() < 4 { return Scale(res); }
         for (i,note) in scale.0.iter().enumerate().take(4){
             res.push(*note);
-            let between = if scale.len() > i + 4 { scale.0[i + 4] - PERFECT_OCTAVE }
+            let between = if scale.len() > i + 4 { scale.0[i + 4] - OCTAVE }
             else { *note + MAJOR_SECOND };
             res.push(between);
         }
@@ -305,7 +305,7 @@ impl RootedChord{
         if scale.len() == 1 { return RootedChord::from_intervals(root, &[]); }
         let top = scale.0[scale.len() - 1];
         while root < top {
-            root += PERFECT_OCTAVE;
+            root += OCTAVE;
         }
         scale.0.remove(0);
         scale.0.push(root);

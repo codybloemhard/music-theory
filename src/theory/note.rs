@@ -14,9 +14,9 @@ pub type Rank = u16;
 /// Interchanging the versions now only can be done explicitly.
 
 pub type Notes = Vec<Note>;
-#[derive(Clone,PartialEq,Eq,Hash)]
+#[derive(Clone,PartialEq,Eq,Hash,Default)]
 pub struct Steps(pub Vec<Note>);
-#[derive(Clone)]
+#[derive(Clone,Default)]
 pub struct Scale(pub Vec<Note>);
 #[derive(PartialEq,Eq,PartialOrd,Ord,Hash,Clone,Default)]
 pub struct Chord(pub Vec<Note>);
@@ -31,24 +31,6 @@ pub const RN_BB: RelativeNote = RelativeNote::Flat(2);
 #[derive(Clone)]
 pub struct Relative(pub Vec<RelativeNote>);
 
-impl Steps{
-    pub fn empty() -> Self{
-        Steps(Vec::new())
-    }
-}
-
-impl Scale{
-    pub fn empty() -> Self{
-        Scale(Vec::new())
-    }
-}
-
-impl Chord{
-    pub fn empty() -> Self{
-        Chord(Vec::new())
-    }
-}
-
 impl Relative{
     pub fn empty(len: usize) -> Self{
         Relative(vec![RelativeNote::Natural; len])
@@ -60,45 +42,24 @@ pub trait NoteSequence{
     fn is_empty(&self) -> bool;
 }
 
-impl NoteSequence for Steps{
-    fn len(&self) -> usize{
-        self.0.len()
-    }
+macro_rules! ImplNoteSequence{
+    ($type:ty) => {
+        impl NoteSequence for $type{
+            fn len(&self) -> usize{
+                self.0.len()
+            }
 
-    fn is_empty(&self) -> bool{
-        self.0.is_empty()
+            fn is_empty(&self) -> bool{
+                self.0.is_empty()
+            }
+        }
     }
 }
 
-impl NoteSequence for Scale{
-    fn len(&self) -> usize{
-        self.0.len()
-    }
-
-    fn is_empty(&self) -> bool{
-        self.0.is_empty()
-    }
-}
-
-impl NoteSequence for Chord{
-    fn len(&self) -> usize{
-        self.0.len()
-    }
-
-    fn is_empty(&self) -> bool{
-        self.0.is_empty()
-    }
-}
-
-impl NoteSequence for Relative{
-    fn len(&self) -> usize{
-        self.0.len()
-    }
-
-    fn is_empty(&self) -> bool{
-        self.0.is_empty()
-    }
-}
+ImplNoteSequence!(Steps);
+ImplNoteSequence!(Scale);
+ImplNoteSequence!(Chord);
+ImplNoteSequence!(Relative);
 
 pub trait ToScale{
     fn to_scale(&self, note: Note) -> Scale;
@@ -125,6 +86,20 @@ pub trait IntoSteps{
 impl<T: ToSteps> IntoSteps for T{
     fn into_steps(self) -> Steps{
         self.to_steps()
+    }
+}
+
+pub trait ToPC{
+    fn to_pc(&self) -> PC;
+}
+
+pub trait IntoPC{
+    fn into_pc(self) -> PC;
+}
+
+impl<T: ToPC> IntoPC for T{
+    fn into_pc(self) -> PC{
+        self.to_pc()
     }
 }
 
@@ -204,7 +179,7 @@ impl PC{
     }
 
     pub fn to_note(self, rank: Rank) -> Note{
-        (self.0 * SEMI) + (rank as Note * PERFECT_OCTAVE)
+        (self.0 * SEMI) + (rank as Note * OCTAVE)
     }
 
     pub fn to_string_name(self) -> String{
@@ -238,13 +213,11 @@ impl std::fmt::Debug for PC {
     }
 }
 
-pub fn as_pc(note: Note) -> PC{
-    if note % SEMI == 0 {
-        let inrank = (note / SEMI) % 12;
+impl ToPC for Note{
+    fn to_pc(&self) -> PC{
+        let inrank = (self / SEMI) % 12;
         if inrank >= 12 { panic!("as_pc: should never happen!"); }
         PC(inrank)
-    } else { // This is a microtonal note
-        panic!("to_pc: microtonal input");
     }
 }
 
@@ -252,7 +225,7 @@ impl IntoPCs for Scale{
     fn into_pcs(self) -> PCs{
         let mut res = Vec::new();
         for n in self.0{
-            res.push(as_pc(n));
+            res.push(n.to_pc());
         }
         res
     }
@@ -294,16 +267,25 @@ impl IntoPCs for String{
         }
         fn str_to_pc(s: &str) -> Option<PC>{
             match s{
+                "ab" => Some(PC(11)),
                 "a"  => Some(PC(0)),
                 "a#" => Some(PC(1)),
+                "bb" => Some(PC(1)),
                 "b"  => Some(PC(2)),
+                "b#" => Some(PC(3)),
+                "cb" => Some(PC(2)),
                 "c"  => Some(PC(3)),
                 "c#" => Some(PC(4)),
+                "db" => Some(PC(4)),
                 "d"  => Some(PC(5)),
                 "d#" => Some(PC(6)),
+                "eb" => Some(PC(6)),
                 "e"  => Some(PC(7)),
+                "e#" => Some(PC(8)),
+                "fb" => Some(PC(7)),
                 "f"  => Some(PC(8)),
                 "f#" => Some(PC(9)),
+                "gb" => Some(PC(9)),
                 "g"  => Some(PC(10)),
                 "g#" => Some(PC(11)),
                 _ => None,
@@ -313,32 +295,38 @@ impl IntoPCs for String{
     }
 }
 
-pub fn pcs_to_named(pcs: &[PC], starting_rank: Rank) -> Vec<NamedNote>{
-    if pcs.is_empty() { return Vec::new(); }
-    let mut rank = starting_rank;
-    let start_note = pcs[0].to_named(rank);
-    let mut res = vec![start_note];
-    let mut last = start_note.to_note();
-    for pc in pcs.iter().skip(1){
-        let note = pc.to_named(rank);
-        let note_val = note.to_note();
-        let diff = note_val - last;
-        if diff > 0{
-            last = note_val;
-            res.push(note);
-            continue;
+pub trait ToNameds{
+    fn to_nameds(&self, rank: Rank) -> Vec<NamedNote>;
+}
+
+impl ToNameds for PCs{
+    fn to_nameds(&self, starting_rank: Rank) -> Vec<NamedNote>{
+        if self.is_empty() { return Vec::new(); }
+        let mut rank = starting_rank;
+        let start_note = self[0].to_named(rank);
+        let mut res = vec![start_note];
+        let mut last = start_note.to_note();
+        for pc in self.iter().skip(1){
+            let note = pc.to_named(rank);
+            let note_val = note.to_note();
+            let diff = note_val - last;
+            if diff > 0{
+                last = note_val;
+                res.push(note);
+                continue;
+            }
+            rank += 1;
+            let new_note = pc.to_named(rank);
+            last = new_note.to_note();
+            res.push(new_note);
         }
-        rank += 1;
-        let new_note = pc.to_named(rank);
-        last = new_note.to_note();
-        res.push(new_note);
+        res
     }
-    res
 }
 
 impl ToScale for PCs{
     fn to_scale(&self, rank: Note) -> Scale{
-        let named = pcs_to_named(self, rank as Rank);
+        let named = self.to_nameds(rank as Rank);
         // TODO: Make this possible
         // named.map(&|n| n.to_note())
         let mut res = Vec::new();
@@ -363,7 +351,7 @@ pub struct NamedNote{
 
 impl NamedNote{
     pub fn from_note(note: Note) -> Self{
-        let rank: Rank = (note / PERFECT_OCTAVE).max(0).try_into().unwrap();
+        let rank: Rank = (note / OCTAVE).max(0).try_into().unwrap();
         let mut inrank = (note / SEMI) % 12;
         if inrank < 0 { inrank += 12; }
         Self{ pc: PC(inrank), rank }
@@ -407,7 +395,7 @@ impl std::fmt::Display for NamedNote{
 // note (48*SEMI) (48=12*4) is A4 at 440 hz
 pub fn to_pitch(note: Note) -> f32{
     let x = note as i32 - (48*SEMI);
-    (2.0f32).powf(x as f32 / PERFECT_OCTAVE as f32) * 440.0
+    (2.0f32).powf(x as f32 / OCTAVE as f32) * 440.0
 }
 
 #[cfg(test)]

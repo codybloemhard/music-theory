@@ -1,5 +1,5 @@
 use super::note::*;
-use super::interval::{PERFECT_OCTAVE,SEMI};
+use super::interval::{ OCTAVE, SEMI };
 use std::cmp::Ordering;
 
 pub type Mode = u8;
@@ -14,7 +14,7 @@ pub const SUB_TONIC: Note = 6;
 
 impl ToSteps for Scale{
     fn to_steps(&self) -> Steps{
-        if self.0.is_empty() { return Steps::empty(); }
+        if self.0.is_empty() { return Steps::default(); }
         let mut last = self.0[0];
         let mut intervals = Vec::new();
         for note in self.0.iter().skip(1){
@@ -186,13 +186,13 @@ pub fn notes_to_octave_scale(scale: &Scale) -> Notes{
         last = *note;
         sum += diff;
     }
-    if sum > PERFECT_OCTAVE{
+    if sum > OCTAVE{
         return Vec::new();
     }
-    if sum == PERFECT_OCTAVE{
+    if sum == OCTAVE{
         return res;
     }
-    res.push(PERFECT_OCTAVE - sum);
+    res.push(OCTAVE - sum);
     res
 }
 
