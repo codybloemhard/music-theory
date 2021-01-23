@@ -1,6 +1,5 @@
-use std::convert::TryInto;
 use super::interval::*;
-use std::collections::{ HashMap, HashSet };
+// use std::collections::{ HashMap, HashSet };
 
 pub const A4: Note = 48;
 
@@ -171,13 +170,6 @@ pub struct PC(Note); // PitchClass
 pub type PCs = Vec<PC>;
 
 impl PC{
-    pub fn to_named(self, rank: Rank) -> NamedNote{
-        NamedNote{
-            pc: self,
-            rank,
-        }
-    }
-
     pub fn to_note(self, rank: Rank) -> Note{
         self.0 + (rank as Note * OCTAVE)
     }
@@ -203,13 +195,13 @@ impl PC{
 
 impl std::fmt::Display for PC{
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result{
-        write!(f, "{}", self.to_named(0).to_string_name())
+        write!(f, "{}", self.to_string_name())
     }
 }
 
 impl std::fmt::Debug for PC {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", self.to_named(0).to_string_name())
+        write!(f, "{}", self.to_string_name())
     }
 }
 
@@ -295,43 +287,24 @@ impl IntoPCs for String{
     }
 }
 
-pub trait ToNameds{
-    fn to_nameds(&self, rank: Rank) -> Vec<NamedNote>;
-}
-
-impl ToNameds for PCs{
-    fn to_nameds(&self, starting_rank: Rank) -> Vec<NamedNote>{
-        if self.is_empty() { return Vec::new(); }
-        let mut rank = starting_rank;
-        let start_note = self[0].to_named(rank);
+impl ToScale for PCs{
+    fn to_scale(&self, rank: Note) -> Scale{
+        let mut rank = rank as Rank;
+        if self.is_empty() { return Scale::default(); }
+        let start_note = self[0].to_note(rank);
         let mut res = vec![start_note];
-        let mut last = start_note.to_note();
+        let mut last = start_note;
         for pc in self.iter().skip(1){
-            let note = pc.to_named(rank);
-            let note_val = note.to_note();
-            let diff = note_val - last;
+            let note = pc.to_note(rank);
+            let diff = note - last;
             if diff > 0{
-                last = note_val;
+                last = note;
                 res.push(note);
                 continue;
             }
             rank += 1;
-            let new_note = pc.to_named(rank);
-            last = new_note.to_note();
-            res.push(new_note);
-        }
-        res
-    }
-}
-
-impl ToScale for PCs{
-    fn to_scale(&self, rank: Note) -> Scale{
-        let named = self.to_nameds(rank as Rank);
-        // TODO: Make this possible
-        // named.map(&|n| n.to_note())
-        let mut res = Vec::new();
-        for n in named{
-            res.push(n.to_note());
+            last = pc.to_note(rank);
+            res.push(last);
         }
         Scale(res)
     }
@@ -340,47 +313,6 @@ impl ToScale for PCs{
 impl IntoSteps for PCs{
     fn into_steps(self) -> Steps{
         self.to_scale(0).into_steps()
-    }
-}
-
-#[derive(Clone,Copy)]
-pub struct NamedNote{
-    pc: PC,
-    rank: Rank,
-}
-
-impl NamedNote{
-    pub fn from_note(note: Note) -> Self{
-        let rank: Rank = (note / OCTAVE).max(0).try_into().unwrap();
-        let mut inrank = note % 12;
-        if inrank < 0 { inrank += 12; }
-        Self{ pc: PC(inrank), rank }
-    }
-
-    pub fn rank(&self) -> Rank{
-        self.rank
-    }
-
-    pub fn pc(&self) -> PC{
-        self.pc
-    }
-
-    pub fn to_note(self) -> Note{
-        self.pc.to_note(self.rank)
-    }
-
-    pub fn to_string_name(&self) -> String{
-        self.pc.to_string_name()
-    }
-
-    pub fn as_string(self) -> String{
-        format!("{}{}", self.to_string_name(), self.rank())
-    }
-}
-
-impl std::fmt::Display for NamedNote{
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result{
-        write!(f, "{}", self.as_string())
     }
 }
 

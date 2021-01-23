@@ -29,8 +29,8 @@ fn main(){
 }
 
 fn dotest(){
-    for named in vec![C,CS,E,F,G,GS,AS].to_nameds(3) {
-        print!("{}, ", named.to_string());
+    for named in vec![C,CS,E,F,G,GS,AS].to_scale(3).0 {
+        print!("{}, ", named.to_pc());
     }
     println!();
     println!("{}", find_scale(&vec![C,CS,E,F,G,GS,AS].into_scale(0)).unwrap());
