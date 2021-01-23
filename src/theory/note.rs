@@ -2,7 +2,7 @@ use std::convert::TryInto;
 use super::interval::*;
 use std::collections::{ HashMap, HashSet };
 
-pub const A4: Note = 5760;
+pub const A4: Note = 48;
 
 pub type Note = i32;
 pub type Rank = u16;
