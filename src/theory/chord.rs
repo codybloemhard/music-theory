@@ -345,11 +345,11 @@ impl RelativeChord{
     }
 
     pub fn from_template(semis: Note, intervals: &[Note]) -> Self{
-        Self{ root: semis * SEMI, chord: Chord::new(intervals) }
+        Self{ root: semis, chord: Chord::new(intervals) }
     }
 
     pub fn as_string(&self, lower: bool, styling: ChordStyling) -> String{
-        let root = format!("<X{}{}>", if self.root > 0 { "+" } else { "" }, self.root / SEMI);
+        let root = format!("<X{}{}>", if self.root > 0 { "+" } else { "" }, self.root);
         self.chord.quality(root, lower, styling)
     }
 }
@@ -428,12 +428,12 @@ pub fn steps_subseq_chords(steps: Steps) -> Vec<Vec<Chord>>{
     scale.0.pop();
     let mut table = vec![0; 12];
     for (i,note) in scale.0.iter().enumerate(){
-        table[(note / SEMI).max(0) as usize] = i;
+        table[(*note).max(0) as usize] = i;
     }
     let subs = scale_subseq_chords(scale.clone());
     let mut cells = vec![vec![]; scale.len()];
     for s in subs.into_iter(){
-        let index = table[(s.root / SEMI).max(0) as usize];
+        let index = table[s.root.max(0) as usize];
         cells[index].push(s.chord);
     }
     cells

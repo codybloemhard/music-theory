@@ -2,157 +2,47 @@ use super::note::Note;
 use std::cmp::Ordering;
 
 pub const SEMI: Note = 1;
-pub const WHOLE: Note = SEMI * 2;
+pub const WHOLE: Note = 2;
 
 pub const UNISON: Note = 0;
-pub const MINOR_SECOND: Note = SEMI;
-pub const MAJOR_SECOND: Note = WHOLE;
-pub const MINOR_THIRD: Note = SEMI * 3;
-pub const MAJOR_THIRD: Note = SEMI * 4;
-pub const PERFECT_FOURTH: Note = SEMI * 5;
-pub const TRITONE: Note = SEMI * 6;
-pub const PERFECT_FIFTH: Note = SEMI * 7;
-pub const MINOR_SIXTH: Note =  SEMI * 8;
-pub const MAJOR_SIXTH: Note = SEMI * 9;
-pub const MINOR_SEVENTH: Note = SEMI * 10;
-pub const MAJOR_SEVENTH: Note = SEMI * 11;
-pub const OCTAVE: Note = SEMI * 12;
+pub const MINOR_SECOND: Note = 1;
+pub const MAJOR_SECOND: Note = 2;
+pub const MINOR_THIRD: Note = 3;
+pub const MAJOR_THIRD: Note = 4;
+pub const PERFECT_FOURTH: Note = 5;
+pub const TRITONE: Note = 6;
+pub const PERFECT_FIFTH: Note = 7;
+pub const MINOR_SIXTH: Note =  8;
+pub const MAJOR_SIXTH: Note = 9;
+pub const MINOR_SEVENTH: Note = 10;
+pub const MAJOR_SEVENTH: Note = 11;
+pub const OCTAVE: Note = 12;
 
-pub const FLAT_NINETH: Note = SEMI * 13;
-pub const NINETH: Note = SEMI * 14;
-pub const SHARP_NINETH: Note = SEMI * 15;
-pub const FLAT_ELEVENTH: Note = SEMI * 16;
-pub const ELEVENTH: Note = SEMI * 17;
-pub const SHARP_ELEVENTH: Note = SEMI * 18;
-pub const TWELVETH: Note = SEMI * 19;
-pub const FLAT_THIRTEENTH: Note = SEMI * 20;
-pub const THIRTEENTH: Note = SEMI * 21;
-pub const SHARP_THIRTEENTH: Note = SEMI * 22;
+pub const FLAT_NINETH: Note = 13;
+pub const NINETH: Note = 14;
+pub const SHARP_NINETH: Note = 15;
+pub const FLAT_ELEVENTH: Note = 16;
+pub const ELEVENTH: Note = 17;
+pub const SHARP_ELEVENTH: Note = 18;
+pub const TWELVETH: Note = 19;
+pub const FLAT_THIRTEENTH: Note = 20;
+pub const THIRTEENTH: Note = 21;
+pub const SHARP_THIRTEENTH: Note = 22;
 
 pub const DIMINISHED_SECOND: Note = 0;
-pub const AUGMENTED_UNISON: Note = SEMI;
-pub const DIMINISHED_THIRD: Note = WHOLE;
-pub const AUGMENTED_SECOND: Note = MINOR_THIRD;
-pub const DIMINISHED_FOURTH: Note = SEMI * 4;
-pub const AUGMENTED_THIRD: Note = SEMI * 5;
-pub const DIMINISHED_FIFTH: Note = SEMI * 6;
-pub const AUGMENTED_FOURTH: Note = SEMI * 6;
-pub const DIMINISHED_SIXTH: Note = SEMI * 7;
-pub const AUGMENTED_FIFTH: Note = SEMI * 8;
-pub const DIMINISHED_SEVENTH: Note = SEMI * 9;
-pub const AUGMENTED_SIXTH: Note = SEMI * 10;
-pub const DIMINISHED_OCTAVE: Note = SEMI * 11;
-pub const AUGMENTED_SEVENTH: Note = SEMI * 12;
-
-pub const S13: Note = SEMI * 13;
-pub const S14: Note = SEMI * 14;
-pub const S15: Note = SEMI * 15;
-pub const S16: Note = SEMI * 16;
-pub const S17: Note = SEMI * 17;
-pub const S18: Note = SEMI * 18;
-pub const S19: Note = SEMI * 19;
-pub const S20: Note = SEMI * 20;
-pub const S21: Note = SEMI * 21;
-pub const S22: Note = SEMI * 22;
-
-pub const SILENT: Note = -1;
-pub const CARRY_ON: Note = -2;
-
-pub fn interval_name(interval: Note) -> String{
-    let string = match interval{
-        UNISON => "Perfect Unison",
-        MINOR_SECOND => "Minor Second",
-        MAJOR_SECOND => "Major Second",
-        MINOR_THIRD => "Minor Third",
-        MAJOR_THIRD => "Major Third",
-        PERFECT_FOURTH => "Perfect Fourth",
-        TRITONE => "Tritone",
-        PERFECT_FIFTH => "Perfect Fifth",
-        MINOR_SIXTH => "Minor Sixth",
-        MAJOR_SIXTH => "Major Sixth",
-        MINOR_SEVENTH => "Minor Seventh",
-        MAJOR_SEVENTH => "Major Seventh",
-        OCTAVE => "Perfect Octave",
-        _ => "",
-    }.to_string();
-    if string.is_empty(){
-        format!("{} Semitones", interval)
-    }else{
-        string
-    }
-}
-
-pub fn interval_name_short(interval: Note) -> String{
-    let string = match interval{
-        UNISON => "P1",
-        MINOR_SECOND => "m2",
-        MAJOR_SECOND => "M2",
-        MINOR_THIRD => "m3",
-        MAJOR_THIRD => "M3",
-        PERFECT_FOURTH => "P4",
-        TRITONE => "TT",
-        PERFECT_FIFTH => "P5",
-        MINOR_SIXTH => "m6",
-        MAJOR_SIXTH => "M6",
-        MINOR_SEVENTH => "m7",
-        MAJOR_SEVENTH  => "M7",
-        OCTAVE => "P8",
-        _ => "",
-    }.to_string();
-    if string.is_empty(){
-        format!("S{}", interval)
-    }else{
-        string
-    }
-}
-
-pub fn interval_name_augdim(interval: Note) -> String{
-    let string = match interval{
-        UNISON => "Diminished Second",
-        MINOR_SECOND => "Augmented Unison",
-        MAJOR_SECOND => "Diminished Third",
-        MINOR_THIRD => "Augmented Second",
-        MAJOR_THIRD => "Diminished Fourth",
-        PERFECT_FOURTH => "Augmented Third",
-        TRITONE => "Diminished Fifth/Augmented Fourth",
-        PERFECT_FIFTH => "Diminished Sixth",
-        MINOR_SIXTH => "Augmented Fifth",
-        MAJOR_SIXTH => "Diminished Seventh",
-        MINOR_SEVENTH => "Augmented Sixth",
-        MAJOR_SEVENTH => "Diminished Octave",
-        OCTAVE => "Augmented Seventh",
-        _ => "",
-    }.to_string();
-    if string.is_empty(){
-        format!("{} Semitones", interval)
-    }else{
-        string
-    }
-}
-
-pub fn interval_name_augdim_short(interval: Note) -> String{
-    let string = match interval{
-        UNISON => "d2",
-        MINOR_SECOND => "A1",
-        MAJOR_SECOND => "d3",
-        MINOR_THIRD => "A2",
-        MAJOR_THIRD => "d4",
-        PERFECT_FOURTH => "A3",
-        TRITONE => "d5/A4",
-        PERFECT_FIFTH => "d6",
-        MINOR_SIXTH => "A5",
-        MAJOR_SIXTH => "d7",
-        MINOR_SEVENTH => "A6",
-        MAJOR_SEVENTH => "d8",
-        OCTAVE => "A7",
-        _ => "",
-    }.to_string();
-    if string.is_empty(){
-        format!("S{}", interval)
-    }else{
-        string
-    }
-}
+pub const AUGMENTED_UNISON: Note = 1;
+pub const DIMINISHED_THIRD: Note = 2;
+pub const AUGMENTED_SECOND: Note = 3;
+pub const DIMINISHED_FOURTH: Note = 4;
+pub const AUGMENTED_THIRD: Note = 5;
+pub const DIMINISHED_FIFTH: Note = 6;
+pub const AUGMENTED_FOURTH: Note = 6;
+pub const DIMINISHED_SIXTH: Note = 7;
+pub const AUGMENTED_FIFTH: Note = 8;
+pub const DIMINISHED_SEVENTH: Note = 9;
+pub const AUGMENTED_SIXTH: Note = 10;
+pub const DIMINISHED_OCTAVE: Note = 11;
+pub const AUGMENTED_SEVENTH: Note = 12;
 
 pub fn interval_chord_extension(interval: Note) -> String{
     match interval{
@@ -169,23 +59,23 @@ pub fn interval_chord_extension(interval: Note) -> String{
         MINOR_SEVENTH => "♭7",
         MAJOR_SEVENTH => "♮7",
         OCTAVE => "",
-        S13 => "♭9",
-        S14 => "♮9",
-        S15 => "♯9",
-        S16 => "♭11",
-        S17 => "♮11",
-        S18 => "♯11",
-        S19 => "",
-        S20 => "♭13",
-        S21 => "♮13",
-        S22 => "♯13",
+        13 => "♭9",
+        14 => "♮9",
+        15 => "♯9",
+        16 => "♭11",
+        17 => "♮11",
+        18 => "♯11",
+        19 => "",
+        20 => "♭13",
+        21 => "♮13",
+        22 => "♯13",
         _ => "",
     }.to_string()
 }
 
 pub fn to_relative_interval_non_nat(interval: Note) -> String{
     let mut res = String::new();
-    let i = interval / SEMI;
+    let i = interval;
     match i.cmp(&0){
         Ordering::Less => { for _ in 0..-i{ res.push_str("♭"); } },
         Ordering::Greater => { for _ in 0..i{ res.push_str("♯") } },

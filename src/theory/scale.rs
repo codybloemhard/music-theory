@@ -4,14 +4,6 @@ use std::cmp::Ordering;
 
 pub type Mode = u8;
 
-pub const TONIC: Note = 0;
-pub const SUPER_TONIC: Note = 1;
-pub const MEDIANT: Note = 2;
-pub const SUB_DOMINANT: Note = 3;
-pub const DOMINANT: Note = 4;
-pub const SUB_MEDIANT: Note = 5;
-pub const SUB_TONIC: Note = 6;
-
 impl ToSteps for Scale{
     fn to_steps(&self) -> Steps{
         if self.0.is_empty() { return Steps::default(); }

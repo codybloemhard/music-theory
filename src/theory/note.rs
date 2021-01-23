@@ -179,7 +179,7 @@ impl PC{
     }
 
     pub fn to_note(self, rank: Rank) -> Note{
-        (self.0 * SEMI) + (rank as Note * OCTAVE)
+        self.0 + (rank as Note * OCTAVE)
     }
 
     pub fn to_string_name(self) -> String{
@@ -215,7 +215,7 @@ impl std::fmt::Debug for PC {
 
 impl ToPC for Note{
     fn to_pc(&self) -> PC{
-        let inrank = (self / SEMI) % 12;
+        let inrank = self % 12;
         if inrank >= 12 { panic!("as_pc: should never happen!"); }
         PC(inrank)
     }
@@ -352,7 +352,7 @@ pub struct NamedNote{
 impl NamedNote{
     pub fn from_note(note: Note) -> Self{
         let rank: Rank = (note / OCTAVE).max(0).try_into().unwrap();
-        let mut inrank = (note / SEMI) % 12;
+        let mut inrank = note % 12;
         if inrank < 0 { inrank += 12; }
         Self{ pc: PC(inrank), rank }
     }
@@ -394,7 +394,7 @@ impl std::fmt::Display for NamedNote{
 
 // note (48*SEMI) (48=12*4) is A4 at 440 hz
 pub fn to_pitch(note: Note) -> f32{
-    let x = note as i32 - (48*SEMI);
+    let x = note as i32 - 48;
     (2.0f32).powf(x as f32 / OCTAVE as f32) * 440.0
 }
 

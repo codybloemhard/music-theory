@@ -1,5 +1,3 @@
-pub mod constants;
-pub mod mathh;
 pub mod theory;
 #[macro_use]
 pub mod utils;
