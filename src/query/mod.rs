@@ -1,4 +1,4 @@
-use crate::theory::note::{Steps,Scale,Relative,RelativeNote,IntoPCs,PCs,PC,NoteSequence,ToScale,IntoScale,ToRelative,ToSteps};
+use crate::theory::note::{Steps,Scale,Relative,RelativeNote,IntoPCs,PCs,PC,NoteSequence,ToScale,IntoScale,ToRelative,ToSteps,ToNote};
 use crate::theory::scale::{notes_to_octave_scale,StepsTrait,ModeIteratorSpawner};
 use crate::theory::interval::{SEMI};
 use fnrs::Sequence;

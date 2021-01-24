@@ -60,6 +60,14 @@ ImplNoteSequence!(Scale);
 ImplNoteSequence!(Chord);
 ImplNoteSequence!(Relative);
 
+pub trait ToStringName{
+    fn to_string_name(&self) -> String;
+}
+
+pub trait ToNote{
+    fn to_note(&self, rank: Rank) -> Note;
+}
+
 pub trait ToScale{
     fn to_scale(&self, note: Note) -> Scale;
 }
@@ -134,6 +142,24 @@ impl<T: ToChord> IntoChord for T{
     }
 }
 
+pub trait ToEnharmonicNote{
+    fn to_enharmonic_note(&self) -> Option<EnharmonicNote>;
+}
+
+pub trait IntoEnharmonicNote{
+    fn into_enharmonic_note(self) -> Option<EnharmonicNote>;
+}
+
+impl<T: ToEnharmonicNote> IntoEnharmonicNote for T{
+    fn into_enharmonic_note(self) -> Option<EnharmonicNote>{
+        self.to_enharmonic_note()
+    }
+}
+
+pub trait IntoEnharmonicNotes{
+    fn into_enharmonic_notes(self) -> Vec<EnharmonicNote>;
+}
+
 impl ToString for RelativeNote{
     fn to_string(&self) -> String{
         let mut res = String::new();
@@ -169,12 +195,8 @@ pub struct PC(Note); // PitchClass
 
 pub type PCs = Vec<PC>;
 
-impl PC{
-    pub fn to_note(self, rank: Rank) -> Note{
-        self.0 + (rank as Note * OCTAVE)
-    }
-
-    pub fn to_string_name(self) -> String{
+impl ToStringName for PC{
+    fn to_string_name(&self) -> String{
         match self.0{
             0  => "A",
             1  => "A♯",
@@ -186,7 +208,7 @@ impl PC{
             7  => "E",
             8  => "F",
             9  => "F♯",
-            10  => "G",
+            10 => "G",
             11 => "G♯",
             _ => panic!("PC::to_string_name: impossible"),
         }.to_string()
@@ -205,6 +227,12 @@ impl std::fmt::Debug for PC {
     }
 }
 
+impl ToNote for PC{
+    fn to_note(&self, rank: Rank) -> Note{
+        self.0 + (rank as Note * OCTAVE)
+    }
+}
+
 impl ToPC for Note{
     fn to_pc(&self) -> PC{
         let inrank = self % 12;
@@ -220,70 +248,6 @@ impl IntoPCs for Scale{
             res.push(n.to_pc());
         }
         res
-    }
-}
-
-// pub fn scale_to_ucns_enharmonic(scale: &Scale, ucns: &[UCN]) -> UCNS{
-//     let mut map = HashMap::new();
-//     let mut set = HashSet::new();
-//     for ucn in ucns{
-//         map.insert(ucn.to_named(0).chromatic_to_index(), ucn);
-//         set.insert(ucn.to_base_letter());
-//     }
-//     let mut res = Vec::new();
-//     for n in &scale.0{
-//         let ucn = as_ucn(*n);
-//         let ucn = if let Some(ucn_fixed) = map.get(&ucn.to_named(0).chromatic_to_index()){
-//             **ucn_fixed
-//         } else {
-//             let base_letter = ucn.to_base_letter();
-//             if set.contains(&base_letter){
-//                 ucn.to_alternative().expect("Expect: scale_to_ucns_enharmonic")
-//             } else {
-//                 set.insert(base_letter);
-//                 ucn
-//             }
-//         };
-//         res.push(ucn);
-//     }
-//     res
-// }
-
-impl IntoPCs for String{
-    fn into_pcs(self) -> PCs{
-        let mut lowercase = String::new();
-        for c in self.chars(){
-            for l in c.to_lowercase(){
-                lowercase.push(l);
-            }
-        }
-        fn str_to_pc(s: &str) -> Option<PC>{
-            match s{
-                "ab" => Some(PC(11)),
-                "a"  => Some(PC(0)),
-                "a#" => Some(PC(1)),
-                "bb" => Some(PC(1)),
-                "b"  => Some(PC(2)),
-                "b#" => Some(PC(3)),
-                "cb" => Some(PC(2)),
-                "c"  => Some(PC(3)),
-                "c#" => Some(PC(4)),
-                "db" => Some(PC(4)),
-                "d"  => Some(PC(5)),
-                "d#" => Some(PC(6)),
-                "eb" => Some(PC(6)),
-                "e"  => Some(PC(7)),
-                "e#" => Some(PC(8)),
-                "fb" => Some(PC(7)),
-                "f"  => Some(PC(8)),
-                "f#" => Some(PC(9)),
-                "gb" => Some(PC(9)),
-                "g"  => Some(PC(10)),
-                "g#" => Some(PC(11)),
-                _ => None,
-            }
-        }
-        lowercase.split(',').into_iter().map(|s| str_to_pc(&s.chars().map(|c| match c { '♯' => '#', '♭' => 'b', x => x }).collect::<String>())).flatten().collect::<Vec<_>>()
     }
 }
 
@@ -315,6 +279,115 @@ impl IntoSteps for PCs{
         self.to_scale(0).into_steps()
     }
 }
+#[derive(Clone,Copy,Default,Debug)]
+pub struct EnharmonicNote{
+    letter: u8,
+    accidental: i8,
+}
+
+impl ToStringName for EnharmonicNote{
+    fn to_string_name(&self) -> String{
+        let mut res = match self.letter{
+            0 => "A",
+            1 => "B",
+            2 => "C",
+            3 => "D",
+            4 => "E",
+            5 => "F",
+            6 => "G",
+            _ => panic!("ToStringName for Enharmonic: should be impossible")
+        }.to_string();
+        res.push_str(&(if self.accidental < 0 { RelativeNote::Flat((-self.accidental).into()) } else { RelativeNote::Sharp((self.accidental).into()) }.to_string()));
+        res
+    }
+}
+
+impl ToNote for EnharmonicNote{
+    fn to_note(&self, rank: Rank) -> Note{
+        ((match self.letter{
+            0 => 0,  // A
+            1 => 2,  // B
+            2 => 3,  // C
+            3 => 5,  // D
+            4 => 7,  // E
+            5 => 8,  // F
+            6 => 10, // G
+            _ => panic!("ToNote for Enharmonic: should be impossible")
+        }) + self.accidental) as Note + rank as Note
+    }
+}
+
+impl ToPC for EnharmonicNote{
+    fn to_pc(&self) -> PC{
+        self.to_note(0).to_pc()
+    }
+}
+
+impl ToEnharmonicNote for String{
+    fn to_enharmonic_note(&self) -> Option<EnharmonicNote>{
+        let mut lowercase = String::new();
+        for c in self.chars(){
+            for l in c.to_lowercase(){
+                lowercase.push(l);
+            }
+        }
+        let mut chars = lowercase.chars();
+        let letter = match chars.next(){
+            Some('a') => 0,
+            Some('b') => 1,
+            Some('c') => 2,
+            Some('d') => 3,
+            Some('e') => 4,
+            Some('f') => 5,
+            Some('g') => 6,
+            _ => return None,
+        };
+        let mut accidental = 0;
+        for ch in chars{
+            match ch{
+                'b' => { accidental -= 1; },
+                '♭' => { accidental -= 1; },
+                '#' => { accidental += 1; },
+                '♯' => { accidental += 1; },
+                '♮' => { accidental = 0; }
+                _ => return None,
+            }
+        }
+        Some(EnharmonicNote{ letter, accidental })
+    }
+}
+
+impl IntoEnharmonicNotes for String{
+    fn into_enharmonic_notes(self) -> Vec<EnharmonicNote>{
+        self.split(',').into_iter().map(|s| s.to_string().to_enharmonic_note()).flatten().collect::<Vec<_>>()
+    }
+}
+
+// pub fn scale_to_ucns_enharmonic(scale: &Scale, ucns: &[UCN]) -> UCNS{
+//     let mut map = HashMap::new();
+//     let mut set = HashSet::new();
+//     for ucn in ucns{
+//         map.insert(ucn.to_named(0).chromatic_to_index(), ucn);
+//         set.insert(ucn.to_base_letter());
+//     }
+//     let mut res = Vec::new();
+//     for n in &scale.0{
+//         let ucn = as_ucn(*n);
+//         let ucn = if let Some(ucn_fixed) = map.get(&ucn.to_named(0).chromatic_to_index()){
+//             **ucn_fixed
+//         } else {
+//             let base_letter = ucn.to_base_letter();
+//             if set.contains(&base_letter){
+//                 ucn.to_alternative().expect("Expect: scale_to_ucns_enharmonic")
+//             } else {
+//                 set.insert(base_letter);
+//                 ucn
+//             }
+//         };
+//         res.push(ucn);
+//     }
+//     res
+// }
 
 /*
 0   1   2   3   4   5   6   7   8   9   10  11  // rank 0

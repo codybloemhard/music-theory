@@ -32,7 +32,8 @@ pub fn print_step_chords(steps: &Steps, root: Note, styling: ChordStyling) -> St
 // return (header,content)
 pub fn notes_analysis(input_string: String, styling: ChordStyling) -> Vec<(String, String)>{
     let pcs = {
-        let pcs = input_string.into_pcs();
+        let ens = input_string.into_enharmonic_notes();
+        let pcs = ens.iter().map(|en| en.to_pc()).collect::<Vec<_>>();
         let mut hm = HashSet::new();
         let mut res = Vec::new();
         for pc in pcs{
