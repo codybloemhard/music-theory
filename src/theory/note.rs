@@ -160,6 +160,10 @@ pub trait IntoEnharmonicNotes{
     fn into_enharmonic_notes(self) -> Vec<EnharmonicNote>;
 }
 
+pub trait IntoEnharmonicNotesWithStart{
+    fn into_enharmonic_notes_with_start(self, start: Option<EnharmonicNote>) -> Vec<EnharmonicNote>;
+}
+
 impl ToString for RelativeNote{
     fn to_string(&self) -> String{
         let mut res = String::new();
@@ -406,26 +410,43 @@ impl ToEnharmonicNote for Note{
     }
 }
 
+fn into_enharmonic_notes_with_start(scale: Scale, start: Option<EnharmonicNote>) -> Vec<EnharmonicNote>{
+    let mut set = vec![0,0,0,0,0,0,0];
+    let mut res = Vec::new();
+    let skip = if let Some(en) = start{
+        set[en.letter() as usize] = 1;
+        res.push(en);
+        1
+    } else {
+        0
+    };
+    for (i, note) in scale.0.into_iter().enumerate().skip(skip){
+        if i >= 7 { return Vec::new(); } // Impossible: no more letters.
+        let en = note.to_enharmonic_note().unwrap();
+        let en = if set[en.letter() as usize] == 1{
+            let mut nen = en;
+            loop {
+                nen = nen.next_enharmonic();
+                if set[nen.letter() as usize] == 0 { break nen; }
+            }
+        } else {
+            en
+        };
+        set[en.letter() as usize] = 1;
+        res.push(en);
+    }
+    res
+}
+
 impl IntoEnharmonicNotes for Scale{
     fn into_enharmonic_notes(self) -> Vec<EnharmonicNote>{
-        let mut set = vec![0,0,0,0,0,0,0];
-        let mut res = Vec::new();
-        for (i, note) in self.0.into_iter().enumerate(){
-            if i >= 7 { return Vec::new(); } // Impossible: no more letters.
-            let en = note.to_enharmonic_note().unwrap();
-            let en = if set[en.letter() as usize] == 1{
-                let mut nen = en;
-                loop {
-                    nen = nen.next_enharmonic();
-                    if set[nen.letter() as usize] == 0 { break nen; }
-                }
-            } else {
-                en
-            };
-            set[en.letter() as usize] = 1;
-            res.push(en);
-        }
-        res
+        into_enharmonic_notes_with_start(self, None)
+    }
+}
+
+impl IntoEnharmonicNotesWithStart for Scale{
+    fn into_enharmonic_notes_with_start(self, start: Option<EnharmonicNote>) -> Vec<EnharmonicNote>{
+        into_enharmonic_notes_with_start(self, start)
     }
 }
 

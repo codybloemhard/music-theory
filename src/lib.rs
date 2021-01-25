@@ -4,7 +4,7 @@ pub mod utils;
 pub mod libr;
 pub mod query;
 
-use std::collections::HashSet;
+use std::collections::{ HashSet, HashMap };
 use std::mem;
 use theory::*;
 use libr::infos::*;
@@ -32,9 +32,10 @@ pub fn print_step_chords(steps: &Steps, root: Note, styling: ChordStyling) -> St
 // return (header,content)
 pub fn notes_analysis(input_string: String, styling: ChordStyling) -> Vec<(String, String)>{
     // Remove duplicate notes
-    let (ens, pcs) = {
+    let (ens, pcs, pcs_to_ens) = {
         let ens = input_string.into_enharmonic_notes();
         let mut hs = HashSet::new();
+        let mut map = HashMap::new();
         let mut pcs = Vec::new();
         let mut new_ens = Vec::new();
         for en in ens{
@@ -43,9 +44,10 @@ pub fn notes_analysis(input_string: String, styling: ChordStyling) -> Vec<(Strin
                 hs.insert(pc);
                 pcs.push(pc);
                 new_ens.push(en);
+                map.insert(pc, en);
             }
         }
-        (new_ens, pcs)
+        (new_ens, pcs, map)
     };
     let mut res = Vec::new();
     if pcs.is_empty() { return res; }
@@ -80,7 +82,12 @@ pub fn notes_analysis(input_string: String, styling: ChordStyling) -> Vec<(Strin
     let mo = find_scale(&ctwts);
     if let Some(m) = mo{
         included.insert((ctonic, m.steps.clone()));
-        let spelled_out = m.steps.to_scale(root).into_enharmonic_notes().into_iter().map(|en| { let mut string = en.to_string_name(); string.push_str(", "); string }).collect::<String>();
+        let start = if let Some(x) = pcs_to_ens.get(&ctonic){
+            Some(*x)
+        } else {
+            None
+        };
+        let spelled_out = m.steps.to_scale(root).into_enharmonic_notes_with_start(start).into_iter().map(|en| { let mut string = en.to_string_name(); string.push_str(", "); string }).collect::<String>();
         string.push_str(&format!("{} {}: {}\n", ctonic, m, spelled_out));
     }
     // if !ctwts.is_empty() {
