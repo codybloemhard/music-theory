@@ -285,6 +285,29 @@ pub struct EnharmonicNote{
     accidental: i8,
 }
 
+impl EnharmonicNote{
+    pub fn letter(&self) -> u8{
+        self.letter
+    }
+
+    pub fn accidental(&self) -> i8{
+        self.accidental
+    }
+
+    pub fn next_enharmonic(&self) -> Self{
+        match self.letter{
+            0 => Self{ letter: 1, accidental: self.accidental - 2 }, // A = Bbb
+            1 => Self{ letter: 2, accidental: self.accidental - 1 }, // B = Cb
+            2 => Self{ letter: 3, accidental: self.accidental - 2 }, // C = Dbb
+            3 => Self{ letter: 4, accidental: self.accidental - 2 }, // D = Ebb
+            4 => Self{ letter: 5, accidental: self.accidental - 1 }, // E = Fb
+            5 => Self{ letter: 6, accidental: self.accidental - 2 }, // F = Gbb
+            6 => Self{ letter: 0, accidental: self.accidental - 2 }, // G = Abb
+            _ => panic!("EnharmonicNote::next_enharmonic: should be impossible"),
+        }
+    }
+}
+
 impl ToStringName for EnharmonicNote{
     fn to_string_name(&self) -> String{
         let mut res = match self.letter{
@@ -363,31 +386,48 @@ impl IntoEnharmonicNotes for String{
     }
 }
 
-// pub fn scale_to_ucns_enharmonic(scale: &Scale, ucns: &[UCN]) -> UCNS{
-//     let mut map = HashMap::new();
-//     let mut set = HashSet::new();
-//     for ucn in ucns{
-//         map.insert(ucn.to_named(0).chromatic_to_index(), ucn);
-//         set.insert(ucn.to_base_letter());
-//     }
-//     let mut res = Vec::new();
-//     for n in &scale.0{
-//         let ucn = as_ucn(*n);
-//         let ucn = if let Some(ucn_fixed) = map.get(&ucn.to_named(0).chromatic_to_index()){
-//             **ucn_fixed
-//         } else {
-//             let base_letter = ucn.to_base_letter();
-//             if set.contains(&base_letter){
-//                 ucn.to_alternative().expect("Expect: scale_to_ucns_enharmonic")
-//             } else {
-//                 set.insert(base_letter);
-//                 ucn
-//             }
-//         };
-//         res.push(ucn);
-//     }
-//     res
-// }
+impl ToEnharmonicNote for Note{
+    fn to_enharmonic_note(&self) -> Option<EnharmonicNote>{
+        Some(match self % OCTAVE{
+            0  => EnharmonicNote{ letter: 0, accidental: 0 },
+            1  => EnharmonicNote{ letter: 0, accidental: 1 },
+            2  => EnharmonicNote{ letter: 1, accidental: 0 },
+            3  => EnharmonicNote{ letter: 2, accidental: 0 },
+            4  => EnharmonicNote{ letter: 2, accidental: 1 },
+            5  => EnharmonicNote{ letter: 3, accidental: 0 },
+            6  => EnharmonicNote{ letter: 3, accidental: 1 },
+            7  => EnharmonicNote{ letter: 4, accidental: 0 },
+            8  => EnharmonicNote{ letter: 5, accidental: 0 },
+            9  => EnharmonicNote{ letter: 5, accidental: 1 },
+            10 => EnharmonicNote{ letter: 6, accidental: 0 },
+            11 => EnharmonicNote{ letter: 6, accidental: 1 },
+            _ => panic!("ToEnharmonicNote for Note, should be impossible."),
+        })
+    }
+}
+
+impl IntoEnharmonicNotes for Scale{
+    fn into_enharmonic_notes(self) -> Vec<EnharmonicNote>{
+        let mut set = vec![0,0,0,0,0,0,0];
+        let mut res = Vec::new();
+        for (i, note) in self.0.into_iter().enumerate(){
+            if i >= 7 { return Vec::new(); } // Impossible: no more letters.
+            let en = note.to_enharmonic_note().unwrap();
+            let en = if set[en.letter() as usize] == 1{
+                let mut nen = en;
+                loop {
+                    nen = nen.next_enharmonic();
+                    if set[nen.letter() as usize] == 0 { break nen; }
+                }
+            } else {
+                en
+            };
+            set[en.letter() as usize] = 1;
+            res.push(en);
+        }
+        res
+    }
+}
 
 /*
 0   1   2   3   4   5   6   7   8   9   10  11  // rank 0

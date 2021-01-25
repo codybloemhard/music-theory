@@ -31,29 +31,33 @@ pub fn print_step_chords(steps: &Steps, root: Note, styling: ChordStyling) -> St
 
 // return (header,content)
 pub fn notes_analysis(input_string: String, styling: ChordStyling) -> Vec<(String, String)>{
-    let pcs = {
+    // Remove duplicate notes
+    let (ens, pcs) = {
         let ens = input_string.into_enharmonic_notes();
-        let pcs = ens.iter().map(|en| en.to_pc()).collect::<Vec<_>>();
-        let mut hm = HashSet::new();
-        let mut res = Vec::new();
-        for pc in pcs{
-            if !hm.contains(&pc){
-                hm.insert(pc);
-                res.push(pc);
+        let mut hs = HashSet::new();
+        let mut pcs = Vec::new();
+        let mut new_ens = Vec::new();
+        for en in ens{
+            let pc = en.to_pc();
+            if !hs.contains(&pc){
+                hs.insert(pc);
+                pcs.push(pc);
+                new_ens.push(en);
             }
         }
-        res
+        (new_ens, pcs)
     };
     let mut res = Vec::new();
     if pcs.is_empty() { return res; }
-    let mut string = String::new();
     let scale = pcs.clone().into_scale(0);
     let root = scale.0[0];
     let steps = pcs.clone().into_steps();
     let ctonic = pcs[0];
     let rchord = RootedChord::from_scale(scale.clone());
     let mut included = HashSet::new();
-    res.push(("Input".to_string(), format!("Your notes: {:?}\n", pcs)));
+    let ens_string = ens.into_iter().map(|en| { let mut string = en.to_string_name(); string.push_str(", "); string }).collect::<String>();
+    let mut string = format!("Your input: {}\nYour pitchclasses: {:?}\n", ens_string, pcs);
+    res.push(("Input".to_string(), mem::replace(&mut string, String::new())));
     let inversions = {
         let mut inversions = rchord.all_inversions();
         inversions.pop();
@@ -76,8 +80,8 @@ pub fn notes_analysis(input_string: String, styling: ChordStyling) -> Vec<(Strin
     let mo = find_scale(&ctwts);
     if let Some(m) = mo{
         included.insert((ctonic, m.steps.clone()));
-        let spelled_out = m.steps.to_scale(root);
-        string.push_str(&format!("{} {}: {:?}\n", ctonic, m, spelled_out.0)); // scale_to_pcs(&spelled_out, &pcs)));
+        let spelled_out = m.steps.to_scale(root).into_enharmonic_notes().into_iter().map(|en| { let mut string = en.to_string_name(); string.push_str(", "); string }).collect::<String>();
+        string.push_str(&format!("{} {}: {}\n", ctonic, m, spelled_out));
     }
     // if !ctwts.is_empty() {
     //     let ctwts = ctwts.into_steps();
