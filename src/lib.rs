@@ -49,6 +49,26 @@ pub fn notes_analysis(input_string: String, styling: ChordStyling) -> Vec<(Strin
         }
         (new_ens, pcs, map)
     };
+
+    let spell_out = |scale: Scale| {
+        if scale.is_empty() { return String::new(); }
+        let tonic = scale.0[0];
+        let start = if let Some(x) = pcs_to_ens.get(&tonic.to_pc()){
+            Some(*x)
+        } else {
+            None
+        };
+        scale.into_enharmonic_notes_with_start(start).into_iter().map(|e| e.to_string_name()).collect::<Vec<String>>().intercalate(", ".to_string())
+    };
+
+    let map_pc_to_en = |pc: PC| {
+        if let Some(x) = pcs_to_ens.get(&pc){
+            *x
+        } else {
+            pc.to_note(0).to_enharmonic_note().expect("should not be able to return None")
+        }
+    };
+
     let mut res = Vec::new();
     if pcs.is_empty() { return res; }
     let scale = pcs.clone().into_scale(0);
@@ -82,13 +102,8 @@ pub fn notes_analysis(input_string: String, styling: ChordStyling) -> Vec<(Strin
     let mo = find_scale(&ctwts);
     if let Some(m) = mo{
         included.insert((ctonic, m.steps.clone()));
-        let start = if let Some(x) = pcs_to_ens.get(&ctonic){
-            Some(*x)
-        } else {
-            None
-        };
-        let spelled_out = m.steps.to_scale(root).into_enharmonic_notes_with_start(start).into_iter().map(|en| { let mut string = en.to_string_name(); string.push_str(", "); string }).collect::<String>();
-        string.push_str(&format!("{} {}: {}\n", ctonic, m, spelled_out));
+        let spelled_out = spell_out(m.steps.to_scale(root));
+        string.push_str(&format!("{} {}: {}\n", map_pc_to_en(ctonic), m, spelled_out));
     }
     // if !ctwts.is_empty() {
     //     let ctwts = ctwts.into_steps();
@@ -98,14 +113,16 @@ pub fn notes_analysis(input_string: String, styling: ChordStyling) -> Vec<(Strin
     for modeobj in find_chordscales(steps){
         if included.contains(&(ctonic, modeobj.steps.clone())) { continue; }
         included.insert((ctonic, modeobj.steps.clone()));
-        string.push_str(&format!("{} {}\n", ctonic, modeobj));
+        let spelled_out = spell_out(modeobj.steps.to_scale(root));
+        string.push_str(&format!("{} {}: {}\n", map_pc_to_en(ctonic), modeobj, spelled_out));
         // string.push_str(&print_step_chords(&modeobj.steps, root, styling));
     }
-    res.push(("Strict Chordscale".to_string(), mem::replace(&mut string, String::new())));
+    res.push(("Strict Chordscales".to_string(), mem::replace(&mut string, String::new())));
     for (tonic,modeobj) in find_scale_superseq(&scale){
         if included.contains(&(tonic, modeobj.steps.clone())) { continue; }
         included.insert((tonic, modeobj.steps.clone()));
-        string.push_str(&format!("{} {}\n", tonic, modeobj));
+        let spelled_out = spell_out(modeobj.steps.to_scale(tonic.to_note(0)));
+        string.push_str(&format!("{} {}: {}\n", map_pc_to_en(tonic), modeobj, spelled_out));
         // let tonic = tonic.to_note(0);
         // string.push_str(&print_step_chords(&modeobj.steps, tonic, styling));
     }
@@ -113,7 +130,8 @@ pub fn notes_analysis(input_string: String, styling: ChordStyling) -> Vec<(Strin
     for (tonic,modeobj) in find_scale_superset(pcs, false){
         if included.contains(&(tonic, modeobj.steps.clone())) { continue; }
         included.insert((tonic, modeobj.steps.clone()));
-        string.push_str(&format!("{} {}\n", tonic, modeobj));
+        let spelled_out = spell_out(modeobj.steps.to_scale(tonic.to_note(0)));
+        string.push_str(&format!("{} {}: {}\n", map_pc_to_en(tonic), modeobj, spelled_out));
         // let tonic = tonic.to_note(0);
         // string.push_str(&print_step_chords(&modeobj.steps, tonic, styling));
     }

@@ -289,6 +289,12 @@ pub struct EnharmonicNote{
     accidental: i8,
 }
 
+impl std::fmt::Display for EnharmonicNote{
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result{
+        write!(f, "{}", self.to_string_name())
+    }
+}
+
 impl EnharmonicNote{
     pub fn letter(&self) -> u8{
         self.letter

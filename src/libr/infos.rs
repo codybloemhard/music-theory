@@ -3,6 +3,31 @@ use crate::theory::scale::RelativeTrait;
 use crate::theory::note::{ToRelative};
 use crate::theory::chord::{strs_scale_chords_roman,ChordStyling};
 
+pub trait Intercalatable{
+    type InterType;
+    type JoinType;
+    fn intercalate(self, val: Self::InterType) -> Self::JoinType;
+}
+
+impl Intercalatable for Vec<String>{
+    type InterType = String;
+    type JoinType = String;
+
+    fn intercalate(self, val: Self::InterType) -> Self::JoinType{
+        let mut builder = String::new();
+        let mut iter = self.into_iter();
+        let first = iter.next();
+        if let Some(s) = first{
+            builder.push_str(&s);
+        }
+        for string in iter{
+            builder.push_str(&val);
+            builder.push_str(&string);
+        }
+        builder
+    }
+}
+
 pub fn print_splitted(strings: &[String], split: &str, end: &str){
     for s in strings{
         print!("{}{}", s, split);
