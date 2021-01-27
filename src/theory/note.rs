@@ -316,6 +316,43 @@ impl EnharmonicNote{
             _ => panic!("EnharmonicNote::next_enharmonic: should be impossible"),
         }
     }
+
+    pub fn prev_enharmonic(&self) -> Self{
+        match self.letter{
+            0 => Self{ letter: 6, accidental: self.accidental + 2 }, // A = G##
+            1 => Self{ letter: 0, accidental: self.accidental + 2 }, // B = A##
+            2 => Self{ letter: 1, accidental: self.accidental + 1 }, // C = B#
+            3 => Self{ letter: 2, accidental: self.accidental + 2 }, // D = C##
+            4 => Self{ letter: 3, accidental: self.accidental + 2 }, // E = D##
+            5 => Self{ letter: 4, accidental: self.accidental + 1 }, // F = E#
+            6 => Self{ letter: 5, accidental: self.accidental + 2 }, // G = F##
+            _ => panic!("EnharmonicNote::next_enharmonic: should be impossible"),
+        }
+    }
+
+    pub fn spelled_as(&self, letter: u8) -> Self{
+        let letter = letter % 7;
+        if self.letter() == letter { return *self; }
+        let up = {
+            let mut en = *self;
+            loop {
+                if en.letter() == letter { break en; }
+                en = en.next_enharmonic();
+            }
+        };
+        let down = {
+            let mut en = *self;
+            loop {
+                if en.letter() == letter { break en; }
+                en = en.prev_enharmonic();
+            }
+        };
+        if up.accidental().abs() > down.accidental().abs() {
+            down
+        } else {
+            up
+        }
+    }
 }
 
 impl ToStringName for EnharmonicNote{
@@ -415,8 +452,8 @@ impl ToEnharmonicNote for Note{
         })
     }
 }
-
-fn into_enharmonic_notes_with_start(scale: Scale, start: Option<EnharmonicNote>) -> Vec<EnharmonicNote>{
+// Could be used for hexatonics etc?
+fn _into_enharmonic_notes_with_start_subheptatonic(scale: Scale, start: Option<EnharmonicNote>) -> Vec<EnharmonicNote>{
     let mut set = vec![0,0,0,0,0,0,0];
     let mut res = Vec::new();
     let skip = if let Some(en) = start{
@@ -444,15 +481,42 @@ fn into_enharmonic_notes_with_start(scale: Scale, start: Option<EnharmonicNote>)
     res
 }
 
+fn into_enharmonic_notes_with_start_heptatonic(scale: Scale, start: Option<EnharmonicNote>) -> Vec<EnharmonicNote>{
+    let mut res = Vec::new();
+    let mut target_letter = 255;
+    let skip = if let Some(en) = start{
+        res.push(en);
+        target_letter = (en.letter() + 1) % 7;
+        1
+    } else {
+        0
+    };
+    for (i, note) in scale.0.into_iter().enumerate().skip(skip){
+        if i >= 7 { return Vec::new(); } // Impossible: no more letters.
+        let en = note.to_enharmonic_note().unwrap();
+        if target_letter == 255 {
+            target_letter = en.letter();
+        }
+        let new_en = if en.letter == target_letter {
+            en
+        } else {
+            en.spelled_as(target_letter)
+        };
+        res.push(new_en);
+        target_letter = (target_letter + 1) % 7;
+    }
+    res
+}
+
 impl IntoEnharmonicNotes for Scale{
     fn into_enharmonic_notes(self) -> Vec<EnharmonicNote>{
-        into_enharmonic_notes_with_start(self, None)
+        into_enharmonic_notes_with_start_heptatonic(self, None)
     }
 }
 
 impl IntoEnharmonicNotesWithStart for Scale{
     fn into_enharmonic_notes_with_start(self, start: Option<EnharmonicNote>) -> Vec<EnharmonicNote>{
-        into_enharmonic_notes_with_start(self, start)
+        into_enharmonic_notes_with_start_heptatonic(self, start)
     }
 }
 
