@@ -48,7 +48,7 @@ fn dotest(){
         println!("{} {}", tonic, modeobj);
     }
     println!("And the strict chordscales: ");
-    for modeobj in find_chordscales(subset.into_steps()){
+    for modeobj in find_chordscales(&subset){
         println!("{}", modeobj);
     }
     let res = find_scale_from_ionian_relative(Relative(vec![

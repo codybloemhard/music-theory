@@ -102,16 +102,19 @@ pub fn find_scale_superset(scale: PCs, same_tonic: bool) -> Vec<(PC,ModeObj)>{
     res
 }
 // Finds all the scales where the input is the I chord
-pub fn find_chordscales(scale: Steps) -> Vec<ModeObj>{
-    let scale = scale.into_scale(0);
-    let scales = get_all_scale_objs();
+pub fn find_chordscales(pcs: &[PC]) -> Vec<ModeObj>{
     let mut res = Vec::new();
+    if pcs.is_empty() { return res; }
+    let tonic = pcs[0].to_note(0);
+    let scales = get_all_scale_objs();
     for sc in scales{
         'outer: for (i,mode) in sc.steps.clone().mode_iter().enumerate(){
-            let modescale = mode.to_scale(0);
-            let l = scale.len().min(modescale.len() / 2);
-            for j in 0..l{
-                if scale.0[j] != modescale.0[j * 2]{
+            let modescale = mode.to_scale(tonic).into_pcs();
+            for j in 0..pcs.len(){
+                if j * 2 > modescale.len() - 1 {
+                    continue 'outer;
+                }
+                if pcs[j] != modescale[j * 2]{
                     continue 'outer;
                 }
             }

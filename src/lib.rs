@@ -73,7 +73,6 @@ pub fn notes_analysis(input_string: String, styling: ChordStyling) -> Vec<(Strin
     if pcs.is_empty() { return res; }
     let scale = pcs.clone().into_scale(0);
     let root = scale.0[0];
-    let steps = pcs.clone().into_steps();
     let ctonic = pcs[0];
     let rchord = RootedChord::from_scale(scale.clone());
     let mut included = HashSet::new();
@@ -110,7 +109,7 @@ pub fn notes_analysis(input_string: String, styling: ChordStyling) -> Vec<(Strin
     //     string.push_str(&print_step_chords(&ctwts, root, styling));
     // }
     res.push(("Chordtone Wholetone Scale".to_string(), mem::replace(&mut string, String::new())));
-    for modeobj in find_chordscales(steps){
+    for modeobj in find_chordscales(&pcs){
         if included.contains(&(ctonic, modeobj.steps.clone())) { continue; }
         included.insert((ctonic, modeobj.steps.clone()));
         let spelled_out = spell_out(modeobj.steps.to_scale(root));
