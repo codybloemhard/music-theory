@@ -7,7 +7,7 @@ pub mod query;
 use std::collections::{ HashSet, HashMap };
 use std::mem;
 use theory::*;
-use libr::infos::*;
+use libr::*;
 use query::*;
 
 #[cfg(test)]
@@ -69,6 +69,18 @@ pub fn notes_analysis(input_string: String, styling: ChordStyling) -> Vec<(Strin
         }
     };
 
+    let namer = HeptatonicScaleNamer::new();
+    let mode_format = |en: EnharmonicNote, mo: ModeObj, spelled_out: String|{
+        let temp;
+        let mode_name = if mo.mode_name == *""{
+            temp = namer.name(&mo.steps);
+            &temp
+        } else {
+            &mo.mode_name
+        };
+        format!("{} {}, {}ᵉ mode of {}: {}\n", en, mode_name, mo.mode_nr + 1, mo.fam_name, spelled_out)
+    };
+
     let mut res = Vec::new();
     if pcs.is_empty() { return res; }
     let scale = pcs.clone().into_scale(0);
@@ -97,13 +109,12 @@ pub fn notes_analysis(input_string: String, styling: ChordStyling) -> Vec<(Strin
         .map(|(mut s,c)| { s.push_str(&format!(": {:?}", c.to_scale().into_pcs())); s })
         .for_each(|s| { string.push_str(&format!("{}\n", s)); });
     res.push(("SubChords".to_string(), mem::replace(&mut string, String::new())));
-    // let namer = HeptatonicScaleNamer::new(); TODO
     let ctwts = rchord.to_chordtone_wholetone_scale();
     let mo = find_scale(&ctwts);
     if let Some(m) = mo{
         included.insert((ctonic, m.steps.clone()));
         let spelled_out = spell_out(m.steps.to_scale(root));
-        string.push_str(&format!("{} {}: {}\n", map_pc_to_en(ctonic), m, spelled_out));
+        string.push_str(&mode_format(map_pc_to_en(ctonic), m, spelled_out));
     }
     // if !ctwts.is_empty() {
     //     let ctwts = ctwts.into_steps();
@@ -114,26 +125,21 @@ pub fn notes_analysis(input_string: String, styling: ChordStyling) -> Vec<(Strin
         if included.contains(&(ctonic, modeobj.steps.clone())) { continue; }
         included.insert((ctonic, modeobj.steps.clone()));
         let spelled_out = spell_out(modeobj.steps.to_scale(root));
-        string.push_str(&format!("{} {}: {}\n", map_pc_to_en(ctonic), modeobj, spelled_out));
-        // string.push_str(&print_step_chords(&modeobj.steps, root, styling));
+        string.push_str(&mode_format(map_pc_to_en(ctonic), modeobj, spelled_out));
     }
     res.push(("Strict Chordscales".to_string(), mem::replace(&mut string, String::new())));
     for (tonic,modeobj) in find_scale_superseq(&scale){
         if included.contains(&(tonic, modeobj.steps.clone())) { continue; }
         included.insert((tonic, modeobj.steps.clone()));
         let spelled_out = spell_out(modeobj.steps.to_scale(tonic.to_note(0)));
-        string.push_str(&format!("{} {}: {}\n", map_pc_to_en(tonic), modeobj, spelled_out));
-        // let tonic = tonic.to_note(0);
-        // string.push_str(&print_step_chords(&modeobj.steps, tonic, styling));
+        string.push_str(&mode_format(map_pc_to_en(tonic), modeobj, spelled_out));
     }
     res.push(("Supersequences".to_string(), mem::replace(&mut string, String::new())));
     for (tonic,modeobj) in find_scale_superset(pcs, false){
         if included.contains(&(tonic, modeobj.steps.clone())) { continue; }
         included.insert((tonic, modeobj.steps.clone()));
         let spelled_out = spell_out(modeobj.steps.to_scale(tonic.to_note(0)));
-        string.push_str(&format!("{} {}: {}\n", map_pc_to_en(tonic), modeobj, spelled_out));
-        // let tonic = tonic.to_note(0);
-        // string.push_str(&print_step_chords(&modeobj.steps, tonic, styling));
+        string.push_str(&mode_format(map_pc_to_en(tonic), modeobj, spelled_out));
     }
     res.push(("Supersets".to_string(), mem::replace(&mut string, String::new())));
     res
