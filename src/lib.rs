@@ -97,6 +97,7 @@ pub fn notes_analysis(input_string: String, styling: ChordStyling) -> Vec<(Strin
         .map(|(mut s,c)| { s.push_str(&format!(": {:?}", c.to_scale().into_pcs())); s })
         .for_each(|s| { string.push_str(&format!("{}\n", s)); });
     res.push(("SubChords".to_string(), mem::replace(&mut string, String::new())));
+    // let namer = HeptatonicScaleNamer::new(); TODO
     let ctwts = rchord.to_chordtone_wholetone_scale();
     let mo = find_scale(&ctwts);
     if let Some(m) = mo{

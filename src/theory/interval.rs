@@ -77,9 +77,9 @@ pub fn to_relative_interval_non_nat(interval: Note) -> String{
     let mut res = String::new();
     let i = interval;
     match i.cmp(&0){
-        Ordering::Less => { for _ in 0..-i{ res.push_str("♭"); } },
-        Ordering::Greater => { for _ in 0..i{ res.push_str("♯") } },
-        Ordering::Equal => {  },
+        Ordering::Less => { for _ in 0..-i{ res.push('♭'); } },
+        Ordering::Greater => { for _ in 0..i{ res.push('♯'); } },
+        Ordering::Equal => { res.push('♮'); },
     }
     res
 }
