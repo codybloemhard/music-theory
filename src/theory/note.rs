@@ -195,7 +195,7 @@ pub const G:  PC = PC(10);
 pub const GS: PC = PC(11);
 
 #[derive(Clone,Copy,PartialEq,Eq,Hash)]
-pub struct PC(Note); // PitchClass
+pub struct PC(pub Note); // PitchClass
 
 pub type PCs = Vec<PC>;
 

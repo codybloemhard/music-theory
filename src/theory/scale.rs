@@ -14,6 +14,7 @@ impl ToSteps for Scale{
             intervals.push(diff);
             last = *note;
         }
+        intervals.push(self.0[0] + OCTAVE - last);
         Steps(intervals)
     }
 }

@@ -183,3 +183,9 @@ impl HeptatonicScaleNamer{
         base_name
     }
 }
+
+impl Default for HeptatonicScaleNamer{
+    fn default() -> Self {
+        Self::new()
+    }
+}

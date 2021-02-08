@@ -18,12 +18,10 @@ mod tests {
     }
 }
 
-pub fn print_step_chords(steps: &Steps, root: Note, styling: ChordStyling) -> String{
+pub fn step_chords_string(steps: &Steps, root: Note, styling: ChordStyling) -> String{
     let mut string = String::new();
-    string.push('\t');
     let triads = format_splitted(&strs_scale_chords(steps, root, 3, styling), ", ", "\n");
     string.push_str(&triads);
-    string.push('\t');
     let tetrads = format_splitted(&strs_scale_chords(steps, root, 4, styling), ", ", "\n");
     string.push_str(&tetrads);
     string
@@ -84,13 +82,36 @@ pub fn notes_analysis(input_string: String, styling: ChordStyling) -> Vec<(Strin
     let mut res = Vec::new();
     if pcs.is_empty() { return res; }
     let scale = pcs.clone().into_scale(0);
+    let steps = scale.to_steps();
     let root = scale.0[0];
     let ctonic = pcs[0];
     let rchord = RootedChord::from_scale(scale.clone());
     let mut included = HashSet::new();
     let ens_string = ens.into_iter().map(|en| { let mut string = en.to_string_name(); string.push_str(", "); string }).collect::<String>();
-    let mut string = format!("Your input: {}\nYour pitchclasses: {:?}\n", ens_string, pcs);
+    let mut string = format!("Your input: {}\n", ens_string);
+    string.push_str(&format!("Numbered pitchclasses: {:?}\n", pcs.iter().map(|pc| pc.0).collect::<Vec<_>>()));
+    string.push_str(&format!("Named pitchclasses: {:?}\n", pcs));
     res.push(("Input".to_string(), mem::replace(&mut string, String::new())));
+    if scale.len() == 7{ // we have an heptatonic scale on our hands
+        let mo = find_scale(&scale);
+        string = if let Some(mo) = mo{
+            let temp;
+            let mode_name = if mo.mode_name == *""{
+                temp = namer.name(&mo.steps);
+                &temp
+            } else {
+                &mo.mode_name
+            };
+            format!("{}, {}ᵉ mode of {}\n", mode_name, mo.mode_nr + 1, mo.fam_name)
+        } else {
+            namer.name(&steps)
+        };
+        string.push_str(&steps.to_relative(&ionian::steps()).unwrap().string_ionian_rel());
+        string.push('\n');
+        string.push_str(&step_chords_string(&steps, root, styling));
+        string.push('\n');
+        res.push(("Heptatonic Scale".to_string(), mem::replace(&mut string, String::new())));
+    }
     let inversions = {
         let mut inversions = rchord.all_inversions();
         inversions.pop();
