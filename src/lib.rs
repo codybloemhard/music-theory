@@ -104,7 +104,7 @@ pub fn notes_analysis(input_string: String, styling: ChordStyling) -> Vec<(Strin
             };
             format!("{}, {}ᵉ mode of {}\n", mode_name, mo.mode_nr + 1, mo.fam_name)
         } else {
-            namer.name(&steps)
+            format!("{}\n", namer.name(&steps))
         };
         string.push_str(&steps.to_relative(&ionian::steps()).unwrap().string_ionian_rel());
         string.push('\n');
