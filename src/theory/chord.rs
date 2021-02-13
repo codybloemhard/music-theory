@@ -349,8 +349,16 @@ impl RelativeChord{
     }
 
     pub fn as_string(&self, lower: bool, styling: ChordStyling) -> String{
-        let root = format!("<X{}{}>", if self.root > 0 { "+" } else { "" }, self.root);
+        let root = to_degree(self.root);
         self.chord.quality(root, lower, styling)
+    }
+}
+
+impl std::fmt::Display for RelativeChord{
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result{
+        let root = format!("<X{}{}>", if self.root >= 0 { "+" } else { "" }, self.root);
+        let res = self.chord.quality(root, true, ChordStyling::Extended);
+        write!(f, "{}", res)
     }
 }
 
