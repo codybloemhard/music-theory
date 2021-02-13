@@ -239,7 +239,10 @@ impl ToNote for PC{
 
 impl ToPC for Note{
     fn to_pc(&self) -> PC{
-        let inrank = self % 12;
+        let mut inrank = self % 12;
+        if inrank < 0 {
+            inrank += 12;
+        }
         if inrank >= 12 { panic!("as_pc: should never happen!"); }
         PC(inrank)
     }
@@ -539,6 +542,11 @@ mod tests{
     use super::*;
     #[test]
     fn test_to_pitch(){
-        assert_eq!(to_pitch(NamedNote::A(4).to_note()).round() as i32, 440);
+        assert_eq!(to_pitch(A4).round() as i32, 440);
+    }
+    #[test]
+    fn test_note_to_pc(){
+        assert_eq!(23.to_pc().0 < 12, true);
+        assert_eq!((-450).to_pc().0 >= 0, true);
     }
 }
