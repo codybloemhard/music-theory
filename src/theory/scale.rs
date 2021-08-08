@@ -34,8 +34,7 @@ impl ToChord for Scale{
 
 impl ToScale for Steps{
     fn to_scale(&self, mut note: Note) -> Scale{
-        let mut vec = Vec::new();
-        vec.push(note);
+        let mut vec = vec![note];
         for step in self.0.iter().take(self.len() - 1){
             note += *step as Note;
             vec.push(note);

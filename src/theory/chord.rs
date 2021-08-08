@@ -115,7 +115,7 @@ impl Chord{
             sub_scales.insert(Scale(subscale).into_chord());
         }
         let mut res = sub_scales.into_iter().collect::<Vec<Chord>>();
-        res.sort_by(|a,b| a.len().cmp(&b.len()).then(a.cmp(&b)));
+        res.sort_by(|a,b| a.len().cmp(&b.len()).then(a.cmp(b)));
         res
     }
 

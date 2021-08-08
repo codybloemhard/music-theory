@@ -59,8 +59,8 @@ fn dotest(){
         println!("{}", modeobj);
     }
     println!("-------");
-    let subchords = scale_subseq_chords(ionian::obj().clone_steps().mode(6).into_scale(A4))
-        .into_iter().map(|c| (c.as_string(true, ChordStyling::Extended),c))
+    let subchords = scale_subseq_chords(ionian::obj().clone_steps().mode(0).into_scale(A4 + 3))
+        .into_iter().map(|c| (c.as_string(true, ChordStyling::Std),c))
         .filter(|(s,_)| !s.contains('[') && !s.contains('(') && !s.is_empty())
         .map(|(mut s,c)| { s.push_str(&format!(": {:?}", c.to_scale().into_pcs())); s })
         .collect::<Vec<_>>();
