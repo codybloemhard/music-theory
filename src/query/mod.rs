@@ -1,4 +1,4 @@
-use crate::theory::note::{Steps,Scale,Relative,RelativeNote,IntoPCs,PCs,PC,NoteSequence,ToScale,IntoScale,ToRelative,ToSteps,ToNote};
+use crate::theory::note::{Steps,Scale,Relative,RelativeNote,IntoPCs,PCs,PC,NoteSequence,ToScale,IntoScale,ToRelative,ToNote};
 use crate::theory::scale::{notes_to_octave_scale,StepsTrait,ModeIteratorSpawner};
 use crate::theory::interval::{SEMI};
 use fnrs::Sequence;
@@ -20,34 +20,12 @@ pub fn find_scale(scale: &Scale) -> Option<ModeObj>{
     Option::None
 }
 
-pub fn find_steps_superseq(scale: &Steps) -> Vec<ModeObj>{
-    let scales = get_all_scale_objs();
-    let mut res = Vec::new();
-    for sc in scales{
-        for (i,mode) in sc.steps.clone().mode_iter().enumerate(){
-            if mode.0.has_seq(&scale.0){
-                res.push(
-                    ModeObj{
-                        steps: mode,
-                        fam_name: sc.family_name(),
-                        mode_name: sc.get_mode_name(i as u8),
-                        mode_nr: i,
-                    }
-                );
-            }
-        }
-    }
-    res
-}
-
-pub fn find_scale_superseq(scale: &Scale) -> Vec<(PC,ModeObj)>{
-    let steps = scale.to_steps();
+pub fn find_scale_superstring(scale: &Scale) -> Vec<(PC,ModeObj)>{
     let pcs = scale.clone().into_pcs();
     let scales = get_all_scale_objs();
     let mut res = Vec::new();
     for sc in scales{
         for (i,mode) in sc.steps.clone().mode_iter().enumerate(){
-            if !mode.0.has_seq(&steps.0) { continue; }
             for j in 0..12{
                 let tonic = j * SEMI;
                 let modescale = mode.clone().into_scale(tonic).into_pcs();
@@ -66,6 +44,7 @@ pub fn find_scale_superseq(scale: &Scale) -> Vec<(PC,ModeObj)>{
     }
     res
 }
+
 // Finds all the scales that are a super set of the set of notes given.
 // When same_tonic == true, it only gives scales that have the same note as the
 // first note in the set(ordered set shortly) as the tonic.

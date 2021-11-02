@@ -53,6 +53,7 @@ pub fn get_all_scale_objs() -> Vec<ScaleObj>{
     enigmatic_major::obj(), enigmatic_minor::obj()]
 }
 
+#[derive(Clone,Debug)]
 pub struct ModeObj{
     pub steps: Steps,
     pub fam_name: String,
@@ -78,10 +79,11 @@ macro_rules! DefScale{
             }
 
             pub fn obj() -> ScaleObj{
-                let mut modes = Vec::new();
-                $(
-                    modes.push(String::from($mode));
-                )*
+                let modes = vec![
+                    $(
+                        String::from($mode),
+                    )*
+                ];
                 ScaleObj{
                     steps: steps(),
                     fam_name: String::from($name),

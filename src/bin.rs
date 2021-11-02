@@ -4,6 +4,7 @@ use music_theory::libr::scales::*;
 use music_theory::libr::infos::*;
 use music_theory::query::*;
 use music_theory::utils::*;
+use fnrs::Sequence;
 // jazzbøt
 fn main(){
     let args = lapp::parse_args("
@@ -34,9 +35,7 @@ fn dotest(){
     }
     println!();
     println!("{}", find_scale(&vec![C,CS,E,F,G,GS,AS].into_scale(0)).unwrap());
-    for modeobj in find_steps_superseq(&vec![A,B,C,D].into_steps()){
-        println!("{}", modeobj);
-    }
+    println!("{:?}", find_scale_superstring(&vec![A,B,C,D,E].into_scale(1)));
     print_scales(ChordStyling::Extended);
     let subset = vec![C,E,G,B];
     print!("Scales which are an superset to {{");
@@ -77,4 +76,5 @@ fn dotest(){
         }
     }
     print_to_grid_auto(&chordstrings, 80, 3);
+    println!("{}", vec![0, 1, 2, 3, 4].has_seq(&vec![0,3]));
 }
