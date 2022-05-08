@@ -13,14 +13,14 @@ pub const MINOR_AUGMENTED: &[Note] = &[MINOR_THIRD, AUGMENTED_FIFTH];
 pub const MAJOR_AUGMENTED: &[Note] = &[MAJOR_THIRD, AUGMENTED_FIFTH];
 pub const MINOR_DIMINISHED: &[Note] = &[MINOR_THIRD, DIMINISHED_FIFTH];
 pub const MAJOR_DIMINISHED: &[Note] = &[MAJOR_THIRD, DIMINISHED_FIFTH];
-pub const SUS2: &[Note] = &[MAJOR_SECOND,PERFECT_FIFTH];
-pub const SUS4: &[Note] = &[PERFECT_FOURTH,PERFECT_FIFTH];
-pub const SUPER_SUS: &[Note] = &[MAJOR_SECOND,PERFECT_FOURTH];
-pub const PHRYGIAN: &[Note] = &[MINOR_SECOND,PERFECT_FIFTH];
-pub const LYDIAN: &[Note] = &[AUGMENTED_FOURTH,PERFECT_FIFTH];
-pub const LOCRIAN2: &[Note] = &[MINOR_SECOND,DIMINISHED_FIFTH];
-pub const LOCRIAN4: &[Note] = &[PERFECT_FOURTH,DIMINISHED_FIFTH];
-pub const SUPER_LOCRIAN: &[Note] = &[MINOR_SECOND,PERFECT_FOURTH,DIMINISHED_FIFTH];
+pub const SUS2: &[Note] = &[MAJOR_SECOND, PERFECT_FIFTH];
+pub const SUS4: &[Note] = &[PERFECT_FOURTH, PERFECT_FIFTH];
+pub const SUPER_SUS: &[Note] = &[MAJOR_SECOND, PERFECT_FOURTH];
+pub const PHRYGIAN: &[Note] = &[MINOR_SECOND, PERFECT_FIFTH];
+pub const LYDIAN: &[Note] = &[AUGMENTED_FOURTH, PERFECT_FIFTH];
+pub const LOCRIAN2: &[Note] = &[MINOR_SECOND, DIMINISHED_FIFTH];
+pub const LOCRIAN4: &[Note] = &[PERFECT_FOURTH, DIMINISHED_FIFTH];
+pub const SUPER_LOCRIAN: &[Note] = &[MINOR_SECOND, PERFECT_FOURTH, DIMINISHED_FIFTH];
 pub const MAJOR_SIXTH_CHORD: &[Note] = &[MAJOR_THIRD, PERFECT_FIFTH, MAJOR_SIXTH];
 pub const MINOR_SIXTH_CHORD: &[Note] = &[MINOR_THIRD, PERFECT_FIFTH, MAJOR_SIXTH];
 pub const MAJOR_SEVENTH_CHORD: &[Note] = &[MAJOR_THIRD, PERFECT_FIFTH, MAJOR_SEVENTH];
@@ -30,11 +30,11 @@ pub const MINOR_MAJOR_SEVENTH: &[Note] = &[MINOR_THIRD, PERFECT_FIFTH, MAJOR_SEV
 pub const HALF_DIMINISHED_SEVENTH: &[Note] = &[MINOR_THIRD, DIMINISHED_FIFTH, MINOR_SEVENTH];
 pub const DIMINISHED_SEVENTH_CHORD: &[Note] = &[MINOR_THIRD, DIMINISHED_FIFTH, DIMINISHED_SEVENTH];
 pub const AUGMENTED_SEVENTH_CHORD: &[Note] = &[MAJOR_THIRD, AUGMENTED_FIFTH, MINOR_SEVENTH];
-pub const MU_CHORD: &[Note] = &[MAJOR_SECOND,MAJOR_THIRD,PERFECT_FIFTH];
-pub const SIX_NINE_CHORD: &[Note] = &[MAJOR_THIRD,PERFECT_FIFTH,MAJOR_SIXTH,NINETH];
+pub const MU_CHORD: &[Note] = &[MAJOR_SECOND, MAJOR_THIRD, PERFECT_FIFTH];
+pub const SIX_NINE_CHORD: &[Note] = &[MAJOR_THIRD, PERFECT_FIFTH, MAJOR_SIXTH, NINETH];
 
 // (pattern, name, major base string?, extended collection?)
-pub type ChordBook = &'static [(&'static [Note],&'static str,bool,bool)];
+pub type ChordBook = &'static [(&'static [Note], &'static str, bool, bool)];
 
 pub const STD_CHORD_BOOK: ChordBook = &[
     (MAJOR, "", true, false),
@@ -224,7 +224,7 @@ impl ToScale for Chord{
     }
 }
 
-#[derive(PartialEq,Eq,Hash,Clone,Default)]
+#[derive(PartialEq, Eq, Hash, Clone, Default)]
 pub struct RootedChord{
     pub root: Note,
     pub chord: Chord,
@@ -329,7 +329,7 @@ impl RootedChord{
     }
 }
 
-#[derive(PartialEq,Eq,Hash,Clone)]
+#[derive(PartialEq, Eq, Hash, Clone)]
 pub struct RelativeChord{
     pub root: Note,
     pub chord: Chord,

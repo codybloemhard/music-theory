@@ -4,6 +4,7 @@ use std::cmp::Ordering;
 pub const SEMI: Note = 1;
 pub const WHOLE: Note = 2;
 
+pub const ROOT: Note = 0;
 pub const UNISON: Note = 0;
 pub const MINOR_SECOND: Note = 1;
 pub const MAJOR_SECOND: Note = 2;
@@ -29,6 +30,18 @@ pub const FLAT_THIRTEENTH: Note = 20;
 pub const THIRTEENTH: Note = 21;
 pub const SHARP_THIRTEENTH: Note = 22;
 
+pub const MIN2: Note = 1;
+pub const MAJ2: Note = 2;
+pub const MIN3: Note = 3;
+pub const MAJ3: Note = 4;
+pub const PER4: Note = 5;
+pub const TRIT: Note = 6;
+pub const PER5: Note = 7;
+pub const MIN6: Note = 8;
+pub const MAJ6: Note = 9;
+pub const MIN7: Note = 10;
+pub const MAJ7: Note = 11;
+
 pub const DIMINISHED_SECOND: Note = 0;
 pub const AUGMENTED_UNISON: Note = 1;
 pub const DIMINISHED_THIRD: Note = 2;
@@ -47,17 +60,17 @@ pub const AUGMENTED_SEVENTH: Note = 12;
 pub fn interval_chord_extension(interval: Note) -> String{
     match interval{
         0 => "R",
-        MINOR_SECOND => "♭2",
-        MAJOR_SECOND => "♮2",
-        MINOR_THIRD => "♭3",
-        MAJOR_THIRD => "♮3",
-        PERFECT_FOURTH => "♮4",
-        TRITONE => "♭5",
-        PERFECT_FIFTH => "♮5",
-        MINOR_SIXTH => "♭6",
-        MAJOR_SIXTH => "♮6",
-        MINOR_SEVENTH => "♭7",
-        MAJOR_SEVENTH => "♮7",
+        MIN2 => "♭2",
+        MAJ2 => "♮2",
+        MIN3 => "♭3",
+        MAJ3 => "♮3",
+        PER4 => "♮4",
+        TRIT => "♭5",
+        PER5 => "♮5",
+        MIN6 => "♭6",
+        MAJ6 => "♮6",
+        MIN7 => "♭7",
+        MAJ7 => "♮7",
         OCTAVE => "",
         13 => "♭9",
         14 => "♮9",
