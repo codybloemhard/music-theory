@@ -121,13 +121,13 @@ impl ToRelative for Steps{
 }
 
 pub trait StepsTrait{
-    fn as_mode(self, note: Note, mode: Mode) -> Scale;
+    fn to_mode(self, note: Note, mode: Mode) -> Scale;
     fn mode_nr_of_this(self, mode: &Self) -> Option<(usize,Self)>
         where Self: std::marker::Sized;
 }
 
 impl StepsTrait for Steps{
-    fn as_mode(self, note: Note, mode: Mode) -> Scale{
+    fn to_mode(self, note: Note, mode: Mode) -> Scale{
         self.mode(mode).into_scale(note)
     }
 
@@ -222,6 +222,7 @@ pub struct ModeIterator<T: ModeTrait + NoteSequence>{
     current: usize,
     len: usize,
 }
+
 //TODO: return references
 impl<T: std::clone::Clone + ModeTrait + NoteSequence>
     Iterator for ModeIterator<T>{

@@ -13,20 +13,26 @@ pub type Rank = u16;
 /// Interchanging the versions now only can be done explicitly.
 
 pub type Notes = Vec<Note>;
+
 #[derive(Clone,PartialEq,Eq,Hash,Default,Debug)]
 pub struct Steps(pub Vec<Note>);
+
 #[derive(Clone,Default,Debug)]
 pub struct Scale(pub Vec<Note>);
+
 #[derive(PartialEq,Eq,PartialOrd,Ord,Hash,Clone,Default,Debug)]
 pub struct Chord(pub Vec<Note>);
+
 #[derive(PartialEq,Copy,Clone,Debug)]
 pub enum RelativeNote { Flat(Note), Sharp(Note), Natural, Blank }
+
 pub const RN_BLANK: RelativeNote = RelativeNote::Blank;
 pub const RN_NAT: RelativeNote = RelativeNote::Natural;
 pub const RN_S: RelativeNote = RelativeNote::Sharp(1);
 pub const RN_SS: RelativeNote = RelativeNote::Sharp(2);
 pub const RN_B: RelativeNote = RelativeNote::Flat(1);
 pub const RN_BB: RelativeNote = RelativeNote::Flat(2);
+
 #[derive(Clone,Debug)]
 pub struct Relative(pub Vec<RelativeNote>);
 
@@ -432,7 +438,7 @@ impl ToEnharmonicNote for String{
 
 impl IntoEnharmonicNotes for String{
     fn into_enharmonic_notes(self) -> Vec<EnharmonicNote>{
-        self.split(',').into_iter().map(|s| s.to_string().to_enharmonic_note()).flatten().collect::<Vec<_>>()
+        self.split(',').into_iter().filter_map(|s| s.to_string().to_enharmonic_note()).collect::<Vec<_>>()
     }
 }
 

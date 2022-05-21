@@ -1,8 +1,8 @@
 [package]
 name = "music-theory-query"
-version = "0.1.14"
-authors = ["Cody Bloemhard <cblmhrd@live.nl>"]
-edition = "2018"
+version = "0.1.15"
+authors = ["Cody Bloemhard <codybloemhard@gmail.com>"]
+edition = "2021"
 description = "Music theory queries"
 readme = "README.md"
 license = "GPL-3.0"

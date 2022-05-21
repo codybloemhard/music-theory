@@ -41,7 +41,7 @@ pub fn format_splitted(strings: &[String], split: &str, end: &str) -> String{
         let x = format!("{}{}", s, split);
         string.push_str(&x);
     }
-    string.push_str(&end.to_string());
+    string.push_str(end);
     string
 }
 
