@@ -57,33 +57,161 @@ pub const AUGMENTED_SIXTH: Note = 10;
 pub const DIMINISHED_OCTAVE: Note = 11;
 pub const AUGMENTED_SEVENTH: Note = 12;
 
-pub fn interval_chord_extension(interval: Note) -> String{
-    match interval{
-        0 => "R",
-        MIN2 => "♭2",
-        MAJ2 => "♮2",
-        MIN3 => "♭3",
-        MAJ3 => "♮3",
-        PER4 => "♮4",
-        TRIT => "♭5",
-        PER5 => "♮5",
-        MIN6 => "♭6",
-        MAJ6 => "♮6",
-        MIN7 => "♭7",
-        MAJ7 => "♮7",
-        OCTAVE => "",
-        13 => "♭9",
-        14 => "♮9",
-        15 => "♯9",
-        16 => "♭11",
-        17 => "♮11",
-        18 => "♯11",
-        19 => "",
-        20 => "♭13",
-        21 => "♮13",
-        22 => "♯13",
-        _ => "",
-    }.to_string()
+#[derive(Clone, Copy)]
+pub enum Interval{
+    Root = 0,
+    Min2 = 1,
+    Maj2 = 2,
+    Min3 = 3,
+    Maj3 = 4,
+    Per4 = 5,
+    Trit = 6,
+    Per5 = 7,
+    Min6 = 8,
+    Maj6 = 9,
+    Min7 = 10,
+    Maj7 = 11,
+    Per8 = 12,
+    Min9 = 13,
+    Maj9 = 14,
+    Aug9 = 15,
+    Min11 = 16,
+    Maj11 = 17,
+    Aug11 = 18,
+    Min13 = 20,
+    Maj13 = 21,
+    Aug13 = 22,
+}
+
+#[derive(Clone, Copy)]
+pub enum OctaveInterval{
+    Root = 0,
+    Min2 = 1,
+    Maj2 = 2,
+    Min3 = 3,
+    Maj3 = 4,
+    Per4 = 5,
+    Trit = 6,
+    Per5 = 7,
+    Min6 = 8,
+    Maj6 = 9,
+    Min7 = 10,
+    Maj7 = 11,
+}
+
+pub trait ToInterval{
+    fn to_interval_try(self) -> Option<Interval>;
+    fn to_interval_mod(self) -> Interval;
+}
+
+impl ToInterval for Note{
+    fn to_interval_try(self) -> Option<Interval>{
+        match self{
+            0 => Some(Interval::Root),
+            1 => Some(Interval::Min2),
+            2 => Some(Interval::Maj2),
+            3 => Some(Interval::Min3),
+            4 => Some(Interval::Maj3),
+            5 => Some(Interval::Per4),
+            6 => Some(Interval::Trit),
+            7 => Some(Interval::Per5),
+            8 => Some(Interval::Min6),
+            9 => Some(Interval::Maj6),
+            10 => Some(Interval::Min7),
+            11 => Some(Interval::Maj7),
+            12 => Some(Interval::Per8),
+            13 => Some(Interval::Min9),
+            14 => Some(Interval::Maj9),
+            15 => Some(Interval::Aug9),
+            16 => Some(Interval::Min11),
+            17 => Some(Interval::Maj11),
+            18 => Some(Interval::Aug11),
+            20 => Some(Interval::Min13),
+            21 => Some(Interval::Maj13),
+            22 => Some(Interval::Aug13),
+            _ => None,
+        }
+    }
+
+    fn to_interval_mod(self) -> Interval{
+        let int = (self % 24).to_interval_try();
+        match int{
+            Some(i) => i,
+            None => (self % 12).to_interval_try().unwrap()
+        }
+    }
+}
+
+impl ToInterval for OctaveInterval{
+    fn to_interval_try(self) -> Option<Interval>{
+        (self as Note).to_interval_try()
+    }
+
+    fn to_interval_mod(self) -> Interval{
+        (self as Note).to_interval_mod()
+    }
+}
+
+impl ToOctaveInterval for Note{
+    fn to_octave_interval_try(self) -> Option<OctaveInterval>{
+        match self{
+            0 => Some(OctaveInterval::Root),
+            1 => Some(OctaveInterval::Min2),
+            2 => Some(OctaveInterval::Maj2),
+            3 => Some(OctaveInterval::Min3),
+            4 => Some(OctaveInterval::Maj3),
+            5 => Some(OctaveInterval::Per4),
+            6 => Some(OctaveInterval::Trit),
+            7 => Some(OctaveInterval::Per5),
+            8 => Some(OctaveInterval::Min6),
+            9 => Some(OctaveInterval::Maj6),
+            10 => Some(OctaveInterval::Min7),
+            11 => Some(OctaveInterval::Maj7),
+            _ => None,
+        }
+    }
+
+    fn to_octave_interval_mod(self) -> OctaveInterval{
+        (self % 12).to_octave_interval_try().unwrap()
+    }
+}
+
+impl ToOctaveInterval for Interval{
+    fn to_octave_interval_try(self) -> Option<OctaveInterval>{
+        (self as Note).to_octave_interval_try()
+    }
+
+    fn to_octave_interval_mod(self) -> OctaveInterval{
+        (self as Note).to_octave_interval_mod()
+    }
+}
+
+pub trait ToOctaveInterval{
+    fn to_octave_interval_try(self) -> Option<OctaveInterval>;
+    fn to_octave_interval_mod(self) -> OctaveInterval;
+}
+
+pub trait ToIntervalChordExtension{
+    fn to_interval_chord_extension(self) -> String;
+}
+
+impl ToIntervalChordExtension for Interval{
+    fn to_interval_chord_extension(self) -> String{
+        let names = [
+            "R", "♭2", "♮2", "♭3", "♮3", "♮4", "♭5", "♮5", "♭6", "♮6", "♭7", "♮7", "♮8",
+            "♭9", "♮9", "♯9", "♭11", "♮11", "♯11", "", "♭13", "♮13", "♯13",
+        ];
+        names[self as usize].to_string()
+    }
+}
+
+impl ToIntervalChordExtension for Option<Interval>{
+    fn to_interval_chord_extension(self) -> String{
+        match self{
+            None => "x".to_string(),
+            Some(int) => int.to_interval_chord_extension(),
+        }
+    }
 }
 
 pub fn to_relative_interval_non_nat(interval: Note) -> String{

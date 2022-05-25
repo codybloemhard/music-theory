@@ -6,6 +6,7 @@ edition = "2021"
 description = "Music theory queries"
 readme = "README.md"
 license = "GPL-3.0"
+repository = "https://github.com/codybloemhard/music-theory"
 # keywords = ["text"]
 # categories = ["command-line-interface"]
 

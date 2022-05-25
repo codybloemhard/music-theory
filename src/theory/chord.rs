@@ -129,7 +129,7 @@ impl Chord{
             let mut spelled_out = basestr;
             spelled_out.push('[');
             for int in &self.0{
-                spelled_out.push_str(&interval_chord_extension(*int));
+                spelled_out.push_str(&(*int).to_interval_try().to_interval_chord_extension());
             }
             spelled_out.push(']');
             spelled_out
@@ -174,7 +174,9 @@ impl Chord{
             if bl >= self.0.len() { return name; }
             let ol = name.len();
             name.push('(');
-            self.0.iter().skip(bl).for_each(|int|name.push_str(&interval_chord_extension(*int)));
+            self.0.iter().skip(bl).for_each(
+                |int|name.push_str(&(*int).to_interval_try().to_interval_chord_extension())
+            );
             name.push(')');
             if name.len() == ol + 2{
                 name.pop(); name.pop();
