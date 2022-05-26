@@ -49,7 +49,7 @@ pub fn find_scale_superstring(scale: &Scale) -> Vec<(PC,ModeObj)>{
 // When same_tonic == true, it only gives scales that have the same note as the
 // first note in the set(ordered set shortly) as the tonic.
 pub fn find_scale_superset(scale: PCs, same_tonic: bool) -> Vec<(PC,ModeObj)>{
-    let target_tonic = scale[0].to_note(0);
+    let target_tonic = scale[0].to_note();
     let scales = get_all_scale_objs();
     let mut res = Vec::new();
     for sc in scales{
@@ -84,7 +84,7 @@ pub fn find_scale_superset(scale: PCs, same_tonic: bool) -> Vec<(PC,ModeObj)>{
 pub fn find_chordscales(pcs: &[PC]) -> Vec<ModeObj>{
     let mut res = Vec::new();
     if pcs.is_empty() { return res; }
-    let tonic = pcs[0].to_note(0);
+    let tonic = pcs[0].to_note();
     let scales = get_all_scale_objs();
     for sc in scales{
         'outer: for (i,mode) in sc.steps.clone().mode_iter().enumerate(){

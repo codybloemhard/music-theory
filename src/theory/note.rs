@@ -70,7 +70,17 @@ pub trait ToStringName{
 }
 
 pub trait ToNote{
-    fn to_note(&self, rank: Rank) -> Note;
+    fn to_note(&self) -> Note;
+}
+
+pub trait HasRank{
+    fn with_rank(self, rank: Rank) -> Self;
+}
+
+impl HasRank for Note{
+    fn with_rank(self, rank: Rank) -> Note{
+        (self % OCTAVE) + rank as Note * OCTAVE
+    }
 }
 
 pub trait ToScale{
@@ -237,8 +247,8 @@ impl std::fmt::Debug for PC {
 }
 
 impl ToNote for PC{
-    fn to_note(&self, rank: Rank) -> Note{
-        self.0 + (rank as Note * OCTAVE)
+    fn to_note(&self) -> Note{
+        self.0
     }
 }
 
@@ -267,11 +277,11 @@ impl ToScale for PCs{
     fn to_scale(&self, rank: Note) -> Scale{
         let mut rank = rank as Rank;
         if self.is_empty() { return Scale::default(); }
-        let start_note = self[0].to_note(rank);
+        let start_note = self[0].to_note().with_rank(rank);
         let mut res = vec![start_note];
         let mut last = start_note;
         for pc in self.iter().skip(1){
-            let note = pc.to_note(rank);
+            let note = pc.to_note().with_rank(rank);
             let diff = note - last;
             if diff > 0{
                 last = note;
@@ -279,7 +289,7 @@ impl ToScale for PCs{
                 continue;
             }
             rank += 1;
-            last = pc.to_note(rank);
+            last = pc.to_note().with_rank(rank);
             res.push(last);
         }
         Scale(res)
@@ -381,7 +391,7 @@ impl ToStringName for EnharmonicNote{
 }
 
 impl ToNote for EnharmonicNote{
-    fn to_note(&self, rank: Rank) -> Note{
+    fn to_note(&self) -> Note{
         ((match self.letter{
             0 => 0,  // A
             1 => 2,  // B
@@ -391,13 +401,13 @@ impl ToNote for EnharmonicNote{
             5 => 8,  // F
             6 => 10, // G
             _ => panic!("ToNote for Enharmonic: should be impossible")
-        }) + self.accidental) as Note + rank as Note
+        }) + self.accidental) as Note
     }
 }
 
 impl ToPC for EnharmonicNote{
     fn to_pc(&self) -> PC{
-        self.to_note(0).to_pc()
+        self.to_note().to_pc()
     }
 }
 

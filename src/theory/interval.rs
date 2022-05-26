@@ -1,4 +1,4 @@
-use super::note::Note;
+use super::note::{ Note, ToNote };
 use std::cmp::Ordering;
 
 pub const SEMI: Note = 1;
