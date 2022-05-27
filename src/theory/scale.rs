@@ -1,5 +1,5 @@
 use super::note::*;
-use super::interval::{ OCTAVE, SEMI };
+use super::interval::{ _OCTAVE, _SEMI };
 use std::cmp::Ordering;
 
 pub type Mode = u8;
@@ -14,7 +14,7 @@ impl ToSteps for Scale{
             intervals.push(diff);
             last = *note;
         }
-        intervals.push(self.0[0] + OCTAVE - last);
+        intervals.push(self.0[0] + _OCTAVE - last);
         Steps(intervals)
     }
 }
@@ -106,7 +106,7 @@ impl ToRelative for Steps{
         let mut acc_b = 0;
         let mut res = Vec::new();
         for i in 0..self.0.len(){
-            let diff = (acc_a - acc_b) / SEMI;
+            let diff = (acc_a - acc_b) / _SEMI;
             let rn = match diff.cmp(&0){
                 Ordering::Greater => { RelativeNote::Sharp(diff) },
                 Ordering::Less => { RelativeNote::Flat(-diff) },
@@ -178,13 +178,13 @@ pub fn notes_to_octave_scale(scale: &Scale) -> Notes{
         last = *note;
         sum += diff;
     }
-    if sum > OCTAVE{
+    if sum > _OCTAVE{
         return Vec::new();
     }
-    if sum == OCTAVE{
+    if sum == _OCTAVE{
         return res;
     }
-    res.push(OCTAVE - sum);
+    res.push(_OCTAVE - sum);
     res
 }
 

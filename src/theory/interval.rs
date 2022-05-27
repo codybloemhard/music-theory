@@ -1,61 +1,73 @@
 use super::note::{ Note, ToNote };
 use std::cmp::Ordering;
 
-pub const SEMI: Note = 1;
-pub const WHOLE: Note = 2;
+pub const _SEMI: Note = 1;
+pub const _WHOLE: Note = 2;
 
-pub const ROOT: Note = 0;
-pub const UNISON: Note = 0;
-pub const MINOR_SECOND: Note = 1;
-pub const MAJOR_SECOND: Note = 2;
-pub const MINOR_THIRD: Note = 3;
-pub const MAJOR_THIRD: Note = 4;
-pub const PERFECT_FOURTH: Note = 5;
-pub const TRITONE: Note = 6;
-pub const PERFECT_FIFTH: Note = 7;
-pub const MINOR_SIXTH: Note =  8;
-pub const MAJOR_SIXTH: Note = 9;
-pub const MINOR_SEVENTH: Note = 10;
-pub const MAJOR_SEVENTH: Note = 11;
-pub const OCTAVE: Note = 12;
+pub const _ROOT: Note = 0;
+pub const _MIN2: Note = 1;
+pub const _MAJ2: Note = 2;
+pub const _MIN3: Note = 3;
+pub const _MAJ3: Note = 4;
+pub const _PER4: Note = 5;
+pub const _TRIT: Note = 6;
+pub const _PER5: Note = 7;
+pub const _MIN6: Note = 8;
+pub const _MAJ6: Note = 9;
+pub const _MIN7: Note = 10;
+pub const _MAJ7: Note = 11;
+pub const _OCTAVE: Note = 12;
+pub const _MIN9: Note = 13;
+pub const _MAJ9: Note = 14;
+pub const _AUG9: Note = 15;
+pub const _MIN11: Note = 16;
+pub const _MAJ11: Note = 17;
+pub const _AUG11: Note = 18;
+pub const _PER12: Note = 19;
+pub const _MIN13: Note = 20;
+pub const _MAJ13: Note = 21;
+pub const _AUG13: Note = 22;
 
-pub const FLAT_NINETH: Note = 13;
-pub const NINETH: Note = 14;
-pub const SHARP_NINETH: Note = 15;
-pub const FLAT_ELEVENTH: Note = 16;
-pub const ELEVENTH: Note = 17;
-pub const SHARP_ELEVENTH: Note = 18;
-pub const TWELVETH: Note = 19;
-pub const FLAT_THIRTEENTH: Note = 20;
-pub const THIRTEENTH: Note = 21;
-pub const SHARP_THIRTEENTH: Note = 22;
+pub const _DIM2: Note = 0;
+pub const _AUG1: Note = 1;
+pub const _DIM3: Note = 2;
+pub const _AUG2: Note = 3;
+pub const _DIM4: Note = 4;
+pub const _AUG3: Note = 5;
+pub const _DIM5: Note = 6;
+pub const _AUG4: Note = 6;
+pub const _DIM6: Note = 7;
+pub const _AUG5: Note = 8;
+pub const _DIM7: Note = 9;
+pub const _AUG6: Note = 10;
+pub const _DIM8: Note = 11;
+pub const _AUG7: Note = 12;
 
-pub const MIN2: Note = 1;
-pub const MAJ2: Note = 2;
-pub const MIN3: Note = 3;
-pub const MAJ3: Note = 4;
-pub const PER4: Note = 5;
-pub const TRIT: Note = 6;
-pub const PER5: Note = 7;
-pub const MIN6: Note = 8;
-pub const MAJ6: Note = 9;
-pub const MIN7: Note = 10;
-pub const MAJ7: Note = 11;
+pub const SEMI: Interval = Interval::Min2;
+pub const WHOLE: Interval = Interval::Maj2;
 
-pub const DIMINISHED_SECOND: Note = 0;
-pub const AUGMENTED_UNISON: Note = 1;
-pub const DIMINISHED_THIRD: Note = 2;
-pub const AUGMENTED_SECOND: Note = 3;
-pub const DIMINISHED_FOURTH: Note = 4;
-pub const AUGMENTED_THIRD: Note = 5;
-pub const DIMINISHED_FIFTH: Note = 6;
-pub const AUGMENTED_FOURTH: Note = 6;
-pub const DIMINISHED_SIXTH: Note = 7;
-pub const AUGMENTED_FIFTH: Note = 8;
-pub const DIMINISHED_SEVENTH: Note = 9;
-pub const AUGMENTED_SIXTH: Note = 10;
-pub const DIMINISHED_OCTAVE: Note = 11;
-pub const AUGMENTED_SEVENTH: Note = 12;
+pub const ROOT: Interval = Interval::Root;
+pub const MIN2: Interval = Interval::Min2;
+pub const MAJ2: Interval = Interval::Maj2;
+pub const MIN3: Interval = Interval::Min3;
+pub const MAJ3: Interval = Interval::Maj3;
+pub const PER4: Interval = Interval::Per4;
+pub const TRIT: Interval = Interval::Trit;
+pub const PER5: Interval = Interval::Per5;
+pub const MIN6: Interval = Interval::Min6;
+pub const MAJ6: Interval = Interval::Maj6;
+pub const MIN7: Interval = Interval::Min7;
+pub const MAJ7: Interval = Interval::Maj7;
+pub const OCTAVE: Interval = Interval::Per8;
+pub const MIN9: Interval = Interval::Min9;
+pub const MAJ9: Interval = Interval::Maj9;
+pub const AUG9: Interval = Interval::Aug9;
+pub const MIN11: Interval = Interval::Min11;
+pub const MAJ11: Interval = Interval::Maj11;
+pub const AUG11: Interval = Interval::Aug11;
+pub const MIN13: Interval = Interval::Min13;
+pub const MAJ13: Interval = Interval::Maj13;
+pub const AUG13: Interval = Interval::Aug13;
 
 #[derive(Clone, Copy)]
 pub enum Interval{
@@ -97,6 +109,12 @@ pub enum OctaveInterval{
     Maj6 = 9,
     Min7 = 10,
     Maj7 = 11,
+}
+
+impl ToNote for Interval{
+    fn to_note(&self) -> Note{
+        *self as Note
+    }
 }
 
 pub trait ToInterval{

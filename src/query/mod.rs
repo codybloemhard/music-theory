@@ -1,6 +1,6 @@
-use crate::theory::note::{Steps,Scale,Relative,RelativeNote,IntoPCs,PCs,PC,NoteSequence,ToScale,IntoScale,ToRelative,ToNote};
-use crate::theory::scale::{notes_to_octave_scale,StepsTrait,ModeIteratorSpawner};
-use crate::theory::interval::{SEMI};
+use crate::theory::note::{ Steps, Scale, Relative, RelativeNote, IntoPCs, PCs, PC, NoteSequence, ToScale, IntoScale, ToRelative, ToNote };
+use crate::theory::scale::{ notes_to_octave_scale, StepsTrait, ModeIteratorSpawner };
+use crate::theory::interval::{ _SEMI };
 use fnrs::Sequence;
 use crate::libr::scales::{get_all_scale_objs, ModeObj,ionian};
 
@@ -27,7 +27,7 @@ pub fn find_scale_superstring(scale: &Scale) -> Vec<(PC,ModeObj)>{
     for sc in scales{
         for (i,mode) in sc.steps.clone().mode_iter().enumerate(){
             for j in 0..12{
-                let tonic = j * SEMI;
+                let tonic = j * _SEMI;
                 let modescale = mode.clone().into_scale(tonic).into_pcs();
                 if modescale.has_seq(&pcs){
                     res.push((modescale[0],
@@ -55,7 +55,7 @@ pub fn find_scale_superset(scale: PCs, same_tonic: bool) -> Vec<(PC,ModeObj)>{
     for sc in scales{
         for (i,mode) in sc.steps.clone().mode_iter().enumerate(){
             for tonic in 0..12{
-                let tonic_note = tonic * SEMI;
+                let tonic_note = tonic * _SEMI;
                 if same_tonic && tonic_note != target_tonic { continue; }
                 let notes = mode.clone().into_scale(tonic_note).into_pcs();
                 let mut has = true;

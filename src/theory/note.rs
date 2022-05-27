@@ -79,7 +79,7 @@ pub trait HasRank{
 
 impl HasRank for Note{
     fn with_rank(self, rank: Rank) -> Note{
-        (self % OCTAVE) + rank as Note * OCTAVE
+        (self % _OCTAVE) + rank as Note * _OCTAVE
     }
 }
 
@@ -453,7 +453,7 @@ impl IntoEnharmonicNotes for String{
 
 impl ToEnharmonicNote for Note{
     fn to_enharmonic_note(&self) -> Option<EnharmonicNote>{
-        Some(match self % OCTAVE{
+        Some(match self % _OCTAVE{
             0  => EnharmonicNote{ letter: 0, accidental: 0 },
             1  => EnharmonicNote{ letter: 0, accidental: 1 },
             2  => EnharmonicNote{ letter: 1, accidental: 0 },
@@ -549,7 +549,7 @@ impl IntoEnharmonicNotesWithStart for Scale{
 // note (48*SEMI) (48=12*4) is A4 at 440 hz
 pub fn to_pitch(note: Note) -> f32{
     let x = note as i32 - 48;
-    (2.0f32).powf(x as f32 / OCTAVE as f32) * 440.0
+    (2.0f32).powf(x as f32 / _OCTAVE as f32) * 440.0
 }
 
 #[cfg(test)]

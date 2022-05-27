@@ -1,5 +1,5 @@
-use crate::theory::scale::{Mode};
-use crate::theory::note::{Steps};
+use crate::theory::scale::{ Mode };
+use crate::theory::note::{ Steps };
 use crate::theory::scale::ModeIteratorSpawner;
 
 pub struct ScaleObj{
@@ -94,34 +94,34 @@ macro_rules! DefScale{
     }
 }
 
-DefScale!(ionian, vec![WHOLE,WHOLE,SEMI,WHOLE,WHOLE,WHOLE,SEMI], "Ionian",
+DefScale!(ionian, vec![_WHOLE, _WHOLE, _SEMI, _WHOLE, _WHOLE, _WHOLE, _SEMI], "Ionian",
     "Ionian", "Dorian", "Phrygian", "Lydian", "Mixolidian", "Aeolian", "Locrian");
 
-DefScale!(harmonic_minor, vec![WHOLE,SEMI,WHOLE,WHOLE,SEMI,MINOR_THIRD,SEMI], "Harmonic Minor",
+DefScale!(harmonic_minor, vec![_WHOLE, _SEMI, _WHOLE, _WHOLE, _SEMI, _MIN3, _SEMI], "Harmonic Minor",
     "Harmonic Minor", "", "", "", "Phrygian Dominant", "", "Superlocrian");
 
-DefScale!(harmonic_major, vec![WHOLE,WHOLE,SEMI,WHOLE,SEMI,MINOR_THIRD,SEMI], "Harmonic Major",
+DefScale!(harmonic_major, vec![_WHOLE, _WHOLE, _SEMI, _WHOLE, _SEMI, _MIN3, _SEMI], "Harmonic Major",
     "Harmonic Major" ,"", "Super Phrygian", "Lydian Diminished", "", "" ,"");
 
-DefScale!(byzantine, vec![SEMI,MINOR_THIRD,SEMI,WHOLE,SEMI,MINOR_THIRD,SEMI], "Double Harmonic Major",
+DefScale!(byzantine, vec![_SEMI, _MIN3, _SEMI, _WHOLE, _SEMI, _MIN3, _SEMI], "Double Harmonic Major",
     "Byzantine", "", "Ultra Phrygian", "Hungarian Minor", "Oriental", "", "");
 
-DefScale!(hungarian_major, vec![MINOR_THIRD,SEMI,WHOLE,SEMI,WHOLE,SEMI,WHOLE], "Hungarian Major",
+DefScale!(hungarian_major, vec![_MIN3, _SEMI, _WHOLE, _SEMI, _WHOLE, _SEMI, _WHOLE], "Hungarian Major",
     "Hungarian Major", "", "", "", "", "", "");
 
-DefScale!(neapolitan_minor, vec![SEMI,WHOLE,WHOLE,WHOLE,SEMI,MINOR_THIRD,SEMI], "Neapolitan Minor",
+DefScale!(neapolitan_minor, vec![_SEMI, _WHOLE, _WHOLE, _WHOLE, _SEMI, _MIN3, _SEMI], "Neapolitan Minor",
     "Neapolitan Minor", "", "Mixolydian Augmented", "Lydian Minor", "", "", "");
 
-DefScale!(neapolitan_major, vec![SEMI,WHOLE,WHOLE,WHOLE,WHOLE,WHOLE,SEMI],"Neapolitan Major",
+DefScale!(neapolitan_major, vec![_SEMI, _WHOLE, _WHOLE, _WHOLE, _WHOLE, _WHOLE, _SEMI],"Neapolitan Major",
     "Neapolitan Major", "", "", "", "", "", "");
 
-DefScale!(melodic_minor, vec![WHOLE,SEMI,WHOLE,WHOLE,WHOLE,WHOLE,SEMI], "Melodic Minor",
+DefScale!(melodic_minor, vec![_WHOLE, _SEMI, _WHOLE, _WHOLE, _WHOLE, _WHOLE, _SEMI], "Melodic Minor",
     "Melodic Minor", "", "Lydian Augmented", "Lydian Dominant", "Melodic Major", "", "Altered Scale");
 
-DefScale!(enigmatic_major, vec![SEMI,MINOR_THIRD,WHOLE,WHOLE,WHOLE,SEMI,SEMI], "Enigmatic Major",
+DefScale!(enigmatic_major, vec![_SEMI, _MIN3, _WHOLE, _WHOLE, _WHOLE, _SEMI, _SEMI], "Enigmatic Major",
     "Enigmatic Major", "", "", "", "", "", "");
 
-DefScale!(enigmatic_minor, vec![SEMI,WHOLE,MINOR_THIRD,SEMI,MINOR_THIRD,SEMI,SEMI], "Enigmatic Minor",
+DefScale!(enigmatic_minor, vec![_SEMI, _WHOLE, _MIN3, _SEMI, _MIN3, _SEMI, _SEMI], "Enigmatic Minor",
     "Enigmatic Minor", "", "", "", "", "", "");
 
 use crate::Scale;
