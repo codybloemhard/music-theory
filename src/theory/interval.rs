@@ -43,34 +43,34 @@ pub const _AUG6: Note = 10;
 pub const _DIM8: Note = 11;
 pub const _AUG7: Note = 12;
 
-pub const SEMI: Interval = Interval::Min2;
-pub const WHOLE: Interval = Interval::Maj2;
+pub const SEMI: NamedInterval = NamedInterval::Min2;
+pub const WHOLE: NamedInterval = NamedInterval::Maj2;
 
-pub const ROOT: Interval = Interval::Root;
-pub const MIN2: Interval = Interval::Min2;
-pub const MAJ2: Interval = Interval::Maj2;
-pub const MIN3: Interval = Interval::Min3;
-pub const MAJ3: Interval = Interval::Maj3;
-pub const PER4: Interval = Interval::Per4;
-pub const TRIT: Interval = Interval::Trit;
-pub const PER5: Interval = Interval::Per5;
-pub const MIN6: Interval = Interval::Min6;
-pub const MAJ6: Interval = Interval::Maj6;
-pub const MIN7: Interval = Interval::Min7;
-pub const MAJ7: Interval = Interval::Maj7;
-pub const OCTAVE: Interval = Interval::Per8;
-pub const MIN9: Interval = Interval::Min9;
-pub const MAJ9: Interval = Interval::Maj9;
-pub const AUG9: Interval = Interval::Aug9;
-pub const MIN11: Interval = Interval::Min11;
-pub const MAJ11: Interval = Interval::Maj11;
-pub const AUG11: Interval = Interval::Aug11;
-pub const MIN13: Interval = Interval::Min13;
-pub const MAJ13: Interval = Interval::Maj13;
-pub const AUG13: Interval = Interval::Aug13;
+pub const ROOT: NamedInterval = NamedInterval::Root;
+pub const MIN2: NamedInterval = NamedInterval::Min2;
+pub const MAJ2: NamedInterval = NamedInterval::Maj2;
+pub const MIN3: NamedInterval = NamedInterval::Min3;
+pub const MAJ3: NamedInterval = NamedInterval::Maj3;
+pub const PER4: NamedInterval = NamedInterval::Per4;
+pub const TRIT: NamedInterval = NamedInterval::Trit;
+pub const PER5: NamedInterval = NamedInterval::Per5;
+pub const MIN6: NamedInterval = NamedInterval::Min6;
+pub const MAJ6: NamedInterval = NamedInterval::Maj6;
+pub const MIN7: NamedInterval = NamedInterval::Min7;
+pub const MAJ7: NamedInterval = NamedInterval::Maj7;
+pub const OCTAVE: NamedInterval = NamedInterval::Per8;
+pub const MIN9: NamedInterval = NamedInterval::Min9;
+pub const MAJ9: NamedInterval = NamedInterval::Maj9;
+pub const AUG9: NamedInterval = NamedInterval::Aug9;
+pub const MIN11: NamedInterval = NamedInterval::Min11;
+pub const MAJ11: NamedInterval = NamedInterval::Maj11;
+pub const AUG11: NamedInterval = NamedInterval::Aug11;
+pub const MIN13: NamedInterval = NamedInterval::Min13;
+pub const MAJ13: NamedInterval = NamedInterval::Maj13;
+pub const AUG13: NamedInterval = NamedInterval::Aug13;
 
-#[derive(Clone, Copy)]
-pub enum Interval{
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub enum NamedInterval{
     Root = 0,
     Min2 = 1,
     Maj2 = 2,
@@ -95,8 +95,8 @@ pub enum Interval{
     Aug13 = 22,
 }
 
-#[derive(Clone, Copy)]
-pub enum OctaveInterval{
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub enum NamedOctaveInterval{
     Root = 0,
     Min2 = 1,
     Maj2 = 2,
@@ -111,47 +111,47 @@ pub enum OctaveInterval{
     Maj7 = 11,
 }
 
-impl ToNote for Interval{
+impl ToNote for NamedInterval{
     fn to_note(&self) -> Note{
         *self as Note
     }
 }
 
-pub trait ToInterval{
-    fn to_interval_try(self) -> Option<Interval>;
-    fn to_interval_mod(self) -> Interval;
+pub trait ToNamedInterval{
+    fn to_interval_try(self) -> Option<NamedInterval>;
+    fn to_interval_mod(self) -> NamedInterval;
 }
 
-impl ToInterval for Note{
-    fn to_interval_try(self) -> Option<Interval>{
+impl ToNamedInterval for Note{
+    fn to_interval_try(self) -> Option<NamedInterval>{
         match self{
-            0 => Some(Interval::Root),
-            1 => Some(Interval::Min2),
-            2 => Some(Interval::Maj2),
-            3 => Some(Interval::Min3),
-            4 => Some(Interval::Maj3),
-            5 => Some(Interval::Per4),
-            6 => Some(Interval::Trit),
-            7 => Some(Interval::Per5),
-            8 => Some(Interval::Min6),
-            9 => Some(Interval::Maj6),
-            10 => Some(Interval::Min7),
-            11 => Some(Interval::Maj7),
-            12 => Some(Interval::Per8),
-            13 => Some(Interval::Min9),
-            14 => Some(Interval::Maj9),
-            15 => Some(Interval::Aug9),
-            16 => Some(Interval::Min11),
-            17 => Some(Interval::Maj11),
-            18 => Some(Interval::Aug11),
-            20 => Some(Interval::Min13),
-            21 => Some(Interval::Maj13),
-            22 => Some(Interval::Aug13),
+            0 => Some(NamedInterval::Root),
+            1 => Some(NamedInterval::Min2),
+            2 => Some(NamedInterval::Maj2),
+            3 => Some(NamedInterval::Min3),
+            4 => Some(NamedInterval::Maj3),
+            5 => Some(NamedInterval::Per4),
+            6 => Some(NamedInterval::Trit),
+            7 => Some(NamedInterval::Per5),
+            8 => Some(NamedInterval::Min6),
+            9 => Some(NamedInterval::Maj6),
+            10 => Some(NamedInterval::Min7),
+            11 => Some(NamedInterval::Maj7),
+            12 => Some(NamedInterval::Per8),
+            13 => Some(NamedInterval::Min9),
+            14 => Some(NamedInterval::Maj9),
+            15 => Some(NamedInterval::Aug9),
+            16 => Some(NamedInterval::Min11),
+            17 => Some(NamedInterval::Maj11),
+            18 => Some(NamedInterval::Aug11),
+            20 => Some(NamedInterval::Min13),
+            21 => Some(NamedInterval::Maj13),
+            22 => Some(NamedInterval::Aug13),
             _ => None,
         }
     }
 
-    fn to_interval_mod(self) -> Interval{
+    fn to_interval_mod(self) -> NamedInterval{
         let int = (self % 24).to_interval_try();
         match int{
             Some(i) => i,
@@ -160,60 +160,60 @@ impl ToInterval for Note{
     }
 }
 
-impl ToInterval for OctaveInterval{
-    fn to_interval_try(self) -> Option<Interval>{
+impl ToNamedInterval for NamedOctaveInterval{
+    fn to_interval_try(self) -> Option<NamedInterval>{
         (self as Note).to_interval_try()
     }
 
-    fn to_interval_mod(self) -> Interval{
+    fn to_interval_mod(self) -> NamedInterval{
         (self as Note).to_interval_mod()
     }
 }
 
-impl ToOctaveInterval for Note{
-    fn to_octave_interval_try(self) -> Option<OctaveInterval>{
+impl ToNamedOctaveInterval for Note{
+    fn to_octave_interval_try(self) -> Option<NamedOctaveInterval>{
         match self{
-            0 => Some(OctaveInterval::Root),
-            1 => Some(OctaveInterval::Min2),
-            2 => Some(OctaveInterval::Maj2),
-            3 => Some(OctaveInterval::Min3),
-            4 => Some(OctaveInterval::Maj3),
-            5 => Some(OctaveInterval::Per4),
-            6 => Some(OctaveInterval::Trit),
-            7 => Some(OctaveInterval::Per5),
-            8 => Some(OctaveInterval::Min6),
-            9 => Some(OctaveInterval::Maj6),
-            10 => Some(OctaveInterval::Min7),
-            11 => Some(OctaveInterval::Maj7),
+            0 => Some(NamedOctaveInterval::Root),
+            1 => Some(NamedOctaveInterval::Min2),
+            2 => Some(NamedOctaveInterval::Maj2),
+            3 => Some(NamedOctaveInterval::Min3),
+            4 => Some(NamedOctaveInterval::Maj3),
+            5 => Some(NamedOctaveInterval::Per4),
+            6 => Some(NamedOctaveInterval::Trit),
+            7 => Some(NamedOctaveInterval::Per5),
+            8 => Some(NamedOctaveInterval::Min6),
+            9 => Some(NamedOctaveInterval::Maj6),
+            10 => Some(NamedOctaveInterval::Min7),
+            11 => Some(NamedOctaveInterval::Maj7),
             _ => None,
         }
     }
 
-    fn to_octave_interval_mod(self) -> OctaveInterval{
+    fn to_octave_interval_mod(self) -> NamedOctaveInterval{
         (self % 12).to_octave_interval_try().unwrap()
     }
 }
 
-impl ToOctaveInterval for Interval{
-    fn to_octave_interval_try(self) -> Option<OctaveInterval>{
+impl ToNamedOctaveInterval for NamedInterval{
+    fn to_octave_interval_try(self) -> Option<NamedOctaveInterval>{
         (self as Note).to_octave_interval_try()
     }
 
-    fn to_octave_interval_mod(self) -> OctaveInterval{
+    fn to_octave_interval_mod(self) -> NamedOctaveInterval{
         (self as Note).to_octave_interval_mod()
     }
 }
 
-pub trait ToOctaveInterval{
-    fn to_octave_interval_try(self) -> Option<OctaveInterval>;
-    fn to_octave_interval_mod(self) -> OctaveInterval;
+pub trait ToNamedOctaveInterval{
+    fn to_octave_interval_try(self) -> Option<NamedOctaveInterval>;
+    fn to_octave_interval_mod(self) -> NamedOctaveInterval;
 }
 
 pub trait ToIntervalChordExtension{
     fn to_interval_chord_extension(self) -> String;
 }
 
-impl ToIntervalChordExtension for Interval{
+impl ToIntervalChordExtension for NamedInterval{
     fn to_interval_chord_extension(self) -> String{
         let names = [
             "R", "♭2", "♮2", "♭3", "♮3", "♮4", "♭5", "♮5", "♭6", "♮6", "♭7", "♮7", "♮8",
@@ -223,7 +223,7 @@ impl ToIntervalChordExtension for Interval{
     }
 }
 
-impl ToIntervalChordExtension for Option<Interval>{
+impl ToIntervalChordExtension for Option<NamedInterval>{
     fn to_interval_chord_extension(self) -> String{
         match self{
             None => "x".to_string(),

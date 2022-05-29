@@ -1,4 +1,4 @@
-use crate::theory::note::{ Steps, Scale, Relative, RelativeNote, IntoPCs, PCs, PC, NoteSequence, ToScale, IntoScale, ToRelative, ToNote };
+use crate::theory::note::{ Steps, Scale, Relative, IntoPCs, PCs, PC, NoteSequence, ToScale, IntoScale, ToRelative, ToNote };
 use crate::theory::scale::{ notes_to_octave_scale, StepsTrait, ModeIteratorSpawner };
 use crate::theory::interval::{ _SEMI };
 use fnrs::Sequence;
@@ -117,11 +117,8 @@ pub fn find_scale_from_ionian_relative(rel: Relative) -> Vec<ModeObj>{
         'outer: for (i,mode) in sc.steps.clone().mode_iter().enumerate(){
             let rl = mode.to_relative(&ionian::steps()).unwrap();
             if rel.len() != rl.len() { continue; }
-            for (i,rn) in rel.0.iter().enumerate(){
-                match rn{
-                    RelativeNote::Blank => { continue; },
-                    _ => { if rn != &rl.0[i] { continue 'outer; } }
-                }
+            for (i, rn) in rel.0.iter().enumerate(){
+                if rn != &rl.0[i] { continue 'outer; }
             }
             res.push(
                 ModeObj{

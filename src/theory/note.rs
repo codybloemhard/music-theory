@@ -13,26 +13,25 @@ pub type Rank = u16;
 
 pub type Notes = Vec<Note>;
 
-#[derive(Clone,PartialEq,Eq,Hash,Default,Debug)]
+#[derive(Debug, Default, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct Steps(pub Vec<Note>);
 
-#[derive(Clone,Default,Debug)]
+#[derive(Debug, Default, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct Scale(pub Vec<Note>);
 
-#[derive(PartialEq,Eq,PartialOrd,Ord,Hash,Clone,Default,Debug)]
+#[derive(Debug, Default, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct Chord(pub Vec<Note>);
 
-#[derive(PartialEq,Copy,Clone,Debug)]
-pub enum RelativeNote { Flat(Note), Sharp(Note), Natural, Blank }
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub enum RelativeNote { Flat(u32), Sharp(u32), Natural }
 
-pub const RN_BLANK: RelativeNote = RelativeNote::Blank;
 pub const RN_NAT: RelativeNote = RelativeNote::Natural;
-pub const RN_S: RelativeNote = RelativeNote::Sharp(1);
-pub const RN_SS: RelativeNote = RelativeNote::Sharp(2);
-pub const RN_B: RelativeNote = RelativeNote::Flat(1);
-pub const RN_BB: RelativeNote = RelativeNote::Flat(2);
+pub const RN_S:   RelativeNote = RelativeNote::Sharp(1);
+pub const RN_SS:  RelativeNote = RelativeNote::Sharp(2);
+pub const RN_B:   RelativeNote = RelativeNote::Flat(1);
+pub const RN_BB:  RelativeNote = RelativeNote::Flat(2);
 
-#[derive(Clone,Debug)]
+#[derive(Debug, Default, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct Relative(pub Vec<RelativeNote>);
 
 impl Relative{
@@ -184,7 +183,6 @@ impl ToString for RelativeNote{
         let mut res = String::new();
         match self{
             RelativeNote::Natural => {  },
-            RelativeNote::Blank => { res.push('?'); },
             RelativeNote::Sharp(i) => {
                 for _ in 0..*i { res.push('♯'); }
             },
@@ -209,7 +207,7 @@ pub const FS: PC = PC(9);
 pub const G:  PC = PC(10);
 pub const GS: PC = PC(11);
 
-#[derive(Clone,Copy,PartialEq,Eq,Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct PC(pub Note); // PitchClass
 
 pub type PCs = Vec<PC>;
@@ -236,12 +234,6 @@ impl ToStringName for PC{
 
 impl std::fmt::Display for PC{
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result{
-        write!(f, "{}", self.to_string_name())
-    }
-}
-
-impl std::fmt::Debug for PC {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}", self.to_string_name())
     }
 }
@@ -301,7 +293,8 @@ impl IntoSteps for PCs{
         self.to_scale(0).into_steps()
     }
 }
-#[derive(Clone,Copy,Default,Debug)]
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct EnharmonicNote{
     letter: u8,
     accidental: i8,
@@ -385,7 +378,13 @@ impl ToStringName for EnharmonicNote{
             6 => "G",
             _ => panic!("ToStringName for Enharmonic: should be impossible")
         }.to_string();
-        res.push_str(&(if self.accidental < 0 { RelativeNote::Flat((-self.accidental).into()) } else { RelativeNote::Sharp((self.accidental).into()) }.to_string()));
+        res.push_str(&(
+            if self.accidental < 0 {
+                RelativeNote::Flat(-self.accidental as u32)
+            } else {
+                RelativeNote::Sharp(self.accidental as u32)
+            }.to_string()
+        ));
         res
     }
 }
