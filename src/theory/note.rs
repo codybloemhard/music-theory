@@ -294,10 +294,60 @@ impl IntoSteps for PCs{
     }
 }
 
+pub trait Cycle{
+    fn next(&self) -> Self;
+    fn prev(&self) -> Self;
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub enum Letter{
+    A = 0, B = 1, C = 2, D = 3, E = 4, F = 5, G = 6
+}
+
+impl ToString for Letter{
+    fn to_string(&self) -> String{
+        match self{
+            Self::A => "A",
+            Self::B => "B",
+            Self::C => "C",
+            Self::D => "D",
+            Self::E => "E",
+            Self::F => "F",
+            Self::G => "G",
+        }.to_string()
+    }
+}
+
+impl Cycle for Letter{
+    fn next(&self) -> Self{
+        match self{
+            Self::A => Self::B,
+            Self::B => Self::C,
+            Self::C => Self::D,
+            Self::D => Self::E,
+            Self::E => Self::F,
+            Self::F => Self::G,
+            Self::G => Self::A,
+        }
+    }
+
+    fn prev(&self) -> Self{
+        match self{
+            Self::A => Self::G,
+            Self::B => Self::A,
+            Self::C => Self::B,
+            Self::D => Self::C,
+            Self::E => Self::D,
+            Self::F => Self::E,
+            Self::G => Self::F,
+        }
+    }
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct EnharmonicNote{
-    letter: u8,
-    accidental: i8,
+    pub letter: Letter,
+    pub accidental: Note,
 }
 
 impl std::fmt::Display for EnharmonicNote{
@@ -307,58 +357,23 @@ impl std::fmt::Display for EnharmonicNote{
 }
 
 impl EnharmonicNote{
-    pub fn letter(&self) -> u8{
-        self.letter
-    }
-
-    pub fn accidental(&self) -> i8{
-        self.accidental
-    }
-
-    pub fn next_enharmonic(&self) -> Self{
-        match self.letter{
-            0 => Self{ letter: 1, accidental: self.accidental - 2 }, // A = Bbb
-            1 => Self{ letter: 2, accidental: self.accidental - 1 }, // B = Cb
-            2 => Self{ letter: 3, accidental: self.accidental - 2 }, // C = Dbb
-            3 => Self{ letter: 4, accidental: self.accidental - 2 }, // D = Ebb
-            4 => Self{ letter: 5, accidental: self.accidental - 1 }, // E = Fb
-            5 => Self{ letter: 6, accidental: self.accidental - 2 }, // F = Gbb
-            6 => Self{ letter: 0, accidental: self.accidental - 2 }, // G = Abb
-            _ => panic!("EnharmonicNote::next_enharmonic: should be impossible"),
-        }
-    }
-
-    pub fn prev_enharmonic(&self) -> Self{
-        match self.letter{
-            0 => Self{ letter: 6, accidental: self.accidental + 2 }, // A = G##
-            1 => Self{ letter: 0, accidental: self.accidental + 2 }, // B = A##
-            2 => Self{ letter: 1, accidental: self.accidental + 1 }, // C = B#
-            3 => Self{ letter: 2, accidental: self.accidental + 2 }, // D = C##
-            4 => Self{ letter: 3, accidental: self.accidental + 2 }, // E = D##
-            5 => Self{ letter: 4, accidental: self.accidental + 1 }, // F = E#
-            6 => Self{ letter: 5, accidental: self.accidental + 2 }, // G = F##
-            _ => panic!("EnharmonicNote::next_enharmonic: should be impossible"),
-        }
-    }
-
-    pub fn spelled_as(&self, letter: u8) -> Self{
-        let letter = letter % 7;
-        if self.letter() == letter { return *self; }
+    pub fn spelled_as(&self, letter: Letter) -> Self{
+        if self.letter == letter { return *self; }
         let up = {
             let mut en = *self;
             loop {
-                if en.letter() == letter { break en; }
-                en = en.next_enharmonic();
+                if en.letter == letter { break en; }
+                en = en.next();
             }
         };
         let down = {
             let mut en = *self;
             loop {
-                if en.letter() == letter { break en; }
-                en = en.prev_enharmonic();
+                if en.letter == letter { break en; }
+                en = en.prev();
             }
         };
-        if up.accidental().abs() > down.accidental().abs() {
+        if up.accidental.abs() > down.accidental.abs() {
             down
         } else {
             up
@@ -366,47 +381,103 @@ impl EnharmonicNote{
     }
 }
 
+impl Cycle for EnharmonicNote{
+    fn next(&self) -> Self{
+        match self.letter{
+            Letter::A => Self{ letter: Letter::B, accidental: self.accidental - 2 }, // A = Bbb
+            Letter::B => Self{ letter: Letter::C, accidental: self.accidental - 1 }, // B = Cb
+            Letter::C => Self{ letter: Letter::D, accidental: self.accidental - 2 }, // C = Dbb
+            Letter::D => Self{ letter: Letter::E, accidental: self.accidental - 2 }, // D = Ebb
+            Letter::E => Self{ letter: Letter::F, accidental: self.accidental - 1 }, // E = Fb
+            Letter::F => Self{ letter: Letter::G, accidental: self.accidental - 2 }, // F = Gbb
+            Letter::G => Self{ letter: Letter::A, accidental: self.accidental - 2 }, // G = Abb
+        }
+    }
+
+    fn prev(&self) -> Self{
+        match self.letter{
+            Letter::A => Self{ letter: Letter::G, accidental: self.accidental + 2 }, // A = G##
+            Letter::B => Self{ letter: Letter::A, accidental: self.accidental + 2 }, // B = A##
+            Letter::C => Self{ letter: Letter::B, accidental: self.accidental + 1 }, // C = B#
+            Letter::D => Self{ letter: Letter::C, accidental: self.accidental + 2 }, // D = C##
+            Letter::E => Self{ letter: Letter::D, accidental: self.accidental + 2 }, // E = D##
+            Letter::F => Self{ letter: Letter::E, accidental: self.accidental + 1 }, // F = E#
+            Letter::G => Self{ letter: Letter::F, accidental: self.accidental + 2 }, // G = F##
+        }
+    }
+}
+
 impl ToStringName for EnharmonicNote{
     fn to_string_name(&self) -> String{
-        let mut res = match self.letter{
-            0 => "A",
-            1 => "B",
-            2 => "C",
-            3 => "D",
-            4 => "E",
-            5 => "F",
-            6 => "G",
-            _ => panic!("ToStringName for Enharmonic: should be impossible")
-        }.to_string();
+        let mut res = self.letter.to_string();
         res.push_str(&(
             if self.accidental < 0 {
-                RelativeNote::Flat(-self.accidental as u32)
+                RelativeNote::Flat(self.accidental.unsigned_abs())
             } else {
-                RelativeNote::Sharp(self.accidental as u32)
+                RelativeNote::Sharp(self.accidental.unsigned_abs())
             }.to_string()
         ));
         res
     }
 }
 
+impl ToNote for Letter{
+    fn to_note(&self) -> Note{
+        match self{
+            Letter::A => 0,
+            Letter::B => 2,
+            Letter::C => 3,
+            Letter::D => 5,
+            Letter::E => 7,
+            Letter::F => 8,
+            Letter::G => 10,
+        }
+    }
+}
+
 impl ToNote for EnharmonicNote{
     fn to_note(&self) -> Note{
-        ((match self.letter{
-            0 => 0,  // A
-            1 => 2,  // B
-            2 => 3,  // C
-            3 => 5,  // D
-            4 => 7,  // E
-            5 => 8,  // F
-            6 => 10, // G
-            _ => panic!("ToNote for Enharmonic: should be impossible")
-        }) + self.accidental) as Note
+        (self.letter.to_note() + self.accidental) as Note
     }
 }
 
 impl ToPC for EnharmonicNote{
     fn to_pc(&self) -> PC{
         self.to_note().to_pc()
+    }
+}
+
+pub trait ToLetterTry{
+    fn to_letter_try(&self) -> Option<Letter>;
+}
+
+impl ToLetterTry for String{
+    fn to_letter_try(&self) -> Option<Letter>{
+        match self.chars().next().map(|c| c.to_lowercase().next()){
+            Some(Some('a')) => Some(Letter::A),
+            Some(Some('b')) => Some(Letter::B),
+            Some(Some('c')) => Some(Letter::C),
+            Some(Some('d')) => Some(Letter::D),
+            Some(Some('e')) => Some(Letter::E),
+            Some(Some('f')) => Some(Letter::F),
+            Some(Some('g')) => Some(Letter::G),
+            _ => None
+        }
+    }
+}
+
+impl ToLetterTry for usize{
+    fn to_letter_try(&self) -> Option<Letter>{
+        match self{
+            0 => Some(Letter::A),
+            1 => Some(Letter::B),
+            2 => Some(Letter::C),
+            3 => Some(Letter::D),
+            4 => Some(Letter::E),
+            5 => Some(Letter::F),
+            6 => Some(Letter::G),
+            _ => None,
+        }
     }
 }
 
@@ -418,17 +489,8 @@ impl ToEnharmonicNote for String{
                 lowercase.push(l);
             }
         }
-        let mut chars = lowercase.chars();
-        let letter = match chars.next(){
-            Some('a') => 0,
-            Some('b') => 1,
-            Some('c') => 2,
-            Some('d') => 3,
-            Some('e') => 4,
-            Some('f') => 5,
-            Some('g') => 6,
-            _ => return None,
-        };
+        let chars = lowercase.chars();
+        let letter = self.to_letter_try()?;
         let mut accidental = 0;
         for ch in chars{
             match ch{
@@ -453,28 +515,28 @@ impl IntoEnharmonicNotes for String{
 impl ToEnharmonicNote for Note{
     fn to_enharmonic_note(&self) -> Option<EnharmonicNote>{
         Some(match self % _OCTAVE{
-            0  => EnharmonicNote{ letter: 0, accidental: 0 },
-            1  => EnharmonicNote{ letter: 0, accidental: 1 },
-            2  => EnharmonicNote{ letter: 1, accidental: 0 },
-            3  => EnharmonicNote{ letter: 2, accidental: 0 },
-            4  => EnharmonicNote{ letter: 2, accidental: 1 },
-            5  => EnharmonicNote{ letter: 3, accidental: 0 },
-            6  => EnharmonicNote{ letter: 3, accidental: 1 },
-            7  => EnharmonicNote{ letter: 4, accidental: 0 },
-            8  => EnharmonicNote{ letter: 5, accidental: 0 },
-            9  => EnharmonicNote{ letter: 5, accidental: 1 },
-            10 => EnharmonicNote{ letter: 6, accidental: 0 },
-            11 => EnharmonicNote{ letter: 6, accidental: 1 },
+            0  => EnharmonicNote{ letter: Letter::A, accidental: 0 },
+            1  => EnharmonicNote{ letter: Letter::A, accidental: 1 },
+            2  => EnharmonicNote{ letter: Letter::B, accidental: 0 },
+            3  => EnharmonicNote{ letter: Letter::C, accidental: 0 },
+            4  => EnharmonicNote{ letter: Letter::C, accidental: 1 },
+            5  => EnharmonicNote{ letter: Letter::D, accidental: 0 },
+            6  => EnharmonicNote{ letter: Letter::D, accidental: 1 },
+            7  => EnharmonicNote{ letter: Letter::E, accidental: 0 },
+            8  => EnharmonicNote{ letter: Letter::F, accidental: 0 },
+            9  => EnharmonicNote{ letter: Letter::F, accidental: 1 },
+            10 => EnharmonicNote{ letter: Letter::G, accidental: 0 },
+            11 => EnharmonicNote{ letter: Letter::G, accidental: 1 },
             _ => panic!("ToEnharmonicNote for Note, should be impossible."),
         })
     }
 }
 // Could be used for hexatonics etc?
 fn _into_enharmonic_notes_with_start_subheptatonic(scale: Scale, start: Option<EnharmonicNote>) -> Vec<EnharmonicNote>{
-    let mut set = vec![0,0,0,0,0,0,0];
+    let mut set = vec![0, 0, 0, 0, 0, 0, 0];
     let mut res = Vec::new();
     let skip = if let Some(en) = start{
-        set[en.letter() as usize] = 1;
+        set[en.letter as usize] = 1;
         res.push(en);
         1
     } else {
@@ -483,16 +545,16 @@ fn _into_enharmonic_notes_with_start_subheptatonic(scale: Scale, start: Option<E
     for (i, note) in scale.0.into_iter().enumerate().skip(skip){
         if i >= 7 { return Vec::new(); } // Impossible: no more letters.
         let en = note.to_enharmonic_note().unwrap();
-        let en = if set[en.letter() as usize] == 1{
+        let en = if set[en.letter as usize] == 1{
             let mut nen = en;
             loop {
-                nen = nen.next_enharmonic();
-                if set[nen.letter() as usize] == 0 { break nen; }
+                nen = nen.next();
+                if set[nen.letter as usize] == 0 { break nen; }
             }
         } else {
             en
         };
-        set[en.letter() as usize] = 1;
+        set[en.letter as usize] = 1;
         res.push(en);
     }
     res
@@ -500,27 +562,23 @@ fn _into_enharmonic_notes_with_start_subheptatonic(scale: Scale, start: Option<E
 
 fn into_enharmonic_notes_with_start_heptatonic(scale: Scale, start: Option<EnharmonicNote>) -> Vec<EnharmonicNote>{
     let mut res = Vec::new();
-    let mut target_letter = 255;
-    let skip = if let Some(en) = start{
+    if scale.len() != 7 { return res; }
+    let (skip, mut target_letter) = if let Some(en) = start{
         res.push(en);
-        target_letter = (en.letter() + 1) % 7;
-        1
+        (1, en.next().letter)
     } else {
-        0
+        (0, scale.0[0].to_enharmonic_note().unwrap().letter)
     };
     for (i, note) in scale.0.into_iter().enumerate().skip(skip){
         if i >= 7 { return Vec::new(); } // Impossible: no more letters.
         let en = note.to_enharmonic_note().unwrap();
-        if target_letter == 255 {
-            target_letter = en.letter();
-        }
         let new_en = if en.letter == target_letter {
             en
         } else {
             en.spelled_as(target_letter)
         };
         res.push(new_en);
-        target_letter = (target_letter + 1) % 7;
+        target_letter = target_letter.next();
     }
     res
 }

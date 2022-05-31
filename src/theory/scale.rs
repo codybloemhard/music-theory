@@ -109,8 +109,8 @@ impl ToRelative for Steps{
             let diff = (acc_a - acc_b) / _SEMI;
             if diff.abs() > 255 { return None; }
             let rn = match diff.cmp(&0){
-                Ordering::Greater => { RelativeNote::Sharp(diff as u32) },
-                Ordering::Less => { RelativeNote::Flat(-diff as u32) },
+                Ordering::Greater => { RelativeNote::Sharp(diff.unsigned_abs()) },
+                Ordering::Less => { RelativeNote::Flat(diff.unsigned_abs()) },
                 Ordering::Equal => { RelativeNote::Natural },
             };
             res.push(rn);
