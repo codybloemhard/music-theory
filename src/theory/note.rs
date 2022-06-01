@@ -1,17 +1,45 @@
 use super::interval::*;
 
-// pub const A4: Note = 48;
+pub const A4: Note = Note(48);
+
 pub(crate) const _MAX_NOTE: u32 = 2147483648;
 pub const MAX_NOTE: Note = Note(_MAX_NOTE);
 
-pub(crate) type _Note = i32;
+pub type _Note = u32;
 pub type Rank = u16;
 
-pub struct Note(u32);
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct Note(pub(crate) u32);
 
 impl Note{
     pub fn new(note: u32) -> Self{
-        Self(note.max(_MAX_NOTE))
+        Self(note.min(_MAX_NOTE))
+    }
+
+    pub fn inside(&self) -> u32{
+        self.0
+    }
+
+    /*
+    0   1   2   3   4   5   6   7   8   9   10  11  // rank 0
+    12  13  14  15  16  17  18  19  20  21  22  23  // rank 1
+    24  25  26  27  28  29  30  31  32  33  34  35  // rank 2
+    36  37  38  39  40  41  42  43  44  45  46  47  // rank 3
+    48                                              // A4
+    */
+
+    // note 48 is A4 at 440 hz
+    pub fn to_pitch(&self) -> f32{
+        let x = self.0 as i32 - 48;
+        (2.0f32).powf(x as f32 / _OCTAVE as f32) * 440.0f32
+    }
+}
+
+impl std::ops::Add for Note{
+    type Output = Self;
+
+    fn add(self, other: Self) -> Self{
+        Self::new(self.0 + other.0)
     }
 }
 
@@ -604,31 +632,32 @@ impl Note{
 //         into_enharmonic_notes_with_start_heptatonic(self, start)
 //     }
 // }
-//
-// /*
-// 0   1   2   3   4   5   6   7   8   9   10  11  // rank 0
-// 12  13  14  15  16  17  18  19  20  21  22  23  // rank 1
-// 24  25  26  27  28  29  30  31  32  33  34  35  // rank 2
-// 36  37  38  39  40  41  42  43  44  45  46  47  // rank 3
-// 48                                              // A4
-// */
-//
-// // note (48*SEMI) (48=12*4) is A4 at 440 hz
-// pub fn to_pitch(note: Note) -> f32{
-//     let x = note as i32 - 48;
-//     (2.0f32).powf(x as f32 / _OCTAVE as f32) * 440.0
-// }
-//
-// #[cfg(test)]
-// mod tests{
-//     use super::*;
-//     #[test]
-//     fn test_to_pitch(){
-//         assert_eq!(to_pitch(A4).round() as i32, 440);
-//     }
-//     #[test]
-//     fn test_note_to_pc(){
-//         assert_eq!(23.to_pc().0 < 12, true);
-//         assert_eq!((-450).to_pc().0 >= 0, true);
-//     }
-// }
+
+#[cfg(test)]
+mod tests{
+    use super::*;
+
+    #[test]
+    fn note_to_pitch(){
+        assert_eq!(A4.to_pitch().round() as i32, 440);
+    }
+
+    #[test]
+    fn note_new(){
+        assert_eq!(MAX_NOTE, Note::new(_MAX_NOTE + 1));
+    }
+
+    #[test]
+    fn note_add(){
+        assert_eq!(Note(0) + Note(0), Note(0));
+        assert_eq!(Note(1) + Note(0), Note(1));
+        assert_eq!(Note(_SEMI) + Note(_WHOLE), Note(_MIN3));
+        assert_eq!(MAX_NOTE + Note(1), MAX_NOTE);
+    }
+
+    // #[test]
+    // fn test_note_to_pc(){
+    //     assert_eq!(23.to_pc().0 < 12, true);
+    //     assert_eq!((-450).to_pc().0 >= 0, true);
+    // }
+}

@@ -1,48 +1,48 @@
-// use super::note::{ Note, ToNote };
+use super::note::{ _Note };
 // use std::cmp::Ordering;
-//
-// pub const _SEMI: Note = 1;
-// pub const _WHOLE: Note = 2;
-//
-// pub const _ROOT: Note = 0;
-// pub const _MIN2: Note = 1;
-// pub const _MAJ2: Note = 2;
-// pub const _MIN3: Note = 3;
-// pub const _MAJ3: Note = 4;
-// pub const _PER4: Note = 5;
-// pub const _TRIT: Note = 6;
-// pub const _PER5: Note = 7;
-// pub const _MIN6: Note = 8;
-// pub const _MAJ6: Note = 9;
-// pub const _MIN7: Note = 10;
-// pub const _MAJ7: Note = 11;
-// pub const _OCTAVE: Note = 12;
-// pub const _MIN9: Note = 13;
-// pub const _MAJ9: Note = 14;
-// pub const _AUG9: Note = 15;
-// pub const _MIN11: Note = 16;
-// pub const _MAJ11: Note = 17;
-// pub const _AUG11: Note = 18;
-// pub const _PER12: Note = 19;
-// pub const _MIN13: Note = 20;
-// pub const _MAJ13: Note = 21;
-// pub const _AUG13: Note = 22;
-//
-// pub const _DIM2: Note = 0;
-// pub const _AUG1: Note = 1;
-// pub const _DIM3: Note = 2;
-// pub const _AUG2: Note = 3;
-// pub const _DIM4: Note = 4;
-// pub const _AUG3: Note = 5;
-// pub const _DIM5: Note = 6;
-// pub const _AUG4: Note = 6;
-// pub const _DIM6: Note = 7;
-// pub const _AUG5: Note = 8;
-// pub const _DIM7: Note = 9;
-// pub const _AUG6: Note = 10;
-// pub const _DIM8: Note = 11;
-// pub const _AUG7: Note = 12;
-//
+
+pub(crate) const _SEMI: _Note = 1;
+pub(crate) const _WHOLE: _Note = 2;
+
+pub(crate) const _ROOT: _Note = 0;
+pub(crate) const _MIN2: _Note = 1;
+pub(crate) const _MAJ2: _Note = 2;
+pub(crate) const _MIN3: _Note = 3;
+pub(crate) const _MAJ3: _Note = 4;
+pub(crate) const _PER4: _Note = 5;
+pub(crate) const _TRIT: _Note = 6;
+pub(crate) const _PER5: _Note = 7;
+pub(crate) const _MIN6: _Note = 8;
+pub(crate) const _MAJ6: _Note = 9;
+pub(crate) const _MIN7: _Note = 10;
+pub(crate) const _MAJ7: _Note = 11;
+pub(crate) const _OCTAVE: _Note = 12;
+pub(crate) const _MIN9: _Note = 13;
+pub(crate) const _MAJ9: _Note = 14;
+pub(crate) const _AUG9: _Note = 15;
+pub(crate) const _MIN11: _Note = 16;
+pub(crate) const _MAJ11: _Note = 17;
+pub(crate) const _AUG11: _Note = 18;
+pub(crate) const _PER12: _Note = 19;
+pub(crate) const _MIN13: _Note = 20;
+pub(crate) const _MAJ13: _Note = 21;
+pub(crate) const _AUG13: _Note = 22;
+
+pub(crate) const _DIM2: _Note = 0;
+pub(crate) const _AUG1: _Note = 1;
+pub(crate) const _DIM3: _Note = 2;
+pub(crate) const _AUG2: _Note = 3;
+pub(crate) const _DIM4: _Note = 4;
+pub(crate) const _AUG3: _Note = 5;
+pub(crate) const _DIM5: _Note = 6;
+pub(crate) const _AUG4: _Note = 6;
+pub(crate) const _DIM6: _Note = 7;
+pub(crate) const _AUG5: _Note = 8;
+pub(crate) const _DIM7: _Note = 9;
+pub(crate) const _AUG6: _Note = 10;
+pub(crate) const _DIM8: _Note = 11;
+pub(crate) const _AUG7: _Note = 12;
+
 // pub const SEMI: NamedInterval = NamedInterval::Min2;
 // pub const WHOLE: NamedInterval = NamedInterval::Maj2;
 //
