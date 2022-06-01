@@ -1,7 +1,7 @@
-use crate::libr::scales::{get_all_scale_objs,ionian,HeptatonicScaleNamer};
-use crate::theory::scale::RelativeTrait;
-use crate::theory::note::{ToRelative};
-use crate::theory::chord::{strs_scale_chords_roman,ChordStyling};
+// use crate::libr::scales::{get_all_scale_objs,ionian,HeptatonicScaleNamer};
+// use crate::theory::scale::RelativeTrait;
+// use crate::theory::note::{ToRelative};
+// use crate::theory::chord::{strs_scale_chords_roman,ChordStyling};
 
 pub trait Intercalatable{
     type InterType;
@@ -86,28 +86,29 @@ pub fn print_to_grid_auto(strings: &[String], width: usize, padding: usize){
     }
 }
 
-pub fn print_scales(styling: ChordStyling){
-    let namer = HeptatonicScaleNamer::new();
-    let objs = get_all_scale_objs();
-    let empty = String::from("");
-    for sobj in objs{
-        println!("{}", sobj.family_name());
-        for mode in sobj.get_modes(){
-            let temp;
-            let mode_name = if mode.mode_name == empty{
-                temp = namer.name(&mode.steps);
-                &temp
-            } else {
-                &mode.mode_name
-            };
-            println!("{}: {}", mode.mode_nr, mode_name);
-            println!("\t{}", mode.steps.to_relative(&ionian::steps()).unwrap().string_ionian_rel());
-            let c3 = strs_scale_chords_roman(&mode.steps, 3, styling);
-            let c4 = strs_scale_chords_roman(&mode.steps, 4, styling);
-            print!("\t");
-            print_splitted(&c3, ", ", "\n");
-            print!("\t");
-            print_splitted(&c4, ", ", "\n");
-        }
-    }
-}
+// pub fn print_scales(styling: ChordStyling){
+//     let namer = HeptatonicScaleNamer::new();
+//     let objs = get_all_scale_objs();
+//     let empty = String::from("");
+//     for sobj in objs{
+//         println!("{}", sobj.family_name());
+//         for mode in sobj.get_modes(){
+//             let temp;
+//             let mode_name = if mode.mode_name == empty{
+//                 temp = namer.name(&mode.steps);
+//                 &temp
+//             } else {
+//                 &mode.mode_name
+//             };
+//             println!("{}: {}", mode.mode_nr, mode_name);
+//             println!("\t{}", mode.steps.to_relative(&ionian::steps()).unwrap().string_ionian_rel());
+//             let c3 = strs_scale_chords_roman(&mode.steps, 3, styling);
+//             let c4 = strs_scale_chords_roman(&mode.steps, 4, styling);
+//             print!("\t");
+//             print_splitted(&c3, ", ", "\n");
+//             print!("\t");
+//             print_splitted(&c4, ", ", "\n");
+//         }
+//     }
+// }
+
