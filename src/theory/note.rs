@@ -1,4 +1,6 @@
-use super::interval::*;
+use super::traits::{ ToNote };
+use super::interval::{ _OCTAVE };
+use super::pc::{ PC };
 
 pub const A4: Note = Note(48);
 
@@ -40,6 +42,18 @@ impl std::ops::Add for Note{
 
     fn add(self, other: Self) -> Self{
         Self::new(self.0 + other.0)
+    }
+}
+
+impl ToNote for _Note{
+    fn to_note(self) -> Note{
+        Note::new(self)
+    }
+}
+
+impl ToNote for PC{
+    fn to_note(self) -> Note{
+        Note::new(self as _Note)
     }
 }
 
@@ -148,24 +162,6 @@ impl std::ops::Add for Note{
 //     }
 // }
 //
-// pub trait ToPC{
-//     fn to_pc(&self) -> PC;
-// }
-//
-// pub trait IntoPC{
-//     fn into_pc(self) -> PC;
-// }
-//
-// impl<T: ToPC> IntoPC for T{
-//     fn into_pc(self) -> PC{
-//         self.to_pc()
-//     }
-// }
-//
-// pub trait IntoPCs{
-//     fn into_pcs(self) -> PCs;
-// }
-//
 // pub trait ToRelative{
 //     fn to_relative(&self, reference: &Steps) -> Option<Relative>;
 // }
@@ -229,106 +225,6 @@ impl std::ops::Add for Note{
 //             }
 //         }
 //         res
-//     }
-// }
-//
-// pub const A:  PC = PC(0);
-// pub const AS: PC = PC(1);
-// pub const B:  PC = PC(2);
-// pub const C:  PC = PC(3);
-// pub const CS: PC = PC(4);
-// pub const D:  PC = PC(5);
-// pub const DS: PC = PC(6);
-// pub const E:  PC = PC(7);
-// pub const F:  PC = PC(8);
-// pub const FS: PC = PC(9);
-// pub const G:  PC = PC(10);
-// pub const GS: PC = PC(11);
-//
-// #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-// pub struct PC(pub Note); // PitchClass
-//
-// pub type PCs = Vec<PC>;
-//
-// impl ToStringName for PC{
-//     fn to_string_name(&self) -> String{
-//         match self.0{
-//             0  => "A",
-//             1  => "A♯",
-//             2  => "B",
-//             3  => "C",
-//             4  => "C♯",
-//             5  => "D",
-//             6  => "D♯",
-//             7  => "E",
-//             8  => "F",
-//             9  => "F♯",
-//             10 => "G",
-//             11 => "G♯",
-//             _ => panic!("PC::to_string_name: impossible"),
-//         }.to_string()
-//     }
-// }
-//
-// impl std::fmt::Display for PC{
-//     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result{
-//         write!(f, "{}", self.to_string_name())
-//     }
-// }
-//
-// impl ToNote for PC{
-//     fn to_note(&self) -> Note{
-//         self.0
-//     }
-// }
-//
-// impl ToPC for Note{
-//     fn to_pc(&self) -> PC{
-//         let mut inrank = self % 12;
-//         if inrank < 0 {
-//             inrank += 12;
-//         }
-//         if inrank >= 12 { panic!("as_pc: should never happen!"); }
-//         PC(inrank)
-//     }
-// }
-//
-// impl IntoPCs for Scale{
-//     fn into_pcs(self) -> PCs{
-//         let mut res = Vec::new();
-//         for n in self.0{
-//             res.push(n.to_pc());
-//         }
-//         res
-//     }
-// }
-//
-// impl ToScale for PCs{
-//     fn to_scale(&self, rank: Note) -> Scale{
-//         let mut rank = rank as Rank;
-//         if self.is_empty() { return Scale::default(); }
-//         let start_note = self[0].to_note().with_rank(rank);
-//         let mut res = vec![start_note];
-//         let mut last = start_note;
-//         for pc in self.iter().skip(1){
-//             let note = pc.to_note().with_rank(rank);
-//             let diff = note - last;
-//             if diff > 0{
-//                 last = note;
-//                 res.push(note);
-//                 continue;
-//             }
-//             rank += 1;
-//             last = pc.to_note().with_rank(rank);
-//             res.push(last);
-//         }
-//         Scale(res)
-//     }
-// }
-//
-// impl IntoSteps for PCs{
-//     fn into_steps(self) -> Steps{
-//         self.to_scale(0).into_steps()
 //     }
 // }
 //
@@ -636,6 +532,7 @@ impl std::ops::Add for Note{
 #[cfg(test)]
 mod tests{
     use super::*;
+    use crate::theory::*;
 
     #[test]
     fn note_to_pitch(){
@@ -655,9 +552,17 @@ mod tests{
         assert_eq!(MAX_NOTE + Note(1), MAX_NOTE);
     }
 
-    // #[test]
-    // fn test_note_to_pc(){
-    //     assert_eq!(23.to_pc().0 < 12, true);
-    //     assert_eq!((-450).to_pc().0 >= 0, true);
-    // }
+    #[test]
+    fn u32_to_note(){
+        for i in 0..12345{
+            assert_eq!(Note::new(i), i.to_note());
+        }
+    }
+
+    #[test]
+    fn pc_to_note(){
+        for (i, pc) in PCS.iter().enumerate(){
+            assert_eq!(pc.to_note().inside() as usize, i);
+        }
+    }
 }
