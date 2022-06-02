@@ -1,6 +1,13 @@
 use super::{ Note, PC };
 
-// Convertion Traits
+// General Traits
+
+pub trait Cyclic{
+    fn next(self) -> Self;
+    fn prev(self) -> Self;
+}
+
+// Conversion Traits
 
 pub trait ToNote{
     fn to_note(self) -> Note;

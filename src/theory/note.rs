@@ -228,11 +228,6 @@ impl ToNote for PC{
 //     }
 // }
 //
-// pub trait Cycle{
-//     fn next(&self) -> Self;
-//     fn prev(&self) -> Self;
-// }
-//
 // #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 // pub enum Letter{
 //     A = 0, B = 1, C = 2, D = 3, E = 4, F = 5, G = 6

@@ -1,5 +1,5 @@
-use super::traits::{ ToNote, ToPC };
-use super::note::{ Note };
+use super::traits::{ Cyclic, ToNote, ToPC };
+use super::note::{ Note, _Note };
 
 pub const A:  PC = PC::A;
 pub const AS: PC = PC::As;
@@ -28,6 +28,18 @@ pub enum PC{
 }
 
 // pub type PCs = Vec<PC>;
+
+impl Cyclic for PC{
+    fn next(self) -> Self{
+        (self as _Note + 1).to_pc()
+    }
+
+    fn prev(self) -> Self{
+        (self as _Note + 11).to_pc()
+    }
+}
+
+// Conversion Traits
 
 impl ToPC for Note{
     fn to_pc(self) -> PC{
@@ -144,5 +156,34 @@ mod tests{
     #[test]
     fn to_note_to_pc(){
         assert_eq!(13.to_pc(), PC::As);
+    }
+
+    #[test]
+    fn cyclic(){
+        assert_eq!(PC::A.next(),  PC::As);
+        assert_eq!(PC::As.next(), PC::B);
+        assert_eq!(PC::B.next(),  PC::C);
+        assert_eq!(PC::C.next(),  PC::Cs);
+        assert_eq!(PC::Cs.next(), PC::D);
+        assert_eq!(PC::D.next(),  PC::Ds);
+        assert_eq!(PC::Ds.next(), PC::E);
+        assert_eq!(PC::E.next(),  PC::F);
+        assert_eq!(PC::F.next(),  PC::Fs);
+        assert_eq!(PC::Fs.next(), PC::G);
+        assert_eq!(PC::G.next(),  PC::Gs);
+        assert_eq!(PC::Gs.next(), PC::A);
+
+        assert_eq!(PC::A.prev(),  PC::Gs);
+        assert_eq!(PC::As.prev(), PC::A);
+        assert_eq!(PC::B.prev(),  PC::As);
+        assert_eq!(PC::C.prev(),  PC::B);
+        assert_eq!(PC::Cs.prev(), PC::C);
+        assert_eq!(PC::D.prev(),  PC::Cs);
+        assert_eq!(PC::Ds.prev(), PC::D);
+        assert_eq!(PC::E.prev(),  PC::Ds);
+        assert_eq!(PC::F.prev(),  PC::E);
+        assert_eq!(PC::Fs.prev(), PC::F);
+        assert_eq!(PC::G.prev(),  PC::Fs);
+        assert_eq!(PC::Gs.prev(), PC::G);
     }
 }
