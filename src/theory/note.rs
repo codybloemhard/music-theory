@@ -1,4 +1,4 @@
-use super::traits::{ ToNote };
+use super::traits::{ ToNote, OctaveShiftable };
 use super::interval::{ _OCTAVE };
 use super::pc::{ PC };
 
@@ -8,7 +8,8 @@ pub(crate) const _MAX_NOTE: u32 = 2147483648;
 pub const MAX_NOTE: Note = Note(_MAX_NOTE);
 
 pub type _Note = u32;
-pub type Rank = u16;
+pub type Octave = u16;
+pub type OctaveShift = i16;
 
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct Note(pub(crate) u32);
@@ -42,6 +43,16 @@ impl std::ops::Add for Note{
 
     fn add(self, other: Self) -> Self{
         Self::new(self.0 + other.0)
+    }
+}
+
+impl OctaveShiftable for Note{
+    fn with_octave(self, octave: Octave) -> Note{
+        (((self.0 % _OCTAVE) as i32 + octave as i32 * _OCTAVE as i32).max(0) as _Note).to_note()
+    }
+
+    fn shift_octave(self, shift: OctaveShift) -> Note{
+        ((self.0 as i32 + shift as i32 * _OCTAVE as i32).max(0) as _Note).to_note()
     }
 }
 
@@ -115,24 +126,6 @@ impl ToNote for PC{
 // ImplNoteSequence!(Scale);
 // ImplNoteSequence!(Chord);
 // ImplNoteSequence!(Relative);
-//
-// pub trait ToStringName{
-//     fn to_string_name(&self) -> String;
-// }
-//
-// pub trait ToNote{
-//     fn to_note(&self) -> Note;
-// }
-//
-// pub trait HasRank{
-//     fn with_rank(self, rank: Rank) -> Self;
-// }
-//
-// impl HasRank for Note{
-//     fn with_rank(self, rank: Rank) -> Note{
-//         (self % _OCTAVE) + rank as Note * _OCTAVE
-//     }
-// }
 //
 // pub trait ToScale{
 //     fn to_scale(&self, note: Note) -> Scale;
@@ -530,17 +523,17 @@ mod tests{
     use crate::theory::*;
 
     #[test]
-    fn note_to_pitch(){
+    fn to_pitch(){
         assert_eq!(A4.to_pitch().round() as i32, 440);
     }
 
     #[test]
-    fn note_new(){
+    fn new(){
         assert_eq!(MAX_NOTE, Note::new(_MAX_NOTE + 1));
     }
 
     #[test]
-    fn note_add(){
+    fn add(){
         assert_eq!(Note(0) + Note(0), Note(0));
         assert_eq!(Note(1) + Note(0), Note(1));
         assert_eq!(Note(_SEMI) + Note(_WHOLE), Note(_MIN3));
@@ -558,6 +551,16 @@ mod tests{
     fn pc_to_note(){
         for (i, pc) in PCS.iter().enumerate(){
             assert_eq!(pc.to_note().inside() as usize, i);
+        }
+    }
+
+    #[test]
+    fn octave_shiftable(){
+        for i in 0..12u32{
+            let note = i.to_note();
+            assert_eq!(note, note.shift_octave(0));
+            assert_eq!(note.inside() + 36, note.with_octave(3).inside());
+            assert_eq!(note.to_pc(), note.shift_octave(12345).to_pc());
         }
     }
 }

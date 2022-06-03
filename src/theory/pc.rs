@@ -29,6 +29,26 @@ pub enum PC{
 
 // pub type PCs = Vec<PC>;
 
+impl std::fmt::Display for PC{
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result{
+        let string = match self{
+            PC::A  => "A",
+            PC::As => "A♯",
+            PC::B  => "B",
+            PC::C  => "C",
+            PC::Cs => "C♯",
+            PC::D  => "D",
+            PC::Ds => "D♯",
+            PC::E  => "E",
+            PC::F  => "F",
+            PC::Fs => "F♯",
+            PC::G  => "G",
+            PC::Gs => "G♯",
+        };
+        write!(f, "{}", string)
+    }
+}
+
 impl Cyclic for PC{
     fn next(self) -> Self{
         (self as _Note + 1).to_pc()
@@ -54,53 +74,8 @@ impl<T: ToNote> ToPC for T{
     }
 }
 
-//
 // pub trait IntoPCs{
 //     fn into_pcs(self) -> PCs;
-// }
-//
-//
-// impl ToStringName for PC{
-//     fn to_string_name(&self) -> String{
-//         match self.0{
-//             0  => "A",
-//             1  => "A♯",
-//             2  => "B",
-//             3  => "C",
-//             4  => "C♯",
-//             5  => "D",
-//             6  => "D♯",
-//             7  => "E",
-//             8  => "F",
-//             9  => "F♯",
-//             10 => "G",
-//             11 => "G♯",
-//             _ => panic!("PC::to_string_name: impossible"),
-//         }.to_string()
-//     }
-// }
-//
-// impl std::fmt::Display for PC{
-//     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result{
-//         write!(f, "{}", self.to_string_name())
-//     }
-// }
-//
-// impl ToNote for PC{
-//     fn to_note(&self) -> Note{
-//         self.0
-//     }
-// }
-//
-// impl ToPC for Note{
-//     fn to_pc(&self) -> PC{
-//         let mut inrank = self % 12;
-//         if inrank < 0 {
-//             inrank += 12;
-//         }
-//         if inrank >= 12 { panic!("as_pc: should never happen!"); }
-//         PC(inrank)
-//     }
 // }
 //
 // impl IntoPCs for Scale{
@@ -142,6 +117,7 @@ impl<T: ToNote> ToPC for T{
 //     }
 // }
 //
+
 #[cfg(test)]
 mod tests{
     use super::*;
@@ -185,5 +161,21 @@ mod tests{
         assert_eq!(PC::Fs.prev(), PC::F);
         assert_eq!(PC::G.prev(),  PC::Fs);
         assert_eq!(PC::Gs.prev(), PC::G);
+    }
+
+    #[test]
+    fn to_string(){
+        assert_eq!(&PC::A.to_string(),  "A");
+        assert_eq!(&PC::As.to_string(), "A♯");
+        assert_eq!(&PC::B.to_string(),  "B");
+        assert_eq!(&PC::C.to_string(),  "C");
+        assert_eq!(&PC::Cs.to_string(), "C♯");
+        assert_eq!(&PC::D.to_string(),  "D");
+        assert_eq!(&PC::Ds.to_string(), "D♯");
+        assert_eq!(&PC::E.to_string(),  "E");
+        assert_eq!(&PC::F.to_string(),  "F");
+        assert_eq!(&PC::Fs.to_string(), "F♯");
+        assert_eq!(&PC::G.to_string(),  "G");
+        assert_eq!(&PC::Gs.to_string(), "G♯");
     }
 }
