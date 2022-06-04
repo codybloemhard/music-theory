@@ -1,5 +1,5 @@
 use super::traits::{ ToNote, OctaveShiftable };
-use super::interval::{ _OCTAVE };
+use super::interval::{ Interval, _OCTAVE };
 use super::pc::{ PC };
 
 pub const A4: Note = Note(48);
@@ -84,24 +84,6 @@ impl ToNote for PC{
 //
 // #[derive(Debug, Default, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 // pub struct Chord(pub Vec<Note>);
-//
-// #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-// pub enum RelativeNote { Flat(u32), Sharp(u32), Natural }
-//
-// pub const RN_NAT: RelativeNote = RelativeNote::Natural;
-// pub const RN_S:   RelativeNote = RelativeNote::Sharp(1);
-// pub const RN_SS:  RelativeNote = RelativeNote::Sharp(2);
-// pub const RN_B:   RelativeNote = RelativeNote::Flat(1);
-// pub const RN_BB:  RelativeNote = RelativeNote::Flat(2);
-//
-// #[derive(Debug, Default, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
-// pub struct Relative(pub Vec<RelativeNote>);
-//
-// impl Relative{
-//     pub fn empty(len: usize) -> Self{
-//         Relative(vec![RelativeNote::Natural; len])
-//     }
-// }
 //
 // pub trait NoteSequence{
 //     fn len(&self) -> usize;
@@ -203,22 +185,6 @@ impl ToNote for PC{
 //
 // pub trait IntoEnharmonicNotesWithStart{
 //     fn into_enharmonic_notes_with_start(self, start: Option<EnharmonicNote>) -> Vec<EnharmonicNote>;
-// }
-//
-// impl ToString for RelativeNote{
-//     fn to_string(&self) -> String{
-//         let mut res = String::new();
-//         match self{
-//             RelativeNote::Natural => {  },
-//             RelativeNote::Sharp(i) => {
-//                 for _ in 0..*i { res.push('♯'); }
-//             },
-//             RelativeNote::Flat(i) => {
-//                 for _ in 0..*i { res.push('♭'); }
-//             }
-//         }
-//         res
-//     }
 // }
 //
 // #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]

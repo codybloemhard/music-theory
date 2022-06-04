@@ -1,5 +1,7 @@
-use super::note::{ _Note };
-// use std::cmp::Ordering;
+use super::traits::{ GeneratablePartialOrder, OctaveShiftable };
+use super::note::{ _Note, Octave, OctaveShift };
+
+use std::cmp::Ordering;
 
 pub(crate) const _SEMI: _Note = 1;
 pub(crate) const _WHOLE: _Note = 2;
@@ -69,6 +71,54 @@ pub(crate) const _AUG7: _Note = 12;
 // pub const MAJ13: NamedInterval = NamedInterval::Maj13;
 // pub const AUG13: NamedInterval = NamedInterval::Aug13;
 //
+
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct Interval(pub(crate) i32);
+
+impl std::fmt::Display for Interval{
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result{
+        let mut string = String::new();
+        let i = self.0.abs();
+        match self.0.cmp(&0){
+            Ordering::Less    => { for _ in 0..i { string.push('♭'); } },
+            Ordering::Greater => { for _ in 0..i { string.push('♯'); } },
+            Ordering::Equal   => { string.push('♮'); },
+        }
+        write!(f, "{}", string)
+    }
+}
+
+impl GeneratablePartialOrder for Interval{
+    fn next(self) -> Option<Interval>{
+        let added = self.0.checked_add(1)?;
+        Some(Self(added))
+    }
+
+    fn prev(self) -> Option<Interval>{
+        let subbed = self.0.checked_sub(1)?;
+        Some(Self(subbed))
+    }
+}
+
+impl OctaveShiftable for Interval{
+    fn with_octave(self, octave: Octave) -> Self{
+        match self.0.cmp(&0){
+            Ordering::Less => Interval((self.0 % _OCTAVE as i32) - octave as i32 * _OCTAVE as i32),
+            Ordering::Equal => Interval(0),
+            Ordering::Greater => Interval((self.0 % _OCTAVE as i32) + octave as i32 * _OCTAVE as i32),
+        }
+    }
+
+    fn shift_octave(self, shift: OctaveShift) -> Self{
+        let pos = shift >= 0;
+        let res = self.0.checked_add(shift as i32 * _OCTAVE as i32);
+        Interval(match res{
+            Some(x) => x,
+            None => if pos { i32::MAX } else { i32::MIN },
+        })
+    }
+}
+
 // #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 // pub enum NamedInterval{
 //     Root = 0,
@@ -232,17 +282,6 @@ pub(crate) const _AUG7: _Note = 12;
 //     }
 // }
 //
-// pub fn to_relative_interval_non_nat(interval: Note) -> String{
-//     let mut res = String::new();
-//     let i = interval;
-//     match i.cmp(&0){
-//         Ordering::Less => { for _ in 0..-i{ res.push('♭'); } },
-//         Ordering::Greater => { for _ in 0..i{ res.push('♯'); } },
-//         Ordering::Equal => { res.push('♮'); },
-//     }
-//     res
-// }
-//
 // pub fn to_degree(interval: Note) -> String{
 //     match interval{
 //         0 => "I",
@@ -261,3 +300,40 @@ pub(crate) const _AUG7: _Note = 12;
 //     }.to_string()
 // }
 
+#[cfg(test)]
+mod tests{
+    use super::*;
+    use crate::theory::*;
+
+    #[test]
+    fn to_string(){
+        assert_eq!(&Interval(0).to_string(), "♮");
+        assert_eq!(&Interval(1).to_string(), "♯");
+        assert_eq!(&Interval(10).to_string(), "♯♯♯♯♯♯♯♯♯♯");
+        assert_eq!(&Interval(-1).to_string(), "♭");
+        assert_eq!(&Interval(-10).to_string(), "♭♭♭♭♭♭♭♭♭♭");
+    }
+
+    #[test]
+    fn generatable_partial_order(){
+        assert_eq!(Interval(0).next(), Some(Interval(1)));
+        assert_eq!(Interval(0).prev(), Some(Interval(-1)));
+        assert_eq!(Interval(i32::MAX).next(), None);
+        assert_eq!(Interval(i32::MIN).prev(), None);
+    }
+
+    #[test]
+    fn octave_shiftable(){
+        assert_eq!(Interval(0).with_octave(0), Interval(0));
+        assert_eq!(Interval(0).with_octave(1), Interval(0));
+        assert_eq!(Interval(1).with_octave(12), Interval(145));
+        assert_eq!(Interval(12).with_octave(0), Interval(0));
+        assert_eq!(Interval(-12).with_octave(0), Interval(0));
+        assert_eq!(Interval(-1).with_octave(2), Interval(-25));
+        assert_eq!(Interval(-38).with_octave(1), Interval(-14));
+        assert_eq!(Interval(-38).with_octave(0), Interval(-2));
+        assert_eq!(Interval(0).shift_octave(2), Interval(24));
+        assert_eq!(Interval(0).shift_octave(-2), Interval(-24));
+        assert_eq!(Interval(1).shift_octave(-2), Interval(-23));
+    }
+}
