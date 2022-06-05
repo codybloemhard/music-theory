@@ -1,11 +1,8 @@
-use super::traits::{ ToNote, OctaveShiftable };
+use super::traits::{ ToNote, OctaveShiftable, GeneratablePartialOrder };
 use super::interval::{ Interval, _OCTAVE };
 use super::pc::{ PC };
 
 pub const A4: Note = Note(48);
-
-pub(crate) const _MAX_NOTE: u32 = 2147483648;
-pub const MAX_NOTE: Note = Note(_MAX_NOTE);
 
 pub type _Note = u32;
 pub type Octave = u16;
@@ -15,8 +12,11 @@ pub type OctaveShift = i16;
 pub struct Note(pub(crate) u32);
 
 impl Note{
+    pub const MAX: Note = Note(1073741824); // 1 << 30
+    pub const MIN: Note = Note(0);
+
     pub fn new(note: u32) -> Self{
-        Self(note.min(_MAX_NOTE))
+        Self(note.min(Self::MAX.0))
     }
 
     pub fn inside(&self) -> u32{
@@ -43,6 +43,26 @@ impl std::ops::Add for Note{
 
     fn add(self, other: Self) -> Self{
         Self::new(self.0 + other.0)
+    }
+}
+
+impl std::ops::Sub for Note {
+    type Output = Interval;
+
+    fn sub(self, other: Self) -> Interval{
+        Interval(self.0 as i32 - other.0 as i32)
+    }
+}
+
+impl GeneratablePartialOrder for Note{
+    fn next(self) -> Option<Note>{
+        if self.0 >= Self::MAX.0 { return None; }
+        Some(Self(self.0 + 1))
+    }
+
+    fn prev(self) -> Option<Note>{
+        let subbed = self.0.checked_sub(1)?;
+        Some(Self(subbed))
     }
 }
 
@@ -495,7 +515,7 @@ mod tests{
 
     #[test]
     fn new(){
-        assert_eq!(MAX_NOTE, Note::new(_MAX_NOTE + 1));
+        assert_eq!(Note::MAX, Note::new(Note::MAX.0 + 1));
     }
 
     #[test]
@@ -503,7 +523,16 @@ mod tests{
         assert_eq!(Note(0) + Note(0), Note(0));
         assert_eq!(Note(1) + Note(0), Note(1));
         assert_eq!(Note(_SEMI) + Note(_WHOLE), Note(_MIN3));
-        assert_eq!(MAX_NOTE + Note(1), MAX_NOTE);
+        assert_eq!(Note::MAX + Note(1), Note::MAX);
+    }
+
+    #[test]
+    fn sub(){
+        assert_eq!(Note(0) - Note(0), Interval(0));
+        assert_eq!(Note(0) - Note(1), Interval(-1));
+        assert_eq!(Note(1) - Note(0), Interval(1));
+        assert_eq!(Note::MAX - Note::MIN, Interval::MAX);
+        assert_eq!(Note::MIN - Note::MAX, Interval::MIN);
     }
 
     #[test]
@@ -527,6 +556,17 @@ mod tests{
             assert_eq!(note, note.shift_octave(0));
             assert_eq!(note.inside() + 36, note.with_octave(3).inside());
             assert_eq!(note.to_pc(), note.shift_octave(12345).to_pc());
+            assert_eq!(Note::MAX.with_octave(u16::MAX) < Note::MAX, true);
+            assert_eq!(Note::MAX.shift_octave(i16::MAX), Note::MAX);
+            assert_eq!(Note::MIN.shift_octave(i16::MIN), Note::MIN);
         }
+    }
+
+    #[test]
+    fn generatable_partial_order(){
+        assert_eq!(Note(0).next(), Some(Note(1)));
+        assert_eq!(Note(1).prev(), Some(Note(0)));
+        assert_eq!(Note::MAX.next(), None);
+        assert_eq!(Note::MIN.prev(), None);
     }
 }

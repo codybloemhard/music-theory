@@ -75,6 +75,15 @@ pub(crate) const _AUG7: _Note = 12;
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct Interval(pub(crate) i32);
 
+impl Interval{
+    pub const MAX: Self = Self(1 << 30);
+    pub const MIN: Self = Self(-1 << 30);
+
+    fn new(i: i32) -> Self{
+        Interval(i.min(Self::MAX.0).max(Self::MIN.0))
+    }
+}
+
 impl std::fmt::Display for Interval{
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result{
         let mut string = String::new();
@@ -90,13 +99,13 @@ impl std::fmt::Display for Interval{
 
 impl GeneratablePartialOrder for Interval{
     fn next(self) -> Option<Interval>{
-        let added = self.0.checked_add(1)?;
-        Some(Self(added))
+        if self.0 >= Self::MAX.0 { return None; }
+        Some(Self(self.0 + 1))
     }
 
     fn prev(self) -> Option<Interval>{
-        let subbed = self.0.checked_sub(1)?;
-        Some(Self(subbed))
+        if self.0 <= Self::MIN.0 { return None; }
+        Some(Self(self.0 - 1))
     }
 }
 
@@ -110,12 +119,7 @@ impl OctaveShiftable for Interval{
     }
 
     fn shift_octave(self, shift: OctaveShift) -> Self{
-        let pos = shift >= 0;
-        let res = self.0.checked_add(shift as i32 * _OCTAVE as i32);
-        Interval(match res{
-            Some(x) => x,
-            None => if pos { i32::MAX } else { i32::MIN },
-        })
+        Interval::new(self.0 + shift as i32 * _OCTAVE as i32)
     }
 }
 
@@ -306,6 +310,15 @@ mod tests{
     use crate::theory::*;
 
     #[test]
+    fn new(){
+        assert_eq!(Interval::new(0), Interval(0));
+        assert_eq!(Interval::new(1 << 30), Interval::MAX);
+        assert_eq!(Interval::new(-1 << 30), Interval::MIN);
+        assert_eq!(Interval::new((1 << 30) + 1), Interval::MAX);
+        assert_eq!(Interval::new((-1 << 30) - 1), Interval::MIN);
+    }
+
+    #[test]
     fn to_string(){
         assert_eq!(&Interval(0).to_string(), "♮");
         assert_eq!(&Interval(1).to_string(), "♯");
@@ -318,8 +331,8 @@ mod tests{
     fn generatable_partial_order(){
         assert_eq!(Interval(0).next(), Some(Interval(1)));
         assert_eq!(Interval(0).prev(), Some(Interval(-1)));
-        assert_eq!(Interval(i32::MAX).next(), None);
-        assert_eq!(Interval(i32::MIN).prev(), None);
+        assert_eq!(Interval::MAX.next(), None);
+        assert_eq!(Interval::MIN.prev(), None);
     }
 
     #[test]
@@ -332,8 +345,12 @@ mod tests{
         assert_eq!(Interval(-1).with_octave(2), Interval(-25));
         assert_eq!(Interval(-38).with_octave(1), Interval(-14));
         assert_eq!(Interval(-38).with_octave(0), Interval(-2));
+        assert_eq!(Interval(0).with_octave(u16::MAX) < Interval::MAX, true);
+        assert_eq!(Interval(0).with_octave(u16::MAX) < Interval::MAX, true);
         assert_eq!(Interval(0).shift_octave(2), Interval(24));
         assert_eq!(Interval(0).shift_octave(-2), Interval(-24));
         assert_eq!(Interval(1).shift_octave(-2), Interval(-23));
+        assert_eq!(Interval::MAX.shift_octave(i16::MAX), Interval::MAX);
+        assert_eq!(Interval::MIN.shift_octave(i16::MIN), Interval::MIN);
     }
 }
