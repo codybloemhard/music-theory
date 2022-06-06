@@ -1,4 +1,4 @@
-use super::traits::{ ToNote, OctaveShiftable, GeneratablePartialOrder };
+use super::traits::{ ToNote, OctaveShiftable, GeneratablePartialOrder, AddInterval };
 use super::interval::{ Interval, _OCTAVE };
 use super::pc::{ PC };
 
@@ -38,6 +38,8 @@ impl Note{
     }
 }
 
+// General implementations
+
 impl std::ops::Add for Note{
     type Output = Self;
 
@@ -68,13 +70,25 @@ impl GeneratablePartialOrder for Note{
 
 impl OctaveShiftable for Note{
     fn with_octave(self, octave: Octave) -> Note{
-        (((self.0 % _OCTAVE) as i32 + octave as i32 * _OCTAVE as i32).max(0) as _Note).to_note()
+        (((self.0 % _OCTAVE) as i32 + octave as i32 * _OCTAVE as i32) as _Note).to_note()
     }
 
     fn shift_octave(self, shift: OctaveShift) -> Note{
         ((self.0 as i32 + shift as i32 * _OCTAVE as i32).max(0) as _Note).to_note()
     }
 }
+
+impl AddInterval for Note{
+    fn add_interval(self, interval: Interval) -> Option<Self>{
+        let res = (self.0 as i32).checked_add(interval.0)?;
+        match res < 0 || res > Self::MAX.0 as i32{
+            true => None,
+            false => Some(Self(res as u32)),
+        }
+    }
+}
+
+// Conversion implementations
 
 impl ToNote for _Note{
     fn to_note(self) -> Note{
@@ -568,5 +582,14 @@ mod tests{
         assert_eq!(Note(1).prev(), Some(Note(0)));
         assert_eq!(Note::MAX.next(), None);
         assert_eq!(Note::MIN.prev(), None);
+    }
+
+    #[test]
+    fn add_interval(){
+        for i in 0..12{
+            assert_eq!(Note(i).to_pc(), Note(i).add_interval(Interval::OCTAVE).unwrap().to_pc());
+        }
+        assert_eq!(Note::MAX.add_interval(Interval::SEMI), None);
+        assert_eq!(Note::MIN.add_interval(-Interval::SEMI), None);
     }
 }

@@ -1,4 +1,6 @@
-use super::{ Note, PC, Octave, OctaveShift };
+use super::{ Note, PC, Octave, OctaveShift, Interval };
+
+use std::marker::Sized;
 
 // General Traits
 
@@ -9,7 +11,7 @@ pub trait Cyclic{
 }
 
 // Possible to generate next, prev, might fail
-pub trait GeneratablePartialOrder where Self: std::marker::Sized{
+pub trait GeneratablePartialOrder where Self: Sized{
     fn next(self) -> Option<Self>;
     fn prev(self) -> Option<Self>;
 }
@@ -17,6 +19,10 @@ pub trait GeneratablePartialOrder where Self: std::marker::Sized{
 pub trait OctaveShiftable{
     fn with_octave(self, octave: Octave) -> Self;
     fn shift_octave(self, shift: OctaveShift) -> Self;
+}
+
+pub trait AddInterval where Self: Sized{
+    fn add_interval(self, interval: Interval) -> Option<Self>;
 }
 
 // Conversion Traits

@@ -1,4 +1,4 @@
-use super::traits::{ GeneratablePartialOrder, OctaveShiftable };
+use super::traits::{ GeneratablePartialOrder, OctaveShiftable, AddInterval };
 use super::note::{ _Note, Octave, OctaveShift };
 
 use std::cmp::Ordering;
@@ -79,8 +79,74 @@ impl Interval{
     pub const MAX: Self = Self(1 << 30);
     pub const MIN: Self = Self(-1 << 30);
 
+    pub const SEMI: Self = Self(1);
+    pub const WHOLE: Self = Self(2);
+
+    pub const ROOT: Self = Self(0);
+    pub const MIN2: Self = Self(1);
+    pub const MAJ2: Self = Self(2);
+    pub const MIN3: Self = Self(3);
+    pub const MAJ3: Self = Self(4);
+    pub const PER4: Self = Self(5);
+    pub const TRIT: Self = Self(6);
+    pub const PER5: Self = Self(7);
+    pub const MIN6: Self = Self(8);
+    pub const MAJ6: Self = Self(9);
+    pub const MIN7: Self = Self(10);
+    pub const MAJ7: Self = Self(11);
+    pub const OCTAVE: Self = Self(12);
+    pub const MIN9: Self = Self(13);
+    pub const MAJ9: Self = Self(14);
+    pub const AUG9: Self = Self(15);
+    pub const MIN11: Self = Self(16);
+    pub const MAJ11: Self = Self(17);
+    pub const AUG11: Self = Self(18);
+    pub const PER12: Self = Self(19);
+    pub const MIN13: Self = Self(20);
+    pub const MAJ13: Self = Self(21);
+    pub const AUG13: Self = Self(22);
+
+    pub const DIM2: Self = Self(0);
+    pub const AUG1: Self = Self(1);
+    pub const DIM3: Self = Self(2);
+    pub const AUG2: Self = Self(3);
+    pub const DIM4: Self = Self(4);
+    pub const AUG3: Self = Self(5);
+    pub const DIM5: Self = Self(6);
+    pub const AUG4: Self = Self(6);
+    pub const DIM6: Self = Self(7);
+    pub const AUG5: Self = Self(8);
+    pub const DIM7: Self = Self(9);
+    pub const AUG6: Self = Self(10);
+    pub const DIM8: Self = Self(11);
+    pub const AUG7: Self = Self(12);
+
     fn new(i: i32) -> Self{
         Interval(i.min(Self::MAX.0).max(Self::MIN.0))
+    }
+}
+
+impl std::ops::Neg for Interval{
+    type Output = Self;
+
+    fn neg(self) -> Self{
+        Self::new(-self.0)
+    }
+}
+
+impl std::ops::Add for Interval{
+    type Output = Self;
+
+    fn add(self, other: Self) -> Self{
+        Self::new(self.0 + other.0)
+    }
+}
+
+impl std::ops::Sub for Interval{
+    type Output = Self;
+
+    fn sub(self, other: Self) -> Self{
+        Self::new(self.0 - other.0)
     }
 }
 
@@ -120,6 +186,16 @@ impl OctaveShiftable for Interval{
 
     fn shift_octave(self, shift: OctaveShift) -> Self{
         Interval::new(self.0 + shift as i32 * _OCTAVE as i32)
+    }
+}
+
+impl AddInterval for Interval{
+    fn add_interval(self, interval: Interval) -> Option<Self>{
+        let res = (self.0 as i32).checked_add(interval.0)?;
+        match res < Self::MIN.0 || res > Self::MAX.0{
+            true => None,
+            false => Some(Self(res)),
+        }
     }
 }
 
@@ -319,6 +395,32 @@ mod tests{
     }
 
     #[test]
+    fn neg(){
+        assert_eq!(-Interval(0), Interval(0));
+        assert_eq!(-Interval(1), Interval(-1));
+        assert_eq!(--Interval(1), Interval(1));
+    }
+
+    #[test]
+    fn add(){
+        assert_eq!(Interval(0) + Interval(0), Interval(0));
+        assert_eq!(Interval(1) + Interval(2), Interval(3));
+        assert_eq!(Interval(1) + Interval(-2), Interval(-1));
+    }
+
+    #[test]
+    fn sub(){
+        assert_eq!(Interval(0) - Interval(0), Interval(0));
+        assert_eq!(Interval(1) - Interval(2), Interval(-1));
+        assert_eq!(Interval(1) - Interval(-2), Interval(3));
+    }
+
+    #[test]
+    fn neg_add_sub(){
+        assert_eq!(-(Interval(13) + -Interval(24) - Interval(3)), Interval(14));
+    }
+
+    #[test]
     fn to_string(){
         assert_eq!(&Interval(0).to_string(), "♮");
         assert_eq!(&Interval(1).to_string(), "♯");
@@ -352,5 +454,17 @@ mod tests{
         assert_eq!(Interval(1).shift_octave(-2), Interval(-23));
         assert_eq!(Interval::MAX.shift_octave(i16::MAX), Interval::MAX);
         assert_eq!(Interval::MIN.shift_octave(i16::MIN), Interval::MIN);
+    }
+
+    #[test]
+    fn add_interval(){
+        for x in -123..123{
+            for y in -123..123{
+                let (ix, iy) = (Interval(x), Interval(y));
+                assert_eq!(Some(ix + iy), ix.add_interval(iy));
+            }
+        }
+        assert_eq!(Interval::MAX.add_interval(Interval(1)), None);
+        assert_eq!(Interval::MIN.add_interval(Interval(-1)), None);
     }
 }
