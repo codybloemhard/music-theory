@@ -16,32 +16,6 @@ pub fn to_roman_num(mut dec: usize) -> String{
     res
 }
 
-pub struct RomanNumeralIter{
-    current: usize,
-}
-
-impl RomanNumeralIter{
-    pub fn new() -> Self{
-        Self{
-            current: 0,
-        }
-    }
-}
-impl Default for RomanNumeralIter {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
-impl Iterator for RomanNumeralIter{
-    type Item = String;
-    fn next(&mut self) -> Option<String>{
-        let res = to_roman_num(self.current);
-        self.current += 1;
-        Some(res)
-    }
-}
-
 #[cfg(test)]
 mod tests{
     use super::*;

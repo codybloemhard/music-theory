@@ -5,7 +5,9 @@ use music_theory::libr::infos::*;
 use music_theory::query::*;
 use music_theory::utils::*;
 use fnrs::Sequence;
+
 // jazzbøt
+#[cfg(not(tarpaulin))]
 fn main(){
     // let args = lapp::parse_args("
     //     -c, --chord (default '') comma seperated vector of notes, interpreted as chord

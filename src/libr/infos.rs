@@ -7,6 +7,7 @@ pub trait Intercalatable{
     type InterType;
     type JoinType;
     fn intercalate(self, val: Self::InterType) -> Self::JoinType;
+    fn intercalate_with_end(self, val: Self::InterType, end: Self::InterType) -> Self::JoinType;
 }
 
 impl Intercalatable for Vec<String>{
@@ -26,47 +27,39 @@ impl Intercalatable for Vec<String>{
         }
         builder
     }
-}
 
-pub fn print_splitted(strings: &[String], split: &str, end: &str){
-    for s in strings{
-        print!("{}{}", s, split);
+    fn intercalate_with_end(self, val: Self::InterType, end: Self::InterType) -> Self::JoinType{
+        let mut res = self.intercalate(val);
+        res.push_str(&end);
+        res
     }
-    print!("{}", end);
 }
 
-pub fn format_splitted(strings: &[String], split: &str, end: &str) -> String{
-    let mut string = String::new();
-    for s in strings{
-        let x = format!("{}{}", s, split);
-        string.push_str(&x);
-    }
-    string.push_str(end);
-    string
-}
-
-pub fn print_even(strings: &[String], spaces: usize, end: &str){
+pub fn format_even(strings: &[String], spaces: usize, end: &str) -> String{
+    let mut res = String::new();
     for string in strings{
         let len = string.chars().count();
         if len < spaces{
-            print!("{}", string);
+            res.push_str(string);
             for _ in 0..spaces - len{
-                print!(" ");
+                res.push(' ');
             }
-        }else{
-            for (i,ch) in string.chars().enumerate(){
+        } else {
+            for (i, ch) in string.chars().enumerate(){
                 if i >= spaces - 1{
                     break;
                 }
-                print!("{}", ch);
+                res.push(ch);
             }
-            print!("`");
+            res.push('`');
         }
     }
-    print!("{}", end);
+    res.push_str(end);
+    res
 }
 
-pub fn print_to_grid_auto(strings: &[String], width: usize, padding: usize){
+pub fn format_to_grid_auto(strings: &[String], width: usize, padding: usize) -> String{
+    let mut res = String::new();
     let mut longest = 0;
     for string in strings{
         let len = string.chars().count();
@@ -77,13 +70,17 @@ pub fn print_to_grid_auto(strings: &[String], width: usize, padding: usize){
     let mut line = Vec::new();
     for string in strings{
         if count > max {
-            print_even(&line, longest + padding, "\n");
+            let line_res = format_even(&line, longest + padding, "\n");
+            res.push_str(&line_res);
             line.clear();
             count = 0;
         }
         line.push(string.clone());
         count += 1;
     }
+    let line_res = format_even(&line, longest + padding, "\n");
+    res.push_str(&line_res);
+    res
 }
 
 // pub fn print_scales(styling: ChordStyling){
@@ -112,3 +109,51 @@ pub fn print_to_grid_auto(strings: &[String], width: usize, padding: usize){
 //     }
 // }
 
+#[cfg(test)]
+mod tests{
+    use super::*;
+
+    #[test]
+    fn intercalate(){
+
+        assert_eq!(&vec!["X".to_string()].intercalate(",".to_string()), "X");
+        assert_eq!(
+            &vec!["X", "Y", "Z"].iter()
+                .map(|x| x.to_string())
+                .collect::<Vec<_>>()
+                .intercalate("--".to_string()),
+            "X--Y--Z"
+        );
+        assert_eq!(
+            &vec!["X", "Y", "Z"].iter()
+                .map(|x| x.to_string())
+                .collect::<Vec<_>>()
+                .intercalate_with_end("--".to_string(), "\n".to_string()),
+            "X--Y--Z\n"
+        );
+    }
+
+    #[test]
+    fn format_even_test(){
+        let v = vec![
+            "AAAA".to_string(),
+            "BBBBBBBB".to_string(),
+            "CCCC".to_string()
+        ];
+        assert_eq!(&format_even(&v, 6, "\n"), "AAAA  BBBBB`CCCC  \n");
+    }
+
+    #[test]
+    fn format_to_grid_auto_test(){
+        let v = vec![
+            "X", "XX", "XXX", "XXXX", "XXXXXX", "XXXXX",
+            "Y", "YY", "YYY", "YYYY", "YYYYYY", "YYYYY",
+            "Z", "ZZ", "ZZZ", "ZZZZ", "ZZZZZZ", "ZZZZZ"
+        ].iter().map(|x| x.to_string()).collect::<Vec<_>>();
+        let res = format_to_grid_auto(&v, 20, 2);
+        assert_eq!(
+            &res,
+            "X       XX      XXX     \nXXXX    XXXXXX  XXXXX   \nY       YY      YYY     \nYYYY    YYYYYY  YYYYY   \nZ       ZZ      ZZZ     \nZZZZ    ZZZZZZ  ZZZZZ   \n"
+        );
+    }
+}
