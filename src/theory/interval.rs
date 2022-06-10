@@ -1,4 +1,7 @@
-use super::traits::{ GeneratablePartialOrder, OctaveShiftable, AddInterval, ToInterval, ToNamedInterval };
+use super::traits::{
+    GeneratablePartialOrder, OctaveShiftable, AddInterval, ToInterval, ToNamedInterval,
+    Cyclic, ToNamedOctaveInterval
+};
 use super::note::{ _Note, Octave, OctaveShift };
 
 use std::cmp::Ordering;
@@ -74,6 +77,22 @@ pub enum NamedInterval{
     Aug13 = 22,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub enum NamedOctaveInterval{
+    Root = 0,
+    Min2 = 1,
+    Maj2 = 2,
+    Min3 = 3,
+    Maj3 = 4,
+    Per4 = 5,
+    Trit = 6,
+    Per5 = 7,
+    Min6 = 8,
+    Maj6 = 9,
+    Min7 = 10,
+    Maj7 = 11,
+}
+
 impl Interval{
     pub const MAX: Self = Self(1 << 30);
     pub const MIN: Self = Self(-1 << 30);
@@ -135,6 +154,19 @@ impl NamedInterval{
     ];
 }
 
+impl NamedOctaveInterval{
+    pub const ALL: [Self; 12] = [
+        Self::Root, Self::Min2, Self::Maj2,
+        Self::Min3, Self::Maj3, Self::Per4,
+        Self::Trit, Self::Per5, Self::Min6,
+        Self::Maj6, Self::Min7, Self::Maj7
+    ];
+}
+
+fn _interval_mod(i: i32) -> i32{
+    ((i % 12) + 12) % 12
+}
+
 impl std::ops::Neg for Interval{
     type Output = Self;
 
@@ -172,6 +204,25 @@ impl std::fmt::Display for Interval{
     }
 }
 
+impl std::fmt::Display for NamedInterval{
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result{
+        let names = [
+            "R", "♭2", "♮2", "♭3", "♮3", "♮4", "♭5", "♮5", "♭6", "♮6", "♭7", "♮7", "♮8",
+            "♭9", "♮9", "♯9", "♭11", "♮11", "♯11", "", "♭13", "♮13", "♯13",
+        ];
+        write!(f, "{}", names[*self as usize])
+    }
+}
+
+impl std::fmt::Display for NamedOctaveInterval{
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result{
+        let names = [
+            "R", "♭2", "♮2", "♭3", "♮3", "♮4", "♭5", "♮5", "♭6", "♮6", "♭7", "♮7",
+        ];
+        write!(f, "{}", names[*self as usize])
+    }
+}
+
 impl GeneratablePartialOrder for Interval{
     fn next(self) -> Option<Interval>{
         if self.0 >= Self::MAX.0 { return None; }
@@ -181,6 +232,34 @@ impl GeneratablePartialOrder for Interval{
     fn prev(self) -> Option<Interval>{
         if self.0 <= Self::MIN.0 { return None; }
         Some(Self(self.0 - 1))
+    }
+}
+
+fn _named_octave_interval_from_int(i: i32) -> NamedOctaveInterval{
+    match i{
+        0 => NamedOctaveInterval::Root,
+        1 => NamedOctaveInterval::Min2,
+        2 => NamedOctaveInterval::Maj2,
+        3 => NamedOctaveInterval::Min3,
+        4 => NamedOctaveInterval::Maj3,
+        5 => NamedOctaveInterval::Per4,
+        6 => NamedOctaveInterval::Trit,
+        7 => NamedOctaveInterval::Per5,
+        8 => NamedOctaveInterval::Min6,
+        9 => NamedOctaveInterval::Maj6,
+        10 => NamedOctaveInterval::Min7,
+        11 => NamedOctaveInterval::Maj7,
+        _ => panic!("theory::interval::_named_octave_interval_from_int(i32): should be impossible!"),
+    }
+}
+
+impl Cyclic for NamedOctaveInterval{
+    fn next(self) -> Self{
+        _named_octave_interval_from_int(_interval_mod(self as i32 + 1))
+    }
+
+    fn prev(self) -> Self{
+        _named_octave_interval_from_int(_interval_mod(self as i32 - 1))
     }
 }
 
@@ -209,6 +288,12 @@ impl AddInterval for Interval{
 }
 
 impl ToInterval for NamedInterval{
+    fn to_interval(self) -> Interval{
+        Interval(self as i32)
+    }
+}
+
+impl ToInterval for NamedOctaveInterval{
     fn to_interval(self) -> Interval{
         Interval(self as i32)
     }
@@ -247,28 +332,55 @@ impl ToNamedInterval for Interval{
         let int = Self(self.0 % 24).to_named_interval_try();
         match int{
             Some(i) => i,
-            None => Self(((self.0 % 12) + 12) % 12).to_named_interval_try().unwrap()
+            None => Self(_interval_mod(self.0)).to_named_interval_try().unwrap()
         }
     }
 }
 
-// #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-// pub enum NamedOctaveInterval{
-//     Root = 0,
-//     Min2 = 1,
-//     Maj2 = 2,
-//     Min3 = 3,
-//     Maj3 = 4,
-//     Per4 = 5,
-//     Trit = 6,
-//     Per5 = 7,
-//     Min6 = 8,
-//     Maj6 = 9,
-//     Min7 = 10,
-//     Maj7 = 11,
-// }
+impl<T> ToNamedInterval for T where T: ToInterval{
+    fn to_named_interval_try(self) -> Option<NamedInterval>{
+        self.to_interval().to_named_interval_try()
+    }
 
-//
+    fn to_named_interval_mod(self) -> NamedInterval{
+        self.to_interval().to_named_interval_mod()
+    }
+}
+
+impl ToNamedOctaveInterval for Interval{
+    fn to_named_octave_interval_try(self) -> Option<NamedOctaveInterval>{
+        match self.0{
+            0 => Some(NamedOctaveInterval::Root),
+            1 => Some(NamedOctaveInterval::Min2),
+            2 => Some(NamedOctaveInterval::Maj2),
+            3 => Some(NamedOctaveInterval::Min3),
+            4 => Some(NamedOctaveInterval::Maj3),
+            5 => Some(NamedOctaveInterval::Per4),
+            6 => Some(NamedOctaveInterval::Trit),
+            7 => Some(NamedOctaveInterval::Per5),
+            8 => Some(NamedOctaveInterval::Min6),
+            9 => Some(NamedOctaveInterval::Maj6),
+            10 => Some(NamedOctaveInterval::Min7),
+            11 => Some(NamedOctaveInterval::Maj7),
+            _ => None,
+        }
+    }
+
+    fn to_named_octave_interval_mod(self) -> NamedOctaveInterval{
+        Self(_interval_mod(self.0 % 12)).to_named_octave_interval_try().unwrap()
+    }
+}
+
+impl<T> ToNamedOctaveInterval for T where T: ToInterval{
+    fn to_named_octave_interval_try(self) -> Option<NamedOctaveInterval>{
+        self.to_interval().to_named_octave_interval_try()
+    }
+
+    fn to_named_octave_interval_mod(self) -> NamedOctaveInterval{
+        self.to_interval().to_named_octave_interval_mod()
+    }
+}
+
 // impl ToNamedInterval for NamedOctaveInterval{
 //     fn to_interval_try(self) -> Option<NamedInterval>{
 //         (self as Note).to_interval_try()
@@ -292,20 +404,6 @@ impl ToNamedInterval for Interval{
 // pub trait ToNamedOctaveInterval{
 //     fn to_octave_interval_try(self) -> Option<NamedOctaveInterval>;
 //     fn to_octave_interval_mod(self) -> NamedOctaveInterval;
-// }
-//
-// pub trait ToIntervalChordExtension{
-//     fn to_interval_chord_extension(self) -> String;
-// }
-//
-// impl ToIntervalChordExtension for NamedInterval{
-//     fn to_interval_chord_extension(self) -> String{
-//         let names = [
-//             "R", "♭2", "♮2", "♭3", "♮3", "♮4", "♭5", "♮5", "♭6", "♮6", "♭7", "♮7", "♮8",
-//             "♭9", "♮9", "♯9", "♭11", "♮11", "♯11", "", "♭13", "♮13", "♯13",
-//         ];
-//         names[self as usize].to_string()
-//     }
 // }
 //
 // impl ToIntervalChordExtension for Option<NamedInterval>{
@@ -339,6 +437,35 @@ impl ToNamedInterval for Interval{
 mod tests{
     use super::*;
     use crate::theory::*;
+
+    #[test]
+    fn interval_mod(){
+        assert_eq!(_interval_mod(-1), 11);
+        assert_eq!(_interval_mod(12), 0);
+        assert_eq!(_interval_mod(13), 1);
+        for i in 0..12{
+            assert_eq!(i, _interval_mod(i));
+        }
+    }
+
+    #[test]
+    fn named_octave_interval_from_int(){
+        for i in 0..12{
+            assert_eq!(i, _named_octave_interval_from_int(i) as i32);
+        }
+    }
+
+    #[test]
+    #[should_panic]
+    fn named_octave_interval_from_int_panic_0(){
+        let _ = _named_octave_interval_from_int(-1);
+    }
+
+    #[test]
+    #[should_panic]
+    fn named_octave_interval_from_int_panic_1(){
+        let _ = _named_octave_interval_from_int(12);
+    }
 
     #[test]
     fn new(){
@@ -376,7 +503,7 @@ mod tests{
     }
 
     #[test]
-    fn to_string(){
+    fn interval_to_string(){
         assert_eq!(&Interval(0).to_string(), "♮");
         assert_eq!(&Interval(1).to_string(), "♯");
         assert_eq!(&Interval(10).to_string(), "♯♯♯♯♯♯♯♯♯♯");
@@ -385,11 +512,42 @@ mod tests{
     }
 
     #[test]
-    fn generatable_partial_order(){
+    fn named_interval_to_string(){
+        let names = [
+            "R", "♭2", "♮2", "♭3", "♮3", "♮4", "♭5", "♮5", "♭6", "♮6", "♭7", "♮7", "♮8",
+            "♭9", "♮9", "♯9", "♭11", "♮11", "♯11", "♭13", "♮13", "♯13",
+        ];
+        for (ni, n) in NamedInterval::ALL.iter().zip(names.iter()){
+            assert_eq!(&ni.to_string(), n);
+        }
+    }
+
+    #[test]
+    fn named_octave_interval_to_string(){
+        let names = ["R", "♭2", "♮2", "♭3", "♮3", "♮4", "♭5", "♮5", "♭6", "♮6", "♭7", "♮7"];
+        for (ni, n) in NamedOctaveInterval::ALL.iter().zip(names.iter()){
+            assert_eq!(&ni.to_string(), n);
+        }
+    }
+
+    #[test]
+    fn interval_generatable_partial_order(){
         assert_eq!(Interval(0).next(), Some(Interval(1)));
         assert_eq!(Interval(0).prev(), Some(Interval(-1)));
         assert_eq!(Interval::MAX.next(), None);
         assert_eq!(Interval::MIN.prev(), None);
+    }
+
+    #[test]
+    fn named_octave_interval_cyclic(){
+        assert_eq!(NamedOctaveInterval::Root.prev(), NamedOctaveInterval::Maj7);
+        assert_eq!(NamedOctaveInterval::Maj7.next(), NamedOctaveInterval::Root);
+        for i in 0..11{
+            assert_eq!(NamedOctaveInterval::ALL[i].next(), NamedOctaveInterval::ALL[i + 1]);
+        }
+        for i in 1..12{
+            assert_eq!(NamedOctaveInterval::ALL[i].prev(), NamedOctaveInterval::ALL[i - 1]);
+        }
     }
 
     #[test]
@@ -429,6 +587,14 @@ mod tests{
             NamedInterval::ALL.iter().map(|ni| ni.to_interval()).collect::<Vec<_>>(),
             [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 20, 21, 22]
                 .iter().map(|i| Interval(*i)).collect::<Vec<_>>()
+        );
+    }
+
+    #[test]
+    fn named_octave_interval_to_interval(){
+        assert_eq!(
+            NamedOctaveInterval::ALL.iter().map(|ni| ni.to_interval()).collect::<Vec<_>>(),
+            [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].iter().map(|i| Interval(*i)).collect::<Vec<_>>()
         );
     }
 
@@ -483,5 +649,95 @@ mod tests{
         assert_eq!(Interval(-11).to_named_interval_mod(), NamedInterval::Min2);
         assert_eq!(Interval(-12).to_named_interval_mod(), NamedInterval::Root);
         assert_eq!(Interval(-13).to_named_interval_mod(), NamedInterval::Maj7);
+    }
+
+    #[test]
+    fn interval_to_named_octave_interval(){
+        assert_eq!(Interval(0).to_named_octave_interval_try(), Some(NamedOctaveInterval::Root));
+        assert_eq!(Interval(1).to_named_octave_interval_try(), Some(NamedOctaveInterval::Min2));
+        assert_eq!(Interval(2).to_named_octave_interval_try(), Some(NamedOctaveInterval::Maj2));
+        assert_eq!(Interval(3).to_named_octave_interval_try(), Some(NamedOctaveInterval::Min3));
+        assert_eq!(Interval(4).to_named_octave_interval_try(), Some(NamedOctaveInterval::Maj3));
+        assert_eq!(Interval(5).to_named_octave_interval_try(), Some(NamedOctaveInterval::Per4));
+        assert_eq!(Interval(6).to_named_octave_interval_try(), Some(NamedOctaveInterval::Trit));
+        assert_eq!(Interval(7).to_named_octave_interval_try(), Some(NamedOctaveInterval::Per5));
+        assert_eq!(Interval(8).to_named_octave_interval_try(), Some(NamedOctaveInterval::Min6));
+        assert_eq!(Interval(9).to_named_octave_interval_try(), Some(NamedOctaveInterval::Maj6));
+        assert_eq!(Interval(10).to_named_octave_interval_try(), Some(NamedOctaveInterval::Min7));
+        assert_eq!(Interval(11).to_named_octave_interval_try(), Some(NamedOctaveInterval::Maj7));
+        assert_eq!(Interval(12).to_named_octave_interval_try(), None);
+        assert_eq!(Interval(-1).to_named_octave_interval_try(), None);
+        for i in 0..12{
+            assert_eq!(
+                Interval(i).to_named_octave_interval_try().unwrap(),
+                Interval(i).to_named_octave_interval_mod()
+            );
+        }
+        for i in 0..24{
+            let itry = Interval(i).to_named_octave_interval_try();
+            let imod = Interval(i).to_named_octave_interval_mod();
+            assert_eq!(if itry.is_some() { itry.unwrap() == imod } else { true }, true);
+        }
+        assert_eq!(Interval(-1).to_named_octave_interval_mod(), NamedOctaveInterval::Maj7);
+        assert_eq!(Interval(-2).to_named_octave_interval_mod(), NamedOctaveInterval::Min7);
+        assert_eq!(Interval(-3).to_named_octave_interval_mod(), NamedOctaveInterval::Maj6);
+        assert_eq!(Interval(-4).to_named_octave_interval_mod(), NamedOctaveInterval::Min6);
+        assert_eq!(Interval(-5).to_named_octave_interval_mod(), NamedOctaveInterval::Per5);
+        assert_eq!(Interval(-6).to_named_octave_interval_mod(), NamedOctaveInterval::Trit);
+        assert_eq!(Interval(-7).to_named_octave_interval_mod(), NamedOctaveInterval::Per4);
+        assert_eq!(Interval(-8).to_named_octave_interval_mod(), NamedOctaveInterval::Maj3);
+        assert_eq!(Interval(-9).to_named_octave_interval_mod(), NamedOctaveInterval::Min3);
+        assert_eq!(Interval(-10).to_named_octave_interval_mod(), NamedOctaveInterval::Maj2);
+        assert_eq!(Interval(-11).to_named_octave_interval_mod(), NamedOctaveInterval::Min2);
+        assert_eq!(Interval(-12).to_named_octave_interval_mod(), NamedOctaveInterval::Root);
+        assert_eq!(Interval(-13).to_named_octave_interval_mod(), NamedOctaveInterval::Maj7);
+    }
+
+    #[test]
+    fn named_octave_interval_to_named_interval(){
+        assert_eq!(NamedOctaveInterval::Root.to_named_interval_try(), Some(NamedInterval::Root));
+        assert_eq!(NamedOctaveInterval::Min2.to_named_interval_try(), Some(NamedInterval::Min2));
+        assert_eq!(NamedOctaveInterval::Maj2.to_named_interval_try(), Some(NamedInterval::Maj2));
+        assert_eq!(NamedOctaveInterval::Min3.to_named_interval_try(), Some(NamedInterval::Min3));
+        assert_eq!(NamedOctaveInterval::Maj3.to_named_interval_try(), Some(NamedInterval::Maj3));
+        assert_eq!(NamedOctaveInterval::Per4.to_named_interval_try(), Some(NamedInterval::Per4));
+        assert_eq!(NamedOctaveInterval::Trit.to_named_interval_try(), Some(NamedInterval::Trit));
+        assert_eq!(NamedOctaveInterval::Per5.to_named_interval_try(), Some(NamedInterval::Per5));
+        assert_eq!(NamedOctaveInterval::Min6.to_named_interval_try(), Some(NamedInterval::Min6));
+        assert_eq!(NamedOctaveInterval::Maj6.to_named_interval_try(), Some(NamedInterval::Maj6));
+        assert_eq!(NamedOctaveInterval::Min7.to_named_interval_try(), Some(NamedInterval::Min7));
+        assert_eq!(NamedOctaveInterval::Maj7.to_named_interval_try(), Some(NamedInterval::Maj7));
+        for noi in NamedOctaveInterval::ALL{
+            let itry = noi.to_named_interval_try();
+            let imod = noi.to_named_interval_mod();
+            assert_eq!(itry, Some(imod));
+        }
+    }
+
+    #[test]
+    fn named_interval_to_named_octave_interval(){
+        assert_eq!(NamedInterval::Root.to_named_octave_interval_try(), Some(NamedOctaveInterval::Root));
+        assert_eq!(NamedInterval::Min2.to_named_octave_interval_try(), Some(NamedOctaveInterval::Min2));
+        assert_eq!(NamedInterval::Maj2.to_named_octave_interval_try(), Some(NamedOctaveInterval::Maj2));
+        assert_eq!(NamedInterval::Min3.to_named_octave_interval_try(), Some(NamedOctaveInterval::Min3));
+        assert_eq!(NamedInterval::Maj3.to_named_octave_interval_try(), Some(NamedOctaveInterval::Maj3));
+        assert_eq!(NamedInterval::Per4.to_named_octave_interval_try(), Some(NamedOctaveInterval::Per4));
+        assert_eq!(NamedInterval::Trit.to_named_octave_interval_try(), Some(NamedOctaveInterval::Trit));
+        assert_eq!(NamedInterval::Per5.to_named_octave_interval_try(), Some(NamedOctaveInterval::Per5));
+        assert_eq!(NamedInterval::Min6.to_named_octave_interval_try(), Some(NamedOctaveInterval::Min6));
+        assert_eq!(NamedInterval::Maj6.to_named_octave_interval_try(), Some(NamedOctaveInterval::Maj6));
+        assert_eq!(NamedInterval::Min7.to_named_octave_interval_try(), Some(NamedOctaveInterval::Min7));
+        assert_eq!(NamedInterval::Maj7.to_named_octave_interval_try(), Some(NamedOctaveInterval::Maj7));
+        let v = [
+            NamedInterval::Root, NamedInterval::Min2, NamedInterval::Maj2,
+            NamedInterval::Min3, NamedInterval::Maj3, NamedInterval::Per4,
+            NamedInterval::Trit, NamedInterval::Per5, NamedInterval::Min6,
+            NamedInterval::Maj6, NamedInterval::Min7, NamedInterval::Maj7
+        ];
+        for ni in v{
+            let itry = ni.to_named_octave_interval_try();
+            let imod = ni.to_named_octave_interval_mod();
+            assert_eq!(itry, Some(imod));
+        }
     }
 }

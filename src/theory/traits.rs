@@ -1,4 +1,4 @@
-use super::{ Note, PC, Octave, OctaveShift, Interval, NamedInterval };
+use super::{ Note, PC, Octave, OctaveShift, Interval, NamedInterval, NamedOctaveInterval };
 
 use std::marker::Sized;
 
@@ -42,4 +42,9 @@ pub trait ToInterval{
 pub trait ToNamedInterval{
     fn to_named_interval_try(self) -> Option<NamedInterval>;
     fn to_named_interval_mod(self) -> NamedInterval;
+}
+
+pub trait ToNamedOctaveInterval{
+    fn to_named_octave_interval_try(self) -> Option<NamedOctaveInterval>;
+    fn to_named_octave_interval_mod(self) -> NamedOctaveInterval;
 }
