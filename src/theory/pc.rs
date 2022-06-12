@@ -14,17 +14,19 @@ pub const FS: PC = PC::Fs;
 pub const G:  PC = PC::G;
 pub const GS: PC = PC::Gs;
 
-pub const PCS: [PC; 12] = [
-    PC::A, PC::As, PC::B, PC::C, PC::Cs, PC::D,
-    PC::Ds, PC::E, PC::F, PC::Fs, PC::G, PC::Gs
-];
-
 // PitchClass
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(u32)]
 pub enum PC{
     A = 0, As = 1, B = 2, C = 3, Cs = 4, D = 5,
     Ds = 6, E = 7, F = 8, Fs = 9, G = 10, Gs = 11
+}
+
+impl PC{
+    pub const ALL: [PC; 12] = [
+        PC::A, PC::As, PC::B, PC::C, PC::Cs, PC::D,
+        PC::Ds, PC::E, PC::F, PC::Fs, PC::G, PC::Gs
+    ];
 }
 
 // pub type PCs = Vec<PC>;
@@ -61,16 +63,9 @@ impl Cyclic for PC{
 
 // Conversion Traits
 
-impl ToPC for Note{
-    fn to_pc(self) -> PC{
-        let index = self.0 as usize % 12;
-        PCS[index]
-    }
-}
-
-impl<T: ToNote> ToPC for T{
-    fn to_pc(self) -> PC{
-        self.to_note().to_pc()
+impl ToNote for PC{
+    fn to_note(self) -> Note{
+        Note::new(self as _Note)
     }
 }
 
@@ -124,14 +119,10 @@ mod tests{
     use crate::theory::note::A4;
 
     #[test]
-    fn note_to_pc(){
-        assert_eq!(A4.to_pc(), PC::A);
-        assert_eq!(Note::new(12).to_pc(), PC::A);
-    }
-
-    #[test]
-    fn to_note_to_pc(){
-        assert_eq!(13.to_pc(), PC::As);
+    fn to_note(){
+        for (i, pc) in PC::ALL.iter().enumerate(){
+            assert_eq!(pc.to_note().inside() as usize, i);
+        }
     }
 
     #[test]

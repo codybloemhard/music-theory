@@ -1,4 +1,4 @@
-use super::{ Note, PC, Octave, OctaveShift, Interval, NamedInterval, NamedOctaveInterval };
+use super::{ Note, PC, Octave, OctaveShift, Interval, NamedInterval, NamedOctaveInterval, Letter };
 
 use std::marker::Sized;
 

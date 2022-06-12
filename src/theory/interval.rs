@@ -287,6 +287,8 @@ impl AddInterval for Interval{
     }
 }
 
+// Conversion Traits
+
 impl ToInterval for NamedInterval{
     fn to_interval(self) -> Interval{
         Interval(self as i32)
