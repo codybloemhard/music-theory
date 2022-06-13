@@ -1,4 +1,4 @@
-use super::traits::{ Cyclic, ToPC, ToNote };
+use super::traits::{ Cyclic, ToPC, ToNote, ToLetterTry };
 use super::{ Note, PC };
 // pub trait ToEnharmonicNote{
 //     fn to_enharmonic_note(&self) -> Option<EnharmonicNote>;
@@ -97,6 +97,21 @@ impl ToNote for Letter{
     }
 }
 
+impl ToLetterTry for String{
+    fn to_letter_try(&self) -> Option<Letter>{
+        match self.chars().next().map(|c| c.to_lowercase().next()){
+            Some(Some('a')) => Some(Letter::A),
+            Some(Some('b')) => Some(Letter::B),
+            Some(Some('c')) => Some(Letter::C),
+            Some(Some('d')) => Some(Letter::D),
+            Some(Some('e')) => Some(Letter::E),
+            Some(Some('f')) => Some(Letter::F),
+            Some(Some('g')) => Some(Letter::G),
+            _ => None
+        }
+    }
+}
+
 // #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 // pub struct EnharmonicNote{
 //     pub letter: Letter,
@@ -183,40 +198,6 @@ impl ToNote for Letter{
 // impl ToPC for EnharmonicNote{
 //     fn to_pc(&self) -> PC{
 //         self.to_note().to_pc()
-//     }
-// }
-//
-// pub trait ToLetterTry{
-//     fn to_letter_try(&self) -> Option<Letter>;
-// }
-//
-// impl ToLetterTry for String{
-//     fn to_letter_try(&self) -> Option<Letter>{
-//         match self.chars().next().map(|c| c.to_lowercase().next()){
-//             Some(Some('a')) => Some(Letter::A),
-//             Some(Some('b')) => Some(Letter::B),
-//             Some(Some('c')) => Some(Letter::C),
-//             Some(Some('d')) => Some(Letter::D),
-//             Some(Some('e')) => Some(Letter::E),
-//             Some(Some('f')) => Some(Letter::F),
-//             Some(Some('g')) => Some(Letter::G),
-//             _ => None
-//         }
-//     }
-// }
-//
-// impl ToLetterTry for usize{
-//     fn to_letter_try(&self) -> Option<Letter>{
-//         match self{
-//             0 => Some(Letter::A),
-//             1 => Some(Letter::B),
-//             2 => Some(Letter::C),
-//             3 => Some(Letter::D),
-//             4 => Some(Letter::E),
-//             5 => Some(Letter::F),
-//             6 => Some(Letter::G),
-//             _ => None,
-//         }
 //     }
 // }
 //
@@ -375,5 +356,21 @@ mod tests{
         for (l, n) in Letter::ALL.iter().zip([0, 2, 3, 5, 7, 8, 10].iter()){
             assert_eq!(l.to_note().0, *n);
         }
+    }
+
+    #[test]
+    fn string_to_letter_try(){
+        assert_eq!("A".to_string().to_letter_try(), Some(Letter::A));
+        assert_eq!("B".to_string().to_letter_try(), Some(Letter::B));
+        assert_eq!("C".to_string().to_letter_try(), Some(Letter::C));
+        assert_eq!("D".to_string().to_letter_try(), Some(Letter::D));
+        assert_eq!("E".to_string().to_letter_try(), Some(Letter::E));
+        assert_eq!("F".to_string().to_letter_try(), Some(Letter::F));
+        assert_eq!("G".to_string().to_letter_try(), Some(Letter::G));
+        assert_eq!("H".to_string().to_letter_try(), None);
+        assert_eq!("a".to_string().to_letter_try(), Some(Letter::A));
+        assert_eq!("a8904tdiae902(@#)*@#".to_string().to_letter_try(), Some(Letter::A));
+        assert_eq!("abcdefg".to_string().to_letter_try(), Some(Letter::A));
+        assert_eq!("".to_string().to_letter_try(), None);
     }
 }

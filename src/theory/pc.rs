@@ -1,5 +1,5 @@
-use super::traits::{ Cyclic, ToNote, ToPC };
-use super::note::{ Note, _Note };
+use super::traits::{ Cyclic, ToNote, ToPC, ToLetterTry };
+use super::{ Note, _Note, Letter };
 
 pub const A:  PC = PC::A;
 pub const AS: PC = PC::As;
@@ -66,6 +66,25 @@ impl Cyclic for PC{
 impl ToNote for PC{
     fn to_note(self) -> Note{
         Note::new(self as _Note)
+    }
+}
+
+impl ToLetterTry for PC{
+    fn to_letter_try(&self) -> Option<Letter>{
+        Some(match self{
+            Self::A  => Letter::A,
+            Self::As => Letter::A,
+            Self::B  => Letter::B,
+            Self::C  => Letter::C,
+            Self::Cs => Letter::C,
+            Self::D  => Letter::D,
+            Self::Ds => Letter::D,
+            Self::E  => Letter::E,
+            Self::F  => Letter::F,
+            Self::Fs => Letter::F,
+            Self::G  => Letter::G,
+            Self::Gs => Letter::G,
+        })
     }
 }
 
@@ -168,5 +187,12 @@ mod tests{
         assert_eq!(&PC::Fs.to_string(), "F♯");
         assert_eq!(&PC::G.to_string(),  "G");
         assert_eq!(&PC::Gs.to_string(), "G♯");
+    }
+
+    #[test]
+    fn to_letter_try(){
+        for pc in PC::ALL{
+            assert_eq!(pc.to_letter_try().is_some(), true);
+        }
     }
 }

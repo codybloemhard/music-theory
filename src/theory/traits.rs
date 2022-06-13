@@ -48,3 +48,7 @@ pub trait ToNamedOctaveInterval{
     fn to_named_octave_interval_try(self) -> Option<NamedOctaveInterval>;
     fn to_named_octave_interval_mod(self) -> NamedOctaveInterval;
 }
+
+pub trait ToLetterTry{
+    fn to_letter_try(&self) -> Option<Letter>;
+}

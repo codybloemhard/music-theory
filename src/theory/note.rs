@@ -1,6 +1,5 @@
-use super::traits::{ ToNote, ToPC, OctaveShiftable, GeneratablePartialOrder, AddInterval };
-use super::interval::{ Interval, _OCTAVE };
-use super::pc::{ PC };
+use super::traits::{ ToNote, ToPC, OctaveShiftable, GeneratablePartialOrder, AddInterval, ToLetterTry };
+use super::{ Interval, _OCTAVE, PC, Letter };
 
 pub const A4: Note = Note(48);
 
@@ -106,6 +105,12 @@ impl ToPC for Note{
     fn to_pc(self) -> PC{
         let index = self.0 as usize % 12;
         PC::ALL[index]
+    }
+}
+
+impl ToLetterTry for Note{
+    fn to_letter_try(&self) -> Option<Letter>{
+        self.to_pc().to_letter_try()
     }
 }
 
@@ -285,5 +290,21 @@ mod tests{
         }
         assert_eq!(Note::MAX.add_interval(Interval::SEMI), None);
         assert_eq!(Note::MIN.add_interval(-Interval::SEMI), None);
+    }
+
+    #[test]
+    fn to_letter_try(){
+        assert_eq!(Note(0).to_letter_try(), Some(Letter::A));
+        assert_eq!(Note(1).to_letter_try(), Some(Letter::A));
+        assert_eq!(Note(2).to_letter_try(), Some(Letter::B));
+        assert_eq!(Note(3).to_letter_try(), Some(Letter::C));
+        assert_eq!(Note(4).to_letter_try(), Some(Letter::C));
+        assert_eq!(Note(5).to_letter_try(), Some(Letter::D));
+        assert_eq!(Note(6).to_letter_try(), Some(Letter::D));
+        assert_eq!(Note(7).to_letter_try(), Some(Letter::E));
+        assert_eq!(Note(8).to_letter_try(), Some(Letter::F));
+        assert_eq!(Note(9).to_letter_try(), Some(Letter::F));
+        assert_eq!(Note(10).to_letter_try(), Some(Letter::G));
+        assert_eq!(Note(11).to_letter_try(), Some(Letter::G));
     }
 }
