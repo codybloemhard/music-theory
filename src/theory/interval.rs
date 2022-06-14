@@ -163,7 +163,7 @@ impl NamedOctaveInterval{
     ];
 }
 
-fn _interval_mod(i: i32) -> i32{
+pub(crate) fn _interval_mod(i: i32) -> i32{
     ((i % 12) + 12) % 12
 }
 

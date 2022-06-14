@@ -1,5 +1,6 @@
 use super::traits::{ Cyclic, ToPC, ToNote, ToLetterTry };
-use super::{ Note, PC };
+use super::{ Note, PC, Interval, AddInterval };
+
 // pub trait ToEnharmonicNote{
 //     fn to_enharmonic_note(&self) -> Option<EnharmonicNote>;
 // }
@@ -29,12 +30,43 @@ pub enum Letter{
     A = 0, B = 1, C = 2, D = 3, E = 4, F = 5, G = 6
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct EnharmonicNote{
+    pub letter: Letter,
+    pub accidental: Interval,
+}
+
 impl Letter{
     pub const ALL: [Letter; 7] = [
         Letter::A, Letter::B, Letter::C, Letter::D,
         Letter::E, Letter::F, Letter::G
     ];
 }
+
+// impl EnharmonicNote{
+//     pub fn spelled_as(&self, letter: Letter) -> Self{
+//         if self.letter == letter { return *self; }
+//         let up = {
+//             let mut en = *self;
+//             loop {
+//                 if en.letter == letter { break en; }
+//                 en = en.next();
+//             }
+//         };
+//         let down = {
+//             let mut en = *self;
+//             loop {
+//                 if en.letter == letter { break en; }
+//                 en = en.prev();
+//             }
+//         };
+//         if up.accidental.abs() > down.accidental.abs() {
+//             down
+//         } else {
+//             up
+//         }
+//     }
+// }
 
 impl std::fmt::Display for Letter{
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result{
@@ -48,6 +80,12 @@ impl std::fmt::Display for Letter{
             Self::G => "G",
         };
         write!(f, "{}", string)
+    }
+}
+
+impl std::fmt::Display for EnharmonicNote{
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result{
+        write!(f, "{}{}", self.letter, self.accidental)
     }
 }
 
@@ -77,6 +115,50 @@ impl Cyclic for Letter{
     }
 }
 
+impl Cyclic for EnharmonicNote{
+    fn next(self) -> Self{
+        let i1 = Interval(1);
+        let i2 = Interval(2);
+        match self.letter{
+            Letter::A => Self{ letter: Letter::B, accidental: self.accidental - i2 }, // A = Bbb
+            Letter::B => Self{ letter: Letter::C, accidental: self.accidental - i1 }, // B = Cb
+            Letter::C => Self{ letter: Letter::D, accidental: self.accidental - i2 }, // C = Dbb
+            Letter::D => Self{ letter: Letter::E, accidental: self.accidental - i2 }, // D = Ebb
+            Letter::E => Self{ letter: Letter::F, accidental: self.accidental - i1 }, // E = Fb
+            Letter::F => Self{ letter: Letter::G, accidental: self.accidental - i2 }, // F = Gbb
+            Letter::G => Self{ letter: Letter::A, accidental: self.accidental - i2 }, // G = Abb
+        }
+    }
+
+    fn prev(self) -> Self{
+        let i1 = Interval(1);
+        let i2 = Interval(2);
+        match self.letter{
+            Letter::A => Self{ letter: Letter::G, accidental: self.accidental + i2 }, // A = G##
+            Letter::B => Self{ letter: Letter::A, accidental: self.accidental + i2 }, // B = A##
+            Letter::C => Self{ letter: Letter::B, accidental: self.accidental + i1 }, // C = B#
+            Letter::D => Self{ letter: Letter::C, accidental: self.accidental + i2 }, // D = C##
+            Letter::E => Self{ letter: Letter::D, accidental: self.accidental + i2 }, // E = D##
+            Letter::F => Self{ letter: Letter::E, accidental: self.accidental + i1 }, // F = E#
+            Letter::G => Self{ letter: Letter::F, accidental: self.accidental + i2 }, // G = F##
+        }
+    }
+}
+
+// Conversion Traits
+
+impl ToNote for Letter{
+    fn to_note(self) -> Note{
+        self.to_pc().to_note()
+    }
+}
+
+impl ToNote for EnharmonicNote{
+    fn to_note(self) -> Note{
+        self.to_pc().to_note()
+    }
+}
+
 impl ToPC for Letter{
     fn to_pc(self) -> PC{
         match self{
@@ -91,9 +173,9 @@ impl ToPC for Letter{
     }
 }
 
-impl ToNote for Letter{
-    fn to_note(self) -> Note{
-        self.to_pc().to_note()
+impl ToPC for EnharmonicNote{
+    fn to_pc(self) -> PC{
+        (super::_interval_mod(self.letter.to_note().0 as i32 + (self.accidental.0 % 12)) as u32).to_pc()
     }
 }
 
@@ -112,95 +194,6 @@ impl ToLetterTry for String{
     }
 }
 
-// #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-// pub struct EnharmonicNote{
-//     pub letter: Letter,
-//     pub accidental: Note,
-// }
-//
-// impl std::fmt::Display for EnharmonicNote{
-//     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result{
-//         write!(f, "{}", self.to_string_name())
-//     }
-// }
-//
-// impl EnharmonicNote{
-//     pub fn spelled_as(&self, letter: Letter) -> Self{
-//         if self.letter == letter { return *self; }
-//         let up = {
-//             let mut en = *self;
-//             loop {
-//                 if en.letter == letter { break en; }
-//                 en = en.next();
-//             }
-//         };
-//         let down = {
-//             let mut en = *self;
-//             loop {
-//                 if en.letter == letter { break en; }
-//                 en = en.prev();
-//             }
-//         };
-//         if up.accidental.abs() > down.accidental.abs() {
-//             down
-//         } else {
-//             up
-//         }
-//     }
-// }
-//
-// impl Cycle for EnharmonicNote{
-//     fn next(&self) -> Self{
-//         match self.letter{
-//             Letter::A => Self{ letter: Letter::B, accidental: self.accidental - 2 }, // A = Bbb
-//             Letter::B => Self{ letter: Letter::C, accidental: self.accidental - 1 }, // B = Cb
-//             Letter::C => Self{ letter: Letter::D, accidental: self.accidental - 2 }, // C = Dbb
-//             Letter::D => Self{ letter: Letter::E, accidental: self.accidental - 2 }, // D = Ebb
-//             Letter::E => Self{ letter: Letter::F, accidental: self.accidental - 1 }, // E = Fb
-//             Letter::F => Self{ letter: Letter::G, accidental: self.accidental - 2 }, // F = Gbb
-//             Letter::G => Self{ letter: Letter::A, accidental: self.accidental - 2 }, // G = Abb
-//         }
-//     }
-//
-//     fn prev(&self) -> Self{
-//         match self.letter{
-//             Letter::A => Self{ letter: Letter::G, accidental: self.accidental + 2 }, // A = G##
-//             Letter::B => Self{ letter: Letter::A, accidental: self.accidental + 2 }, // B = A##
-//             Letter::C => Self{ letter: Letter::B, accidental: self.accidental + 1 }, // C = B#
-//             Letter::D => Self{ letter: Letter::C, accidental: self.accidental + 2 }, // D = C##
-//             Letter::E => Self{ letter: Letter::D, accidental: self.accidental + 2 }, // E = D##
-//             Letter::F => Self{ letter: Letter::E, accidental: self.accidental + 1 }, // F = E#
-//             Letter::G => Self{ letter: Letter::F, accidental: self.accidental + 2 }, // G = F##
-//         }
-//     }
-// }
-//
-// impl ToStringName for EnharmonicNote{
-//     fn to_string_name(&self) -> String{
-//         let mut res = self.letter.to_string();
-//         res.push_str(&(
-//             if self.accidental < 0 {
-//                 RelativeNote::Flat(self.accidental.unsigned_abs())
-//             } else {
-//                 RelativeNote::Sharp(self.accidental.unsigned_abs())
-//             }.to_string()
-//         ));
-//         res
-//     }
-// }
-//
-// impl ToNote for EnharmonicNote{
-//     fn to_note(&self) -> Note{
-//         (self.letter.to_note() + self.accidental) as Note
-//     }
-// }
-//
-// impl ToPC for EnharmonicNote{
-//     fn to_pc(&self) -> PC{
-//         self.to_note().to_pc()
-//     }
-// }
-//
 // impl ToEnharmonicNote for String{
 //     fn to_enharmonic_note(&self) -> Option<EnharmonicNote>{
 //         let mut lowercase = String::new();
@@ -372,5 +365,67 @@ mod tests{
         assert_eq!("a8904tdiae902(@#)*@#".to_string().to_letter_try(), Some(Letter::A));
         assert_eq!("abcdefg".to_string().to_letter_try(), Some(Letter::A));
         assert_eq!("".to_string().to_letter_try(), None);
+    }
+
+    #[test]
+    fn enharmonic_note_to_string(){
+        assert_eq!(&EnharmonicNote{ letter: Letter::A, accidental: Interval(-2) }.to_string(), "A♭♭");
+        for l in Letter::ALL{
+            for i in -25..25{
+                let res = &EnharmonicNote{ letter: l, accidental: Interval(i) }.to_string();
+                assert_eq!(res.chars().next(), l.to_string().chars().next());
+                assert_eq!(res.chars().count(), i.abs().max(1) as usize + 1);
+            }
+        }
+    }
+
+    #[test]
+    fn enharmonic_note_cyclic(){
+        // must for tarpaulin 100% cover
+        assert_eq!(EnharmonicNote{letter: Letter::A,accidental: Interval(0) }.next().letter, Letter::B);
+        assert_eq!(EnharmonicNote{letter: Letter::B,accidental: Interval(0) }.next().letter, Letter::C);
+        assert_eq!(EnharmonicNote{letter: Letter::C,accidental: Interval(0) }.next().letter, Letter::D);
+        assert_eq!(EnharmonicNote{letter: Letter::D,accidental: Interval(0) }.next().letter, Letter::E);
+        assert_eq!(EnharmonicNote{letter: Letter::E,accidental: Interval(0) }.next().letter, Letter::F);
+        assert_eq!(EnharmonicNote{letter: Letter::F,accidental: Interval(0) }.next().letter, Letter::G);
+        assert_eq!(EnharmonicNote{letter: Letter::G,accidental: Interval(0) }.next().letter, Letter::A);
+        assert_eq!(EnharmonicNote{letter: Letter::A,accidental: Interval(0) }.prev().letter, Letter::G);
+        assert_eq!(EnharmonicNote{letter: Letter::B,accidental: Interval(0) }.prev().letter, Letter::A);
+        assert_eq!(EnharmonicNote{letter: Letter::C,accidental: Interval(0) }.prev().letter, Letter::B);
+        assert_eq!(EnharmonicNote{letter: Letter::D,accidental: Interval(0) }.prev().letter, Letter::C);
+        assert_eq!(EnharmonicNote{letter: Letter::E,accidental: Interval(0) }.prev().letter, Letter::D);
+        assert_eq!(EnharmonicNote{letter: Letter::F,accidental: Interval(0) }.prev().letter, Letter::E);
+        assert_eq!(EnharmonicNote{letter: Letter::G,accidental: Interval(0) }.prev().letter, Letter::F);
+
+        let mut en = EnharmonicNote{
+            letter: Letter::A,
+            accidental: Interval(0),
+        };
+        for _ in 0..100{
+            let new = en.next();
+            assert_eq!(new.letter, en.letter.next());
+            assert_eq!(new.to_note(), en.to_note());
+        }
+        en = EnharmonicNote{
+            letter: Letter::C,
+            accidental: Interval(0),
+        };
+        for _ in 0..100{
+            let new = en.prev();
+            assert_eq!(new.letter, en.letter.prev());
+            assert_eq!(new.to_note(), en.to_note());
+        }
+    }
+
+    #[test]
+    fn enharmonic_note_to_pc(){
+        for l in Letter::ALL{
+            assert_eq!(EnharmonicNote{ letter: l, accidental: Interval(0) }.to_pc(), l.to_pc());
+            assert_eq!(EnharmonicNote{ letter: l, accidental: Interval(12) }.to_pc(), l.to_pc());
+        }
+        assert_eq!(EnharmonicNote{ letter: Letter::A, accidental: Interval(1) }.to_pc(), PC::As);
+        assert_eq!(EnharmonicNote{ letter: Letter::A, accidental: Interval(2) }.to_pc(), PC::B);
+        assert_eq!(EnharmonicNote{ letter: Letter::B, accidental: Interval(1) }.to_pc(), PC::C);
+        assert_eq!(EnharmonicNote{ letter: Letter::D, accidental: Interval(14) }.to_pc(), PC::E);
     }
 }
