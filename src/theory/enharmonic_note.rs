@@ -43,30 +43,30 @@ impl Letter{
     ];
 }
 
-// impl EnharmonicNote{
-//     pub fn spelled_as(&self, letter: Letter) -> Self{
-//         if self.letter == letter { return *self; }
-//         let up = {
-//             let mut en = *self;
-//             loop {
-//                 if en.letter == letter { break en; }
-//                 en = en.next();
-//             }
-//         };
-//         let down = {
-//             let mut en = *self;
-//             loop {
-//                 if en.letter == letter { break en; }
-//                 en = en.prev();
-//             }
-//         };
-//         if up.accidental.abs() > down.accidental.abs() {
-//             down
-//         } else {
-//             up
-//         }
-//     }
-// }
+impl EnharmonicNote{
+    pub fn spelled_as(&self, letter: Letter) -> Self{
+        if self.letter == letter { return *self; }
+        let up = {
+            let mut en = *self;
+            loop {
+                if en.letter == letter { break en; }
+                en = en.next();
+            }
+        };
+        let down = {
+            let mut en = *self;
+            loop {
+                if en.letter == letter { break en; }
+                en = en.prev();
+            }
+        };
+        if up.accidental.abs() > down.accidental.abs() {
+            down
+        } else {
+            up
+        }
+    }
+}
 
 impl std::fmt::Display for Letter{
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result{
@@ -427,5 +427,19 @@ mod tests{
         assert_eq!(EnharmonicNote{ letter: Letter::A, accidental: Interval(2) }.to_pc(), PC::B);
         assert_eq!(EnharmonicNote{ letter: Letter::B, accidental: Interval(1) }.to_pc(), PC::C);
         assert_eq!(EnharmonicNote{ letter: Letter::D, accidental: Interval(14) }.to_pc(), PC::E);
+    }
+
+    #[test]
+    fn spelled_as(){
+        for l0 in Letter::ALL{
+            for l1 in Letter::ALL{
+                for i in -13..13{
+                    let original = EnharmonicNote{ letter: l0, accidental: Interval(i) };
+                    let respelled = original.spelled_as(l1);
+                    assert_eq!(respelled.letter, l1);
+                    assert_eq!(original.to_note(), respelled.to_note());
+                }
+            }
+        }
     }
 }

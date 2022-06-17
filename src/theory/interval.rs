@@ -139,8 +139,12 @@ impl Interval{
     pub const DIM8: Self = Self(11);
     pub const AUG7: Self = Self(12);
 
-    fn new(i: i32) -> Self{
+    pub fn new(i: i32) -> Self{
         Interval(i.min(Self::MAX.0).max(Self::MIN.0))
+    }
+
+    pub fn abs(self) -> Self{
+        Self::new(self.0.abs())
     }
 }
 
@@ -476,6 +480,15 @@ mod tests{
         assert_eq!(Interval::new(-1 << 30), Interval::MIN);
         assert_eq!(Interval::new((1 << 30) + 1), Interval::MAX);
         assert_eq!(Interval::new((-1 << 30) - 1), Interval::MIN);
+    }
+
+    #[test]
+    fn abs(){
+        assert_eq!(Interval(0).abs(), Interval(0));
+        assert_eq!(Interval(1).abs(), Interval(1));
+        assert_eq!(Interval(-1).abs(), Interval(1));
+        assert_eq!(Interval::MAX.abs(), Interval::MAX);
+        assert_eq!(Interval::MIN.abs(), Interval::MAX);
     }
 
     #[test]
