@@ -1,5 +1,8 @@
-use super::traits::{ ToNote, ToPC, OctaveShiftable, GeneratablePartialOrder, AddInterval, ToLetterTry };
-use super::{ Interval, _OCTAVE, PC, Letter };
+use super::traits::{
+    ToNote, ToPC, OctaveShiftable, GeneratablePartialOrder, AddInterval, ToLetterTry,
+    ToEnharmonicNote,
+};
+use super::{ Interval, _OCTAVE, PC, Letter, EnharmonicNote };
 
 pub const A4: Note = Note(48);
 
@@ -111,6 +114,12 @@ impl ToPC for Note{
 impl ToLetterTry for Note{
     fn to_letter_try(&self) -> Option<Letter>{
         self.to_pc().to_letter_try()
+    }
+}
+
+impl ToEnharmonicNote for Note{
+    fn to_enharmonic_note(self) -> EnharmonicNote{
+        self.to_pc().to_enharmonic_note()
     }
 }
 
@@ -306,5 +315,12 @@ mod tests{
         assert_eq!(Note(9).to_letter_try(), Some(Letter::F));
         assert_eq!(Note(10).to_letter_try(), Some(Letter::G));
         assert_eq!(Note(11).to_letter_try(), Some(Letter::G));
+    }
+
+    #[test]
+    fn to_enharmonic_note(){
+        for i in 0..123{
+            assert_eq!(Note(i).to_pc(), Note(i).to_enharmonic_note().to_pc());
+        }
     }
 }

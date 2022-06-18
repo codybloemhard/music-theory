@@ -1,4 +1,7 @@
-use super::{ Note, PC, Octave, OctaveShift, Interval, NamedInterval, NamedOctaveInterval, Letter };
+use super::{
+    Note, PC, Octave, OctaveShift, Interval, NamedInterval, NamedOctaveInterval, Letter,
+    EnharmonicNote
+};
 
 use std::marker::Sized;
 
@@ -26,6 +29,7 @@ pub trait AddInterval where Self: Sized{
 }
 
 // Conversion Traits
+// Note, PC, Interval, NamedInterval, NamedOctaveInterval, Letter, EnharmonicNote
 
 pub trait ToNote{
     fn to_note(self) -> Note;
@@ -52,3 +56,8 @@ pub trait ToNamedOctaveInterval{
 pub trait ToLetterTry{
     fn to_letter_try(&self) -> Option<Letter>;
 }
+
+pub trait ToEnharmonicNote{
+    fn to_enharmonic_note(self) -> EnharmonicNote;
+}
+

@@ -1,20 +1,6 @@
-use super::traits::{ Cyclic, ToPC, ToNote, ToLetterTry };
+use super::traits::{ Cyclic, ToPC, ToNote, ToLetterTry, ToEnharmonicNote };
 use super::{ Note, PC, Interval, AddInterval };
 
-// pub trait ToEnharmonicNote{
-//     fn to_enharmonic_note(&self) -> Option<EnharmonicNote>;
-// }
-//
-// pub trait IntoEnharmonicNote{
-//     fn into_enharmonic_note(self) -> Option<EnharmonicNote>;
-// }
-//
-// impl<T: ToEnharmonicNote> IntoEnharmonicNote for T{
-//     fn into_enharmonic_note(self) -> Option<EnharmonicNote>{
-//         self.to_enharmonic_note()
-//     }
-// }
-//
 // pub trait IntoEnharmonicNotes{
 //     fn into_enharmonic_notes(self) -> Vec<EnharmonicNote>;
 // }
@@ -191,6 +177,12 @@ impl ToLetterTry for String{
             Some(Some('g')) => Some(Letter::G),
             _ => None
         }
+    }
+}
+
+impl ToEnharmonicNote for Letter{
+    fn to_enharmonic_note(self) -> EnharmonicNote{
+        EnharmonicNote{ letter: self, accidental: Interval::ROOT }
     }
 }
 
@@ -440,6 +432,13 @@ mod tests{
                     assert_eq!(original.to_note(), respelled.to_note());
                 }
             }
+        }
+    }
+
+    #[test]
+    fn letter_to_enharmonic_note(){
+        for l in Letter::ALL{
+            assert_eq!(l, l.to_enharmonic_note().letter);
         }
     }
 }

@@ -1,5 +1,5 @@
-use super::traits::{ Cyclic, ToNote, ToPC, ToLetterTry };
-use super::{ Note, _Note, Letter };
+use super::traits::{ Cyclic, ToNote, ToPC, ToLetterTry, ToEnharmonicNote };
+use super::{ Note, _Note, Letter, Interval, EnharmonicNote };
 
 pub const A:  PC = PC::A;
 pub const AS: PC = PC::As;
@@ -85,6 +85,25 @@ impl ToLetterTry for PC{
             Self::G  => Letter::G,
             Self::Gs => Letter::G,
         })
+    }
+}
+
+impl ToEnharmonicNote for PC{
+    fn to_enharmonic_note(self) -> EnharmonicNote{
+        match self{
+            PC::A  => EnharmonicNote{ letter: Letter::A, accidental: Interval(0) },
+            PC::As => EnharmonicNote{ letter: Letter::A, accidental: Interval(1) },
+            PC::B  => EnharmonicNote{ letter: Letter::B, accidental: Interval(0) },
+            PC::C  => EnharmonicNote{ letter: Letter::C, accidental: Interval(0) },
+            PC::Cs => EnharmonicNote{ letter: Letter::C, accidental: Interval(1) },
+            PC::D  => EnharmonicNote{ letter: Letter::D, accidental: Interval(0) },
+            PC::Ds => EnharmonicNote{ letter: Letter::D, accidental: Interval(1) },
+            PC::E  => EnharmonicNote{ letter: Letter::E, accidental: Interval(0) },
+            PC::F  => EnharmonicNote{ letter: Letter::F, accidental: Interval(0) },
+            PC::Fs => EnharmonicNote{ letter: Letter::F, accidental: Interval(1) },
+            PC::G  => EnharmonicNote{ letter: Letter::G, accidental: Interval(0) },
+            PC::Gs => EnharmonicNote{ letter: Letter::G, accidental: Interval(1) },
+        }
     }
 }
 
@@ -193,6 +212,14 @@ mod tests{
     fn to_letter_try(){
         for pc in PC::ALL{
             assert_eq!(pc.to_letter_try().is_some(), true);
+        }
+    }
+
+    #[test]
+    fn to_enharmonic_note(){
+        for pc in PC::ALL{
+            assert_eq!(pc.to_note(), pc.to_enharmonic_note().to_note());
+            assert_eq!(pc, pc.to_enharmonic_note().to_pc());
         }
     }
 }
