@@ -61,3 +61,6 @@ pub trait ToEnharmonicNote{
     fn to_enharmonic_note(self) -> EnharmonicNote;
 }
 
+pub trait ToEnharmonicNoteTry{
+    fn to_enharmonic_note_try(&self) -> Option<EnharmonicNote>;
+}

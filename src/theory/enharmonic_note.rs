@@ -1,4 +1,4 @@
-use super::traits::{ Cyclic, ToPC, ToNote, ToLetterTry, ToEnharmonicNote };
+use super::traits::{ Cyclic, ToPC, ToNote, ToLetterTry, ToEnharmonicNote, ToEnharmonicNoteTry };
 use super::{ Note, PC, Interval, AddInterval };
 
 // pub trait IntoEnharmonicNotes{
@@ -186,56 +186,40 @@ impl ToEnharmonicNote for Letter{
     }
 }
 
-// impl ToEnharmonicNote for String{
-//     fn to_enharmonic_note(&self) -> Option<EnharmonicNote>{
-//         let mut lowercase = String::new();
-//         for c in self.chars(){
-//             for l in c.to_lowercase(){
-//                 lowercase.push(l);
-//             }
-//         }
-//         let chars = lowercase.chars();
-//         let letter = self.to_letter_try()?;
-//         let mut accidental = 0;
-//         for ch in chars{
-//             match ch{
-//                 'b' => { accidental -= 1; },
-//                 '♭' => { accidental -= 1; },
-//                 '#' => { accidental += 1; },
-//                 '♯' => { accidental += 1; },
-//                 '♮' => { accidental = 0; }
-//                 _ => return None,
-//             }
-//         }
-//         Some(EnharmonicNote{ letter, accidental })
-//     }
-// }
-//
+impl ToEnharmonicNoteTry for String{
+    fn to_enharmonic_note_try(&self) -> Option<EnharmonicNote>{
+        let mut lowercase = String::new();
+        for c in self.chars(){
+            for l in c.to_lowercase(){
+                lowercase.push(l);
+            }
+        }
+        let mut iter = lowercase.chars();
+        let letter_part = iter.next()?;
+        let accidental_part = iter;
+        let letter = letter_part.to_string().to_letter_try()?;
+        let mut accidental = 0;
+        for ch in accidental_part{
+            match ch{
+                'b' => { accidental -= 1; },
+                '♭' => { accidental -= 1; },
+                '#' => { accidental += 1; },
+                '♯' => { accidental += 1; },
+                '♮' => { accidental = 0; }
+                _ => return None,
+            }
+        }
+        let accidental = Interval::new_try(accidental)?;
+        Some(EnharmonicNote{ letter, accidental })
+    }
+}
+
 // impl IntoEnharmonicNotes for String{
 //     fn into_enharmonic_notes(self) -> Vec<EnharmonicNote>{
 //         self.split(',').into_iter().filter_map(|s| s.to_string().to_enharmonic_note()).collect::<Vec<_>>()
 //     }
 // }
 //
-// impl ToEnharmonicNote for Note{
-//     fn to_enharmonic_note(&self) -> Option<EnharmonicNote>{
-//         Some(match self % _OCTAVE{
-//             0  => EnharmonicNote{ letter: Letter::A, accidental: 0 },
-//             1  => EnharmonicNote{ letter: Letter::A, accidental: 1 },
-//             2  => EnharmonicNote{ letter: Letter::B, accidental: 0 },
-//             3  => EnharmonicNote{ letter: Letter::C, accidental: 0 },
-//             4  => EnharmonicNote{ letter: Letter::C, accidental: 1 },
-//             5  => EnharmonicNote{ letter: Letter::D, accidental: 0 },
-//             6  => EnharmonicNote{ letter: Letter::D, accidental: 1 },
-//             7  => EnharmonicNote{ letter: Letter::E, accidental: 0 },
-//             8  => EnharmonicNote{ letter: Letter::F, accidental: 0 },
-//             9  => EnharmonicNote{ letter: Letter::F, accidental: 1 },
-//             10 => EnharmonicNote{ letter: Letter::G, accidental: 0 },
-//             11 => EnharmonicNote{ letter: Letter::G, accidental: 1 },
-//             _ => panic!("ToEnharmonicNote for Note, should be impossible."),
-//         })
-//     }
-// }
 // // Could be used for hexatonics etc?
 // fn _into_enharmonic_notes_with_start_subheptatonic(scale: Scale, start: Option<EnharmonicNote>) -> Vec<EnharmonicNote>{
 //     let mut set = vec![0, 0, 0, 0, 0, 0, 0];
@@ -440,5 +424,65 @@ mod tests{
         for l in Letter::ALL{
             assert_eq!(l, l.to_enharmonic_note().letter);
         }
+    }
+
+    #[test]
+    fn string_to_enharmonic_note_try(){
+        assert_eq!(
+            "A".to_string().to_enharmonic_note_try(),
+            Some(EnharmonicNote{ letter: Letter::A, accidental: Interval(0) })
+        );
+        assert_eq!(
+            "B".to_string().to_enharmonic_note_try(),
+            Some(EnharmonicNote{ letter: Letter::B, accidental: Interval(0) })
+        );
+        assert_eq!(
+            "C".to_string().to_enharmonic_note_try(),
+            Some(EnharmonicNote{ letter: Letter::C, accidental: Interval(0) })
+        );
+        assert_eq!(
+            "D".to_string().to_enharmonic_note_try(),
+            Some(EnharmonicNote{ letter: Letter::D, accidental: Interval(0) })
+        );
+        assert_eq!(
+            "E".to_string().to_enharmonic_note_try(),
+            Some(EnharmonicNote{ letter: Letter::E, accidental: Interval(0) })
+        );
+        assert_eq!(
+            "F".to_string().to_enharmonic_note_try(),
+            Some(EnharmonicNote{ letter: Letter::F, accidental: Interval(0) })
+        );
+        assert_eq!(
+            "G".to_string().to_enharmonic_note_try(),
+            Some(EnharmonicNote{ letter: Letter::G, accidental: Interval(0) })
+        );
+        assert_eq!(
+            "Abbbb".to_string().to_enharmonic_note_try(),
+            Some(EnharmonicNote{ letter: Letter::A, accidental: Interval(-4) })
+        );
+        assert_eq!(
+            "A#######".to_string().to_enharmonic_note_try(),
+            Some(EnharmonicNote{ letter: Letter::A, accidental: Interval(7) })
+        );
+        assert_eq!(
+            "A♭♭♭♭♭♭".to_string().to_enharmonic_note_try(),
+            Some(EnharmonicNote{ letter: Letter::A, accidental: Interval(-6) })
+        );
+        assert_eq!(
+            "A♯♯♯".to_string().to_enharmonic_note_try(),
+            Some(EnharmonicNote{ letter: Letter::A, accidental: Interval(3) })
+        );
+        assert_eq!(
+            "A♮♮♮♮".to_string().to_enharmonic_note_try(),
+            Some(EnharmonicNote{ letter: Letter::A, accidental: Interval(0) })
+        );
+        assert_eq!(
+            "A♮♮♭♭♯♯♭♭♭♯♭".to_string().to_enharmonic_note_try(),
+            Some(EnharmonicNote{ letter: Letter::A, accidental: Interval(-3) })
+        );
+        assert_eq!(
+            "A♮♭♭♯♯♭♭♭♮♯".to_string().to_enharmonic_note_try(),
+            Some(EnharmonicNote{ letter: Letter::A, accidental: Interval(1) })
+        );
     }
 }

@@ -140,7 +140,15 @@ impl Interval{
     pub const AUG7: Self = Self(12);
 
     pub fn new(i: i32) -> Self{
-        Interval(i.min(Self::MAX.0).max(Self::MIN.0))
+        Self(i.min(Self::MAX.0).max(Self::MIN.0))
+    }
+
+    pub fn new_try(i: i32) -> Option<Self>{
+        if i > Self::MAX.0 || i < Self::MIN.0 {
+            None
+        } else {
+            Some(Self(i))
+        }
     }
 
     pub fn abs(self) -> Self{
@@ -480,6 +488,15 @@ mod tests{
         assert_eq!(Interval::new(-1 << 30), Interval::MIN);
         assert_eq!(Interval::new((1 << 30) + 1), Interval::MAX);
         assert_eq!(Interval::new((-1 << 30) - 1), Interval::MIN);
+    }
+
+    #[test]
+    fn new_try(){
+        assert_eq!(Interval::new_try(0), Some(Interval(0)));
+        assert_eq!(Interval::new_try(1 << 30), Some(Interval::MAX));
+        assert_eq!(Interval::new_try(-1 << 30), Some(Interval::MIN));
+        assert_eq!(Interval::new_try((1 << 30) + 1), None);
+        assert_eq!(Interval::new_try((-1 << 30) - 1), None);
     }
 
     #[test]
