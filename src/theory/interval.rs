@@ -395,40 +395,6 @@ impl<T> ToNamedOctaveInterval for T where T: ToInterval{
     }
 }
 
-// impl ToNamedInterval for NamedOctaveInterval{
-//     fn to_interval_try(self) -> Option<NamedInterval>{
-//         (self as Note).to_interval_try()
-//     }
-//
-//     fn to_interval_mod(self) -> NamedInterval{
-//         (self as Note).to_interval_mod()
-//     }
-// }
-//
-// impl ToNamedOctaveInterval for NamedInterval{
-//     fn to_octave_interval_try(self) -> Option<NamedOctaveInterval>{
-//         (self as Note).to_octave_interval_try()
-//     }
-//
-//     fn to_octave_interval_mod(self) -> NamedOctaveInterval{
-//         (self as Note).to_octave_interval_mod()
-//     }
-// }
-//
-// pub trait ToNamedOctaveInterval{
-//     fn to_octave_interval_try(self) -> Option<NamedOctaveInterval>;
-//     fn to_octave_interval_mod(self) -> NamedOctaveInterval;
-// }
-//
-// impl ToIntervalChordExtension for Option<NamedInterval>{
-//     fn to_interval_chord_extension(self) -> String{
-//         match self{
-//             None => "x".to_string(),
-//             Some(int) => int.to_interval_chord_extension(),
-//         }
-//     }
-// }
-//
 // pub fn to_degree(interval: Note) -> String{
 //     match interval{
 //         0 => "I",

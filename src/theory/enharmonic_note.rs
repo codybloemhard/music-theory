@@ -484,5 +484,9 @@ mod tests{
             "A♮♭♭♯♯♭♭♭♮♯".to_string().to_enharmonic_note_try(),
             Some(EnharmonicNote{ letter: Letter::A, accidental: Interval(1) })
         );
+        assert_eq!(
+            "A♮♭♭♯♯♭♭♭♮nottherightcharacters♯".to_string().to_enharmonic_note_try(),
+            None
+        );
     }
 }
