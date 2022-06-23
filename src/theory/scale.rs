@@ -1,9 +1,16 @@
-// use super::note::*;
-// use super::interval::{ _OCTAVE, _SEMI };
+use super::{ Note, ModeTrait, _OCTAVE, _SEMI };
+//
 // use std::cmp::Ordering;
 //
-// pub type Mode = u8;
-//
+pub type Mode = usize;
+pub type Notes = Vec<Note>;
+
+#[derive(Debug, Default, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct Scale(pub(crate) Vec<Note>);
+
+// #[derive(Debug, Default, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+// pub struct Steps(pub Vec<Note>);
+
 // impl ToSteps for Scale{
 //     fn to_steps(&self) -> Steps{
 //         if self.0.is_empty() { return Steps::default(); }
@@ -42,48 +49,24 @@
 //         Scale(vec)
 //     }
 // }
-//
-// pub fn next_mode(mut scale: Notes) -> Notes{
-//     let len = scale.len();
-//     if len == 0{
-//         return scale;
-//     }
-//     let head = scale[0];
-//     for i in 0..len - 1{
-//         scale[i] = scale[i + 1];
-//     }
-//     scale[len - 1] = head;
-//     scale
-// }
-//
-// pub fn mode_of(mut scale: Notes, mut mode: Mode) -> Notes{
-//     mode %= scale.len() as u8;
-//     for _ in 0..mode{
-//         scale = next_mode(scale)
-//     }
-//     scale
-// }
-//
-// pub trait ModeTrait{
-//     fn next_mode_mut(&mut self);
-//     fn next_mode(self) -> Self;
-//     fn mode(self, mode: Mode) -> Self;
-// }
-//
-// impl ModeTrait for Scale{
-//     fn next_mode_mut(&mut self){
-//         self.0.rotate_left(1);
-//     }
-//
-//     fn next_mode(self) -> Self{
-//         Scale(next_mode(self.0))
-//     }
-//
-//     fn mode(self, mode: Mode) -> Self{
-//         Scale(mode_of(self.0, mode))
-//     }
-// }
-//
+
+impl ModeTrait for Scale{
+    fn next_mode_mut(&mut self){
+        self.0.rotate_left(1);
+    }
+
+    fn next_mode(mut self) -> Self{
+        self.next_mode_mut();
+        self
+    }
+
+    fn mode(mut self, mode: Mode) -> Self{
+        let len = self.0.len();
+        self.0.rotate_left(mode % len);
+        Scale(self.0)
+    }
+}
+
 // impl ModeTrait for Steps{
 //     fn next_mode_mut(&mut self){
 //         self.0.rotate_left(1);
@@ -253,3 +236,46 @@
 //         }
 //     }
 // }
+#[cfg(test)]
+mod tests{
+    use super::*;
+
+    // fn mode(self, mode: Mode) -> Self;
+    #[test]
+    fn scale_next_mode_mut(){
+        let mut scale = Scale(vec![Note(0), Note(1), Note(2)]);
+        scale.next_mode_mut();
+        assert_eq!(scale, Scale(vec![Note(1), Note(2), Note(0)]));
+        scale.next_mode_mut();
+        assert_eq!(scale, Scale(vec![Note(2), Note(0), Note(1)]));
+        scale.next_mode_mut();
+        assert_eq!(scale, Scale(vec![Note(0), Note(1), Note(2)]));
+        let clone = scale.clone();
+        scale.next_mode_mut();
+        assert_eq!(scale, clone.next_mode());
+    }
+
+    #[test]
+    fn scale_next_mode(){
+        let mut scale = Scale(vec![Note(0), Note(1), Note(2)]);
+        scale = scale.next_mode();
+        assert_eq!(scale, Scale(vec![Note(1), Note(2), Note(0)]));
+        scale = scale.next_mode();
+        assert_eq!(scale, Scale(vec![Note(2), Note(0), Note(1)]));
+        scale = scale.next_mode();
+        assert_eq!(scale, Scale(vec![Note(0), Note(1), Note(2)]));
+        let mut clone = scale.clone();
+        clone.next_mode_mut();
+        assert_eq!(scale.next_mode(), clone);
+    }
+
+    #[test]
+    fn scale_mode(){
+        let scale = Scale(vec![Note(0), Note(1), Note(2)]);
+        assert_eq!(scale.clone().mode(0), scale);
+        assert_eq!(scale.clone().mode(1), Scale(vec![Note(1), Note(2), Note(0)]));
+        assert_eq!(scale.clone().mode(2), Scale(vec![Note(2), Note(0), Note(1)]));
+        assert_eq!(scale.clone().mode(3), scale);
+        assert_eq!(scale.clone().mode(1), scale.clone().next_mode());
+    }
+}
