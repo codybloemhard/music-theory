@@ -1,4 +1,5 @@
-use super::{ Note, ModeTrait, _OCTAVE, _SEMI };
+use super::{ Note, _OCTAVE, _SEMI };
+use super::traits::{ Wrapper, ModeTrait };
 //
 // use std::cmp::Ordering;
 //
@@ -49,6 +50,22 @@ pub struct Scale(pub(crate) Vec<Note>);
 //         Scale(vec)
 //     }
 // }
+
+impl Wrapper for Scale{
+    type Inner = Notes;
+
+    fn wrap(scale: Self::Inner) -> Option<Self>{
+        if scale.is_empty(){
+            None
+        } else{
+            Some(Self(scale))
+        }
+    }
+
+    fn unwrap(self) -> Self::Inner{
+        self.0
+    }
+}
 
 impl ModeTrait for Scale{
     fn next_mode_mut(&mut self){
@@ -240,7 +257,17 @@ impl ModeTrait for Scale{
 mod tests{
     use super::*;
 
-    // fn mode(self, mode: Mode) -> Self;
+    #[test]
+    fn wrap(){
+        assert_eq!(Scale::wrap(vec![]), None);
+        assert_eq!(Scale::wrap(vec![Note(0), Note(1)]), Some(Scale(vec![Note(0), Note(1)])));
+    }
+
+    #[test]
+    fn unwrap(){
+        assert_eq!(Scale(vec![Note(0), Note(1)]).unwrap(), vec![Note(0), Note(1)]);
+    }
+
     #[test]
     fn scale_next_mode_mut(){
         let mut scale = Scale(vec![Note(0), Note(1), Note(2)]);

@@ -7,6 +7,12 @@ use std::marker::Sized;
 
 // General Traits
 
+pub trait Wrapper where Self: Sized{
+    type Inner;
+    fn wrap(inner: Self::Inner) -> Option<Self>;
+    fn unwrap(self) -> Self::Inner;
+}
+
 // You always know next, prev and it goes round n round
 pub trait Cyclic{
     fn next(self) -> Self;

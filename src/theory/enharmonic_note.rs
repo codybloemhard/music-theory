@@ -1,4 +1,6 @@
-use super::traits::{ Cyclic, ToPC, ToNote, ToLetterTry, ToEnharmonicNote, ToEnharmonicNoteTry };
+use super::traits::{
+    Wrapper, Cyclic, ToPC, ToNote, ToLetterTry, ToEnharmonicNote, ToEnharmonicNoteTry
+};
 use super::{ Note, PC, Interval, AddInterval };
 
 // pub trait IntoEnharmonicNotes{
@@ -18,8 +20,8 @@ pub enum Letter{
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct EnharmonicNote{
-    pub letter: Letter,
-    pub accidental: Interval,
+    pub(crate) letter: Letter,
+    pub(crate) accidental: Interval,
 }
 
 impl Letter{
@@ -72,6 +74,18 @@ impl std::fmt::Display for Letter{
 impl std::fmt::Display for EnharmonicNote{
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result{
         write!(f, "{}{}", self.letter, self.accidental)
+    }
+}
+
+impl Wrapper for EnharmonicNote{
+    type Inner = (Letter, Interval);
+
+    fn wrap((letter, accidental): Self::Inner) -> Option<Self>{
+        Some(Self{ letter, accidental })
+    }
+
+    fn unwrap(self) -> Self::Inner{
+        (self.letter, self.accidental)
     }
 }
 
@@ -353,6 +367,22 @@ mod tests{
                 assert_eq!(res.chars().count(), i.abs().max(1) as usize + 1);
             }
         }
+    }
+
+    #[test]
+    fn wrap(){
+        assert_eq!(
+            EnharmonicNote::wrap((Letter::A, Interval(0))),
+            Some(EnharmonicNote{ letter: Letter::A, accidental: Interval(0) })
+        );
+    }
+
+    #[test]
+    fn unwrap(){
+        assert_eq!(
+            EnharmonicNote{ letter: Letter::A, accidental: Interval(0) }.unwrap(),
+            (Letter::A, Interval(0))
+        );
     }
 
     #[test]

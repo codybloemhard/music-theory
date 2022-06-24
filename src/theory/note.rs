@@ -1,6 +1,6 @@
 use super::traits::{
     ToNote, ToPC, OctaveShiftable, GeneratablePartialOrder, AddInterval, ToLetterTry,
-    ToEnharmonicNote,
+    ToEnharmonicNote, Wrapper
 };
 use super::{ Interval, _OCTAVE, PC, Letter, EnharmonicNote };
 
@@ -55,6 +55,22 @@ impl std::ops::Sub for Note {
 
     fn sub(self, other: Self) -> Interval{
         Interval(self.0 as i32 - other.0 as i32)
+    }
+}
+
+impl Wrapper for Note{
+    type Inner = _Note;
+
+    fn wrap(note: Self::Inner) -> Option<Self>{
+        if note > Self::MAX.0 || note < Self::MIN.0{
+            None
+        } else {
+            Some(Self(note))
+        }
+    }
+
+    fn unwrap(self) -> Self::Inner{
+        self.0
     }
 }
 
@@ -140,6 +156,19 @@ mod tests{
     #[test]
     fn new(){
         assert_eq!(Note::MAX, Note::new(Note::MAX.0 + 1));
+    }
+
+    #[test]
+    fn wrap(){
+        assert_eq!(Note::wrap(0), Some(Note(0)));
+        assert_eq!(Note::wrap(Note::MAX.0), Some(Note::MAX));
+        assert_eq!(Note::wrap(Note::MIN.0), Some(Note::MIN));
+        assert_eq!(Note::wrap(Note::MAX.0 + 1), None);
+    }
+
+    #[test]
+    fn unwrap(){
+        assert_eq!(Note(0).unwrap(), 0);
     }
 
     #[test]

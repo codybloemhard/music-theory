@@ -1,6 +1,6 @@
 use super::traits::{
     GeneratablePartialOrder, OctaveShiftable, AddInterval, ToInterval, ToNamedInterval,
-    Cyclic, ToNamedOctaveInterval
+    Cyclic, ToNamedOctaveInterval, Wrapper
 };
 use super::note::{ _Note, Octave, OctaveShift };
 
@@ -232,6 +232,22 @@ impl std::fmt::Display for NamedOctaveInterval{
             "R", "♭2", "♮2", "♭3", "♮3", "♮4", "♭5", "♮5", "♭6", "♮6", "♭7", "♮7",
         ];
         write!(f, "{}", names[*self as usize])
+    }
+}
+
+impl Wrapper for Interval{
+    type Inner = i32;
+
+    fn wrap(interval: Self::Inner) -> Option<Self>{
+        if interval > Self::MAX.0 || interval < Self::MIN.0{
+            None
+        } else {
+            Some(Self(interval))
+        }
+    }
+
+    fn unwrap(self) -> Self::Inner{
+        self.0
     }
 }
 
@@ -526,6 +542,20 @@ mod tests{
         for (ni, n) in NamedOctaveInterval::ALL.iter().zip(names.iter()){
             assert_eq!(&ni.to_string(), n);
         }
+    }
+
+    #[test]
+    fn wrap(){
+        assert_eq!(Interval::wrap(0), Some(Interval(0)));
+        assert_eq!(Interval::wrap(Interval::MAX.0), Some(Interval::MAX));
+        assert_eq!(Interval::wrap(Interval::MIN.0), Some(Interval::MIN));
+        assert_eq!(Interval::wrap(Interval::MAX.0 + 1), None);
+        assert_eq!(Interval::wrap(Interval::MIN.0 - 1), None);
+    }
+
+    #[test]
+    fn unwrap(){
+        assert_eq!(Interval(0).unwrap(), 0);
     }
 
     #[test]
