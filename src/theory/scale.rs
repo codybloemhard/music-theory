@@ -1,16 +1,16 @@
 use super::{ Note, _OCTAVE, _SEMI };
 use super::traits::{ Wrapper, ModeTrait };
-//
+
 // use std::cmp::Ordering;
-//
+
 pub type Mode = usize;
 pub type Notes = Vec<Note>;
 
 #[derive(Debug, Default, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub struct Scale(pub(crate) Vec<Note>);
+pub struct Scale(pub(crate) Notes);
 
-// #[derive(Debug, Default, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
-// pub struct Steps(pub Vec<Note>);
+#[derive(Debug, Default, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct Steps(pub(crate) Notes);
 
 // impl ToSteps for Scale{
 //     fn to_steps(&self) -> Steps{
@@ -57,8 +57,24 @@ impl Wrapper for Scale{
     fn wrap(scale: Self::Inner) -> Option<Self>{
         if scale.is_empty(){
             None
-        } else{
+        } else {
             Some(Self(scale))
+        }
+    }
+
+    fn unwrap(self) -> Self::Inner{
+        self.0
+    }
+}
+
+impl Wrapper for Steps{
+    type Inner = Notes;
+
+    fn wrap(steps: Self::Inner) -> Option<Self>{
+        if steps.is_empty(){
+            None
+        } else {
+            Some(Self(steps))
         }
     }
 
@@ -84,20 +100,23 @@ impl ModeTrait for Scale{
     }
 }
 
-// impl ModeTrait for Steps{
-//     fn next_mode_mut(&mut self){
-//         self.0.rotate_left(1);
-//     }
-//
-//     fn next_mode(self) -> Self{
-//         Steps(next_mode(self.0))
-//     }
-//
-//     fn mode(self, mode: Mode) -> Self{
-//         Steps(mode_of(self.0, mode))
-//     }
-// }
-//
+impl ModeTrait for Steps{
+    fn next_mode_mut(&mut self){
+        self.0.rotate_left(1);
+    }
+
+    fn next_mode(mut self) -> Self{
+        self.next_mode_mut();
+        self
+    }
+
+    fn mode(mut self, mode: Mode) -> Self{
+        let len = self.0.len();
+        self.0.rotate_left(mode % len);
+        Steps(self.0)
+    }
+}
+
 // impl ToRelative for Steps{
 //     fn to_relative(&self, reference: &Steps) -> Option<Relative>{
 //         if self.0.len() != reference.0.len() { return None; }
@@ -258,14 +277,25 @@ mod tests{
     use super::*;
 
     #[test]
-    fn wrap(){
+    fn scale_wrap(){
         assert_eq!(Scale::wrap(vec![]), None);
         assert_eq!(Scale::wrap(vec![Note(0), Note(1)]), Some(Scale(vec![Note(0), Note(1)])));
     }
 
     #[test]
-    fn unwrap(){
+    fn scale_unwrap(){
         assert_eq!(Scale(vec![Note(0), Note(1)]).unwrap(), vec![Note(0), Note(1)]);
+    }
+
+    #[test]
+    fn steps_wrap(){
+        assert_eq!(Steps::wrap(vec![]), None);
+        assert_eq!(Steps::wrap(vec![Note(0), Note(1)]), Some(Steps(vec![Note(0), Note(1)])));
+    }
+
+    #[test]
+    fn steps_unwrap(){
+        assert_eq!(Steps(vec![Note(2), Note(1)]).unwrap(), vec![Note(2), Note(1)]);
     }
 
     #[test]
@@ -304,5 +334,43 @@ mod tests{
         assert_eq!(scale.clone().mode(2), Scale(vec![Note(2), Note(0), Note(1)]));
         assert_eq!(scale.clone().mode(3), scale);
         assert_eq!(scale.clone().mode(1), scale.clone().next_mode());
+    }
+
+    #[test]
+    fn steps_next_mode_mut(){
+        let mut steps = Steps(vec![Note(1), Note(2), Note(3)]);
+        steps.next_mode_mut();
+        assert_eq!(steps, Steps(vec![Note(2), Note(3), Note(1)]));
+        steps.next_mode_mut();
+        assert_eq!(steps, Steps(vec![Note(3), Note(1), Note(2)]));
+        steps.next_mode_mut();
+        assert_eq!(steps, Steps(vec![Note(1), Note(2), Note(3)]));
+        let clone = steps.clone();
+        steps.next_mode_mut();
+        assert_eq!(steps, clone.next_mode());
+    }
+
+    #[test]
+    fn steps_next_mode(){
+        let mut steps = Steps(vec![Note(1), Note(2), Note(3)]);
+        steps = steps.next_mode();
+        assert_eq!(steps, Steps(vec![Note(2), Note(3), Note(1)]));
+        steps = steps.next_mode();
+        assert_eq!(steps, Steps(vec![Note(3), Note(1), Note(2)]));
+        steps = steps.next_mode();
+        assert_eq!(steps, Steps(vec![Note(1), Note(2), Note(3)]));
+        let mut clone = steps.clone();
+        clone.next_mode_mut();
+        assert_eq!(steps.next_mode(), clone);
+    }
+
+    #[test]
+    fn steps_mode(){
+        let steps = Steps(vec![Note(1), Note(2), Note(3)]);
+        assert_eq!(steps.clone().mode(0), steps);
+        assert_eq!(steps.clone().mode(1), Steps(vec![Note(2), Note(3), Note(1)]));
+        assert_eq!(steps.clone().mode(2), Steps(vec![Note(3), Note(1), Note(2)]));
+        assert_eq!(steps.clone().mode(3), steps);
+        assert_eq!(steps.clone().mode(1), steps.clone().next_mode());
     }
 }
