@@ -13,6 +13,36 @@ pub trait Wrapper where Self: Sized{
     fn unwrap(self) -> Self::Inner;
 }
 
+pub trait VecWrapper{
+    type Item;
+
+    fn len(&self) -> usize;
+    fn is_empty(&self) -> bool;
+    fn iter(&self) -> std::slice::Iter<'_, Self::Item>;
+}
+
+macro_rules! ImplVecWrapper{
+    ($type:ty, $item:ty) => {
+        impl VecWrapper for $type{
+            type Item = $item;
+
+            fn len(&self) -> usize{
+                self.0.len()
+            }
+
+            fn is_empty(&self) -> bool{
+                self.0.is_empty()
+            }
+
+            fn iter(&self) -> std::slice::Iter<'_, Self::Item>{
+                self.0.iter()
+            }
+        }
+    }
+}
+// ImplNoteSequence!(Chord);
+// ImplNoteSequence!(Relative);
+
 // You always know next, prev and it goes round n round
 pub trait Cyclic{
     fn next(self) -> Self;
@@ -78,30 +108,6 @@ pub trait ToEnharmonicNoteTry{
     fn to_enharmonic_note_try(&self) -> Option<EnharmonicNote>;
 }
 
-// pub trait NoteSequence{
-//     fn len(&self) -> usize;
-//     fn is_empty(&self) -> bool;
-// }
-//
-// macro_rules! ImplNoteSequence{
-//     ($type:ty) => {
-//         impl NoteSequence for $type{
-//             fn len(&self) -> usize{
-//                 self.0.len()
-//             }
-//
-//             fn is_empty(&self) -> bool{
-//                 self.0.is_empty()
-//             }
-//         }
-//     }
-// }
-//
-// ImplNoteSequence!(Steps);
-// ImplNoteSequence!(Scale);
-// ImplNoteSequence!(Chord);
-// ImplNoteSequence!(Relative);
-//
 // pub trait ToScale{
 //     fn to_scale(&self, note: Note) -> Scale;
 // }

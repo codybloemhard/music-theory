@@ -1,5 +1,5 @@
 use super::{ Note, _OCTAVE, _SEMI };
-use super::traits::{ Wrapper, ModeTrait };
+use super::traits::{ Wrapper, VecWrapper, ModeTrait };
 
 // use std::cmp::Ordering;
 
@@ -12,44 +12,8 @@ pub struct Scale(pub(crate) Notes);
 #[derive(Debug, Default, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct Steps(pub(crate) Notes);
 
-// impl ToSteps for Scale{
-//     fn to_steps(&self) -> Steps{
-//         if self.0.is_empty() { return Steps::default(); }
-//         let mut last = self.0[0];
-//         let mut intervals = Vec::new();
-//         for note in self.0.iter().skip(1){
-//             let diff = note - last;
-//             intervals.push(diff);
-//             last = *note;
-//         }
-//         intervals.push(self.0[0] + _OCTAVE - last);
-//         Steps(intervals)
-//     }
-// }
-//
-// impl ToChord for Scale{
-//     fn to_chord(&self) -> Chord{
-//         if self.0.is_empty() { return Chord(Vec::new()); }
-//         let root = self.0[0];
-//         let mut intervals = vec![];
-//         for note in self.0.iter().skip(1){
-//             let diff = note - root;
-//             intervals.push(diff);
-//         }
-//         Chord(intervals)
-//     }
-// }
-//
-// impl ToScale for Steps{
-//     fn to_scale(&self, mut note: Note) -> Scale{
-//         let mut vec = vec![note];
-//         for step in self.0.iter().take(self.len() - 1){
-//             note += *step as Note;
-//             vec.push(note);
-//         }
-//         Scale(vec)
-//     }
-// }
+ImplVecWrapper!(Steps, Note);
+ImplVecWrapper!(Scale, Note);
 
 impl Wrapper for Scale{
     type Inner = Notes;
@@ -116,6 +80,45 @@ impl ModeTrait for Steps{
         Steps(self.0)
     }
 }
+
+// impl ToSteps for Scale{
+//     fn to_steps(&self) -> Steps{
+//         if self.0.is_empty() { return Steps::default(); }
+//         let mut last = self.0[0];
+//         let mut intervals = Vec::new();
+//         for note in self.0.iter().skip(1){
+//             let diff = note - last;
+//             intervals.push(diff);
+//             last = *note;
+//         }
+//         intervals.push(self.0[0] + _OCTAVE - last);
+//         Steps(intervals)
+//     }
+// }
+//
+// impl ToChord for Scale{
+//     fn to_chord(&self) -> Chord{
+//         if self.0.is_empty() { return Chord(Vec::new()); }
+//         let root = self.0[0];
+//         let mut intervals = vec![];
+//         for note in self.0.iter().skip(1){
+//             let diff = note - root;
+//             intervals.push(diff);
+//         }
+//         Chord(intervals)
+//     }
+// }
+//
+// impl ToScale for Steps{
+//     fn to_scale(&self, mut note: Note) -> Scale{
+//         let mut vec = vec![note];
+//         for step in self.0.iter().take(self.len() - 1){
+//             note += *step as Note;
+//             vec.push(note);
+//         }
+//         Scale(vec)
+//     }
+// }
 
 // impl ToRelative for Steps{
 //     fn to_relative(&self, reference: &Steps) -> Option<Relative>{
@@ -296,6 +299,46 @@ mod tests{
     #[test]
     fn steps_unwrap(){
         assert_eq!(Steps(vec![Note(2), Note(1)]).unwrap(), vec![Note(2), Note(1)]);
+    }
+
+    #[test]
+    fn scale_len(){
+        assert_eq!(Scale(vec![Note(0), Note(1)]).len(), 2);
+    }
+
+    #[test]
+    fn scale_is_empty(){
+        assert_eq!(Scale(vec![Note(0)]).is_empty(), false);
+    }
+
+    #[test]
+    fn scale_iter(){
+        let scale = Scale(vec![Note(0), Note(1), Note(2)]);
+        let mut iter = scale.iter();
+        assert_eq!(iter.next(), Some(&Note(0)));
+        assert_eq!(iter.next(), Some(&Note(1)));
+        assert_eq!(iter.next(), Some(&Note(2)));
+        assert_eq!(iter.next(), None);
+    }
+
+    #[test]
+    fn steps_len(){
+        assert_eq!(Steps(vec![Note(1), Note(2)]).len(), 2);
+    }
+
+    #[test]
+    fn steps_is_empty(){
+        assert_eq!(Steps(vec![Note(1)]).is_empty(), false);
+    }
+
+    #[test]
+    fn steps_iter(){
+        let steps = Steps(vec![Note(1), Note(2), Note(3)]);
+        let mut iter = steps.iter();
+        assert_eq!(iter.next(), Some(&Note(1)));
+        assert_eq!(iter.next(), Some(&Note(2)));
+        assert_eq!(iter.next(), Some(&Note(3)));
+        assert_eq!(iter.next(), None);
     }
 
     #[test]

@@ -1,3 +1,4 @@
+#[macro_use]
 pub mod traits;
 pub mod note;
 pub mod pc;
