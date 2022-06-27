@@ -1,5 +1,5 @@
 use super::{ Note, _OCTAVE, _SEMI };
-use super::traits::{ Wrapper, VecWrapper, ModeTrait };
+use super::traits::{ Wrapper, VecWrapper, ModeTrait, AsScale };
 
 // use std::cmp::Ordering;
 
@@ -58,7 +58,7 @@ impl ModeTrait for Scale{
     }
 
     fn mode(mut self, mode: Mode) -> Self{
-        let len = self.0.len();
+        let len = self.len();
         self.0.rotate_left(mode % len);
         Scale(self.0)
     }
@@ -75,7 +75,7 @@ impl ModeTrait for Steps{
     }
 
     fn mode(mut self, mode: Mode) -> Self{
-        let len = self.0.len();
+        let len = self.len();
         self.0.rotate_left(mode % len);
         Steps(self.0)
     }
@@ -109,16 +109,20 @@ impl ModeTrait for Steps{
 //     }
 // }
 //
-// impl ToScale for Steps{
-//     fn to_scale(&self, mut note: Note) -> Scale{
-//         let mut vec = vec![note];
-//         for step in self.0.iter().take(self.len() - 1){
-//             note += *step as Note;
-//             vec.push(note);
-//         }
-//         Scale(vec)
-//     }
-// }
+
+impl AsScale for Steps{
+    fn as_scale(&self, mut note: Note) -> Scale{
+        let mut vec = vec![note];
+        if self.is_empty(){
+            return Scale(vec);
+        }
+        for step in self.iter().take(self.len() - 1){
+            note = note + *step; // TODO: can do + but not += ?
+            vec.push(note);
+        }
+        Scale(vec)
+    }
+}
 
 // impl ToRelative for Steps{
 //     fn to_relative(&self, reference: &Steps) -> Option<Relative>{
@@ -277,7 +281,7 @@ impl ModeTrait for Steps{
 // }
 #[cfg(test)]
 mod tests{
-    use super::*;
+    use super::super::*;
 
     #[test]
     fn scale_wrap(){
@@ -415,5 +419,24 @@ mod tests{
         assert_eq!(steps.clone().mode(2), Steps(vec![Note(3), Note(1), Note(2)]));
         assert_eq!(steps.clone().mode(3), steps);
         assert_eq!(steps.clone().mode(1), steps.clone().next_mode());
+    }
+
+    #[test]
+    fn steps_as_scale(){
+        assert_eq!(
+            Steps(vec![]).as_scale(Note(123)),
+            Scale(vec![Note(123)])
+        );
+        assert_eq!( // C Major
+            Steps(vec![Note(2), Note(2), Note(1), Note(2), Note(2), Note(2), Note(1)])
+                .as_scale(PC::C.to_note()).iter().map(|n| n.to_pc()).collect::<Vec<_>>(),
+            vec![PC::C, PC::D, PC::E, PC::F, PC::G, PC::A, PC::B]
+        );
+        assert_eq!( // A Minor
+            Steps(vec![Note(2), Note(2), Note(1), Note(2), Note(2), Note(2), Note(1)])
+                .mode(5)
+                .to_scale(PC::A.to_note()).iter().map(|n| n.to_pc()).collect::<Vec<_>>(),
+            vec![PC::A, PC::B, PC::C, PC::D, PC::E, PC::F, PC::G]
+        );
     }
 }
