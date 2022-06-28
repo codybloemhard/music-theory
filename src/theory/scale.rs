@@ -1,19 +1,20 @@
-use super::{ Note, _OCTAVE, _SEMI };
-use super::traits::{ Wrapper, VecWrapper, ModeTrait, AsScale };
+use super::{ Note, Interval, _OCTAVE, _SEMI };
+use super::traits::{ Wrapper, VecWrapper, ModeTrait, AsScaleTry, AddInterval };
 
 // use std::cmp::Ordering;
 
 pub type Mode = usize;
 pub type Notes = Vec<Note>;
+pub type Intervals = Vec<Interval>;
 
 #[derive(Debug, Default, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct Scale(pub(crate) Notes);
 
 #[derive(Debug, Default, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub struct Steps(pub(crate) Notes);
+pub struct Steps(pub(crate) Intervals);
 
-ImplVecWrapper!(Steps, Note);
 ImplVecWrapper!(Scale, Note);
+ImplVecWrapper!(Steps, Interval);
 
 impl Wrapper for Scale{
     type Inner = Notes;
@@ -32,7 +33,7 @@ impl Wrapper for Scale{
 }
 
 impl Wrapper for Steps{
-    type Inner = Notes;
+    type Inner = Intervals;
 
     fn wrap(steps: Self::Inner) -> Option<Self>{
         if steps.is_empty(){
@@ -81,21 +82,21 @@ impl ModeTrait for Steps{
     }
 }
 
-// impl ToSteps for Scale{
-//     fn to_steps(&self) -> Steps{
+// impl AsSteps for Scale{
+//     fn as_steps(&self) -> Steps{
 //         if self.0.is_empty() { return Steps::default(); }
 //         let mut last = self.0[0];
 //         let mut intervals = Vec::new();
 //         for note in self.0.iter().skip(1){
-//             let diff = note - last;
-//             intervals.push(diff);
+//             let diff = *note - last;
+//             intervals.push(Note(diff.0));
 //             last = *note;
 //         }
-//         intervals.push(self.0[0] + _OCTAVE - last);
+//         intervals.push(Note(self.0[0] + _OCTAVE - last));
 //         Steps(intervals)
 //     }
 // }
-//
+
 // impl ToChord for Scale{
 //     fn to_chord(&self) -> Chord{
 //         if self.0.is_empty() { return Chord(Vec::new()); }
@@ -110,17 +111,17 @@ impl ModeTrait for Steps{
 // }
 //
 
-impl AsScale for Steps{
-    fn as_scale(&self, mut note: Note) -> Scale{
+impl AsScaleTry for Steps{
+    fn as_scale_try(&self, mut note: Note) -> Option<Scale>{
         let mut vec = vec![note];
         if self.is_empty(){
-            return Scale(vec);
+            return Some(Scale(vec));
         }
         for step in self.iter().take(self.len() - 1){
-            note = note + *step; // TODO: can do + but not += ?
+            note = note.add_interval(*step)?; // TODO: can do + but not += ?
             vec.push(note);
         }
-        Scale(vec)
+        Some(Scale(vec))
     }
 }
 
@@ -297,12 +298,14 @@ mod tests{
     #[test]
     fn steps_wrap(){
         assert_eq!(Steps::wrap(vec![]), None);
-        assert_eq!(Steps::wrap(vec![Note(0), Note(1)]), Some(Steps(vec![Note(0), Note(1)])));
+        assert_eq!(
+            Steps::wrap(vec![Interval(0), Interval(1)]), Some(Steps(vec![Interval(0), Interval(1)]))
+        );
     }
 
     #[test]
     fn steps_unwrap(){
-        assert_eq!(Steps(vec![Note(2), Note(1)]).unwrap(), vec![Note(2), Note(1)]);
+        assert_eq!(Steps(vec![Interval(2), Interval(1)]).unwrap(), vec![Interval(2), Interval(1)]);
     }
 
     #[test]
@@ -327,21 +330,21 @@ mod tests{
 
     #[test]
     fn steps_len(){
-        assert_eq!(Steps(vec![Note(1), Note(2)]).len(), 2);
+        assert_eq!(Steps(vec![Interval(1), Interval(2)]).len(), 2);
     }
 
     #[test]
     fn steps_is_empty(){
-        assert_eq!(Steps(vec![Note(1)]).is_empty(), false);
+        assert_eq!(Steps(vec![Interval(1)]).is_empty(), false);
     }
 
     #[test]
     fn steps_iter(){
-        let steps = Steps(vec![Note(1), Note(2), Note(3)]);
+        let steps = Steps(vec![Interval(1), Interval(2), Interval(3)]);
         let mut iter = steps.iter();
-        assert_eq!(iter.next(), Some(&Note(1)));
-        assert_eq!(iter.next(), Some(&Note(2)));
-        assert_eq!(iter.next(), Some(&Note(3)));
+        assert_eq!(iter.next(), Some(&Interval(1)));
+        assert_eq!(iter.next(), Some(&Interval(2)));
+        assert_eq!(iter.next(), Some(&Interval(3)));
         assert_eq!(iter.next(), None);
     }
 
@@ -385,13 +388,13 @@ mod tests{
 
     #[test]
     fn steps_next_mode_mut(){
-        let mut steps = Steps(vec![Note(1), Note(2), Note(3)]);
+        let mut steps = Steps(vec![Interval(1), Interval(2), Interval(3)]);
         steps.next_mode_mut();
-        assert_eq!(steps, Steps(vec![Note(2), Note(3), Note(1)]));
+        assert_eq!(steps, Steps(vec![Interval(2), Interval(3), Interval(1)]));
         steps.next_mode_mut();
-        assert_eq!(steps, Steps(vec![Note(3), Note(1), Note(2)]));
+        assert_eq!(steps, Steps(vec![Interval(3), Interval(1), Interval(2)]));
         steps.next_mode_mut();
-        assert_eq!(steps, Steps(vec![Note(1), Note(2), Note(3)]));
+        assert_eq!(steps, Steps(vec![Interval(1), Interval(2), Interval(3)]));
         let clone = steps.clone();
         steps.next_mode_mut();
         assert_eq!(steps, clone.next_mode());
@@ -399,13 +402,13 @@ mod tests{
 
     #[test]
     fn steps_next_mode(){
-        let mut steps = Steps(vec![Note(1), Note(2), Note(3)]);
+        let mut steps = Steps(vec![Interval(1), Interval(2), Interval(3)]);
         steps = steps.next_mode();
-        assert_eq!(steps, Steps(vec![Note(2), Note(3), Note(1)]));
+        assert_eq!(steps, Steps(vec![Interval(2), Interval(3), Interval(1)]));
         steps = steps.next_mode();
-        assert_eq!(steps, Steps(vec![Note(3), Note(1), Note(2)]));
+        assert_eq!(steps, Steps(vec![Interval(3), Interval(1), Interval(2)]));
         steps = steps.next_mode();
-        assert_eq!(steps, Steps(vec![Note(1), Note(2), Note(3)]));
+        assert_eq!(steps, Steps(vec![Interval(1), Interval(2), Interval(3)]));
         let mut clone = steps.clone();
         clone.next_mode_mut();
         assert_eq!(steps.next_mode(), clone);
@@ -413,10 +416,10 @@ mod tests{
 
     #[test]
     fn steps_mode(){
-        let steps = Steps(vec![Note(1), Note(2), Note(3)]);
+        let steps = Steps(vec![Interval(1), Interval(2), Interval(3)]);
         assert_eq!(steps.clone().mode(0), steps);
-        assert_eq!(steps.clone().mode(1), Steps(vec![Note(2), Note(3), Note(1)]));
-        assert_eq!(steps.clone().mode(2), Steps(vec![Note(3), Note(1), Note(2)]));
+        assert_eq!(steps.clone().mode(1), Steps(vec![Interval(2), Interval(3), Interval(1)]));
+        assert_eq!(steps.clone().mode(2), Steps(vec![Interval(3), Interval(1), Interval(2)]));
         assert_eq!(steps.clone().mode(3), steps);
         assert_eq!(steps.clone().mode(1), steps.clone().next_mode());
     }
@@ -424,18 +427,18 @@ mod tests{
     #[test]
     fn steps_as_scale(){
         assert_eq!(
-            Steps(vec![]).as_scale(Note(123)),
-            Scale(vec![Note(123)])
+            Steps(vec![]).as_scale_try(Note(123)),
+            Some(Scale(vec![Note(123)]))
         );
         assert_eq!( // C Major
-            Steps(vec![Note(2), Note(2), Note(1), Note(2), Note(2), Note(2), Note(1)])
-                .as_scale(PC::C.to_note()).iter().map(|n| n.to_pc()).collect::<Vec<_>>(),
+            Steps(vec![Interval(2), Interval(2), Interval(1), Interval(2), Interval(2), Interval(2), Interval(1)])
+                .as_scale_try(PC::C.to_note()).unwrap().iter().map(|n| n.to_pc()).collect::<Vec<_>>(),
             vec![PC::C, PC::D, PC::E, PC::F, PC::G, PC::A, PC::B]
         );
         assert_eq!( // A Minor
-            Steps(vec![Note(2), Note(2), Note(1), Note(2), Note(2), Note(2), Note(1)])
+            Steps(vec![Interval(2), Interval(2), Interval(1), Interval(2), Interval(2), Interval(2), Interval(1)])
                 .mode(5)
-                .to_scale(PC::A.to_note()).iter().map(|n| n.to_pc()).collect::<Vec<_>>(),
+                .to_scale_try(PC::A.to_note()).unwrap().iter().map(|n| n.to_pc()).collect::<Vec<_>>(),
             vec![PC::A, PC::B, PC::C, PC::D, PC::E, PC::F, PC::G]
         );
     }

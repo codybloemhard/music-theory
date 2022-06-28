@@ -108,34 +108,34 @@ pub trait ToEnharmonicNoteTry{
     fn to_enharmonic_note_try(&self) -> Option<EnharmonicNote>;
 }
 
-pub trait AsScale{
-    fn as_scale(&self, note: Note) -> Scale;
+pub trait AsScaleTry{
+    fn as_scale_try(&self, note: Note) -> Option<Scale>;
 }
 
-pub trait ToScale{
-    fn to_scale(self, note: Note) -> Scale;
+pub trait ToScaleTry{
+    fn to_scale_try(self, note: Note) -> Option<Scale>;
 }
 
-impl<T: AsScale> ToScale for T{
-    fn to_scale(self, note: Note) -> Scale{
-        self.as_scale(note)
+impl<T: AsScaleTry> ToScaleTry for T{
+    fn to_scale_try(self, note: Note) -> Option<Scale>{
+        self.as_scale_try(note)
     }
 }
 
+// pub trait AsSteps{
+//     fn as_steps(&self) -> Steps;
+// }
+//
 // pub trait ToSteps{
-//     fn to_steps(&self) -> Steps;
+//     fn to_steps(self) -> Steps;
 // }
 //
-// pub trait IntoSteps{
-//     fn into_steps(self) -> Steps;
-// }
-//
-// impl<T: ToSteps> IntoSteps for T{
-//     fn into_steps(self) -> Steps{
-//         self.to_steps()
+// impl<T: AsSteps> ToSteps for T{
+//     fn to_steps(self) -> Steps{
+//         self.as_steps()
 //     }
 // }
-//
+
 // pub trait ToRelative{
 //     fn to_relative(&self, reference: &Steps) -> Option<Relative>;
 // }
