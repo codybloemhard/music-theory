@@ -122,19 +122,19 @@ impl<T: AsScaleTry> ToScaleTry for T{
     }
 }
 
-// pub trait AsSteps{
-//     fn as_steps(&self) -> Steps;
-// }
-//
-// pub trait ToSteps{
-//     fn to_steps(self) -> Steps;
-// }
-//
-// impl<T: AsSteps> ToSteps for T{
-//     fn to_steps(self) -> Steps{
-//         self.as_steps()
-//     }
-// }
+pub trait AsSteps{
+    fn as_steps(&self) -> Steps;
+}
+
+pub trait ToSteps{
+    fn to_steps(self) -> Steps;
+}
+
+impl<T: AsSteps> ToSteps for T{
+    fn to_steps(self) -> Steps{
+        self.as_steps()
+    }
+}
 
 // pub trait ToRelative{
 //     fn to_relative(&self, reference: &Steps) -> Option<Relative>;

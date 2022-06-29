@@ -4,8 +4,6 @@ use super::traits::{
 };
 use super::{ Interval, _OCTAVE, PC, Letter, EnharmonicNote };
 
-pub const A4: Note = Note(48);
-
 pub type _Note = u32;
 pub type Octave = u16;
 pub type OctaveShift = i16;
@@ -16,6 +14,31 @@ pub struct Note(pub(crate) u32);
 impl Note{
     pub const MAX: Note = Note(1073741824); // 1 << 30
     pub const MIN: Note = Note(0);
+    pub const A1: Note  = Note(12);
+    pub const AS1: Note = Note(13);
+    pub const B1: Note  = Note(14);
+    pub const C1: Note  = Note(15);
+    pub const CS1: Note = Note(16);
+    pub const D1: Note  = Note(17);
+    pub const DS1: Note = Note(18);
+    pub const E1: Note  = Note(19);
+    pub const F1: Note  = Note(20);
+    pub const FS1: Note = Note(21);
+    pub const G1: Note  = Note(22);
+    pub const GS1: Note = Note(23);
+    pub const A2: Note  = Note(24);
+    pub const AS2: Note = Note(25);
+    pub const B2: Note  = Note(26);
+    pub const C2: Note  = Note(27);
+    pub const CS2: Note = Note(28);
+    pub const D2: Note  = Note(29);
+    pub const DS2: Note = Note(30);
+    pub const E2: Note  = Note(31);
+    pub const F2: Note  = Note(32);
+    pub const FS2: Note = Note(33);
+    pub const G2: Note  = Note(34);
+    pub const GS2: Note = Note(35);
+    pub const A4:  Note = Note(48);
 
     pub fn new(note: u32) -> Self{
         Self(note.min(Self::MAX.0))
@@ -150,7 +173,7 @@ mod tests{
 
     #[test]
     fn to_pitch(){
-        assert_eq!(A4.to_pitch().round() as i32, 440);
+        assert_eq!(Note::A4.to_pitch().round() as i32, 440);
     }
 
     #[test]
@@ -197,7 +220,7 @@ mod tests{
 
     #[test]
     fn note_to_pc(){
-        assert_eq!(A4.to_pc(), PC::A);
+        assert_eq!(Note::A4.to_pc(), PC::A);
         assert_eq!(Note::new(12).to_pc(), PC::A);
     }
 

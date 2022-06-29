@@ -154,7 +154,6 @@ impl ToEnharmonicNote for PC{
 #[cfg(test)]
 mod tests{
     use super::*;
-    use crate::theory::note::A4;
 
     #[test]
     fn to_note(){

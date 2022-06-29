@@ -1,5 +1,5 @@
 use super::{ Note, Interval, _OCTAVE, _SEMI };
-use super::traits::{ Wrapper, VecWrapper, ModeTrait, AsScaleTry, AddInterval };
+use super::traits::{ Wrapper, VecWrapper, ModeTrait, AsScaleTry, AsSteps, AddInterval };
 
 // use std::cmp::Ordering;
 
@@ -82,20 +82,20 @@ impl ModeTrait for Steps{
     }
 }
 
-// impl AsSteps for Scale{
-//     fn as_steps(&self) -> Steps{
-//         if self.0.is_empty() { return Steps::default(); }
-//         let mut last = self.0[0];
-//         let mut intervals = Vec::new();
-//         for note in self.0.iter().skip(1){
-//             let diff = *note - last;
-//             intervals.push(Note(diff.0));
-//             last = *note;
-//         }
-//         intervals.push(Note(self.0[0] + _OCTAVE - last));
-//         Steps(intervals)
-//     }
-// }
+impl AsSteps for Scale{
+    fn as_steps(&self) -> Steps{
+        if self.0.is_empty() { return Steps::default(); }
+        let mut last = self.0[0];
+        let mut intervals = Vec::new();
+        for note in self.iter().skip(1){
+            let diff = *note - last;
+            intervals.push(diff);
+            last = *note;
+        }
+        intervals.push(self.0[0] - last + Interval::OCTAVE);
+        Steps(intervals)
+    }
+}
 
 // impl ToChord for Scale{
 //     fn to_chord(&self) -> Chord{
@@ -431,15 +431,36 @@ mod tests{
             Some(Scale(vec![Note(123)]))
         );
         assert_eq!( // C Major
-            Steps(vec![Interval(2), Interval(2), Interval(1), Interval(2), Interval(2), Interval(2), Interval(1)])
+            Steps(vec![Interval(2), Interval(2), Interval(1), Interval(2),
+                        Interval(2), Interval(2), Interval(1)])
                 .as_scale_try(PC::C.to_note()).unwrap().iter().map(|n| n.to_pc()).collect::<Vec<_>>(),
             vec![PC::C, PC::D, PC::E, PC::F, PC::G, PC::A, PC::B]
         );
         assert_eq!( // A Minor
-            Steps(vec![Interval(2), Interval(2), Interval(1), Interval(2), Interval(2), Interval(2), Interval(1)])
-                .mode(5)
+            Steps(vec![Interval(2), Interval(2), Interval(1), Interval(2),
+                        Interval(2), Interval(2), Interval(1)]).mode(5)
                 .to_scale_try(PC::A.to_note()).unwrap().iter().map(|n| n.to_pc()).collect::<Vec<_>>(),
             vec![PC::A, PC::B, PC::C, PC::D, PC::E, PC::F, PC::G]
+        );
+    }
+
+    #[test]
+    fn scale_as_steps(){
+        assert_eq!( // C Major
+            Scale(vec![Note::C1, Note::D1, Note::E1, Note::F1, Note::G1, Note::A2, Note::B2])
+                .as_steps(),
+            Steps(vec![Interval(2), Interval(2), Interval(1), Interval(2),
+                        Interval(2), Interval(2), Interval(1)])
+        );
+        assert_eq!(
+            Scale(vec![Note::A1, Note::B1, Note::C1, Note::D1, Note::E1, Note::F1, Note::G1])
+                .as_steps(),
+            Steps(vec![Interval(2), Interval(2), Interval(1), Interval(2),
+                        Interval(2), Interval(2), Interval(1)]).mode(5)
+        );
+        assert_eq!(
+            Scale(vec![Note::A1, Note::B1, Note::A1, Note::B1]).to_steps(),
+            Steps(vec![Interval(2), Interval(-2), Interval(2), Interval(10)])
         );
     }
 }
