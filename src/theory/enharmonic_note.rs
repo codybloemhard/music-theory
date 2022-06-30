@@ -3,15 +3,6 @@ use super::traits::{
 };
 use super::{ Note, PC, Interval, AddInterval };
 
-// pub trait IntoEnharmonicNotes{
-//     fn into_enharmonic_notes(self) -> Vec<EnharmonicNote>;
-// }
-//
-// pub trait IntoEnharmonicNotesWithStart{
-//     fn into_enharmonic_notes_with_start(self, start: Option<EnharmonicNote>) -> Vec<EnharmonicNote>;
-// }
-//
-
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(u32)]
 pub enum Letter{

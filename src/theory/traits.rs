@@ -1,5 +1,5 @@
 use super::{
-    Note, PC, Octave, OctaveShift, Interval, NamedInterval, NamedOctaveInterval, Letter,
+    Note, PC, PCs, Octave, OctaveShift, Interval, NamedInterval, NamedOctaveInterval, Letter,
     EnharmonicNote, Mode, Scale, Steps
 };
 
@@ -123,16 +123,30 @@ impl<T: AsScaleTry> ToScaleTry for T{
 }
 
 pub trait AsSteps{
-    fn as_steps(&self) -> Steps;
+    fn as_steps(&self, complete_octave_cycle: bool) -> Steps;
 }
 
 pub trait ToSteps{
-    fn to_steps(self) -> Steps;
+    fn to_steps(self, complete_octave_cycle: bool) -> Steps;
 }
 
 impl<T: AsSteps> ToSteps for T{
-    fn to_steps(self) -> Steps{
-        self.as_steps()
+    fn to_steps(self, complete_octave_cycle: bool) -> Steps{
+        self.as_steps(complete_octave_cycle)
+    }
+}
+
+pub trait AsPCs{
+    fn as_pcs(&self) -> PCs;
+}
+
+pub trait ToPCs{
+    fn to_pcs(self) -> PCs;
+}
+
+impl<T: AsPCs> ToPCs for T{
+    fn to_pcs(self) -> PCs{
+        self.as_pcs()
     }
 }
 
@@ -162,6 +176,15 @@ impl<T: AsSteps> ToSteps for T{
 //     fn into_chord(self) -> Chord{
 //         self.to_chord()
 //     }
+// }
+//
+
+// pub trait IntoEnharmonicNotes{
+//     fn into_enharmonic_notes(self) -> Vec<EnharmonicNote>;
+// }
+//
+// pub trait IntoEnharmonicNotesWithStart{
+//     fn into_enharmonic_notes_with_start(self, start: Option<EnharmonicNote>) -> Vec<EnharmonicNote>;
 // }
 //
 

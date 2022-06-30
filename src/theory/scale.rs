@@ -1,5 +1,5 @@
-use super::{ Note, Interval, _OCTAVE, _SEMI };
-use super::traits::{ Wrapper, VecWrapper, ModeTrait, AsScaleTry, AsSteps, AddInterval };
+use super::{ Note, Interval, PCs, _OCTAVE, _SEMI };
+use super::traits::{ Wrapper, VecWrapper, ModeTrait, AsScaleTry, AsSteps, AddInterval, ToPC, AsPCs };
 
 // use std::cmp::Ordering;
 
@@ -83,7 +83,7 @@ impl ModeTrait for Steps{
 }
 
 impl AsSteps for Scale{
-    fn as_steps(&self) -> Steps{
+    fn as_steps(&self, complete_octave_cycle: bool) -> Steps{
         if self.0.is_empty() { return Steps::default(); }
         let mut last = self.0[0];
         let mut intervals = Vec::new();
@@ -92,8 +92,20 @@ impl AsSteps for Scale{
             intervals.push(diff);
             last = *note;
         }
-        intervals.push(self.0[0] - last + Interval::OCTAVE);
+        if complete_octave_cycle {
+            intervals.push(self.0[0] - last + Interval::OCTAVE);
+        }
         Steps(intervals)
+    }
+}
+
+impl AsPCs for Scale{
+    fn as_pcs(&self) -> PCs{
+        let mut res = Vec::new();
+        for n in &self.0{
+            res.push(n.to_pc());
+        }
+        res
     }
 }
 
@@ -118,7 +130,7 @@ impl AsScaleTry for Steps{
             return Some(Scale(vec));
         }
         for step in self.iter().take(self.len() - 1){
-            note = note.add_interval(*step)?; // TODO: can do + but not += ?
+            note = note.add_interval(*step)?;
             vec.push(note);
         }
         Some(Scale(vec))
@@ -280,6 +292,7 @@ impl AsScaleTry for Steps{
 //         }
 //     }
 // }
+
 #[cfg(test)]
 mod tests{
     use super::super::*;
@@ -448,19 +461,35 @@ mod tests{
     fn scale_as_steps(){
         assert_eq!( // C Major
             Scale(vec![Note::C1, Note::D1, Note::E1, Note::F1, Note::G1, Note::A2, Note::B2])
-                .as_steps(),
+                .as_steps(true),
             Steps(vec![Interval(2), Interval(2), Interval(1), Interval(2),
                         Interval(2), Interval(2), Interval(1)])
         );
         assert_eq!(
             Scale(vec![Note::A1, Note::B1, Note::C1, Note::D1, Note::E1, Note::F1, Note::G1])
-                .as_steps(),
+                .as_steps(true),
             Steps(vec![Interval(2), Interval(2), Interval(1), Interval(2),
                         Interval(2), Interval(2), Interval(1)]).mode(5)
         );
         assert_eq!(
-            Scale(vec![Note::A1, Note::B1, Note::A1, Note::B1]).to_steps(),
+            Scale(vec![Note::A1, Note::B1, Note::A1, Note::B1]).to_steps(true),
             Steps(vec![Interval(2), Interval(-2), Interval(2), Interval(10)])
+        );
+        assert_eq!(
+            Scale(vec![Note::A1, Note::B1, Note::A1, Note::B1]).to_steps(false),
+            Steps(vec![Interval(2), Interval(-2), Interval(2)])
+        );
+    }
+
+    #[test]
+    fn scale_as_pcs(){
+        assert_eq!(
+            Scale(vec![Note::C1, Note::E1, Note::G1, Note::C2]).as_pcs(),
+            vec![PC::C, PC::E, PC::G, PC::C]
+        );
+        assert_eq!(
+            Scale(vec![Note::A1, Note::C1, Note::D1, Note::F1, Note::A2]).to_pcs(),
+            vec![PC::A, PC::C, PC::D, PC::F, PC::A]
         );
     }
 }

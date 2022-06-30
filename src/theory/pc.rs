@@ -1,5 +1,7 @@
-use super::traits::{ Cyclic, ToNote, ToPC, ToLetterTry, ToEnharmonicNote };
-use super::{ Note, _Note, Letter, Interval, EnharmonicNote };
+use super::traits::{
+    Cyclic, ToNote, ToPC, ToLetterTry, ToEnharmonicNote, AsScaleTry, OctaveShiftable, AsSteps
+};
+use super::{ Note, _Note, Letter, Interval, EnharmonicNote, Scale, Octave, Steps };
 
 pub const A:  PC = PC::A;
 pub const AS: PC = PC::As;
@@ -29,7 +31,7 @@ impl PC{
     ];
 }
 
-// pub type PCs = Vec<PC>;
+pub type PCs = Vec<PC>;
 
 impl std::fmt::Display for PC{
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result{
@@ -107,53 +109,39 @@ impl ToEnharmonicNote for PC{
     }
 }
 
-// pub trait IntoPCs{
-//     fn into_pcs(self) -> PCs;
-// }
-//
-// impl IntoPCs for Scale{
-//     fn into_pcs(self) -> PCs{
-//         let mut res = Vec::new();
-//         for n in self.0{
-//             res.push(n.to_pc());
-//         }
-//         res
+impl AsScaleTry for PCs{
+    fn as_scale_try(&self, octave: Note) -> Option<Scale>{
+        if octave.0 > Octave::MAX as _Note { return None; }
+        let mut octave = octave.0 as Octave;
+        if self.is_empty() { return Some(Scale::default()); }
+        let start_note = self[0].to_note().with_octave(octave);
+        let mut res = vec![start_note];
+        let mut last = start_note;
+        for pc in self.iter().skip(1){
+            let note = pc.to_note().with_octave(octave);
+            let diff = note - last;
+            if diff > Interval::ROOT{
+                last = note;
+                res.push(note);
+            } else {
+                octave += 1;
+                last = pc.to_note().with_octave(octave);
+                res.push(last);
+            }
+        }
+        Some(Scale(res))
+    }
+}
+
+// impl AsSteps for PCs{
+//     fn as_steps(&self, complete_octave_cycle: bool) -> Steps{
+//         self.to_scale(Note::MIN).as_steps(complete_octave_cycle)
 //     }
 // }
-//
-// impl ToScale for PCs{
-//     fn to_scale(&self, rank: Note) -> Scale{
-//         let mut rank = rank as Rank;
-//         if self.is_empty() { return Scale::default(); }
-//         let start_note = self[0].to_note().with_rank(rank);
-//         let mut res = vec![start_note];
-//         let mut last = start_note;
-//         for pc in self.iter().skip(1){
-//             let note = pc.to_note().with_rank(rank);
-//             let diff = note - last;
-//             if diff > 0{
-//                 last = note;
-//                 res.push(note);
-//                 continue;
-//             }
-//             rank += 1;
-//             last = pc.to_note().with_rank(rank);
-//             res.push(last);
-//         }
-//         Scale(res)
-//     }
-// }
-//
-// impl IntoSteps for PCs{
-//     fn into_steps(self) -> Steps{
-//         self.to_scale(0).into_steps()
-//     }
-// }
-//
 
 #[cfg(test)]
 mod tests{
-    use super::*;
+    use super::super::*;
 
     #[test]
     fn to_note(){
@@ -220,5 +208,15 @@ mod tests{
             assert_eq!(pc.to_note(), pc.to_enharmonic_note().to_note());
             assert_eq!(pc, pc.to_enharmonic_note().to_pc());
         }
+    }
+
+    #[test]
+    fn pcs_as_scale(){
+        assert_eq!(
+            vec![PC::A, PC::C, PC::E, PC::G, PC::B].to_scale_try(Note(1)),
+            Some(Scale(vec![Note::A1, Note::C1, Note::E1, Note::G1, Note::B2]))
+        );
+        assert_eq!(vec![PC::A, PC::B].to_scale_try(Note(u16::MAX as u32)).is_some(), true);
+        assert_eq!(vec![PC::A, PC::B].to_scale_try(Note(u16::MAX as u32 + 1)), None);
     }
 }
