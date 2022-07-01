@@ -1,5 +1,6 @@
 use super::traits::{
-    Cyclic, ToNote, ToPC, ToLetterTry, ToEnharmonicNote, AsScaleTry, OctaveShiftable, AsSteps
+    Cyclic, ToNote, ToPC, ToLetterTry, ToEnharmonicNote, AsScaleTry, OctaveShiftable,
+    AsSteps, AsStepsTry, ToScaleTry
 };
 use super::{ Note, _Note, Letter, Interval, EnharmonicNote, Scale, Octave, Steps };
 
@@ -133,11 +134,11 @@ impl AsScaleTry for PCs{
     }
 }
 
-// impl AsSteps for PCs{
-//     fn as_steps(&self, complete_octave_cycle: bool) -> Steps{
-//         self.to_scale(Note::MIN).as_steps(complete_octave_cycle)
-//     }
-// }
+impl AsStepsTry for PCs{
+    fn as_steps_try(&self, complete_octave_cycle: bool) -> Option<Steps>{
+        self.as_scale_try(Note::MIN).map(|x| x.as_steps(complete_octave_cycle))
+    }
+}
 
 #[cfg(test)]
 mod tests{
@@ -211,12 +212,21 @@ mod tests{
     }
 
     #[test]
-    fn pcs_as_scale(){
+    fn pcs_as_scale_try(){
         assert_eq!(
             vec![PC::A, PC::C, PC::E, PC::G, PC::B].to_scale_try(Note(1)),
             Some(Scale(vec![Note::A1, Note::C1, Note::E1, Note::G1, Note::B2]))
         );
         assert_eq!(vec![PC::A, PC::B].to_scale_try(Note(u16::MAX as u32)).is_some(), true);
         assert_eq!(vec![PC::A, PC::B].to_scale_try(Note(u16::MAX as u32 + 1)), None);
+    }
+
+    #[test]
+    fn pcs_as_steps_try(){
+        assert_eq!(
+            vec![PC::C, PC::D, PC::E, PC::F, PC::G, PC::A, PC::B].to_steps_try(true),
+            Some(Steps(vec![Interval(2), Interval(2), Interval(1), Interval(2),
+                        Interval(2), Interval(2), Interval(1)]))
+        );
     }
 }

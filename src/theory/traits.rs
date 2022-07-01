@@ -136,6 +136,20 @@ impl<T: AsSteps> ToSteps for T{
     }
 }
 
+pub trait AsStepsTry{
+    fn as_steps_try(&self, complete_octave_cycle: bool) -> Option<Steps>;
+}
+
+pub trait ToStepsTry{
+    fn to_steps_try(self, complete_octave_cycle: bool) -> Option<Steps>;
+}
+
+impl<T: AsStepsTry> ToStepsTry for T{
+    fn to_steps_try(self, complete_octave_cycle: bool) -> Option<Steps>{
+        self.as_steps_try(complete_octave_cycle)
+    }
+}
+
 pub trait AsPCs{
     fn as_pcs(&self) -> PCs;
 }

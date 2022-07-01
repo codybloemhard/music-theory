@@ -1,8 +1,6 @@
 use super::{ Note, Interval, PCs, _OCTAVE, _SEMI };
 use super::traits::{ Wrapper, VecWrapper, ModeTrait, AsScaleTry, AsSteps, AddInterval, ToPC, AsPCs };
 
-// use std::cmp::Ordering;
-
 pub type Mode = usize;
 pub type Notes = Vec<Note>;
 pub type Intervals = Vec<Interval>;
@@ -12,6 +10,23 @@ pub struct Scale(pub(crate) Notes);
 
 #[derive(Debug, Default, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct Steps(pub(crate) Intervals);
+
+impl Steps{
+    fn mode_nr_of_this(&self, mode: &Steps) -> Option<usize>{
+        if mode.len() != self.len() {
+            return None;
+        }
+        let len = self.len();
+        let mut copy = self.clone();
+        for i in 0..=len{
+            if copy.0 == mode.0{
+                return Some(i);
+            }
+            copy.next_mode_mut();
+        }
+        None
+    }
+}
 
 ImplVecWrapper!(Scale, Note);
 ImplVecWrapper!(Steps, Interval);
@@ -121,7 +136,6 @@ impl AsPCs for Scale{
 //         Chord(intervals)
 //     }
 // }
-//
 
 impl AsScaleTry for Steps{
     fn as_scale_try(&self, mut note: Note) -> Option<Scale>{
@@ -159,34 +173,7 @@ impl AsScaleTry for Steps{
 //         Some(Relative(res))
 //     }
 // }
-//
-// pub trait StepsTrait{
-//     fn to_mode(self, note: Note, mode: Mode) -> Scale;
-//     fn mode_nr_of_this(self, mode: &Self) -> Option<(usize,Self)>
-//         where Self: std::marker::Sized;
-// }
-//
-// impl StepsTrait for Steps{
-//     fn to_mode(self, note: Note, mode: Mode) -> Scale{
-//         self.mode(mode).into_scale(note)
-//     }
-//
-//     fn mode_nr_of_this(mut self, mode: &Steps) -> Option<(usize,Steps)>{
-//         if mode.len() != self.len() {
-//             return Option::None;
-//         }
-//         let len = self.len();
-//         for i in 0..=len{
-//             if self.0 == mode.0{
-//                 return Option::Some((i, self));
-//             }
-//             // self.next_mode_mut();
-//             self = self.next_mode();
-//         }
-//         Option::None
-//     }
-// }
-//
+
 // pub trait RelativeTrait{
 //     fn string_ionian_rel(&self) -> String;
 // }
@@ -490,6 +477,23 @@ mod tests{
         assert_eq!(
             Scale(vec![Note::A1, Note::C1, Note::D1, Note::F1, Note::A2]).to_pcs(),
             vec![PC::A, PC::C, PC::D, PC::F, PC::A]
+        );
+    }
+
+    #[test]
+    fn mode_nr_of_this(){
+        let major = Steps(vec![Interval(2), Interval(2), Interval(1), Interval(2),
+            Interval(2), Interval(2), Interval(1)]);
+        let minor = major.clone().mode(5);
+        assert_eq!(major.mode_nr_of_this(&minor), Some(5));
+        assert_eq!(
+            Steps(vec![Interval(1), Interval(1)]).mode_nr_of_this(&Steps(vec![Interval(1)])),
+            None
+        );
+        assert_eq!(
+            Steps(vec![Interval(1), Interval(2)])
+                .mode_nr_of_this(&Steps(vec![Interval(2), Interval(2)])),
+            None
         );
     }
 }
