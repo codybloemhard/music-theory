@@ -51,6 +51,8 @@ pub(crate) const _AUG7: _Note = 12;
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct Interval(pub(crate) i32);
 
+pub type Intervals = Vec<Interval>;
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum NamedInterval{
     Root = 0,

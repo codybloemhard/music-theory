@@ -1,6 +1,6 @@
 use super::{
     Note, PC, PCs, Octave, OctaveShift, Interval, NamedInterval, NamedOctaveInterval, Letter,
-    EnharmonicNote, Mode, Scale, Steps
+    EnharmonicNote, Mode, Scale, Steps, Intervals
 };
 
 use std::marker::Sized;
@@ -164,20 +164,20 @@ impl<T: AsPCs> ToPCs for T{
     }
 }
 
-// pub trait ToRelative{
-//     fn to_relative(&self, reference: &Steps) -> Option<Relative>;
-// }
-//
-// pub trait IntoRelative{
-//     fn into_relative(self, reference: &Steps) -> Option<Relative>;
-// }
-//
-// impl<T: ToRelative> IntoRelative for T{
-//     fn into_relative(self, reference: &Steps) -> Option<Relative>{
-//         self.to_relative(reference)
-//     }
-// }
-//
+pub trait AsRelativeIntervals{
+    fn as_relative_intervals(&self, reference: &Self) -> Option<Intervals>;
+}
+
+pub trait ToRelativeIntervals{
+    fn to_relative_intervals(self, reference: &Self) -> Option<Intervals>;
+}
+
+impl<T: AsRelativeIntervals> ToRelativeIntervals for T{
+    fn to_relative_intervals(self, reference: &Self) -> Option<Intervals>{
+        self.as_relative_intervals(reference)
+    }
+}
+
 // pub trait ToChord{
 //     fn to_chord(&self) -> Chord;
 // }

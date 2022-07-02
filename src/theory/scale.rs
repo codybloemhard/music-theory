@@ -1,9 +1,12 @@
-use super::{ Note, Interval, PCs, _OCTAVE, _SEMI };
-use super::traits::{ Wrapper, VecWrapper, ModeTrait, AsScaleTry, AsSteps, AddInterval, ToPC, AsPCs };
+use super::{ Note, Interval, PCs, _OCTAVE, _SEMI, Intervals };
+use super::traits::{
+    Wrapper, VecWrapper, ModeTrait, AsScaleTry, AsSteps, AddInterval, ToPC, AsPCs, AsRelativeIntervals
+};
+
+use std::cmp::Ordering;
 
 pub type Mode = usize;
 pub type Notes = Vec<Note>;
-pub type Intervals = Vec<Interval>;
 
 #[derive(Debug, Default, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct Scale(pub(crate) Notes);
@@ -151,28 +154,23 @@ impl AsScaleTry for Steps{
     }
 }
 
-// impl ToRelative for Steps{
-//     fn to_relative(&self, reference: &Steps) -> Option<Relative>{
-//         if self.0.len() != reference.0.len() { return None; }
-//         if self.0.is_empty() { return None; }
-//         let mut acc_a = 0;
-//         let mut acc_b = 0;
-//         let mut res = Vec::new();
-//         for i in 0..self.0.len(){
-//             let diff = (acc_a - acc_b) / _SEMI;
-//             if diff.abs() > 255 { return None; }
-//             let rn = match diff.cmp(&0){
-//                 Ordering::Greater => { RelativeNote::Sharp(diff.unsigned_abs()) },
-//                 Ordering::Less => { RelativeNote::Flat(diff.unsigned_abs()) },
-//                 Ordering::Equal => { RelativeNote::Natural },
-//             };
-//             res.push(rn);
-//             acc_a += self.0[i];
-//             acc_b += reference.0[i];
-//         }
-//         Some(Relative(res))
-//     }
-// }
+impl AsRelativeIntervals for Steps{
+    fn as_relative_intervals(&self, reference: &Self) -> Option<Intervals>{
+        if self.0.len() != reference.0.len() { return None; }
+        if self.0.is_empty() { return None; }
+        // std::ops::AddAssign<_> to use +=
+        let mut acc_a = Interval(0);
+        let mut acc_b = Interval(0);
+        let mut res = Vec::new();
+        for i in 0..self.0.len(){
+            let diff = acc_a - acc_b;
+            res.push(diff);
+            acc_a = acc_a + self.0[i];
+            acc_b = acc_b + reference.0[i];
+        }
+        Some(res)
+    }
+}
 
 // pub trait RelativeTrait{
 //     fn string_ionian_rel(&self) -> String;
@@ -494,6 +492,29 @@ mod tests{
             Steps(vec![Interval(1), Interval(2)])
                 .mode_nr_of_this(&Steps(vec![Interval(2), Interval(2)])),
             None
+        );
+    }
+
+    #[test]
+    fn steps_as_relative_intervals(){
+        let a = Steps(vec![Interval(2), Interval(2), Interval(1), Interval(2),
+            Interval(2), Interval(2), Interval(1)]);
+        let b = Steps(vec![Interval(3), Interval(2), Interval(1), Interval(1),
+            Interval(2), Interval(2), Interval(1)]);
+        assert_eq!(
+            a.to_relative_intervals(&b),
+            Some(vec![Interval(0), Interval(-1), Interval(-1), Interval(-1),
+                        Interval(0), Interval(0), Interval(0)])
+        );
+
+        let scalea = vec![PC::C, PC::D, PC::E, PC::F, PC::G, PC::A, PC::B]
+            .to_scale_try(Note(1)).unwrap().to_steps(true);
+        let scaleb = vec![PC::A, PC::B, PC::C, PC::D, PC::E, PC::F, PC::G]
+            .to_scale_try(Note(1)).unwrap().to_steps(true);
+        assert_eq!(
+            scaleb.to_relative_intervals(&scalea),
+            Some(vec![Interval(0), Interval(0), Interval(-1), Interval(0),
+                    Interval(0), Interval(-1), Interval(-1)])
         );
     }
 }
