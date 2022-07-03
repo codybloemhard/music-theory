@@ -125,6 +125,7 @@ impl AsScaleTry for PCs{
                 last = note;
                 res.push(note);
             } else {
+                if octave == Octave::MAX { return None; }
                 octave += 1;
                 last = pc.to_note().with_octave(octave);
                 res.push(last);
@@ -219,6 +220,7 @@ mod tests{
         );
         assert_eq!(vec![PC::A, PC::B].to_scale_try(Note(u16::MAX as u32)).is_some(), true);
         assert_eq!(vec![PC::A, PC::B].to_scale_try(Note(u16::MAX as u32 + 1)), None);
+        assert_eq!(vec![PC::G, PC::A].to_scale_try(Note(u16::MAX as u32)).is_some(), false);
     }
 
     #[test]

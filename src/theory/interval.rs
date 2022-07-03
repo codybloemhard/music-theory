@@ -1,6 +1,6 @@
 use super::traits::{
     GeneratablePartialOrder, OctaveShiftable, AddInterval, ToInterval, ToNamedInterval,
-    Cyclic, ToNamedOctaveInterval, Wrapper
+    Cyclic, ToNamedOctaveInterval, Wrapper, AsIonianRelativeStringTry
 };
 use super::note::{ _Note, Octave, OctaveShift };
 
@@ -413,6 +413,22 @@ impl<T> ToNamedOctaveInterval for T where T: ToInterval{
     }
 }
 
+impl AsIonianRelativeStringTry for Intervals{
+    fn as_ionian_relative_string_try(&self) -> Option<String>{
+        if self.len() != 7{
+            return None;
+        }
+        let mut res = String::new();
+        for (i, int) in self.iter().enumerate().take(7){
+            let prefix = int.to_string();
+            res.push_str(&prefix);
+            res.push_str(&format!("{} ", i + 1));
+        }
+        res.pop();
+        Some(res)
+    }
+}
+
 // pub fn to_degree(interval: Note) -> String{
 //     match interval{
 //         0 => "I",
@@ -769,5 +785,31 @@ mod tests{
             let imod = ni.to_named_octave_interval_mod();
             assert_eq!(itry, Some(imod));
         }
+    }
+
+    #[test]
+    fn intervals_as_ionian_relative_string_try(){
+        assert_eq!(
+            vec![Interval(0)].as_ionian_relative_string_try(),
+            None
+        );
+        assert_eq!(
+            vec![Interval(0), Interval(0), Interval(0), Interval(0),
+                    Interval(0), Interval(0), Interval(0)].as_ionian_relative_string_try(),
+            Some(String::from("♮1 ♮2 ♮3 ♮4 ♮5 ♮6 ♮7"))
+        );
+        assert_eq!(
+            vec![Interval(-2), Interval(-1), Interval(0), Interval(1),
+                    Interval(2), Interval(3), Interval(4)].as_ionian_relative_string_try(),
+            Some(String::from("♭♭1 ♭2 ♮3 ♯4 ♯♯5 ♯♯♯6 ♯♯♯♯7"))
+        );
+        let scalea = vec![PC::C, PC::D, PC::E, PC::F, PC::G, PC::A, PC::B]
+            .to_scale_try(Note(1)).unwrap().to_steps(true);
+        let scaleb = vec![PC::A, PC::B, PC::C, PC::D, PC::E, PC::F, PC::G]
+            .to_scale_try(Note(1)).unwrap().to_steps(true);
+        assert_eq!(
+            scaleb.to_relative_intervals(&scalea).unwrap().to_ionian_relative_string_try(),
+            Some(String::from("♮1 ♮2 ♭3 ♮4 ♮5 ♭6 ♭7"))
+        );
     }
 }

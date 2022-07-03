@@ -172,26 +172,6 @@ impl AsRelativeIntervals for Steps{
     }
 }
 
-// pub trait RelativeTrait{
-//     fn string_ionian_rel(&self) -> String;
-// }
-//
-// impl RelativeTrait for Relative{
-//     fn string_ionian_rel(&self) -> String{
-//         if self.0.len() != 7{
-//             String::from("Not a Ionian relative!")
-//         }else{
-//             let mut res = String::new();
-//             for i in 1..=7{
-//                 let prefix = self.0[i - 1].to_string();
-//                 res.push_str(&prefix);
-//                 res.push_str(&format!("{} ", i));
-//             }
-//             res
-//         }
-//     }
-// }
-//
 // pub fn notes_to_octave_scale(scale: &Scale) -> Notes{
 //     let mut res = Vec::new();
 //     if scale.0.is_empty(){ return res; }
