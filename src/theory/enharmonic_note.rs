@@ -1,5 +1,6 @@
 use super::traits::{
-    Wrapper, Cyclic, ToPC, ToNote, ToLetterTry, ToEnharmonicNote, ToEnharmonicNoteTry
+    Wrapper, Cyclic, ToPC, ToNote, ToLetterTry, ToEnharmonicNote, ToEnharmonicNoteTry,
+    AsEnharmonicNotes, ToEnharmonicNotes
 };
 use super::{ Note, PC, Interval, AddInterval };
 
@@ -219,12 +220,14 @@ impl ToEnharmonicNoteTry for String{
     }
 }
 
-// impl IntoEnharmonicNotes for String{
-//     fn into_enharmonic_notes(self) -> Vec<EnharmonicNote>{
-//         self.split(',').into_iter().filter_map(|s| s.to_string().to_enharmonic_note()).collect::<Vec<_>>()
-//     }
-// }
-//
+impl AsEnharmonicNotes for String{
+    fn as_enharmonic_notes(&self) -> Vec<EnharmonicNote>{
+        self.split(',').into_iter().filter_map(
+            |s| s.to_string().to_enharmonic_note_try()
+        ).collect::<Vec<_>>()
+    }
+}
+
 // // Could be used for hexatonics etc?
 // fn _into_enharmonic_notes_with_start_subheptatonic(scale: Scale, start: Option<EnharmonicNote>) -> Vec<EnharmonicNote>{
 //     let mut set = vec![0, 0, 0, 0, 0, 0, 0];
@@ -508,6 +511,31 @@ mod tests{
         assert_eq!(
             "A♮♭♭♯♯♭♭♭♮nottherightcharacters♯".to_string().to_enharmonic_note_try(),
             None
+        );
+    }
+
+    #[test]
+    fn string_to_enharmonic_notes(){
+        assert_eq!("Abbqgmlwy,B##qgmlwy".to_string().to_enharmonic_notes(), vec![]);
+        assert_eq!(
+            "Abbqgmlwy,B##".to_string().to_enharmonic_notes(),
+            vec![EnharmonicNote{ letter: Letter::B, accidental: Interval(2) }]
+        );
+        assert_eq!(
+            "Abb,B##qgmlwy".to_string().to_enharmonic_notes(),
+            vec![EnharmonicNote{ letter: Letter::A, accidental: Interval(-2) }]
+        );
+        assert_eq!(
+            "C,D,Eb,F,G,Ab,Bb".to_string().to_enharmonic_notes(),
+            vec![
+                EnharmonicNote{ letter: Letter::C, accidental: Interval(0) },
+                EnharmonicNote{ letter: Letter::D, accidental: Interval(0) },
+                EnharmonicNote{ letter: Letter::E, accidental: Interval(-1) },
+                EnharmonicNote{ letter: Letter::F, accidental: Interval(0) },
+                EnharmonicNote{ letter: Letter::G, accidental: Interval(0) },
+                EnharmonicNote{ letter: Letter::A, accidental: Interval(-1) },
+                EnharmonicNote{ letter: Letter::B, accidental: Interval(-1) },
+            ]
         );
     }
 }

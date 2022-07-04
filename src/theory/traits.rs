@@ -192,6 +192,24 @@ impl<T: AsIonianRelativeStringTry> ToIonianRelativeStringTry for T{
     }
 }
 
+pub trait AsEnharmonicNotes{
+    fn as_enharmonic_notes(&self) -> Vec<EnharmonicNote>;
+}
+
+pub trait ToEnharmonicNotes{
+    fn to_enharmonic_notes(self) -> Vec<EnharmonicNote>;
+}
+
+impl<T: AsEnharmonicNotes> ToEnharmonicNotes for T{
+    fn to_enharmonic_notes(self) -> Vec<EnharmonicNote>{
+        self.as_enharmonic_notes()
+    }
+}
+
+// pub trait IntoEnharmonicNotesWithStart{
+//     fn into_enharmonic_notes_with_start(self, start: Option<EnharmonicNote>) -> Vec<EnharmonicNote>;
+// }
+
 // pub trait ToChord{
 //     fn to_chord(&self) -> Chord;
 // }
@@ -204,15 +222,6 @@ impl<T: AsIonianRelativeStringTry> ToIonianRelativeStringTry for T{
 //     fn into_chord(self) -> Chord{
 //         self.to_chord()
 //     }
-// }
-//
-
-// pub trait IntoEnharmonicNotes{
-//     fn into_enharmonic_notes(self) -> Vec<EnharmonicNote>;
-// }
-//
-// pub trait IntoEnharmonicNotesWithStart{
-//     fn into_enharmonic_notes_with_start(self, start: Option<EnharmonicNote>) -> Vec<EnharmonicNote>;
 // }
 //
 
