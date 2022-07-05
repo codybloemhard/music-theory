@@ -1,6 +1,7 @@
-use super::{ Note, Interval, PCs, _OCTAVE, _SEMI, Intervals };
+use super::{ Note, Interval, PCs, _OCTAVE, _SEMI, Intervals, EnharmonicNote };
 use super::traits::{
-    Wrapper, VecWrapper, ModeTrait, AsScaleTry, AsSteps, AddInterval, ToPC, AsPCs, AsRelativeIntervals
+    Wrapper, VecWrapper, ModeTrait, AsScaleTry, AsSteps, AddInterval, ToPC, AsPCs, AsRelativeIntervals,
+    AsEnharmonicNotes, AsEnharmonicNotesWithStart, Cyclic, ToEnharmonicNote
 };
 
 use std::cmp::Ordering;
@@ -139,6 +140,71 @@ impl AsPCs for Scale{
 //         Chord(intervals)
 //     }
 // }
+
+// Could be used for hexatonics etc?
+// fn _into_enharmonic_notes_with_start_subheptatonic(scale: Scale, start: Option<EnharmonicNote>) -> Vec<EnharmonicNote>{
+//     let mut set = vec![0, 0, 0, 0, 0, 0, 0];
+//     let mut res = Vec::new();
+//     let skip = if let Some(en) = start{
+//         set[en.letter as usize] = 1;
+//         res.push(en);
+//         1
+//     } else {
+//         0
+//     };
+//     for (i, note) in scale.0.into_iter().enumerate().skip(skip){
+//         if i >= 7 { return Vec::new(); } // Impossible: no more letters.
+//         let en = note.to_enharmonic_note().unwrap();
+//         let en = if set[en.letter as usize] == 1{
+//             let mut nen = en;
+//             loop {
+//                 nen = nen.next();
+//                 if set[nen.letter as usize] == 0 { break nen; }
+//             }
+//         } else {
+//             en
+//         };
+//         set[en.letter as usize] = 1;
+//         res.push(en);
+//     }
+//     res
+// }
+
+fn as_enharmonic_notes_with_start_heptatonic(scale: &Scale, start: Option<EnharmonicNote>)
+    -> Vec<EnharmonicNote>
+{
+    let mut res = Vec::new();
+    if scale.is_empty() { return res; }
+    let (skip, mut target_letter) = if let Some(en) = start{
+        res.push(en);
+        (1, en.next().letter)
+    } else {
+        (0, scale.0[0].to_enharmonic_note().letter)
+    };
+    for note in scale.iter().skip(skip){
+        let en = note.to_enharmonic_note();
+        let new_en = if en.letter == target_letter {
+            en
+        } else {
+            en.spelled_as(target_letter)
+        };
+        res.push(new_en);
+        target_letter = target_letter.next();
+    }
+    res
+}
+
+impl AsEnharmonicNotes for Scale{
+    fn as_enharmonic_notes(&self) -> Vec<EnharmonicNote>{
+        as_enharmonic_notes_with_start_heptatonic(self, None)
+    }
+}
+
+impl AsEnharmonicNotesWithStart for Scale{
+    fn as_enharmonic_notes_with_start(&self, start: Option<EnharmonicNote>) -> Vec<EnharmonicNote>{
+        as_enharmonic_notes_with_start_heptatonic(self, start)
+    }
+}
 
 impl AsScaleTry for Steps{
     fn as_scale_try(&self, mut note: Note) -> Option<Scale>{
@@ -495,6 +561,65 @@ mod tests{
             scaleb.to_relative_intervals(&scalea),
             Some(vec![Interval(0), Interval(0), Interval(-1), Interval(0),
                     Interval(0), Interval(-1), Interval(-1)])
+        );
+    }
+
+    #[test]
+    fn scale_as_enharmonic_notes(){
+        assert_eq!(Scale(vec![]).to_enharmonic_notes(), vec![]);
+        assert_eq!(
+            Scale(vec![
+                  Note(0), Note(1), Note(2), Note(3)
+            ]).to_enharmonic_notes(),
+            vec![
+                EnharmonicNote{ letter: Letter::A, accidental: Interval(0) },
+                EnharmonicNote{ letter: Letter::B, accidental: Interval(-1) },
+                EnharmonicNote{ letter: Letter::C, accidental: Interval(-1) },
+                EnharmonicNote{ letter: Letter::D, accidental: Interval(-2) },
+            ]
+        );
+    }
+
+    #[test]
+    fn scale_as_enharmonic_notes_with_start(){
+        assert_eq!(
+            Scale(vec![]).to_enharmonic_notes_with_start(
+                Some(EnharmonicNote{ letter: Letter::A, accidental: Interval(0) })
+            ),
+            vec![]
+        );
+        let scale = Scale(vec![Note(0), Note(1), Note(2), Note(3)]);
+        assert_eq!(
+            scale.clone().to_enharmonic_notes(),
+            scale.to_enharmonic_notes_with_start(
+                Some(EnharmonicNote{ letter: Letter::A, accidental: Interval(0) })
+            )
+        );
+        assert_eq!(
+            Scale(vec![
+                  Note(10), Note(11), Note(12), Note(13)
+            ]).to_enharmonic_notes_with_start(
+                Some(EnharmonicNote { letter: Letter::G, accidental: Interval(0) })
+            ),
+            vec![
+                EnharmonicNote { letter: Letter::G, accidental: Interval(0) },
+                EnharmonicNote { letter: Letter::A, accidental: Interval(-1) },
+                EnharmonicNote { letter: Letter::B, accidental: Interval(-2) },
+                EnharmonicNote { letter: Letter::C, accidental: Interval(-2) }
+            ]
+        );
+        assert_eq!(
+            Scale(vec![
+                  Note(10), Note(11), Note(12), Note(13)
+            ]).to_enharmonic_notes_with_start(
+                Some(EnharmonicNote { letter: Letter::F, accidental: Interval(-2) })
+            ),
+            vec![
+                EnharmonicNote { letter: Letter::F, accidental: Interval(-2) },
+                EnharmonicNote { letter: Letter::G, accidental: Interval(1) },
+                EnharmonicNote { letter: Letter::A, accidental: Interval(0) },
+                EnharmonicNote { letter: Letter::B, accidental: Interval(-1) }
+            ]
         );
     }
 }

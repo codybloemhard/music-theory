@@ -206,9 +206,19 @@ impl<T: AsEnharmonicNotes> ToEnharmonicNotes for T{
     }
 }
 
-// pub trait IntoEnharmonicNotesWithStart{
-//     fn into_enharmonic_notes_with_start(self, start: Option<EnharmonicNote>) -> Vec<EnharmonicNote>;
-// }
+pub trait AsEnharmonicNotesWithStart{
+    fn as_enharmonic_notes_with_start(&self, start: Option<EnharmonicNote>) -> Vec<EnharmonicNote>;
+}
+
+pub trait ToEnharmonicNotesWithStart{
+    fn to_enharmonic_notes_with_start(self, start: Option<EnharmonicNote>) -> Vec<EnharmonicNote>;
+}
+
+impl<T: AsEnharmonicNotesWithStart> ToEnharmonicNotesWithStart for T{
+    fn to_enharmonic_notes_with_start(self, start: Option<EnharmonicNote>) -> Vec<EnharmonicNote>{
+        self.as_enharmonic_notes_with_start(start)
+    }
+}
 
 // pub trait ToChord{
 //     fn to_chord(&self) -> Chord;
