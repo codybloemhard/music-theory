@@ -1,7 +1,7 @@
 use super::{ Note, Interval, PCs, _OCTAVE, _SEMI, Intervals, EnharmonicNote };
 use super::traits::{
     Wrapper, VecWrapper, ModeTrait, AsScaleTry, AsSteps, AddInterval, ToPC, AsPCs, AsRelativeIntervals,
-    AsEnharmonicNotes, AsEnharmonicNotesWithStart, Cyclic, ToEnharmonicNote
+    AsEnharmonicNotes, AsEnharmonicNotesWithStart, Cyclic, ToEnharmonicNote, ToNote
 };
 
 use std::cmp::Ordering;
@@ -176,6 +176,7 @@ fn as_enharmonic_notes_with_start_heptatonic(scale: &Scale, start: Option<Enharm
     let mut res = Vec::new();
     if scale.is_empty() { return res; }
     let (skip, mut target_letter) = if let Some(en) = start{
+        if en.to_note() != scale.0[0] { return res; }
         res.push(en);
         (1, en.next().letter)
     } else {
@@ -612,14 +613,22 @@ mod tests{
             Scale(vec![
                   Note(10), Note(11), Note(12), Note(13)
             ]).to_enharmonic_notes_with_start(
-                Some(EnharmonicNote { letter: Letter::F, accidental: Interval(-2) })
+                Some(EnharmonicNote { letter: Letter::F, accidental: Interval(2) })
             ),
             vec![
-                EnharmonicNote { letter: Letter::F, accidental: Interval(-2) },
+                EnharmonicNote { letter: Letter::F, accidental: Interval(2) },
                 EnharmonicNote { letter: Letter::G, accidental: Interval(1) },
                 EnharmonicNote { letter: Letter::A, accidental: Interval(0) },
                 EnharmonicNote { letter: Letter::B, accidental: Interval(-1) }
             ]
+        );
+        assert_eq!(
+            Scale(vec![
+                  Note(10), Note(11), Note(12), Note(13)
+            ]).to_enharmonic_notes_with_start(
+                Some(EnharmonicNote { letter: Letter::F, accidental: Interval(0) })
+            ),
+            vec![]
         );
     }
 }
