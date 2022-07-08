@@ -162,10 +162,6 @@ impl ToEnharmonicNote for Note{
     }
 }
 
-// #[derive(Debug, Default, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
-// pub struct Chord(pub Vec<Note>);
-//
-
 #[cfg(test)]
 mod tests{
     use super::*;

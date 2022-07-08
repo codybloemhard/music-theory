@@ -1,5 +1,7 @@
+use super::{ _Note, Note, Notes };
+use super::interval::*;
+use super::traits::{ VecWrapper, Wrapper };
 // use super::note::*;
-// use super::interval::*;
 // use super::scale::*;
 // use crate::utils::roman_numerals::to_roman_num;
 
@@ -8,71 +10,101 @@ use std::collections::HashSet;
 pub const NUM_SUPS: [char; 10] = ['⁰', 'ⁱ', '²', '³', '⁴', '⁵', '⁶', '⁷', '⁸', '⁹'];
 pub const NUM_SUBS: [char; 10] = ['₀', '₁', '₂', '₃', '₄', '₅', '₆', '₇', '₈', '₉'];
 
-// pub const MAJOR: &[Note] = &[_MAJ3, _PER5];
-// pub const MINOR: &[Note] = &[_MIN3, _PER5];
-// pub const MINOR_AUGMENTED: &[Note] = &[_MIN3, _AUG5];
-// pub const MAJOR_AUGMENTED: &[Note] = &[_MAJ3, _AUG5];
-// pub const MINOR_DIMINISHED: &[Note] = &[_MIN3, _DIM5];
-// pub const MAJOR_DIMINISHED: &[Note] = &[_MAJ3, _DIM5];
-// pub const SUS2: &[Note] = &[_MAJ2, _PER5];
-// pub const SUS4: &[Note] = &[_PER4, _PER5];
-// pub const SUPER_SUS: &[Note] = &[_MAJ2, _PER4];
-// pub const PHRYGIAN: &[Note] = &[_MIN2, _PER5];
-// pub const LYDIAN: &[Note] = &[_AUG4, _PER5];
-// pub const LOCRIAN2: &[Note] = &[_MIN2, _DIM5];
-// pub const LOCRIAN4: &[Note] = &[_PER4, _DIM5];
-// pub const SUPER_LOCRIAN: &[Note] = &[_MIN2, _PER4, _DIM5];
-// pub const MAJOR_SIXTH_CHORD: &[Note] = &[_MAJ3, _PER5, _MAJ6];
-// pub const MINOR_SIXTH_CHORD: &[Note] = &[_MIN3, _PER5, _MAJ6];
-// pub const MAJOR_SEVENTH_CHORD: &[Note] = &[_MAJ3, _PER5, _MAJ7];
-// pub const MINOR_SEVENTH_CHORD: &[Note] = &[_MIN3, _PER5, _MIN7];
-// pub const DOMINANT_SEVENTH: &[Note] = &[_MAJ3, _PER5, _MIN7];
-// pub const MINOR_MAJOR_SEVENTH: &[Note] = &[_MIN3, _PER5, _MAJ7];
-// pub const HALF_DIMINISHED_SEVENTH: &[Note] = &[_MIN3, _DIM5, _MIN7];
-// pub const DIMINISHED_SEVENTH_CHORD: &[Note] = &[_MIN3, _DIM5, _DIM7];
-// pub const AUGMENTED_SEVENTH_CHORD: &[Note] = &[_MAJ3, _AUG5, _MIN7];
-// pub const MU_CHORD: &[Note] = &[_MAJ2, _MAJ3, _PER5];
-// pub const SIX_NINE_CHORD: &[Note] = &[_MAJ3, _PER5, _MAJ6, _MAJ9];
-//
-// // (pattern, name, major base string?, extended collection?)
-// pub type ChordBook = &'static [(&'static [Note], &'static str, bool, bool)];
-//
-// pub const STD_CHORD_BOOK: ChordBook = &[
-//     (MAJOR, "", true, false),
-//     (MINOR, "", false, false),
-//     (MINOR_AUGMENTED, "+", false, true),
-//     (MAJOR_AUGMENTED, "+", true, false),
-//     (MINOR_DIMINISHED, "°", false, false),
-//     (MAJOR_DIMINISHED, "°", true, true),
-//     (SUPER_SUS, "ssus", true, true),
-//     (PHRYGIAN, "phry", true, false),
-//     (LYDIAN, "lyd", true, false),
-//     (LOCRIAN2, "loc2", true, false),
-//     (LOCRIAN4, "loc4", true, false),
-//     (SUPER_LOCRIAN, "o", true, true),
-//     (MAJOR_SIXTH_CHORD, "⁶", true, false),
-//     (MINOR_SIXTH_CHORD, "⁶", false, false),
-//     (MAJOR_SEVENTH_CHORD, "∆", true, false),
-//     (MINOR_SEVENTH_CHORD, "-", false, false),
-//     (DOMINANT_SEVENTH, "⁷", true, false),
-//     (MINOR_MAJOR_SEVENTH, "-∆", true, false),
-//     (HALF_DIMINISHED_SEVENTH, "ø", false, false),
-//     (DIMINISHED_SEVENTH_CHORD, "°⁷", false, false),
-//     (AUGMENTED_SEVENTH_CHORD, "+⁷", true, false),
-//     (MU_CHORD, "μ", true, true),
-//     (SIX_NINE_CHORD, "6/9", true, false),
-// ];
-//
-// #[derive(PartialEq,Eq,Clone,Copy)]
-// pub enum ChordStyling{ Std, Extended, SpelledOut }
-//
+pub const MAJOR: &[_Note] = &[_MAJ3, _PER5];
+pub const MINOR: &[_Note] = &[_MIN3, _PER5];
+pub const MINOR_AUGMENTED: &[_Note] = &[_MIN3, _AUG5];
+pub const MAJOR_AUGMENTED: &[_Note] = &[_MAJ3, _AUG5];
+pub const MINOR_DIMINISHED: &[_Note] = &[_MIN3, _DIM5];
+pub const MAJOR_DIMINISHED: &[_Note] = &[_MAJ3, _DIM5];
+pub const SUS2: &[_Note] = &[_MAJ2, _PER5];
+pub const SUS4: &[_Note] = &[_PER4, _PER5];
+pub const SUPER_SUS: &[_Note] = &[_MAJ2, _PER4];
+pub const PHRYGIAN: &[_Note] = &[_MIN2, _PER5];
+pub const LYDIAN: &[_Note] = &[_AUG4, _PER5];
+pub const LOCRIAN2: &[_Note] = &[_MIN2, _DIM5];
+pub const LOCRIAN4: &[_Note] = &[_PER4, _DIM5];
+pub const SUPER_LOCRIAN: &[_Note] = &[_MIN2, _PER4, _DIM5];
+pub const MAJOR_SIXTH_CHORD: &[_Note] = &[_MAJ3, _PER5, _MAJ6];
+pub const MINOR_SIXTH_CHORD: &[_Note] = &[_MIN3, _PER5, _MAJ6];
+pub const MAJOR_SEVENTH_CHORD: &[_Note] = &[_MAJ3, _PER5, _MAJ7];
+pub const MINOR_SEVENTH_CHORD: &[_Note] = &[_MIN3, _PER5, _MIN7];
+pub const DOMINANT_SEVENTH: &[_Note] = &[_MAJ3, _PER5, _MIN7];
+pub const MINOR_MAJOR_SEVENTH: &[_Note] = &[_MIN3, _PER5, _MAJ7];
+pub const HALF_DIMINISHED_SEVENTH: &[_Note] = &[_MIN3, _DIM5, _MIN7];
+pub const DIMINISHED_SEVENTH_CHORD: &[_Note] = &[_MIN3, _DIM5, _DIM7];
+pub const AUGMENTED_SEVENTH_CHORD: &[_Note] = &[_MAJ3, _AUG5, _MIN7];
+pub const MU_CHORD: &[_Note] = &[_MAJ2, _MAJ3, _PER5];
+pub const SIX_NINE_CHORD: &[_Note] = &[_MAJ3, _PER5, _MAJ6, _MAJ9];
+
+// (pattern, name, major base string?, extended collection?)
+pub type ChordBook = &'static [(&'static [_Note], &'static str, bool, bool)];
+
+pub const STD_CHORD_BOOK: ChordBook = &[
+    (MAJOR, "", true, false),
+    (MINOR, "", false, false),
+    (MINOR_AUGMENTED, "+", false, true),
+    (MAJOR_AUGMENTED, "+", true, false),
+    (MINOR_DIMINISHED, "°", false, false),
+    (MAJOR_DIMINISHED, "°", true, true),
+    (SUPER_SUS, "ssus", true, true),
+    (PHRYGIAN, "phry", true, false),
+    (LYDIAN, "lyd", true, false),
+    (LOCRIAN2, "loc2", true, false),
+    (LOCRIAN4, "loc4", true, false),
+    (SUPER_LOCRIAN, "o", true, true),
+    (MAJOR_SIXTH_CHORD, "⁶", true, false),
+    (MINOR_SIXTH_CHORD, "⁶", false, false),
+    (MAJOR_SEVENTH_CHORD, "∆", true, false),
+    (MINOR_SEVENTH_CHORD, "-", false, false),
+    (DOMINANT_SEVENTH, "⁷", true, false),
+    (MINOR_MAJOR_SEVENTH, "-∆", true, false),
+    (HALF_DIMINISHED_SEVENTH, "ø", false, false),
+    (DIMINISHED_SEVENTH_CHORD, "°⁷", false, false),
+    (AUGMENTED_SEVENTH_CHORD, "+⁷", true, false),
+    (MU_CHORD, "μ", true, true),
+    (SIX_NINE_CHORD, "6/9", true, false),
+];
+
+#[derive(Debug, Default, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct Chord(pub Vec<Note>);
+
+#[derive(PartialEq,Eq,Clone,Copy)]
+pub enum ChordStyling{ Std, Extended, SpelledOut }
+
 // fn bit_on(num: usize, bit: usize) -> bool{
 //     let mut t = 1 << bit;
 //     t &= num;
 //     t != 0
 // }
-//
-// impl Chord{
+
+fn is_sorted<T: PartialOrd + Copy>(v: &[T]) -> bool{
+    let mut last = v[0];
+    for x in v{
+        if last > *x { return false; }
+        last = *x;
+    }
+    true
+}
+
+ImplVecWrapper!(Chord, Note);
+
+impl Wrapper for Chord{
+    type Inner = Notes;
+
+    fn wrap(scale: Self::Inner) -> Option<Self>{
+        if scale.is_empty() || !is_sorted(&scale){
+            None
+        } else {
+            Some(Self(scale))
+        }
+    }
+
+    fn unwrap(self) -> Self::Inner{
+        self.0
+    }
+}
+
+impl Chord{
 //     pub fn new(intervals: &[Note]) -> Self{
 //         Chord(intervals.to_owned())
 //     }
@@ -215,7 +247,7 @@ pub const NUM_SUBS: [char; 10] = ['₀', '₁', '₂', '₃', '₄', '₅', '₆
 //     pub fn as_string(&self, styling: ChordStyling) -> String{
 //         self.quality("X".to_string(), true, styling)
 //     }
-// }
+}
 //
 // impl ToScale for Chord{
 //     fn to_scale(&self, root: Note) -> Scale{
@@ -450,9 +482,31 @@ pub const NUM_SUBS: [char; 10] = ['₀', '₁', '₂', '₃', '₄', '₅', '₆
 //     cells
 // }
 //
-// #[cfg(test)]
-// mod tests{
-//     use super::*;
+#[cfg(test)]
+mod tests{
+    use super::*;
+
+    #[test]
+    fn test_is_sorted(){
+        assert_eq!(is_sorted(&[Note(0)]), true);
+        assert_eq!(is_sorted(&[Note(0), Note(1)]), true);
+        assert_eq!(is_sorted(&[Note(1), Note(1)]), true);
+        assert_eq!(is_sorted(&[Note(3), Note(1)]), false);
+        assert_eq!(is_sorted(&[Note(3), Note(4), Note(3), Note(5)]), false);
+    }
+
+    #[test]
+    fn chord_wrap(){
+        assert_eq!(Chord::wrap(vec![]), None);
+        assert_eq!(Chord::wrap(vec![Note(1), Note(0)]), None);
+        assert_eq!(Chord::wrap(vec![Note(0), Note(1)]), Some(Chord(vec![Note(0), Note(1)])));
+    }
+
+    #[test]
+    fn chord_unwrap(){
+        assert_eq!(Chord(vec![Note(0), Note(1)]).unwrap(), vec![Note(0), Note(1)]);
+    }
+
 //     #[test]
 //     fn test_chords_strings(){
 //         assert_eq!(Chord::new(&[_MAJ3,_PER5]).as_string(ChordStyling::Std), String::from("X"));
@@ -489,4 +543,4 @@ pub const NUM_SUBS: [char; 10] = ['₀', '₁', '₂', '₃', '₄', '₅', '₆
 //         assert_eq!(Chord::new(&[_MAJ2,_PER5,_MAJ7,_MIN9,_AUG11]).as_string(ChordStyling::Std), String::from("X∆sus2(♭9♯11)"));
 //         assert_eq!(Chord::new(&[_PER4,_PER5,_MIN7,_AUG9,_AUG13]).as_string(ChordStyling::Std), String::from("X-sus4(♯9♯13)"));
 //     }
-// }
+}

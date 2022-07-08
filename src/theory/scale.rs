@@ -1,7 +1,8 @@
 use super::{ Note, Interval, PCs, _OCTAVE, _SEMI, Intervals, EnharmonicNote };
 use super::traits::{
-    Wrapper, VecWrapper, ModeTrait, AsScaleTry, AsSteps, AddInterval, ToPC, AsPCs, AsRelativeIntervals,
-    AsEnharmonicNotes, AsEnharmonicNotesWithStart, Cyclic, ToEnharmonicNote, ToNote
+    Wrapper, VecWrapper, ModeTrait, AsScaleTry, AsSteps, AddInterval, ToPC, AsPCs,
+    AsRelativeIntervals, AsEnharmonicNotes, AsEnharmonicNotesWithStart, Cyclic,
+    ToEnharmonicNote, ToNote
 };
 
 use std::cmp::Ordering;
