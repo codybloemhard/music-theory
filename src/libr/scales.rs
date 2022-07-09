@@ -1,4 +1,4 @@
-use crate::theory::{ Steps, Mode };
+use crate::theory::{ Steps, Mode, Interval };
 use crate::theory::traits::{ ModeIteratorSpawner, VecWrapper };
 // use crate::theory::scale::{ Mode };
 // use crate::theory::scale::ModeIteratorSpawner;
@@ -53,78 +53,103 @@ impl ScaleObj{
     }
 }
 
-// pub fn get_all_scale_objs() -> Vec<ScaleObj>{
-//     vec![ionian::obj(),
-//     harmonic_minor::obj(), harmonic_major::obj(),
-//     melodic_minor::obj(),
-//     byzantine::obj(), hungarian_major::obj(),
-//     neapolitan_minor::obj(), neapolitan_major::obj(),
-//     enigmatic_major::obj(), enigmatic_minor::obj()]
-// }
-//
-// impl std::fmt::Display for ModeObj{
-//     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result{
-//         write!(f, "{}, {}ᵉ mode of {}", self.mode_name, self.mode_nr + 1, self.fam_name)
-//     }
-// }
-//
-// macro_rules! DefScale{
-//     ($modname:ident, $steps:expr, $name:expr, $( $mode:expr ),* ) => {
-//         pub mod $modname{
-//             use crate::theory::note::{Steps};
-//             use crate::theory::interval::*;
-//             use super::ScaleObj;
-//
-//             pub fn steps() -> Steps{
-//                 Steps($steps)
-//             }
-//
-//             pub fn obj() -> ScaleObj{
-//                 let modes = vec![
-//                     $(
-//                         String::from($mode),
-//                     )*
-//                 ];
-//                 ScaleObj{
-//                     steps: steps(),
-//                     fam_name: String::from($name),
-//                     modes,
-//                 }
-//             }
-//         }
-//     }
-// }
-//
-// DefScale!(ionian, vec![_WHOLE, _WHOLE, _SEMI, _WHOLE, _WHOLE, _WHOLE, _SEMI], "Ionian",
-//     "Ionian", "Dorian", "Phrygian", "Lydian", "Mixolidian", "Aeolian", "Locrian");
-//
-// DefScale!(harmonic_minor, vec![_WHOLE, _SEMI, _WHOLE, _WHOLE, _SEMI, _MIN3, _SEMI], "Harmonic Minor",
-//     "Harmonic Minor", "", "", "", "Phrygian Dominant", "", "Superlocrian");
-//
-// DefScale!(harmonic_major, vec![_WHOLE, _WHOLE, _SEMI, _WHOLE, _SEMI, _MIN3, _SEMI], "Harmonic Major",
-//     "Harmonic Major" ,"", "Super Phrygian", "Lydian Diminished", "", "" ,"");
-//
-// DefScale!(byzantine, vec![_SEMI, _MIN3, _SEMI, _WHOLE, _SEMI, _MIN3, _SEMI], "Double Harmonic Major",
-//     "Byzantine", "", "Ultra Phrygian", "Hungarian Minor", "Oriental", "", "");
-//
-// DefScale!(hungarian_major, vec![_MIN3, _SEMI, _WHOLE, _SEMI, _WHOLE, _SEMI, _WHOLE], "Hungarian Major",
-//     "Hungarian Major", "", "", "", "", "", "");
-//
-// DefScale!(neapolitan_minor, vec![_SEMI, _WHOLE, _WHOLE, _WHOLE, _SEMI, _MIN3, _SEMI], "Neapolitan Minor",
-//     "Neapolitan Minor", "", "Mixolydian Augmented", "Lydian Minor", "", "", "");
-//
-// DefScale!(neapolitan_major, vec![_SEMI, _WHOLE, _WHOLE, _WHOLE, _WHOLE, _WHOLE, _SEMI],"Neapolitan Major",
-//     "Neapolitan Major", "", "", "", "", "", "");
-//
-// DefScale!(melodic_minor, vec![_WHOLE, _SEMI, _WHOLE, _WHOLE, _WHOLE, _WHOLE, _SEMI], "Melodic Minor",
-//     "Melodic Minor", "", "Lydian Augmented", "Lydian Dominant", "Melodic Major", "", "Altered Scale");
-//
-// DefScale!(enigmatic_major, vec![_SEMI, _MIN3, _WHOLE, _WHOLE, _WHOLE, _SEMI, _SEMI], "Enigmatic Major",
-//     "Enigmatic Major", "", "", "", "", "", "");
-//
-// DefScale!(enigmatic_minor, vec![_SEMI, _WHOLE, _MIN3, _SEMI, _MIN3, _SEMI, _SEMI], "Enigmatic Minor",
-//     "Enigmatic Minor", "", "", "", "", "", "");
-//
+impl std::fmt::Display for ModeObj{
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result{
+        write!(f, "{}, {}ᵉ mode of {}", self.mode_name, self.mode_nr + 1, self.fam_name)
+    }
+}
+
+pub fn get_all_scale_objs() -> Vec<ScaleObj>{
+    vec![
+        ionian::obj(),
+        harmonic_minor::obj(), harmonic_major::obj(),
+        melodic_minor::obj(),
+        byzantine::obj(), hungarian_major::obj(),
+        neapolitan_minor::obj(), neapolitan_major::obj(),
+        enigmatic_major::obj(), enigmatic_minor::obj()
+    ]
+}
+
+macro_rules! DefScale{
+    ($modname:ident, $name:expr, $steps:expr, $( $mode:expr ),* ) => {
+        pub mod $modname{
+            use crate::theory::{ Steps };
+            use super::*;
+
+            pub fn steps() -> Steps{
+                Steps($steps)
+            }
+
+            pub fn obj() -> ScaleObj{
+                let modes = vec![
+                    $(
+                        String::from($mode),
+                    )*
+                ];
+                ScaleObj{
+                    steps: steps(),
+                    fam_name: String::from($name),
+                    modes,
+                }
+            }
+        }
+    }
+}
+
+const SEMI: Interval = Interval::SEMI;
+const WHOLE: Interval = Interval::WHOLE;
+const MIN3: Interval = Interval::MIN3;
+
+DefScale!(ionian, "Ionian",
+    vec![WHOLE, WHOLE, SEMI, WHOLE, WHOLE, WHOLE, SEMI],
+    "Ionian", "Dorian", "Phrygian", "Lydian", "Mixolidian", "Aeolian", "Locrian"
+);
+
+DefScale!(harmonic_minor, "Harmonic Minor",
+    vec![WHOLE, SEMI, WHOLE, WHOLE, SEMI, MIN3, SEMI],
+    "Harmonic Minor", "", "", "", "Phrygian Dominant", "", "Superlocrian"
+);
+
+DefScale!(harmonic_major, "Harmonic Major",
+    vec![WHOLE, WHOLE, SEMI, WHOLE, SEMI, MIN3, SEMI],
+    "Harmonic Major" ,"", "Super Phrygian", "Lydian Diminished", "", "" ,""
+);
+
+DefScale!(byzantine, "Double Harmonic Major",
+    vec![SEMI, MIN3, SEMI, WHOLE, SEMI, MIN3, SEMI],
+    "Byzantine", "", "Ultra Phrygian", "Hungarian Minor", "Oriental", "", ""
+);
+
+DefScale!(hungarian_major, "Hungarian Major",
+    vec![MIN3, SEMI, WHOLE, SEMI, WHOLE, SEMI, WHOLE],
+    "Hungarian Major", "", "", "", "", "", ""
+);
+
+DefScale!(neapolitan_minor, "Neopolitan Minor",
+    vec![SEMI, WHOLE, WHOLE, WHOLE, SEMI, MIN3, SEMI],
+    "Neapolitan Minor", "", "Mixolydian Augmented", "Lydian Minor", "", "", ""
+);
+
+DefScale!(neapolitan_major, "Neapolitan Major",
+    vec![SEMI, WHOLE, WHOLE, WHOLE, WHOLE, WHOLE, SEMI],
+    "Neapolitan Major", "", "", "", "", "", ""
+);
+
+DefScale!(melodic_minor, "Melodic Minor",
+    vec![WHOLE, SEMI, WHOLE, WHOLE, WHOLE, WHOLE, SEMI],
+    "Melodic Minor", "", "Lydian Augmented", "Lydian Dominant", "Melodic Major", "", "Altered Scale"
+);
+
+DefScale!(enigmatic_major, "Enigmatic Major",
+    vec![SEMI, MIN3, WHOLE, WHOLE, WHOLE, SEMI, SEMI], "Enigmatic Major",
+    "Enigmatic Major", "", "", "", "", "", ""
+);
+
+DefScale!(enigmatic_minor, "Enigmatic Minor",
+    vec![SEMI, WHOLE, MIN3, SEMI, MIN3, SEMI, SEMI],
+    "Enigmatic Minor", "", "", "", "", "", ""
+);
+
 // use crate::Scale;
 // use crate::theory::note::ToScale;
 // use crate::theory::note::NoteSequence;
@@ -271,5 +296,38 @@ mod tests{
             })
         );
         assert_eq!(iter.next(), None);
+    }
+
+    #[test]
+    fn mode_obj_to_string(){
+        assert_eq!(
+            &ModeObj{
+                steps: Steps(vec![Interval(2), Interval(0), Interval(1)]),
+                fam_name: String::from("test"),
+                mode_name: String::from("Ahh"),
+                mode_nr: 2,
+            }.to_string(),
+            "Ahh, 3ᵉ mode of test"
+        );
+    }
+
+    #[test]
+    fn test_get_all_scale_objs(){
+        let objs = get_all_scale_objs();
+        assert_eq!(objs.len(), 10);
+    }
+
+    #[test]
+    fn steps(){
+        assert_eq!(
+            ionian::steps(),
+            Steps(vec![WHOLE, WHOLE, SEMI, WHOLE, WHOLE, WHOLE, SEMI]),
+        );
+    }
+
+    #[test]
+    fn obj(){
+        assert_eq!(&ionian::obj().modes[5], "Aeolian");
+        assert_eq!(&neapolitan_minor::obj().modes[2], "Mixolydian Augmented");
     }
 }
