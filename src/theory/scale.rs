@@ -2,7 +2,7 @@ use super::{ Note, Interval, PCs, _OCTAVE, _SEMI, Intervals, EnharmonicNote };
 use super::traits::{
     Wrapper, VecWrapper, ModeTrait, AsScaleTry, AsSteps, AddInterval, ToPC, AsPCs,
     AsRelativeIntervals, AsEnharmonicNotes, AsEnharmonicNotesWithStart, Cyclic,
-    ToEnharmonicNote, ToNote
+    ToEnharmonicNote, ToNote, ModeIteratorSpawner
 };
 
 use std::cmp::Ordering;
@@ -289,42 +289,38 @@ impl AsRelativeIntervals for Steps{
 //         root,
 //     }
 // }
-//
-// pub struct ModeIterator<T: ModeTrait + NoteSequence>{
-//     scale: T,
-//     current: usize,
-//     len: usize,
-// }
-//
-// //TODO: return references
-// impl<T: std::clone::Clone + ModeTrait + NoteSequence>
-//     Iterator for ModeIterator<T>{
-//     type Item = T;
-//     fn next(&mut self) -> Option<T>{
-//         if self.current >= self.len{
-//             return Option::None;
-//         }
-//         let res = self.scale.clone();
-//         self.scale.next_mode_mut();
-//         self.current += 1;
-//         Option::Some(res)
-//     }
-// }
-//
-// pub trait ModeIteratorSpawner<T: ModeTrait + NoteSequence>{
-//     fn mode_iter(self) -> ModeIterator<T>;
-// }
-//
-// impl<T: ModeTrait + NoteSequence> ModeIteratorSpawner<T> for T{
-//     fn mode_iter(self) -> ModeIterator<T>{
-//         let len = self.len();
-//         ModeIterator{
-//             scale: self,
-//             current: 0,
-//             len,
-//         }
-//     }
-// }
+
+pub struct ModeIterator<T: ModeTrait + VecWrapper>{
+    wrapper: T,
+    current: usize,
+    len: usize,
+}
+
+// TODO: return references?
+impl<T: Clone + ModeTrait + VecWrapper> Iterator for ModeIterator<T>{
+    type Item = T;
+
+    fn next(&mut self) -> Option<T>{
+        if self.current >= self.len{
+            return Option::None;
+        }
+        let res = self.wrapper.clone();
+        self.wrapper.next_mode_mut();
+        self.current += 1;
+        Option::Some(res)
+    }
+}
+
+impl<T: ModeTrait + VecWrapper> ModeIteratorSpawner<T> for T{
+    fn mode_iter(self) -> ModeIterator<T>{
+        let len = self.len();
+        ModeIterator{
+            wrapper: self,
+            current: 0,
+            len,
+        }
+    }
+}
 
 #[cfg(test)]
 mod tests{
@@ -631,5 +627,14 @@ mod tests{
             ),
             vec![]
         );
+    }
+
+    #[test]
+    fn mode_iterator(){
+        let mut iter = Steps(vec![Interval(1), Interval(2), Interval(3)]).mode_iter();
+        assert_eq!(iter.next(), Some(Steps(vec![Interval(1), Interval(2), Interval(3)])));
+        assert_eq!(iter.next(), Some(Steps(vec![Interval(2), Interval(3), Interval(1)])));
+        assert_eq!(iter.next(), Some(Steps(vec![Interval(3), Interval(1), Interval(2)])));
+        assert_eq!(iter.next(), None);
     }
 }

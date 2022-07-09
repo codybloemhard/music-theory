@@ -1,6 +1,6 @@
 use super::{
     Note, PC, PCs, Octave, OctaveShift, Interval, NamedInterval, NamedOctaveInterval, Letter,
-    EnharmonicNote, Mode, Scale, Steps, Intervals
+    EnharmonicNote, Mode, Scale, Steps, Intervals, ModeIterator
 };
 
 use std::marker::Sized;
@@ -68,6 +68,10 @@ pub trait ModeTrait{
     fn next_mode_mut(&mut self);
     fn next_mode(self) -> Self;
     fn mode(self, mode: Mode) -> Self;
+}
+
+pub trait ModeIteratorSpawner<T: ModeTrait + VecWrapper>{
+    fn mode_iter(self) -> ModeIterator<T>;
 }
 
 // Conversion Traits

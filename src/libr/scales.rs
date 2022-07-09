@@ -1,49 +1,58 @@
+use crate::theory::{ Steps, Mode };
+use crate::theory::traits::{ ModeIteratorSpawner, VecWrapper };
 // use crate::theory::scale::{ Mode };
-// use crate::theory::note::{ Steps };
 // use crate::theory::scale::ModeIteratorSpawner;
 
-// pub struct ScaleObj{
-//     pub steps: Steps,
-//     pub fam_name: String,
-//     pub modes: Vec<String>,
-// }
-//
-// impl ScaleObj{
-//     pub fn clone_steps(&self) -> Steps{
-//         self.steps.clone()
-//     }
-//
-//     pub fn family_name(&self) -> String{
-//         self.fam_name.clone()
-//     }
-//
-//     pub fn get_mode_name(&self, mode: Mode) -> String{
-//         let m = mode as usize % self.steps.0.len();
-//         let name = self.modes[m].clone();
-//         if name.is_empty(){
-//             String::from("")
-//         }else{
-//             name
-//         }
-//     }
-//
-//     pub fn get_modes(self) -> Vec<ModeObj>{
-//         let fname = self.family_name();
-//         let mut res = Vec::new();
-//         for (i,mode) in self.clone_steps().mode_iter().enumerate(){
-//             res.push(
-//                 ModeObj{
-//                     steps: mode,
-//                     fam_name: fname.clone(),
-//                     mode_name: self.get_mode_name(i as u8),
-//                     mode_nr: i,
-//                 }
-//             );
-//         }
-//         res
-//     }
-// }
-//
+pub struct ScaleObj{
+    pub steps: Steps,
+    pub fam_name: String,
+    pub modes: Vec<String>,
+}
+
+#[derive(Debug, Default, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct ModeObj{
+    pub steps: Steps,
+    pub fam_name: String,
+    pub mode_name: String,
+    pub mode_nr: usize,
+}
+
+impl ScaleObj{
+    pub fn clone_steps(&self) -> Steps{
+        self.steps.clone()
+    }
+
+    pub fn family_name(&self) -> String{
+        self.fam_name.clone()
+    }
+
+    pub fn get_mode_name(&self, mode: Mode) -> String{
+        let m = mode as usize % self.steps.len();
+        let name = self.modes[m].clone();
+        if name.is_empty(){
+            String::from("")
+        }else{
+            name
+        }
+    }
+
+    pub fn get_modes(self) -> Vec<ModeObj>{
+        let fname = self.family_name();
+        let mut res = Vec::new();
+        for (i, mode) in self.clone_steps().mode_iter().enumerate(){
+            res.push(
+                ModeObj{
+                    steps: mode,
+                    fam_name: fname.clone(),
+                    mode_name: self.get_mode_name(i),
+                    mode_nr: i,
+                }
+            );
+        }
+        res
+    }
+}
+
 // pub fn get_all_scale_objs() -> Vec<ScaleObj>{
 //     vec![ionian::obj(),
 //     harmonic_minor::obj(), harmonic_major::obj(),
@@ -51,14 +60,6 @@
 //     byzantine::obj(), hungarian_major::obj(),
 //     neapolitan_minor::obj(), neapolitan_major::obj(),
 //     enigmatic_major::obj(), enigmatic_minor::obj()]
-// }
-//
-// #[derive(Clone,Debug)]
-// pub struct ModeObj{
-//     pub steps: Steps,
-//     pub fam_name: String,
-//     pub mode_name: String,
-//     pub mode_nr: usize,
 // }
 //
 // impl std::fmt::Display for ModeObj{
@@ -192,3 +193,83 @@
 //     }
 // }
 
+#[cfg(test)]
+mod tests{
+    use super::*;
+    use super::super::super::theory::*;
+
+    #[test]
+    fn clone_steps(){
+        assert_eq!(
+            ScaleObj{
+                steps: Steps(vec![Interval(123456)]),
+                fam_name: String::from("test"),
+                modes: vec![]
+            }.clone_steps(),
+            Steps(vec![Interval(123456)])
+        );
+    }
+
+    #[test]
+    fn family_name(){
+        assert_eq!(
+            ScaleObj{
+                steps: Steps(vec![Interval(123456)]),
+                fam_name: String::from("test"),
+                modes: vec![]
+            }.family_name(),
+            String::from("test")
+        );
+    }
+
+    #[test]
+    fn get_mode_name(){
+        let so = ScaleObj{
+            steps: Steps(vec![Interval(0), Interval(1), Interval(2)]),
+            fam_name: String::from("test"),
+            modes: vec![String::from("Uhh"), String::from(""), String::from("Ahh")]
+        };
+        assert_eq!(&so.get_mode_name(0), "Uhh");
+        assert_eq!(&so.get_mode_name(1), "");
+        assert_eq!(&so.get_mode_name(2), "Ahh");
+        assert_eq!(&so.get_mode_name(3), "Uhh");
+    }
+
+    #[test]
+    fn get_modes(){
+        let so = ScaleObj{
+            steps: Steps(vec![Interval(0), Interval(1), Interval(2)]),
+            fam_name: String::from("test"),
+            modes: vec![String::from("Uhh"), String::from(""), String::from("Ahh")]
+        };
+        let mut iter = so.get_modes().into_iter();
+        assert_eq!(
+            iter.next(),
+            Some(ModeObj{
+                steps: Steps(vec![Interval(0), Interval(1), Interval(2)]),
+                fam_name: String::from("test"),
+                mode_name: String::from("Uhh"),
+                mode_nr: 0,
+            })
+        );
+        assert_eq!(
+            iter.next(),
+            Some(ModeObj{
+                steps: Steps(vec![Interval(1), Interval(2), Interval(0)]),
+                fam_name: String::from("test"),
+                mode_name: String::from(""),
+                mode_nr: 1,
+            })
+        );
+        assert_eq!(
+            iter.next(),
+            Some(ModeObj{
+                steps: Steps(vec![Interval(2), Interval(0), Interval(1)]),
+                fam_name: String::from("test"),
+                mode_name: String::from("Ahh"),
+                mode_nr: 2,
+            })
+        );
+        assert_eq!(iter.next(), None);
+    }
+}
