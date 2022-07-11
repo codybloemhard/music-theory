@@ -155,68 +155,70 @@ DefScale!(enigmatic_minor, "Enigmatic Minor",
 // use crate::theory::note::NoteSequence;
 // use crate::theory::note::IntoScale;
 // use crate::to_relative_interval_non_nat;
-//
-// pub struct HeptatonicScaleNamer{
-//     basis: Vec<(Scale, String)>,
-// }
-//
-// impl HeptatonicScaleNamer{
-//     pub fn new() -> Self{
-//         let scales = get_all_scale_objs();
-//         let mut basis = Vec::new();
-//         for sc in scales{
-//             for (i,mode) in sc.steps.clone().mode_iter().enumerate(){
-//                 let mode_name = sc.get_mode_name(i as u8);
-//                 if mode_name.is_empty() {
-//                     continue;
-//                 }
-//                 basis.push((mode.to_scale(0), mode_name));
-//             }
-//         }
-//         Self{
-//             basis,
-//         }
-//     }
-//
-//     pub fn name(&self, steps: &Steps) -> String{
-//         let nameless = steps.to_scale(0);
-//         if nameless.len() != 7 { return String::new(); }
-//         let mut dif_positions = 8;
-//         let mut dif_units = 9999;
-//         let ionian = ionian::obj().steps.into_scale(0);
-//         let mut base_scale = ionian.clone();
-//         let mut base_name = "Ionian".to_string();
-//         for (scale, name) in &self.basis{
-//             let mut dp = 0;
-//             let mut du = 0;
-//             for i in 0..7{
-//                 let d = nameless.0[i] - scale.0[i];
-//                 if d == 0 { continue; }
-//                 dp += 1;
-//                 du += d.abs();
-//             }
-//             if dp > dif_positions { continue; }
-//             if du >= dif_units { continue; }
-//             dif_positions = dp;
-//             dif_units = du;
-//             base_scale = scale.clone();
-//             base_name = name.to_string();
-//         }
-//         for i in 0..7{
-//             let d = nameless.0[i] - base_scale.0[i];
-//             if d == 0 { continue; }
-//             let d = nameless.0[i] - ionian.0[i];
-//             base_name.push_str(&format!(" {}{}", to_relative_interval_non_nat(d), i + 1));
-//         }
-//         base_name
-//     }
-// }
-//
-// impl Default for HeptatonicScaleNamer{
-//     fn default() -> Self {
-//         Self::new()
-//     }
-// }
+use crate::theory::{ Scale, AsScaleTry, ToScaleTry, Note };
+use crate::theory::traits::{ Wrapper };
+
+pub struct HeptatonicScaleNamer{
+    basis: Vec<(Scale, String)>,
+}
+
+impl HeptatonicScaleNamer{
+    pub fn new() -> Self{
+        let scales = get_all_scale_objs();
+        let mut basis = Vec::new();
+        for sc in scales{
+            for (i, mode) in sc.steps.clone().mode_iter().enumerate(){
+                let mode_name = sc.get_mode_name(i);
+                if mode_name.is_empty() {
+                    continue;
+                }
+                if let Some(scale) = mode.to_scale_try(Note::new(0)){
+                    basis.push((scale, mode_name));
+                }
+            }
+        }
+        Self{ basis }
+    }
+
+    pub fn name(&self, steps: &Steps) -> Option<String>{
+        let nameless = steps.as_scale_try(Note(0))?;
+        if nameless.len() != 7 { return None; }
+        let mut dif_positions = 8;
+        let mut dif_units = 9999;
+        let ionian = ionian::obj().steps.to_scale_try(Note(0))?;
+        let mut base_scale = ionian.clone();
+        let mut base_name = "Ionian".to_string();
+        for (scale, name) in &self.basis{
+            let mut dp = 0;
+            let mut du = 0;
+            for i in 0..7{
+                let d = nameless.0[i] - scale.0[i];
+                if d == Interval::ROOT { continue; }
+                dp += 1;
+                du += d.abs().unwrap();
+            }
+            if dp > dif_positions { continue; }
+            if du >= dif_units { continue; }
+            dif_positions = dp;
+            dif_units = du;
+            base_scale = scale.clone();
+            base_name = name.to_string();
+        }
+        for i in 0..7{
+            let d = nameless.0[i] - base_scale.0[i];
+            if d == Interval::ROOT { continue; }
+            let d = nameless.0[i] - ionian.0[i];
+            base_name.push_str(&format!(" {}{}", d.to_string(), i + 1));
+        }
+        Some(base_name)
+    }
+}
+
+impl Default for HeptatonicScaleNamer{
+    fn default() -> Self {
+        Self::new()
+    }
+}
 
 #[cfg(test)]
 mod tests{
@@ -329,5 +331,28 @@ mod tests{
     fn obj(){
         assert_eq!(&ionian::obj().modes[5], "Aeolian");
         assert_eq!(&neapolitan_minor::obj().modes[2], "Mixolydian Augmented");
+    }
+
+    #[test]
+    fn heptatonic_scale_namer_new(){
+        let namer = HeptatonicScaleNamer::new();
+        assert_eq!(namer.basis.len(), 30);
+        assert_eq!(namer.basis[0].1, String::from("Ionian"));
+    }
+
+    #[test]
+    fn heptatonic_scale_namer_name(){
+        let namer = HeptatonicScaleNamer::new();
+        assert_eq!(namer.name(&ionian::steps()), Some(String::from("Ionian")));
+        let objs = get_all_scale_objs();
+        for obj in objs{
+            let mut steps = obj.steps;
+            for mode in obj.modes.clone(){
+                if &mode != ""{
+                    assert_eq!(namer.name(&steps), Some(mode));
+                }
+                steps.next_mode_mut();
+            }
+        }
     }
 }

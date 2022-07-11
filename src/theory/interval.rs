@@ -156,6 +156,17 @@ impl Interval{
     pub fn abs(self) -> Self{
         Self::new(self.0.abs())
     }
+
+    pub fn to_string_non_nat(&self) -> String{
+        let mut string = String::new();
+        let i = self.0.abs();
+        match self.0.cmp(&0){
+            Ordering::Less    => { for _ in 0..i { string.push('♭'); } },
+            Ordering::Greater => { for _ in 0..i { string.push('♯'); } },
+            Ordering::Equal   => {  }
+        }
+        string
+    }
 }
 
 impl NamedInterval{
@@ -541,6 +552,15 @@ mod tests{
         assert_eq!(&Interval(10).to_string(), "♯♯♯♯♯♯♯♯♯♯");
         assert_eq!(&Interval(-1).to_string(), "♭");
         assert_eq!(&Interval(-10).to_string(), "♭♭♭♭♭♭♭♭♭♭");
+    }
+
+    #[test]
+    fn interval_to_string_non_nat(){
+        assert_eq!(&Interval(0).to_string_non_nat(), "");
+        assert_eq!(&Interval(1).to_string_non_nat(), "♯");
+        assert_eq!(&Interval(10).to_string_non_nat(), "♯♯♯♯♯♯♯♯♯♯");
+        assert_eq!(&Interval(-1).to_string_non_nat(), "♭");
+        assert_eq!(&Interval(-10).to_string_non_nat(), "♭♭♭♭♭♭♭♭♭♭");
     }
 
     #[test]
