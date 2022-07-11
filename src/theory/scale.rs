@@ -1,11 +1,9 @@
-use super::{ Note, Interval, PCs, _OCTAVE, _SEMI, Intervals, EnharmonicNote };
+use super::{ Note, Interval, PCs, Intervals, EnharmonicNote };
 use super::traits::{
     Wrapper, VecWrapper, ModeTrait, AsScaleTry, AsSteps, AddInterval, ToPC, AsPCs,
     AsRelativeIntervals, AsEnharmonicNotes, AsEnharmonicNotesWithStart, Cyclic,
     ToEnharmonicNote, ToNote, ModeIteratorSpawner
 };
-
-use std::cmp::Ordering;
 
 pub type Mode = usize;
 pub type Notes = Vec<Note>;
@@ -17,7 +15,7 @@ pub struct Scale(pub(crate) Notes);
 pub struct Steps(pub(crate) Intervals);
 
 impl Steps{
-    fn mode_nr_of_this(&self, mode: &Steps) -> Option<usize>{
+    pub fn mode_nr_of_this(&self, mode: &Steps) -> Option<usize>{
         if mode.len() != self.len() {
             return None;
         }

@@ -1,6 +1,6 @@
 use super::traits::{
     Cyclic, ToNote, ToPC, ToLetterTry, ToEnharmonicNote, AsScaleTry, OctaveShiftable,
-    AsSteps, AsStepsTry, ToScaleTry
+    AsSteps, AsStepsTry
 };
 use super::{ Note, _Note, Letter, Interval, EnharmonicNote, Scale, Octave, Steps };
 

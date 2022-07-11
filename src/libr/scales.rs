@@ -1,5 +1,6 @@
-use crate::theory::{ Steps, Mode, Interval };
-use crate::theory::traits::{ ModeIteratorSpawner, VecWrapper };
+use crate::theory::{ Steps, Mode, Interval, Scale, AsScaleTry, ToScaleTry, Note };
+use crate::theory::traits::{ ModeIteratorSpawner, VecWrapper, Wrapper };
+
 // use crate::theory::scale::{ Mode };
 // use crate::theory::scale::ModeIteratorSpawner;
 
@@ -150,14 +151,6 @@ DefScale!(enigmatic_minor, "Enigmatic Minor",
     "Enigmatic Minor", "", "", "", "", "", ""
 );
 
-// use crate::Scale;
-// use crate::theory::note::ToScale;
-// use crate::theory::note::NoteSequence;
-// use crate::theory::note::IntoScale;
-// use crate::to_relative_interval_non_nat;
-use crate::theory::{ Scale, AsScaleTry, ToScaleTry, Note };
-use crate::theory::traits::{ Wrapper };
-
 pub struct HeptatonicScaleNamer{
     basis: Vec<(Scale, String)>,
 }
@@ -208,7 +201,7 @@ impl HeptatonicScaleNamer{
             let d = nameless.0[i] - base_scale.0[i];
             if d == Interval::ROOT { continue; }
             let d = nameless.0[i] - ionian.0[i];
-            base_name.push_str(&format!(" {}{}", d.to_string(), i + 1));
+            base_name.push_str(&format!(" {}{}", d, i + 1));
         }
         Some(base_name)
     }
@@ -354,5 +347,15 @@ mod tests{
                 steps.next_mode_mut();
             }
         }
+        assert_eq!(namer.name(
+            &vec![PC::C, PC::Cs, PC::E, PC::F, PC::G, PC::A, PC::B]
+                .to_scale_try(Note(0)).unwrap()
+                .to_steps(true)
+        ), Some(String::from("Ionian ♭2")));
+    }
+
+    #[test]
+    fn heptotonic_scale_namer_default(){
+        assert_eq!(HeptatonicScaleNamer::new(), HeptatonicScaleNamer::default());
     }
 }

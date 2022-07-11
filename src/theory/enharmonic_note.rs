@@ -1,8 +1,8 @@
 use super::traits::{
     Wrapper, Cyclic, ToPC, ToNote, ToLetterTry, ToEnharmonicNote, ToEnharmonicNoteTry,
-    AsEnharmonicNotes, ToEnharmonicNotes
+    AsEnharmonicNotes
 };
-use super::{ Note, PC, Interval, AddInterval };
+use super::{ Note, PC, Interval };
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(u32)]
