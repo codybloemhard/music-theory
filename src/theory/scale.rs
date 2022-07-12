@@ -369,6 +369,24 @@ mod tests{
     }
 
     #[test]
+    fn contains(){
+        let scale = Scale(vec![Note(0), Note(1), Note(2)]);
+        assert_eq!(scale.contains(&Note(0)), true);
+        assert_eq!(scale.contains(&Note(1)), true);
+        assert_eq!(scale.contains(&Note(2)), true);
+        assert_eq!(scale.contains(&Note(3)), false);
+    }
+
+    #[test]
+    fn contains_all(){
+        let scale = Scale(vec![Note(0), Note(1), Note(2)]);
+        assert_eq!(scale.contains_all(&[Note(0)]), true);
+        assert_eq!(scale.contains_all(&[Note(0), Note(1)]), true);
+        assert_eq!(scale.contains_all(&[Note(0), Note(1), Note(2)]), true);
+        assert_eq!(scale.contains_all(&[Note(0), Note(1), Note(2), Note(3)]), false);
+    }
+
+    #[test]
     fn steps_len(){
         assert_eq!(Steps(vec![Interval(1), Interval(2)]).len(), 2);
     }

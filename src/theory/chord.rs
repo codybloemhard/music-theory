@@ -1,4 +1,4 @@
-use super::{ _Note, Note, Notes };
+use super::{ Note, Notes };
 use super::interval::*;
 use super::traits::{ VecWrapper, Wrapper };
 // use super::note::*;
@@ -10,34 +10,34 @@ use std::collections::HashSet;
 pub const NUM_SUPS: [char; 10] = ['⁰', 'ⁱ', '²', '³', '⁴', '⁵', '⁶', '⁷', '⁸', '⁹'];
 pub const NUM_SUBS: [char; 10] = ['₀', '₁', '₂', '₃', '₄', '₅', '₆', '₇', '₈', '₉'];
 
-pub const MAJOR: &[_Note] = &[_MAJ3, _PER5];
-pub const MINOR: &[_Note] = &[_MIN3, _PER5];
-pub const MINOR_AUGMENTED: &[_Note] = &[_MIN3, _AUG5];
-pub const MAJOR_AUGMENTED: &[_Note] = &[_MAJ3, _AUG5];
-pub const MINOR_DIMINISHED: &[_Note] = &[_MIN3, _DIM5];
-pub const MAJOR_DIMINISHED: &[_Note] = &[_MAJ3, _DIM5];
-pub const SUS2: &[_Note] = &[_MAJ2, _PER5];
-pub const SUS4: &[_Note] = &[_PER4, _PER5];
-pub const SUPER_SUS: &[_Note] = &[_MAJ2, _PER4];
-pub const PHRYGIAN: &[_Note] = &[_MIN2, _PER5];
-pub const LYDIAN: &[_Note] = &[_AUG4, _PER5];
-pub const LOCRIAN2: &[_Note] = &[_MIN2, _DIM5];
-pub const LOCRIAN4: &[_Note] = &[_PER4, _DIM5];
-pub const SUPER_LOCRIAN: &[_Note] = &[_MIN2, _PER4, _DIM5];
-pub const MAJOR_SIXTH_CHORD: &[_Note] = &[_MAJ3, _PER5, _MAJ6];
-pub const MINOR_SIXTH_CHORD: &[_Note] = &[_MIN3, _PER5, _MAJ6];
-pub const MAJOR_SEVENTH_CHORD: &[_Note] = &[_MAJ3, _PER5, _MAJ7];
-pub const MINOR_SEVENTH_CHORD: &[_Note] = &[_MIN3, _PER5, _MIN7];
-pub const DOMINANT_SEVENTH: &[_Note] = &[_MAJ3, _PER5, _MIN7];
-pub const MINOR_MAJOR_SEVENTH: &[_Note] = &[_MIN3, _PER5, _MAJ7];
-pub const HALF_DIMINISHED_SEVENTH: &[_Note] = &[_MIN3, _DIM5, _MIN7];
-pub const DIMINISHED_SEVENTH_CHORD: &[_Note] = &[_MIN3, _DIM5, _DIM7];
-pub const AUGMENTED_SEVENTH_CHORD: &[_Note] = &[_MAJ3, _AUG5, _MIN7];
-pub const MU_CHORD: &[_Note] = &[_MAJ2, _MAJ3, _PER5];
-pub const SIX_NINE_CHORD: &[_Note] = &[_MAJ3, _PER5, _MAJ6, _MAJ9];
+pub const MAJOR: &[Note] = &[_MAJ3, _PER5];
+pub const MINOR: &[Note] = &[_MIN3, _PER5];
+pub const MINOR_AUGMENTED: &[Note] = &[_MIN3, _AUG5];
+pub const MAJOR_AUGMENTED: &[Note] = &[_MAJ3, _AUG5];
+pub const MINOR_DIMINISHED: &[Note] = &[_MIN3, _DIM5];
+pub const MAJOR_DIMINISHED: &[Note] = &[_MAJ3, _DIM5];
+pub const SUS2: &[Note] = &[_MAJ2, _PER5];
+pub const SUS4: &[Note] = &[_PER4, _PER5];
+pub const SUPER_SUS: &[Note] = &[_MAJ2, _PER4];
+pub const PHRYGIAN: &[Note] = &[_MIN2, _PER5];
+pub const LYDIAN: &[Note] = &[_AUG4, _PER5];
+pub const LOCRIAN2: &[Note] = &[_MIN2, _DIM5];
+pub const LOCRIAN4: &[Note] = &[_PER4, _DIM5];
+pub const SUPER_LOCRIAN: &[Note] = &[_MIN2, _PER4, _DIM5];
+pub const MAJOR_SIXTH_CHORD: &[Note] = &[_MAJ3, _PER5, _MAJ6];
+pub const MINOR_SIXTH_CHORD: &[Note] = &[_MIN3, _PER5, _MAJ6];
+pub const MAJOR_SEVENTH_CHORD: &[Note] = &[_MAJ3, _PER5, _MAJ7];
+pub const MINOR_SEVENTH_CHORD: &[Note] = &[_MIN3, _PER5, _MIN7];
+pub const DOMINANT_SEVENTH: &[Note] = &[_MAJ3, _PER5, _MIN7];
+pub const MINOR_MAJOR_SEVENTH: &[Note] = &[_MIN3, _PER5, _MAJ7];
+pub const HALF_DIMINISHED_SEVENTH: &[Note] = &[_MIN3, _DIM5, _MIN7];
+pub const DIMINISHED_SEVENTH_CHORD: &[Note] = &[_MIN3, _DIM5, _DIM7];
+pub const AUGMENTED_SEVENTH_CHORD: &[Note] = &[_MAJ3, _AUG5, _MIN7];
+pub const MU_CHORD: &[Note] = &[_MAJ2, _MAJ3, _PER5];
+pub const SIX_NINE_CHORD: &[Note] = &[_MAJ3, _PER5, _MAJ6, _MAJ9];
 
 // (pattern, name, major base string?, extended collection?)
-pub type ChordBook = &'static [(&'static [_Note], &'static str, bool, bool)];
+pub type ChordBook = &'static [(&'static [Note], &'static str, bool, bool)];
 
 pub const STD_CHORD_BOOK: ChordBook = &[
     (MAJOR, "", true, false),
@@ -105,32 +105,28 @@ impl Wrapper for Chord{
 }
 
 impl Chord{
-//     pub fn new(intervals: &[Note]) -> Self{
-//         Chord(intervals.to_owned())
-//     }
-//
-//     pub fn same_intervals(&self, blueprint: &[Note]) -> bool{
-//         self.0 == blueprint
-//     }
-//
-//     pub fn has_intervals(&self, blueprint: &[Note]) -> bool{
-//         for note in blueprint{
-//             if !self.0.contains(note){
-//                 return false;
-//             }
-//         }
-//         true
-//     }
-//
-//     pub fn normalized(mut self) -> Self{
-//         if self.0.contains(&_PER12) && !self.0.contains(&_PER5){
-//             self.0.push(_PER5);
-//         }
-//         Chord(self.0.into_iter()
-//             .map(|i| i % (2 * _OCTAVE))
-//             .filter(|i| i != &_OCTAVE && i != &_PER12)
-//             .collect::<Vec<_>>())
-//     }
+    pub fn new(intervals: &[Note]) -> Self{
+        let mut ints = intervals.to_owned();
+        ints.sort();
+        Chord(ints)
+    }
+
+    pub fn same_intervals(&self, blueprint: &[Note]) -> bool{
+        self.0 == blueprint
+    }
+
+    pub fn normalized(mut self) -> Self{
+        if self.contains(&_PER12) && !self.contains(&_PER5){
+            self.0.push(_PER5);
+        }
+        let mut res =
+            self.0.into_iter()
+            .map(|i| i % (Note(2) * _OCTAVE))
+            .filter(|i| i != &_OCTAVE && i != &_PER12)
+            .collect::<Vec<_>>();
+        res.sort();
+        Chord(res)
+    }
 //
 //     pub fn to_subseq_chords(&self) -> Vec<Chord>{
 //         let scale = self.to_scale(0).0;
@@ -505,6 +501,36 @@ mod tests{
     #[test]
     fn chord_unwrap(){
         assert_eq!(Chord(vec![Note(0), Note(1)]).unwrap(), vec![Note(0), Note(1)]);
+    }
+
+    #[test]
+    fn chord_new(){
+        assert_eq!(
+            Chord::new(&[Note(0), Note(1), Note(2)]),
+            Chord(vec![Note(0), Note(1), Note(2)])
+        );
+        assert_eq!(
+            Chord::new(&[Note(1), Note(0), Note(2)]),
+            Chord(vec![Note(0), Note(1), Note(2)])
+        );
+    }
+
+    #[test]
+    fn chord_same_intervals(){
+        assert_eq!(Chord(vec![Note(4), Note(7)]).same_intervals(&MAJOR), true);
+    }
+
+    #[test]
+    fn chord_normalized(){
+        assert_eq!(Chord::new(&MAJOR).normalized(), Chord::new(&MAJOR));
+        assert_eq!(
+            Chord::new(&[_MAJ3, _PER5, _OCTAVE, _MAJ9, _PER12]).normalized(),
+            Chord::new(&[_MAJ3, _PER5, _MAJ9])
+        );
+        assert_eq!(
+            Chord::new(&[_MAJ3, _MAJ9, _PER12]).normalized(),
+            Chord::new(&[_MAJ3, _PER5, _MAJ9])
+        );
     }
 
 //     #[test]

@@ -19,6 +19,8 @@ pub trait VecWrapper{
     fn len(&self) -> usize;
     fn is_empty(&self) -> bool;
     fn iter(&self) -> std::slice::Iter<'_, Self::Item>;
+    fn contains(&self, item: &Self::Item) -> bool;
+    fn contains_all(&self, items: &[Self::Item]) -> bool;
 }
 
 macro_rules! ImplVecWrapper{
@@ -36,6 +38,19 @@ macro_rules! ImplVecWrapper{
 
             fn iter(&self) -> std::slice::Iter<'_, Self::Item>{
                 self.0.iter()
+            }
+
+            fn contains(&self, item: &Self::Item) -> bool{
+                self.0.contains(item)
+            }
+
+            fn contains_all(&self, items: &[Self::Item]) -> bool{
+                for item in items{
+                    if !self.0.contains(item){
+                        return false;
+                    }
+                }
+                true
             }
         }
     }

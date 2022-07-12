@@ -59,7 +59,7 @@ impl Note{
     // note 48 is A4 at 440 hz
     pub fn to_pitch(&self) -> f32{
         let x = self.0 as i32 - 48;
-        (2.0f32).powf(x as f32 / _OCTAVE as f32) * 440.0f32
+        (2.0f32).powf(x as f32 / _OCTAVE.0 as f32) * 440.0f32
     }
 }
 
@@ -73,11 +73,27 @@ impl std::ops::Add for Note{
     }
 }
 
-impl std::ops::Sub for Note {
+impl std::ops::Sub for Note{
     type Output = Interval;
 
     fn sub(self, other: Self) -> Interval{
         Interval(self.0 as i32 - other.0 as i32)
+    }
+}
+
+impl std::ops::Rem for Note{
+    type Output = Self;
+
+    fn rem(self, modulus: Self) -> Self::Output{
+        Self(self.0 % modulus.0)
+    }
+}
+
+impl std::ops::Mul for Note{
+    type Output = Self;
+
+    fn mul(self, other: Self) -> Self::Output{
+        Self::new(self.0 * other.0)
     }
 }
 
@@ -111,11 +127,11 @@ impl GeneratablePartialOrder for Note{
 
 impl OctaveShiftable for Note{
     fn with_octave(self, octave: Octave) -> Note{
-        (((self.0 % _OCTAVE) as i32 + octave as i32 * _OCTAVE as i32) as _Note).to_note()
+        (((self.0 % _OCTAVE.0) as i32 + octave as i32 * _OCTAVE.0 as i32) as _Note).to_note()
     }
 
     fn shift_octave(self, shift: OctaveShift) -> Note{
-        ((self.0 as i32 + shift as i32 * _OCTAVE as i32).max(0) as _Note).to_note()
+        ((self.0 as i32 + shift as i32 * _OCTAVE.0 as i32).max(0) as _Note).to_note()
     }
 }
 
@@ -194,7 +210,7 @@ mod tests{
     fn add(){
         assert_eq!(Note(0) + Note(0), Note(0));
         assert_eq!(Note(1) + Note(0), Note(1));
-        assert_eq!(Note(_SEMI) + Note(_WHOLE), Note(_MIN3));
+        assert_eq!(_SEMI + _WHOLE, _MIN3);
         assert_eq!(Note::MAX + Note(1), Note::MAX);
     }
 
@@ -205,6 +221,16 @@ mod tests{
         assert_eq!(Note(1) - Note(0), Interval(1));
         assert_eq!(Note::MAX - Note::MIN, Interval::MAX);
         assert_eq!(Note::MIN - Note::MAX, Interval::MIN);
+    }
+
+    #[test]
+    fn rem(){
+        assert_eq!(Note(13) % Note(12), Note(1));
+    }
+
+    #[test]
+    fn mul(){
+        assert_eq!(Note(2) * Note(2) * Note(2), Note(8));
     }
 
     #[test]

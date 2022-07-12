@@ -1,6 +1,6 @@
 use super::traits::{
     Wrapper, Cyclic, ToPC, ToNote, ToLetterTry, ToEnharmonicNote, ToEnharmonicNoteTry,
-    AsEnharmonicNotes
+    AsEnharmonicNotes, ToEnharmonicNotes
 };
 use super::{ Note, PC, Interval };
 

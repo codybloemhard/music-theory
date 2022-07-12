@@ -2,51 +2,51 @@ use super::traits::{
     GeneratablePartialOrder, OctaveShiftable, AddInterval, ToInterval, ToNamedInterval,
     Cyclic, ToNamedOctaveInterval, Wrapper, AsIonianRelativeStringTry
 };
-use super::note::{ _Note, Octave, OctaveShift };
+use super::note::{ Note, Octave, OctaveShift };
 
 use std::cmp::Ordering;
 
-pub(crate) const _SEMI: _Note = 1;
-pub(crate) const _WHOLE: _Note = 2;
+pub(crate) const _SEMI: Note = Note(1);
+pub(crate) const _WHOLE: Note = Note(2);
 
-pub(crate) const _ROOT: _Note = 0;
-pub(crate) const _MIN2: _Note = 1;
-pub(crate) const _MAJ2: _Note = 2;
-pub(crate) const _MIN3: _Note = 3;
-pub(crate) const _MAJ3: _Note = 4;
-pub(crate) const _PER4: _Note = 5;
-pub(crate) const _TRIT: _Note = 6;
-pub(crate) const _PER5: _Note = 7;
-pub(crate) const _MIN6: _Note = 8;
-pub(crate) const _MAJ6: _Note = 9;
-pub(crate) const _MIN7: _Note = 10;
-pub(crate) const _MAJ7: _Note = 11;
-pub(crate) const _OCTAVE: _Note = 12;
-pub(crate) const _MIN9: _Note = 13;
-pub(crate) const _MAJ9: _Note = 14;
-pub(crate) const _AUG9: _Note = 15;
-pub(crate) const _MIN11: _Note = 16;
-pub(crate) const _MAJ11: _Note = 17;
-pub(crate) const _AUG11: _Note = 18;
-pub(crate) const _PER12: _Note = 19;
-pub(crate) const _MIN13: _Note = 20;
-pub(crate) const _MAJ13: _Note = 21;
-pub(crate) const _AUG13: _Note = 22;
+pub(crate) const _ROOT: Note = Note(0);
+pub(crate) const _MIN2: Note = Note(1);
+pub(crate) const _MAJ2: Note = Note(2);
+pub(crate) const _MIN3: Note = Note(3);
+pub(crate) const _MAJ3: Note = Note(4);
+pub(crate) const _PER4: Note = Note(5);
+pub(crate) const _TRIT: Note = Note(6);
+pub(crate) const _PER5: Note = Note(7);
+pub(crate) const _MIN6: Note = Note(8);
+pub(crate) const _MAJ6: Note = Note(9);
+pub(crate) const _MIN7: Note = Note(10);
+pub(crate) const _MAJ7: Note = Note(11);
+pub(crate) const _OCTAVE: Note = Note(12);
+pub(crate) const _MIN9: Note = Note(13);
+pub(crate) const _MAJ9: Note = Note(14);
+pub(crate) const _AUG9: Note = Note(15);
+pub(crate) const _MIN11: Note = Note(16);
+pub(crate) const _MAJ11: Note = Note(17);
+pub(crate) const _AUG11: Note = Note(18);
+pub(crate) const _PER12: Note = Note(19);
+pub(crate) const _MIN13: Note = Note(20);
+pub(crate) const _MAJ13: Note = Note(21);
+pub(crate) const _AUG13: Note = Note(22);
 
-pub(crate) const _DIM2: _Note = 0;
-pub(crate) const _AUG1: _Note = 1;
-pub(crate) const _DIM3: _Note = 2;
-pub(crate) const _AUG2: _Note = 3;
-pub(crate) const _DIM4: _Note = 4;
-pub(crate) const _AUG3: _Note = 5;
-pub(crate) const _DIM5: _Note = 6;
-pub(crate) const _AUG4: _Note = 6;
-pub(crate) const _DIM6: _Note = 7;
-pub(crate) const _AUG5: _Note = 8;
-pub(crate) const _DIM7: _Note = 9;
-pub(crate) const _AUG6: _Note = 10;
-pub(crate) const _DIM8: _Note = 11;
-pub(crate) const _AUG7: _Note = 12;
+pub(crate) const _DIM2: Note = Note(0);
+pub(crate) const _AUG1: Note = Note(1);
+pub(crate) const _DIM3: Note = Note(2);
+pub(crate) const _AUG2: Note = Note(3);
+pub(crate) const _DIM4: Note = Note(4);
+pub(crate) const _AUG3: Note = Note(5);
+pub(crate) const _DIM5: Note = Note(6);
+pub(crate) const _AUG4: Note = Note(6);
+pub(crate) const _DIM6: Note = Note(7);
+pub(crate) const _AUG5: Note = Note(8);
+pub(crate) const _DIM7: Note = Note(9);
+pub(crate) const _AUG6: Note = Note(10);
+pub(crate) const _DIM8: Note = Note(11);
+pub(crate) const _AUG7: Note = Note(12);
 
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct Interval(pub(crate) i32);
@@ -307,14 +307,17 @@ impl Cyclic for NamedOctaveInterval{
 impl OctaveShiftable for Interval{
     fn with_octave(self, octave: Octave) -> Self{
         match self.0.cmp(&0){
-            Ordering::Less => Interval((self.0 % _OCTAVE as i32) - octave as i32 * _OCTAVE as i32),
-            Ordering::Equal => Interval(0),
-            Ordering::Greater => Interval((self.0 % _OCTAVE as i32) + octave as i32 * _OCTAVE as i32),
+            Ordering::Less =>
+                Interval((self.0 % _OCTAVE.0 as i32) - octave as i32 * _OCTAVE.0 as i32),
+            Ordering::Equal =>
+                Interval(0),
+            Ordering::Greater =>
+                Interval((self.0 % _OCTAVE.0 as i32) + octave as i32 * _OCTAVE.0 as i32),
         }
     }
 
     fn shift_octave(self, shift: OctaveShift) -> Self{
-        Interval::new(self.0 + shift as i32 * _OCTAVE as i32)
+        Interval::new(self.0 + shift as i32 * _OCTAVE.0 as i32)
     }
 }
 

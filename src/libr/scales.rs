@@ -1,9 +1,6 @@
 use crate::theory::{ Steps, Mode, Interval, Scale, AsScaleTry, ToScaleTry, Note };
 use crate::theory::traits::{ ModeIteratorSpawner, VecWrapper, Wrapper };
 
-// use crate::theory::scale::{ Mode };
-// use crate::theory::scale::ModeIteratorSpawner;
-
 pub struct ScaleObj{
     pub steps: Steps,
     pub fam_name: String,
@@ -151,6 +148,7 @@ DefScale!(enigmatic_minor, "Enigmatic Minor",
     "Enigmatic Minor", "", "", "", "", "", ""
 );
 
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct HeptatonicScaleNamer{
     basis: Vec<(Scale, String)>,
 }
