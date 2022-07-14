@@ -123,30 +123,6 @@ impl Chord{
         Chord(res)
     }
 
-//     pub fn as_subseq_chords(&self) -> Vec<Chord>{
-//         let scale = self.0.clone();
-//         let mut sub_chords = HashSet::new();
-//         let slen = scale.len();
-//         let rlen = 2u32.pow(slen as u32) as usize;
-//         for i in 0..rlen{
-//             let mut subscale = Vec::new();
-//             for (j, note) in scale.iter().enumerate().take(slen){
-//                 if bit_on(i, j){
-//                     subscale.push(*note);
-//                 }
-//             }
-//             if subscale.len() < 2 { continue; }
-//             sub_chords.insert(Scale(subscale).to_chord());
-//         }
-//         let mut res = sub_chords.into_iter().collect::<Vec<Chord>>();
-//         res.sort_by(|a, b| a.len().cmp(&b.len()).then(a.cmp(b)));
-//         res
-//     }
-//
-//     pub fn to_subseq_chords(self) -> Vec<Chord>{
-//         self.as_subseq_chords()
-//     }
-// //
 //     pub fn quality(&self, basestr: String, lower: bool, style: ChordStyling) -> String{
 //         // Just print intervals
 //         let spelled_out = |basestr: String|{
@@ -286,31 +262,6 @@ impl Chord{
 //         }
 //     }
 //
-//     pub fn to_subseq_chords(&self) -> Vec<RootedChord>{
-//         let scale = self.to_scale().0;
-//         let mut sub_scales = Vec::new();
-//         let slen = scale.len();
-//         let rlen = 2u32.pow(slen as u32) as usize;
-//         for i in 0..rlen{
-//             let mut subscale = Vec::new();
-//             for (j,note) in scale.iter().enumerate().take(slen){
-//                 if bit_on(i,j){
-//                     subscale.push(*note);
-//                 }
-//             }
-//             if subscale.len() < 2 { continue; }
-//             let subroot = subscale[0];
-//             let subchord = Scale(subscale).into_chord();
-//             sub_scales.push(Self::from_chord(subroot, subchord));
-//         }
-//         sub_scales.sort_by(|a,b| a.chord.len().cmp(&b.chord.len()).then(a.root.cmp(&b.root)).then(a.chord.cmp(&b.chord)));
-//         sub_scales
-//     }
-//
-//     pub fn into_subseq_chords(self) -> Vec<RootedChord>{
-//         self.to_subseq_chords()
-//     }
-//
 //     pub fn to_chordtone_wholetone_scale(&self) -> Scale{
 //         let mut res = Vec::new();
 //         let scale = self.to_scale();
@@ -440,39 +391,7 @@ impl Chord{
 //     }
 //     res
 // }
-//
-// pub fn scale_subseq_chords(scale: Scale) -> Vec<RootedChord>{
-//     if scale.len() < 3 { return Vec::new(); }
-//     let steps = scale.to_steps();
-//     let root = scale.0[0];
-//     let mut sub_scales = HashSet::new();
-//     let slen = scale.len();
-//     for (i, _) in note_iter(root, &steps.0).enumerate().take(slen){
-//         let lscale = note_iter(root, &steps.0).skip(i).take(slen).collect::<Vec<_>>();
-//         let subchords = RootedChord::from_scale(Scale(lscale)).into_subseq_chords();
-//         sub_scales.extend(subchords.into_iter().map(|sc| sc.normalized()));
-//     }
-//     let mut sub_scales = sub_scales.into_iter().collect::<Vec<_>>();
-//     sub_scales.sort_by(|a,b| a.chord.len().cmp(&b.chord.len()).then(a.root.cmp(&b.root)).then(a.chord.cmp(&b.chord)));
-//     sub_scales
-// }
-//
-// pub fn steps_subseq_chords(steps: Steps) -> Vec<Vec<Chord>>{
-//     let mut scale = steps.into_scale(0);
-//     scale.0.pop();
-//     let mut table = vec![0; 12];
-//     for (i,note) in scale.0.iter().enumerate(){
-//         table[(*note).max(0) as usize] = i;
-//     }
-//     let subs = scale_subseq_chords(scale.clone());
-//     let mut cells = vec![vec![]; scale.len()];
-//     for s in subs.into_iter(){
-//         let index = table[s.root.max(0) as usize];
-//         cells[index].push(s.chord);
-//     }
-//     cells
-// }
-//
+
 #[cfg(test)]
 mod tests{
     use super::*;
