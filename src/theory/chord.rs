@@ -1,6 +1,6 @@
 use super::{ Note, Notes, Scale };
 use super::interval::*;
-use super::traits::{ VecWrapper, Wrapper, ToChord };
+use super::traits::{ VecWrapper, Wrapper, ToChord, ToNamedInterval };
 // use super::note::*;
 // use super::scale::*;
 // use crate::utils::roman_numerals::to_roman_num;
@@ -123,97 +123,97 @@ impl Chord{
         Chord(res)
     }
 
-//     pub fn quality(&self, basestr: String, lower: bool, style: ChordStyling) -> String{
-//         // Just print intervals
-//         let spelled_out = |basestr: String|{
-//             let mut spelled_out = basestr;
-//             spelled_out.push('[');
-//             for int in &self.0{
-//                 spelled_out.push_str(&(*int).to_interval_try().to_interval_chord_extension());
-//             }
-//             spelled_out.push(']');
-//             spelled_out
-//         };
-//         if style == ChordStyling::SpelledOut{
-//             return spelled_out(basestr);
-//         }
-//         let mut lowercase = String::new();
-//         for c in basestr.chars(){
-//             for l in c.to_lowercase(){
-//                 lowercase.push(l);
-//             }
-//         }
-//         let mut minorcase = String::new();
-//         minorcase.push_str(&basestr);
-//         minorcase.push('m');
-//         let minorstr = if lower{ lowercase }
-//         else{ minorcase };
-//         let sname = |major_base| if major_base { basestr.clone() } else { minorstr.clone() };
-//         // Find exact matches in the book
-//         for (pattern,postfix,majorstr,ext) in STD_CHORD_BOOK{
-//             if pattern != &self.0 { continue; }
-//             if *ext && style == ChordStyling::Std { continue; }
-//             let mut name = sname(*majorstr);
-//             name.push_str(postfix);
-//             return name
-//         }
-//         // Extended chords
-//         let mut name = String::new();
-//         let mut baselen = 0;
-//         for (pattern,postfix,majorstr,ext) in STD_CHORD_BOOK{
-//             if *ext && style == ChordStyling::Std { continue; }
-//             if self.0.len() <= pattern.len() { continue; }
-//             if baselen >= pattern.len() { continue; }
-//             let base = self.0.iter().take(pattern.len()).copied().collect::<Vec<Note>>();
-//             if &base != pattern { continue; }
-//             baselen = pattern.len();
-//             name = sname(*majorstr);
-//             name.push_str(postfix);
-//         }
-//         let ext_name = |bl,mut name: String|{
-//             if bl >= self.0.len() { return name; }
-//             let ol = name.len();
-//             name.push('(');
-//             self.0.iter().skip(bl).for_each(
-//                 |int|name.push_str(&(*int).to_interval_try().to_interval_chord_extension())
-//             );
-//             name.push(')');
-//             if name.len() == ol + 2{
-//                 name.pop(); name.pop();
-//             }
-//             name
-//         };
-//         if baselen > 0 { return ext_name(baselen,name); }
-//         //Sus chords, maybe extended
-//         baselen = 0;
-//         for (pattern,postfix,_,ext) in STD_CHORD_BOOK{
-//             if *ext && style == ChordStyling::Std { continue; }
-//             if self.0.len() < pattern.len() { continue; }
-//             if baselen >= pattern.len() { continue; }
-//             let base = self.0.iter().take(pattern.len()).copied().collect::<Vec<Note>>();
-//             let res = pattern.iter().zip(base.iter()).fold(10, |res,(ba,se)|{
-//                 if res == 0 { 0 }
-//                 else {
-//                     if se == ba { 10 }
-//                     else if se == &_MAJ2 && (ba == &_MIN3 || ba == &_MAJ3) { 2 }
-//                     else if se == &_PER4 && (ba == &_MIN3 || ba == &_MAJ3) { 4 }
-//                     else { 0 }.min(res)
-//                 }
-//             });
-//             if res == 0 || res == 10 { continue; }
-//             baselen = pattern.len();
-//             name = sname(true);
-//             name.push_str(postfix);
-//             name.push_str(&format!("sus{}", res));
-//         }
-//         if baselen > 0 { return ext_name(baselen,name); }
-//         // Default to spelling out
-//         spelled_out(basestr)
-//     }
-//
-//     pub fn as_string(&self, styling: ChordStyling) -> String{
-//         self.quality("X".to_string(), true, styling)
-//     }
+    pub fn quality(&self, basestr: String, lower: bool, style: ChordStyling) -> String{
+        // Just print intervals
+        let spelled_out = |basestr: String|{
+            let mut spelled_out = basestr;
+            spelled_out.push('[');
+            for int in &self.0{
+                spelled_out.push_str(&Interval(int.0 as i32).to_named_interval_mod().to_string());
+            }
+            spelled_out.push(']');
+            spelled_out
+        };
+        if style == ChordStyling::SpelledOut{
+            return spelled_out(basestr);
+        }
+        let mut lowercase = String::new();
+        for c in basestr.chars(){
+            for l in c.to_lowercase(){
+                lowercase.push(l);
+            }
+        }
+        let mut minorcase = String::new();
+        minorcase.push_str(&basestr);
+        minorcase.push('m');
+        let minorstr = if lower{ lowercase }
+        else { minorcase };
+        let sname = |major_base| if major_base { basestr.clone() } else { minorstr.clone() };
+        // Find exact matches in the book
+        for (pattern, postfix, majorstr, ext) in STD_CHORD_BOOK{
+            if pattern != &self.0 { continue; }
+            if *ext && style == ChordStyling::Std { continue; }
+            let mut name = sname(*majorstr);
+            name.push_str(postfix);
+            return name
+        }
+        // Extended chords
+        let mut name = String::new();
+        let mut baselen = 0;
+        for (pattern, postfix, majorstr, ext) in STD_CHORD_BOOK{
+            if *ext && style == ChordStyling::Std { continue; }
+            if self.0.len() <= pattern.len() { continue; }
+            if baselen >= pattern.len() { continue; }
+            let base = self.0.iter().take(pattern.len()).copied().collect::<Vec<Note>>();
+            if &base != pattern { continue; }
+            baselen = pattern.len();
+            name = sname(*majorstr);
+            name.push_str(postfix);
+        }
+        let ext_name = |bl, mut name: String|{
+            if bl >= self.0.len() { return name; }
+            let ol = name.len();
+            name.push('(');
+            self.0.iter().skip(bl).for_each(
+                |int| name.push_str(&Interval(int.0 as i32).to_named_interval_mod().to_string())
+            );
+            name.push(')');
+            if name.len() == ol + 2{
+                name.pop(); name.pop();
+            }
+            name
+        };
+        if baselen > 0 { return ext_name(baselen, name); }
+        //Sus chords, maybe extended
+        baselen = 0;
+        for (pattern, postfix, _, ext) in STD_CHORD_BOOK{
+            if *ext && style == ChordStyling::Std { continue; }
+            if self.0.len() < pattern.len() { continue; }
+            if baselen >= pattern.len() { continue; }
+            let base = self.0.iter().take(pattern.len()).copied().collect::<Vec<Note>>();
+            let res = pattern.iter().zip(base.iter()).fold(10, |res,(ba,se)|{
+                if res == 0 { 0 }
+                else {
+                    if se == ba { 10 }
+                    else if se == &_MAJ2 && (ba == &_MIN3 || ba == &_MAJ3) { 2 }
+                    else if se == &_PER4 && (ba == &_MIN3 || ba == &_MAJ3) { 4 }
+                    else { 0 }.min(res)
+                }
+            });
+            if res == 0 || res == 10 { continue; }
+            baselen = pattern.len();
+            name = sname(true);
+            name.push_str(postfix);
+            name.push_str(&format!("sus{}", res));
+        }
+        if baselen > 0 { return ext_name(baselen,name); }
+        // Default to spelling out
+        spelled_out(basestr)
+    }
+
+    pub fn as_string(&self, styling: ChordStyling) -> String{
+        self.quality("X".to_string(), true, styling)
+    }
 }
 //
 // impl ToScale for Chord{
@@ -451,40 +451,47 @@ mod tests{
         );
     }
 
-//     #[test]
-//     fn test_chords_strings(){
-//         assert_eq!(Chord::new(&[_MAJ3,_PER5]).as_string(ChordStyling::Std), String::from("X"));
-//         assert_eq!(Chord::new(&[_MIN3,_PER5]).as_string(ChordStyling::Std), String::from("x"));
-//         assert_eq!(Chord::new(&[_MIN3,_DIM5]).as_string(ChordStyling::Std), String::from("x°"));
-//         assert_eq!(Chord::new(&[_MAJ3,_DIM5]).as_string(ChordStyling::Std), String::from("X[♮3♭5]"));
-//         assert_eq!(Chord::new(&[_MAJ3,_DIM5]).as_string(ChordStyling::Extended), String::from("X°"));
-//         assert_eq!(Chord::new(&[_MIN3]).as_string(ChordStyling::Std), String::from("X[♭3]"));
-//         assert_eq!(Chord::new(&[_MAJ2,_PER5]).as_string(ChordStyling::Std), String::from("Xsus2"));
-//         assert_eq!(Chord::new(&[_PER4,_PER5]).as_string(ChordStyling::Std), String::from("Xsus4"));
-//         assert_eq!(Chord::new(&[_MAJ3,_AUG5]).as_string(ChordStyling::Std), String::from("X+"));
-//         assert_eq!(Chord::new(&[_MIN3,_AUG5]).as_string(ChordStyling::Std), String::from("X[♭3♭6]"));
-//         assert_eq!(Chord::new(&[_MIN3,_AUG5]).as_string(ChordStyling::Extended), String::from("x+"));
-//         assert_eq!(Chord::new(&[_MAJ2,_PER4]).as_string(ChordStyling::Std), String::from("X[♮2♮4]"));
-//         assert_eq!(Chord::new(&[_MAJ2,_PER4]).as_string(ChordStyling::Extended), String::from("Xssus"));
-//         assert_eq!(Chord::new(&[_MIN2,_PER5]).as_string(ChordStyling::Std), String::from("Xphry"));
-//         assert_eq!(Chord::new(&[_AUG4,_PER5]).as_string(ChordStyling::Std), String::from("Xlyd"));
-//         assert_eq!(Chord::new(&[_MIN2,_DIM5]).as_string(ChordStyling::Std), String::from("Xloc2"));
-//         assert_eq!(Chord::new(&[_PER4,_DIM5]).as_string(ChordStyling::Std), String::from("Xloc4"));
-//         assert_eq!(Chord::new(&[_MIN2,_PER4,_DIM5]).as_string(ChordStyling::Std), String::from("X[♭2♮4♭5]"));
-//         assert_eq!(Chord::new(&[_MIN2,_PER4,_DIM5]).as_string(ChordStyling::Extended), String::from("Xo"));
-//         assert_eq!(Chord::new(&[_MAJ3,_PER5,_MAJ6]).as_string(ChordStyling::Std), String::from("X⁶"));
-//         assert_eq!(Chord::new(&[_MIN3,_PER5,_MAJ6]).as_string(ChordStyling::Std), String::from("x⁶"));
-//         assert_eq!(Chord::new(&[_MAJ3,_PER5,_MAJ7]).as_string(ChordStyling::Std), String::from("X∆"));
-//         assert_eq!(Chord::new(&[_MIN3,_PER5,_MIN7]).as_string(ChordStyling::Std), String::from("x-"));
-//         assert_eq!(Chord::new(&[_MAJ3,_PER5,_MIN7]).as_string(ChordStyling::Std), String::from("X⁷"));
-//         assert_eq!(Chord::new(&[_MIN3,_PER5,_MAJ7]).as_string(ChordStyling::Std), String::from("X-∆"));
-//         assert_eq!(Chord::new(&[_MIN3,_DIM5,_MIN7]).as_string(ChordStyling::Std), String::from("xø"));
-//         assert_eq!(Chord::new(&[_MIN3,_DIM5,_DIM7]).as_string(ChordStyling::Std), String::from("x°⁷"));
-//         assert_eq!(Chord::new(&[_MAJ3,_AUG5,_MIN7]).as_string(ChordStyling::Std), String::from("X+⁷"));
-//         assert_eq!(Chord::new(&[_MAJ2,_MAJ3,_PER5]).as_string(ChordStyling::Std), String::from("X[♮2♮3♮5]"));
-//         assert_eq!(Chord::new(&[_MAJ2,_MAJ3,_PER5]).as_string(ChordStyling::Extended), String::from("Xμ"));
-//         assert_eq!(Chord::new(&[_MAJ3,_PER5,_MAJ6,_MAJ9]).as_string(ChordStyling::Std), String::from("X6/9"));
-//         assert_eq!(Chord::new(&[_MAJ2,_PER5,_MAJ7,_MIN9,_AUG11]).as_string(ChordStyling::Std), String::from("X∆sus2(♭9♯11)"));
-//         assert_eq!(Chord::new(&[_PER4,_PER5,_MIN7,_AUG9,_AUG13]).as_string(ChordStyling::Std), String::from("X-sus4(♯9♯13)"));
-//     }
+    #[test]
+    fn test_chords_strings(){
+        let spl = ChordStyling::SpelledOut;
+        let std = ChordStyling::Std;
+        let ext = ChordStyling::Extended;
+        assert_eq!(&Chord::new(&[_MAJ3,_PER5]).as_string(std), "X");
+        assert_eq!(&Chord::new(&[_MAJ3,_PER5]).as_string(ext), "X");
+        assert_eq!(&Chord::new(&[_MAJ3,_PER5]).as_string(spl), "X[♮3♮5]");
+        assert_eq!(&Chord::new(&[_MIN3,_PER5]).as_string(std), "x");
+        assert_eq!(&Chord::new(&[_MIN3,_PER5]).quality(String::from("Y"), false, std), "Ym");
+        assert_eq!(&Chord::new(&[_MIN3,_PER5]).quality(String::from("Y"), true, std), "y");
+        assert_eq!(&Chord::new(&[_MIN3,_DIM5]).as_string(std), "x°");
+        assert_eq!(&Chord::new(&[_MAJ3,_DIM5]).as_string(std), "X[♮3♭5]");
+        assert_eq!(&Chord::new(&[_MAJ3,_DIM5]).as_string(ext), "X°");
+        assert_eq!(&Chord::new(&[_MIN3]).as_string(std), "X[♭3]");
+        assert_eq!(&Chord::new(&[_MAJ2,_PER5]).as_string(std), "Xsus2");
+        assert_eq!(&Chord::new(&[_PER4,_PER5]).as_string(std), "Xsus4");
+        assert_eq!(&Chord::new(&[_MAJ3,_AUG5]).as_string(std), "X+");
+        assert_eq!(&Chord::new(&[_MIN3,_AUG5]).as_string(std), "X[♭3♭6]");
+        assert_eq!(&Chord::new(&[_MIN3,_AUG5]).as_string(ext), "x+");
+        assert_eq!(&Chord::new(&[_MAJ2,_PER4]).as_string(std), "X[♮2♮4]");
+        assert_eq!(&Chord::new(&[_MAJ2,_PER4]).as_string(ext), "Xssus");
+        assert_eq!(&Chord::new(&[_MIN2,_PER5]).as_string(std), "Xphry");
+        assert_eq!(&Chord::new(&[_AUG4,_PER5]).as_string(std), "Xlyd");
+        assert_eq!(&Chord::new(&[_MIN2,_DIM5]).as_string(std), "Xloc2");
+        assert_eq!(&Chord::new(&[_PER4,_DIM5]).as_string(std), "Xloc4");
+        assert_eq!(&Chord::new(&[_MIN2,_PER4,_DIM5]).as_string(std), "X[♭2♮4♭5]");
+        assert_eq!(&Chord::new(&[_MIN2,_PER4,_DIM5]).as_string(ext), "Xo");
+        assert_eq!(&Chord::new(&[_MAJ3,_PER5,_MAJ6]).as_string(std), "X⁶");
+        assert_eq!(&Chord::new(&[_MIN3,_PER5,_MAJ6]).as_string(std), "x⁶");
+        assert_eq!(&Chord::new(&[_MAJ3,_PER5,_MAJ7]).as_string(std), "X∆");
+        assert_eq!(&Chord::new(&[_MIN3,_PER5,_MIN7]).as_string(std), "x-");
+        assert_eq!(&Chord::new(&[_MAJ3,_PER5,_MIN7]).as_string(std), "X⁷");
+        assert_eq!(&Chord::new(&[_MIN3,_PER5,_MAJ7]).as_string(std), "X-∆");
+        assert_eq!(&Chord::new(&[_MIN3,_DIM5,_MIN7]).as_string(std), "xø");
+        assert_eq!(&Chord::new(&[_MIN3,_DIM5,_DIM7]).as_string(std), "x°⁷");
+        assert_eq!(&Chord::new(&[_MAJ3,_AUG5,_MIN7]).as_string(std), "X+⁷");
+        assert_eq!(&Chord::new(&[_MAJ2,_MAJ3,_PER5]).as_string(std), "X[♮2♮3♮5]");
+        assert_eq!(&Chord::new(&[_MAJ2,_MAJ3,_PER5]).as_string(ext), "Xμ");
+        assert_eq!(&Chord::new(&[_MAJ3,_PER5,_MAJ6,_MAJ9]).as_string(std), "X6/9");
+        assert_eq!(&Chord::new(&[_MAJ2,_PER5,_MAJ7,_MIN9,_AUG11]).as_string(std), "X∆sus2(♭9♯11)");
+        assert_eq!(&Chord::new(&[_PER4,_PER5,_MIN7,_AUG9,_AUG13]).as_string(std), "X-sus4(♯9♯13)");
+    }
 }
