@@ -1,6 +1,6 @@
-use super::{ Note, Notes };
+use super::{ Note, Notes, Scale };
 use super::interval::*;
-use super::traits::{ VecWrapper, Wrapper };
+use super::traits::{ VecWrapper, Wrapper, ToChord };
 // use super::note::*;
 // use super::scale::*;
 // use crate::utils::roman_numerals::to_roman_num;
@@ -71,12 +71,6 @@ pub struct Chord(pub Vec<Note>);
 #[derive(PartialEq,Eq,Clone,Copy)]
 pub enum ChordStyling{ Std, Extended, SpelledOut }
 
-// fn bit_on(num: usize, bit: usize) -> bool{
-//     let mut t = 1 << bit;
-//     t &= num;
-//     t != 0
-// }
-
 fn is_sorted<T: PartialOrd + Copy>(v: &[T]) -> bool{
     let mut last = v[0];
     for x in v{
@@ -124,34 +118,35 @@ impl Chord{
             .map(|i| i % (Note(2) * _OCTAVE))
             .filter(|i| i != &_OCTAVE && i != &_PER12)
             .collect::<Vec<_>>();
+        res.dedup();
         res.sort();
         Chord(res)
     }
-//
-//     pub fn to_subseq_chords(&self) -> Vec<Chord>{
-//         let scale = self.to_scale(0).0;
-//         let mut sub_scales = HashSet::new();
+
+//     pub fn as_subseq_chords(&self) -> Vec<Chord>{
+//         let scale = self.0.clone();
+//         let mut sub_chords = HashSet::new();
 //         let slen = scale.len();
 //         let rlen = 2u32.pow(slen as u32) as usize;
 //         for i in 0..rlen{
 //             let mut subscale = Vec::new();
-//             for (j,note) in scale.iter().enumerate().take(slen){
-//                 if bit_on(i,j){
+//             for (j, note) in scale.iter().enumerate().take(slen){
+//                 if bit_on(i, j){
 //                     subscale.push(*note);
 //                 }
 //             }
 //             if subscale.len() < 2 { continue; }
-//             sub_scales.insert(Scale(subscale).into_chord());
+//             sub_chords.insert(Scale(subscale).to_chord());
 //         }
-//         let mut res = sub_scales.into_iter().collect::<Vec<Chord>>();
-//         res.sort_by(|a,b| a.len().cmp(&b.len()).then(a.cmp(b)));
+//         let mut res = sub_chords.into_iter().collect::<Vec<Chord>>();
+//         res.sort_by(|a, b| a.len().cmp(&b.len()).then(a.cmp(b)));
 //         res
 //     }
 //
-//     pub fn into_subseq_chords(self) -> Vec<Chord>{
-//         self.to_subseq_chords()
+//     pub fn to_subseq_chords(self) -> Vec<Chord>{
+//         self.as_subseq_chords()
 //     }
-//
+// //
 //     pub fn quality(&self, basestr: String, lower: bool, style: ChordStyling) -> String{
 //         // Just print intervals
 //         let spelled_out = |basestr: String|{
@@ -529,6 +524,10 @@ mod tests{
         );
         assert_eq!(
             Chord::new(&[_MAJ3, _MAJ9, _PER12]).normalized(),
+            Chord::new(&[_MAJ3, _PER5, _MAJ9])
+        );
+        assert_eq!(
+            Chord::new(&[_MAJ3, _MAJ3, _MAJ9, _PER12]).normalized(),
             Chord::new(&[_MAJ3, _PER5, _MAJ9])
         );
     }

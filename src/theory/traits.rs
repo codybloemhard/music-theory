@@ -1,6 +1,6 @@
 use super::{
     Note, PC, PCs, Octave, OctaveShift, Interval, NamedInterval, NamedOctaveInterval, Letter,
-    EnharmonicNote, Mode, Scale, Steps, Intervals, ModeIterator
+    EnharmonicNote, Mode, Scale, Steps, Intervals, ModeIterator, Chord
 };
 
 use std::marker::Sized;
@@ -239,18 +239,17 @@ impl<T: AsEnharmonicNotesWithStart> ToEnharmonicNotesWithStart for T{
     }
 }
 
-// pub trait ToChord{
-//     fn to_chord(&self) -> Chord;
-// }
-//
-// pub trait IntoChord{
-//     fn into_chord(self) -> Chord;
-// }
-//
-// impl<T: ToChord> IntoChord for T{
-//     fn into_chord(self) -> Chord{
-//         self.to_chord()
-//     }
-// }
-//
+pub trait AsChord{
+    fn as_chord(&self) -> Chord;
+}
+
+pub trait ToChord{
+    fn to_chord(self) -> Chord;
+}
+
+impl<T: AsChord> ToChord for T{
+    fn to_chord(self) -> Chord{
+        self.as_chord()
+    }
+}
 

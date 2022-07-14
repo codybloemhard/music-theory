@@ -1,8 +1,8 @@
-use super::{ Note, Interval, PCs, Intervals, EnharmonicNote };
+use super::{ Note, _Note, Interval, PCs, Intervals, EnharmonicNote, Chord };
 use super::traits::{
     Wrapper, VecWrapper, ModeTrait, AsScaleTry, AsSteps, AddInterval, ToPC, AsPCs,
     AsRelativeIntervals, AsEnharmonicNotes, AsEnharmonicNotesWithStart, Cyclic,
-    ToEnharmonicNote, ToNote, ModeIteratorSpawner
+    ToEnharmonicNote, ToNote, ModeIteratorSpawner, AsChord
 };
 
 pub type Mode = usize;
@@ -127,18 +127,20 @@ impl AsPCs for Scale{
     }
 }
 
-// impl ToChord for Scale{
-//     fn to_chord(&self) -> Chord{
-//         if self.0.is_empty() { return Chord(Vec::new()); }
-//         let root = self.0[0];
-//         let mut intervals = vec![];
-//         for note in self.0.iter().skip(1){
-//             let diff = note - root;
-//             intervals.push(diff);
-//         }
-//         Chord(intervals)
-//     }
-// }
+impl AsChord for Scale{
+    fn as_chord(&self) -> Chord{
+        if self.is_empty() { return Chord(Vec::new()); }
+        let root = self.0[0];
+        let mut intervals = vec![];
+        for note in self.iter().skip(1){
+            let diff = note.0 as i32 - root.0 as i32;
+            if diff == 0 { continue; }
+            intervals.push(Note((((diff % 12) + 12) % 12) as _Note));
+        }
+        intervals.sort();
+        Chord(intervals)
+    }
+}
 
 // Could be used for hexatonics etc?
 // fn _into_enharmonic_notes_with_start_subheptatonic(scale: Scale, start: Option<EnharmonicNote>) -> Vec<EnharmonicNote>{
@@ -235,6 +237,21 @@ impl AsRelativeIntervals for Steps{
             acc_b = acc_b + reference.0[i];
         }
         Some(res)
+    }
+}
+
+impl AsChord for Steps{
+    fn as_chord(&self) -> Chord{
+        if self.is_empty() { return Chord(Vec::new()); }
+        let mut intervals = vec![];
+        let mut acc = 0;
+        for step in self.iter(){
+            acc += step.0;
+            if acc == 0 { continue; }
+            intervals.push(Note((((acc % 12) + 12) % 12) as _Note));
+        }
+        let chord = Chord(intervals);
+        chord.normalized()
     }
 }
 
@@ -539,6 +556,23 @@ mod tests{
     }
 
     #[test]
+    fn scale_as_chord(){
+        assert_eq!(Scale(vec![]).to_chord(), Chord(vec![]));
+        assert_eq!(
+            Scale(vec![Note::C1, Note::E1, Note::G1]).as_chord(),
+            Chord::new(MAJOR)
+        );
+        assert_eq!(
+            Scale(vec![Note::C1, Note::B1, Note::E1, Note::G1]).as_chord(),
+            Chord::new(MAJOR_SEVENTH_CHORD)
+        );
+        assert_eq!(
+            Scale(vec![Note::C1, Note::E1, Note::G1, Note::B2]).as_chord(),
+            Chord::new(MAJOR_SEVENTH_CHORD)
+        );
+    }
+
+    #[test]
     fn mode_nr_of_this(){
         let major = Steps(vec![Interval(2), Interval(2), Interval(1), Interval(2),
             Interval(2), Interval(2), Interval(1)]);
@@ -575,6 +609,23 @@ mod tests{
             scaleb.to_relative_intervals(&scalea),
             Some(vec![Interval(0), Interval(0), Interval(-1), Interval(0),
                     Interval(0), Interval(-1), Interval(-1)])
+        );
+    }
+
+    #[test]
+    fn steps_as_chord(){
+        assert_eq!(Steps(vec![]).to_chord(), Chord(vec![]));
+        assert_eq!(
+            Steps(vec![
+                Interval(4), Interval(3), Interval(4)
+            ]).to_chord(),
+            Chord::new(&MAJOR_SEVENTH_CHORD)
+        );
+        assert_eq!(
+            Steps(vec![
+                Interval(0), Interval(4), Interval(3), Interval(4)
+            ]).to_chord(),
+            Chord::new(&MAJOR_SEVENTH_CHORD)
         );
     }
 
