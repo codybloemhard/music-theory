@@ -233,8 +233,8 @@ impl AsRelativeIntervals for Steps{
         for i in 0..self.0.len(){
             let diff = acc_a - acc_b;
             res.push(diff);
-            acc_a = acc_a + self.0[i];
-            acc_b = acc_b + reference.0[i];
+            acc_a += self.0[i];
+            acc_b += reference.0[i];
         }
         Some(res)
     }

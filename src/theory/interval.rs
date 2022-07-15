@@ -3,8 +3,10 @@ use super::traits::{
     Cyclic, ToNamedOctaveInterval, Wrapper, AsIonianRelativeStringTry
 };
 use super::note::{ Note, Octave, OctaveShift };
+use crate::utils::ImplAssign;
 
 use std::cmp::Ordering;
+use std::ops::{ Add, Sub };
 
 pub(crate) const _SEMI: Note = Note(1);
 pub(crate) const _WHOLE: Note = Note(2);
@@ -215,6 +217,9 @@ impl std::ops::Sub for Interval{
         Self::new(self.0 - other.0)
     }
 }
+
+ImplAssign!(std::ops::AddAssign, Interval, add_assign, add);
+ImplAssign!(std::ops::SubAssign, Interval, sub_assign, sub);
 
 impl std::fmt::Display for Interval{
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result{
@@ -537,10 +542,36 @@ mod tests{
     }
 
     #[test]
+    fn add_assign(){
+        for x in 0..123{
+        for y in 0..123{
+            let x = Interval(x);
+            let y = Interval(y);
+            let mut z = x;
+            z += y;
+            assert_eq!(z, x + y);
+        }
+        }
+    }
+
+    #[test]
     fn sub(){
         assert_eq!(Interval(0) - Interval(0), Interval(0));
         assert_eq!(Interval(1) - Interval(2), Interval(-1));
         assert_eq!(Interval(1) - Interval(-2), Interval(3));
+    }
+
+    #[test]
+    fn sub_assign(){
+        for x in 0..123{
+        for y in 0..123{
+            let x = Interval(x);
+            let y = Interval(y);
+            let mut z = x;
+            z -= y;
+            assert_eq!(z, x - y);
+        }
+        }
     }
 
     #[test]

@@ -3,6 +3,9 @@ use super::traits::{
     ToEnharmonicNote, Wrapper
 };
 use super::{ Interval, _OCTAVE, PC, Letter, EnharmonicNote };
+use crate::utils::ImplAssign;
+
+use std::ops::{ Add, Mul, Rem };
 
 pub type _Note = u32;
 pub type Octave = u16;
@@ -96,6 +99,10 @@ impl std::ops::Mul for Note{
         Self::new(self.0 * other.0)
     }
 }
+
+ImplAssign!(std::ops::AddAssign, Note, add_assign, add);
+ImplAssign!(std::ops::RemAssign, Note, rem_assign, rem);
+ImplAssign!(std::ops::MulAssign, Note, mul_assign, mul);
 
 impl Wrapper for Note{
     type Inner = _Note;
@@ -215,6 +222,19 @@ mod tests{
     }
 
     #[test]
+    fn add_assign(){
+        for x in 0..123{
+        for y in 0..123{
+            let x = Note(x);
+            let y = Note(y);
+            let mut z = x;
+            z += y;
+            assert_eq!(z, x + y);
+        }
+        }
+    }
+
+    #[test]
     fn sub(){
         assert_eq!(Note(0) - Note(0), Interval(0));
         assert_eq!(Note(0) - Note(1), Interval(-1));
@@ -229,8 +249,34 @@ mod tests{
     }
 
     #[test]
+    fn rem_assign(){
+        for x in 0..123{
+        for y in 1..123{
+            let x = Note(x);
+            let y = Note(y);
+            let mut z = x;
+            z %= y;
+            assert_eq!(z, x % y);
+        }
+        }
+    }
+
+    #[test]
     fn mul(){
         assert_eq!(Note(2) * Note(2) * Note(2), Note(8));
+    }
+
+    #[test]
+    fn mul_assign(){
+        for x in 0..123{
+        for y in 0..123{
+            let x = Note(x);
+            let y = Note(y);
+            let mut z = x;
+            z *= y;
+            assert_eq!(z, x * y);
+        }
+        }
     }
 
     #[test]
