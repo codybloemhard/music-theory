@@ -55,8 +55,6 @@ macro_rules! ImplVecWrapper{
         }
     }
 }
-// ImplNoteSequence!(Chord);
-// ImplNoteSequence!(Relative);
 
 // You always know next, prev and it goes round n round
 pub trait Cyclic{

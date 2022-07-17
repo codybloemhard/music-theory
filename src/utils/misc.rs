@@ -9,3 +9,13 @@ macro_rules! ImplAssign{ ($assigntrait:ty, $implementee:ty, $funcname:ident, $in
 }
 
 pub(crate) use ImplAssign;
+
+pub fn as_lowercase(input: &str) -> String{
+    let mut lowercase = String::new();
+    for c in input.chars(){
+        for l in c.to_lowercase(){
+            lowercase.push(l);
+        }
+    }
+    lowercase
+}
