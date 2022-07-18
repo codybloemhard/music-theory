@@ -133,9 +133,12 @@ impl AsChord for Scale{
         let root = self.0[0];
         let mut intervals = vec![];
         for note in self.iter().skip(1){
-            let diff = note.0 as i32 - root.0 as i32;
+            let mut diff = note.0 as i32 - root.0 as i32;
             if diff == 0 { continue; }
-            intervals.push(Note((((diff % 12) + 12) % 12) as _Note));
+            if diff < 0 {
+                diff = (diff % 12) + 12;
+            }
+            intervals.push(Note(diff as _Note));
         }
         intervals.sort();
         Chord(intervals)

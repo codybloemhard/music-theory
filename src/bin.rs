@@ -9,6 +9,7 @@ use fnrs::Sequence;
 // jazzbøt
 #[cfg(not(tarpaulin))]
 fn main(){
+    dotest();
     // let args = lapp::parse_args("
     //     -c, --chord (default '') comma seperated vector of notes, interpreted as chord
     //     -t, --test testing output
@@ -31,7 +32,9 @@ fn main(){
     // }
 }
 
-// fn dotest(){
+fn dotest(){
+    println!("{}", Scale::wrap(vec![Note::C1,Note::E1,Note::G1,Note::AS2,Note::D2,Note::F2])
+             .unwrap().to_chord().quality(String::from("C"), true, ChordStyling::SpelledOut));
 //     for named in vec![C,CS,E,F,G,GS,AS].to_scale(3).0 {
 //         print!("{}, ", named.to_pc());
 //     }
@@ -79,4 +82,4 @@ fn main(){
 //     }
 //     print_to_grid_auto(&chordstrings, 80, 3);
 //     println!("{}", vec![0, 1, 2, 3, 4].has_seq(&vec![0,3]));
-// }
+}
