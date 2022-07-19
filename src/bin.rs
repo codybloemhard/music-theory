@@ -33,8 +33,9 @@ fn main(){
 }
 
 fn dotest(){
+    let style = ChordStyle::Spelled;
     println!("{}", Scale::wrap(vec![Note::C1,Note::E1,Note::G1,Note::AS2,Note::D2,Note::F2])
-             .unwrap().to_chord().quality(String::from("C"), true, ChordStyling::SpelledOut));
+             .unwrap().to_chord().quality(String::from("C"), style));
 //     for named in vec![C,CS,E,F,G,GS,AS].to_scale(3).0 {
 //         print!("{}, ", named.to_pc());
 //     }
