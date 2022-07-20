@@ -32,6 +32,7 @@ fn main(){
     // }
 }
 
+#[cfg(not(tarpaulin))]
 fn dotest(){
     let style = ChordStyle::Spelled;
     println!("{}", Scale::wrap(vec![Note::C1,Note::E1,Note::G1,Note::AS2,Note::D2,Note::F2])

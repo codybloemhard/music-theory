@@ -1,7 +1,7 @@
 use super::{ Note, Notes, Scale };
 use super::interval::*;
-use super::traits::{ VecWrapper, Wrapper, ToChord, ToNamedInterval };
-use super::super::utils::{ as_lowercase };
+use super::traits::{ VecWrapper, Wrapper, ToChord, ToNamedInterval, AsScaleTry, ToScaleTry };
+use super::super::utils::{ is_sorted };
 // use super::note::*;
 // use super::scale::*;
 // use crate::utils::roman_numerals::to_roman_num;
@@ -108,15 +108,6 @@ pub enum ChordStyle{
     Std(MStyle, EStyle),
     Extra(MStyle, EStyle),
     Spelled,
-}
-
-fn is_sorted<T: PartialOrd + Copy>(v: &[T]) -> bool{
-    let mut last = v[0];
-    for x in v{
-        if last > *x { return false; }
-        last = *x;
-    }
-    true
 }
 
 ImplVecWrapper!(Chord, Note);
@@ -240,17 +231,17 @@ impl Chord{
         self.quality("X".to_string(), style)
     }
 }
-//
-// impl ToScale for Chord{
-//     fn to_scale(&self, root: Note) -> Scale{
-//         let mut scale = vec![root];
-//         for int in &self.0{
-//             scale.push(root + *int);
-//         }
-//         Scale(scale)
-//     }
-// }
-//
+
+impl AsScaleTry for Chord{
+    fn as_scale_try(&self, root: Note) -> Option<Scale>{
+        let mut scale = vec![root];
+        for int in &self.0{
+            scale.push(root + *int);
+        }
+        Some(Scale(scale))
+    }
+}
+
 // #[derive(PartialEq, Eq, Hash, Clone, Default)]
 // pub struct RootedChord{
 //     pub root: Note,
@@ -422,15 +413,6 @@ mod tests{
     use super::*;
 
     #[test]
-    fn test_is_sorted(){
-        assert_eq!(is_sorted(&[Note(0)]), true);
-        assert_eq!(is_sorted(&[Note(0), Note(1)]), true);
-        assert_eq!(is_sorted(&[Note(1), Note(1)]), true);
-        assert_eq!(is_sorted(&[Note(3), Note(1)]), false);
-        assert_eq!(is_sorted(&[Note(3), Note(4), Note(3), Note(5)]), false);
-    }
-
-    #[test]
     fn chord_wrap(){
         assert_eq!(Chord::wrap(vec![]), None);
         assert_eq!(Chord::wrap(vec![Note(1), Note(0)]), None);
@@ -486,6 +468,7 @@ mod tests{
         let verbose = ChordStyle::Extra(MStyle::Long, EStyle::Long);
 
         assert_eq!(&Chord::new(&[_MIN3]).as_string(std), "X[♭3]");
+        assert_eq!(&Chord::new(&[_PER5]).as_string(std), "XΔno3");
         assert_eq!(&Chord::new(&[_MAJ3,_PER5]).as_string(spl), "X[♮3♮5]");
         assert_eq!(&Chord::new(&[_MAJ3,_PER5]).as_string(std), "XΔ");
         assert_eq!(&Chord::new(&[_MAJ3,_PER5]).as_string(ext), "XΔ");
@@ -623,5 +606,17 @@ mod tests{
         assert_eq!(&Chord::new(&[_MAJ2,_PER5,_MAJ7,_MIN9,_AUG11]).as_string(ext), "XΔ7sus2(♭9♯11)");
         // assert_eq!(&Chord::new(&[_PER4,_PER5,_MIN7,_MIN9,_MIN11]).as_string(std), "x11sus4");
         // assert_eq!(&Chord::new(&[_PER4,_PER5,_MIN7,_MIN9,_MIN11]).as_string(ext), "x11sus4");
+    }
+
+    #[test]
+    fn chord_as_scale(){
+        assert_eq!(
+            Chord(vec![]).to_scale_try(Note::F1).unwrap(),
+            Scale(vec![Note::F1])
+        );
+        assert_eq!(
+            Chord::new(&MAJOR_SEVENTH_CHORD).to_scale_try(Note::F1).unwrap(),
+            Scale(vec![Note::F1, Note::A2, Note::C2, Note::E2])
+        );
     }
 }

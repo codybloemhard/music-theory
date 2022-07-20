@@ -10,12 +10,25 @@ macro_rules! ImplAssign{ ($assigntrait:ty, $implementee:ty, $funcname:ident, $in
 
 pub(crate) use ImplAssign;
 
-pub fn as_lowercase(input: &str) -> String{
-    let mut lowercase = String::new();
-    for c in input.chars(){
-        for l in c.to_lowercase(){
-            lowercase.push(l);
-        }
+pub fn is_sorted<T: PartialOrd + Copy>(v: &[T]) -> bool{
+    let mut last = v[0];
+    for x in v{
+        if last > *x { return false; }
+        last = *x;
     }
-    lowercase
+    true
+}
+
+#[cfg(test)]
+mod tests{
+    use super::*;
+
+    #[test]
+    fn test_is_sorted(){
+        assert_eq!(is_sorted(&[0]), true);
+        assert_eq!(is_sorted(&[0, 1]), true);
+        assert_eq!(is_sorted(&[1, 1]), true);
+        assert_eq!(is_sorted(&[3, 1]), false);
+        assert_eq!(is_sorted(&[3, 4, 3, 5]), false);
+    }
 }
