@@ -1,8 +1,8 @@
-use super::{ Note, _Note, Interval, PCs, Intervals, EnharmonicNote, Chord };
+use super::{ Note, _Note, Interval, PCs, Intervals, EnharmonicNote, Chord, RootedChord };
 use super::traits::{
     Wrapper, VecWrapper, ModeTrait, AsScaleTry, AsSteps, AddInterval, ToPC, AsPCs,
     AsRelativeIntervals, AsEnharmonicNotes, AsEnharmonicNotesWithStart, Cyclic,
-    ToEnharmonicNote, ToNote, ModeIteratorSpawner, AsChord
+    ToEnharmonicNote, ToNote, ModeIteratorSpawner, AsChord, AsRootedChord
 };
 
 pub type Mode = usize;
@@ -208,6 +208,14 @@ impl AsEnharmonicNotes for Scale{
 impl AsEnharmonicNotesWithStart for Scale{
     fn as_enharmonic_notes_with_start(&self, start: Option<EnharmonicNote>) -> Vec<EnharmonicNote>{
         as_enharmonic_notes_with_start_heptatonic(self, start)
+    }
+}
+
+impl AsRootedChord for Scale{
+    fn as_rooted_chord(&self) -> RootedChord{
+        if self.is_empty() { RootedChord{ root: Note::ZERO, chord: Chord(vec![]) } }
+        else if self.len() == 1 { RootedChord{ root: self.0[0], chord: Chord(vec![]) } }
+        else { RootedChord::from_chord(self.0[0], self.as_chord()) }
     }
 }
 

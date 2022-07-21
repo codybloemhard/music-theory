@@ -1,6 +1,8 @@
 use super::{ Note, Notes, Scale };
 use super::interval::*;
-use super::traits::{ VecWrapper, Wrapper, ToChord, ToNamedInterval, AsScaleTry, ToScaleTry };
+use super::traits::{
+    VecWrapper, Wrapper, ToNamedInterval, AsScale, ToPC, ToRootedChord,
+};
 use super::super::utils::{ is_sorted };
 // use super::note::*;
 // use super::scale::*;
@@ -94,6 +96,12 @@ pub const STD_CHORD_BOOK: ChordBook = &[
 
 #[derive(Debug, Default, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct Chord(pub Vec<Note>);
+
+#[derive(Debug, Default, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct RootedChord{
+    pub root: Note,
+    pub chord: Chord,
+}
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(usize)]
@@ -232,96 +240,97 @@ impl Chord{
     }
 }
 
-impl AsScaleTry for Chord{
-    fn as_scale_try(&self, root: Note) -> Option<Scale>{
+impl RootedChord{
+    pub fn new(root: Note, intervals: &[Note]) -> Self{
+        Self{ root, chord: Chord::new(intervals) }
+    }
+
+    pub fn from_chord(root: Note, chord: Chord) -> Self{
+        Self{ root, chord }
+    }
+
+    pub fn as_scale(&self) -> Scale{
+        let mut scale = vec![self.root];
+        for int in &self.chord.0{
+            scale.push(self.root + *int);
+        }
+        Scale(scale)
+    }
+
+    pub fn to_scale(self) -> Scale{
+        self.as_scale()
+    }
+
+    pub fn normalized(self) -> Self{
+        Self {
+            root: self.root % _OCTAVE,
+            chord: self.chord.normalized(),
+        }
+    }
+
+    pub fn as_chordtone_wholetone_scale(&self) -> Option<Scale>{
+        let mut res = Vec::new();
+        let scale = self.as_scale();
+        if scale.len() < 4 { return None; }
+        for (i, note) in scale.iter().enumerate().take(4){
+            res.push(*note);
+            if i >= 3 { continue; }
+            let between = if scale.len() > i + 4 { scale.0[i + 4].0 - _OCTAVE.0 }
+            else { note.0 + _MAJ2.0 };
+            res.push(Note(between));
+        }
+        Some(Scale(res))
+    }
+
+    pub fn as_inversion(&self) -> Self{
+        let mut scale = self.as_scale();
+        if scale.is_empty() { return Self::default(); }
+        let mut root = scale.0[0];
+        if scale.len() == 1 { return Self::new(root, &[]); }
+        let top = scale.0[scale.len() - 1];
+        while root < top {
+            root += _OCTAVE;
+        }
+        scale.0.remove(0);
+        scale.0.push(root);
+        scale.to_rooted_chord()
+    }
+
+    pub fn to_inversion(self) -> Self{
+        self.as_inversion()
+    }
+
+    pub fn as_all_inversions(&self) -> Vec<Self>{
+        let len = self.chord.len() + 1;
+        let mut inv = self.clone();
+        let mut res = Vec::new();
+        for _ in 0..len{
+            inv = inv.as_inversion();
+            res.push(inv.clone());
+        }
+        res
+    }
+
+    pub fn to_all_inversions(self) -> Vec<Self>{
+        self.as_all_inversions()
+    }
+
+    pub fn as_string(&self, style: ChordStyle) -> String{
+        let root = self.root.to_pc().to_string();
+        self.chord.quality(root, style)
+    }
+}
+
+impl AsScale for Chord{
+    fn as_scale(&self, root: Note) -> Scale{
         let mut scale = vec![root];
         for int in &self.0{
             scale.push(root + *int);
         }
-        Some(Scale(scale))
+        Scale(scale)
     }
 }
 
-// #[derive(PartialEq, Eq, Hash, Clone, Default)]
-// pub struct RootedChord{
-//     pub root: Note,
-//     pub chord: Chord,
-// }
-//
-// impl RootedChord{
-//     pub fn from_chord(root: Note, chord: Chord) -> Self{
-//         Self{ root, chord }
-//     }
-//
-//     pub fn from_intervals(root: Note, intervals: &[Note]) -> Self{
-//         Self{ root, chord: Chord::new(intervals) }
-//     }
-//
-//     pub fn from_scale(scale: Scale) -> Self{
-//         if scale.is_empty() { Self{ root: 0, chord: Chord(Vec::new()) } }
-//         else if scale.len() == 1 { Self{ root: scale.0[0], chord: Chord(Vec::new()) } }
-//         else { Self::from_chord(scale.0[0], scale.into_chord()) }
-//     }
-//
-//     pub fn to_scale(&self) -> Scale{
-//         let mut scale = vec![self.root];
-//         for int in &self.chord.0{
-//             scale.push(self.root + *int);
-//         }
-//         Scale(scale)
-//     }
-//
-//     fn normalized(self) -> Self{
-//         Self {
-//             root: self.root % _OCTAVE,
-//             chord: self.chord.normalized(),
-//         }
-//     }
-//
-//     pub fn to_chordtone_wholetone_scale(&self) -> Scale{
-//         let mut res = Vec::new();
-//         let scale = self.to_scale();
-//         if scale.len() < 4 { return Scale(res); }
-//         for (i,note) in scale.0.iter().enumerate().take(4){
-//             res.push(*note);
-//             let between = if scale.len() > i + 4 { scale.0[i + 4] - _OCTAVE }
-//             else { *note + _MAJ2 };
-//             res.push(between);
-//         }
-//         Scale(res)
-//     }
-//
-//     pub fn to_inversion(&self) -> RootedChord{
-//         let mut scale = self.to_scale();
-//         if scale.is_empty() { return RootedChord::default(); }
-//         let mut root = scale.0[0];
-//         if scale.len() == 1 { return RootedChord::from_intervals(root, &[]); }
-//         let top = scale.0[scale.len() - 1];
-//         while root < top {
-//             root += _OCTAVE;
-//         }
-//         scale.0.remove(0);
-//         scale.0.push(root);
-//         Self::from_scale(scale)
-//     }
-//
-//     pub fn all_inversions(&self) -> Vec<RootedChord>{
-//         let len = self.chord.len() + 1;
-//         let mut inv = self.clone();
-//         let mut res = Vec::new();
-//         for _ in 0..len{
-//             inv = inv.to_inversion();
-//             res.push(inv.clone());
-//         }
-//         res
-//     }
-//
-//     pub fn as_string(&self, lower: bool, styling: ChordStyling) -> String{
-//         let root = self.root.to_pc().to_string_name(); //NamedNote::from_note(self.root).to_string_name();
-//         self.chord.quality(root, lower, styling)
-//     }
-// }
-//
 // #[derive(PartialEq, Eq, Hash, Clone)]
 // pub struct RelativeChord{
 //     pub root: Note,
@@ -411,6 +420,7 @@ impl AsScaleTry for Chord{
 #[cfg(test)]
 mod tests{
     use super::*;
+    use super::super::*;
 
     #[test]
     fn chord_wrap(){
@@ -611,12 +621,107 @@ mod tests{
     #[test]
     fn chord_as_scale(){
         assert_eq!(
-            Chord(vec![]).to_scale_try(Note::F1).unwrap(),
+            Chord(vec![]).to_scale(Note::F1),
             Scale(vec![Note::F1])
         );
         assert_eq!(
-            Chord::new(&MAJOR_SEVENTH_CHORD).to_scale_try(Note::F1).unwrap(),
+            Chord::new(&MAJOR_SEVENTH_CHORD).to_scale(Note::F1),
             Scale(vec![Note::F1, Note::A2, Note::C2, Note::E2])
+        );
+    }
+
+    #[test]
+    fn rooted_chord_new(){
+        assert_eq!(
+            RootedChord::new(Note::A4, &MAJOR_SIXTH_CHORD),
+            RootedChord{ root: Note::A4, chord: Chord(vec![_MAJ3, _PER5, _MAJ6]) }
+        );
+    }
+
+    #[test]
+    fn rooted_chord_from_chord(){
+        assert_eq!(
+            RootedChord::from_chord(Note::A4, Chord::new(&MU_CHORD)),
+            RootedChord{ root: Note::A4, chord: Chord(vec![_MAJ2, _MAJ3, _PER5]) }
+        );
+    }
+
+    #[test]
+    fn rooted_chord_as_scale(){
+        assert_eq!(
+            RootedChord{ root: Note::A4, chord: Chord(vec![]) }.to_scale(),
+            Scale(vec![Note::A4])
+        );
+        assert_eq!(
+            RootedChord{ root: Note::A1, chord: Chord::new(&MAJOR) }.to_scale(),
+            Scale(vec![Note::A1, Note::CS1, Note::E1])
+        );
+    }
+
+    #[test]
+    fn rooted_chord_normalized(){
+        assert_eq!(
+            RootedChord::new(Note::A1, &[_MAJ3, _PER5, _OCTAVE, _MAJ9, _PER12]).normalized(),
+            RootedChord::new(Note::ZERO, &[_MAJ2, _MAJ3, _PER5])
+        );
+    }
+
+    #[test]
+    fn rooted_chord_as_chordtone_wholetone_scale(){
+        assert_eq!(RootedChord::new(Note::F1, &MAJOR).as_chordtone_wholetone_scale(), None);
+        assert_eq!(
+            RootedChord::new(Note::F1, &MAJOR_SEVENTH_CHORD).as_chordtone_wholetone_scale(),
+            Some(Scale(vec![Note::F1, Note::G1, Note::A2, Note::B2, Note::C2, Note::D2, Note::E2]))
+        );
+        assert_eq!(
+            RootedChord::new(Note::A1, &MINOR_SEVENTH_CHORD).as_chordtone_wholetone_scale(),
+            Some(Scale(vec![Note::A1, Note::B1, Note::C1, Note::D1, Note::E1, Note::FS1, Note::G1]))
+        );
+    }
+
+    #[test]
+    fn rooted_chord_as_inversion(){
+        assert_eq!(
+            Scale(vec![Note::A1, Note::C1, Note::E1, Note::G1]).to_rooted_chord().to_inversion(),
+            Scale(vec![Note::C1, Note::E1, Note::G1, Note::A2]).to_rooted_chord(),
+        );
+        assert_eq!(
+            Scale(vec![Note::C1, Note::E1, Note::G1, Note::A2]).to_rooted_chord().to_inversion(),
+            Scale(vec![Note::E1, Note::G1, Note::A1, Note::C2]).to_rooted_chord(),
+        );
+        assert_eq!(
+            Scale(vec![Note::E1, Note::G1, Note::A1, Note::C2]).to_rooted_chord().to_inversion(),
+            Scale(vec![Note::G1, Note::A2, Note::C2, Note::E2]).to_rooted_chord(),
+        );
+        assert_eq!(
+            Scale(vec![Note::G1, Note::A2, Note::C2, Note::E2]).to_rooted_chord().to_inversion(),
+            Scale(vec![Note::A2, Note::C2, Note::E2, Note::G2]).to_rooted_chord(),
+        );
+    }
+
+    #[test]
+    fn rooted_chord_as_all_inversions(){
+        assert_eq!(
+            Scale(vec![Note::A1, Note::C1, Note::E1, Note::G1]).to_rooted_chord().to_all_inversions(),
+            vec![
+                Scale(vec![Note::C1, Note::E1, Note::G1, Note::A2]).to_rooted_chord(),
+                Scale(vec![Note::E1, Note::G1, Note::A1, Note::C2]).to_rooted_chord(),
+                Scale(vec![Note::G1, Note::A2, Note::C2, Note::E2]).to_rooted_chord(),
+                Scale(vec![Note::A2, Note::C2, Note::E2, Note::G2]).to_rooted_chord(),
+            ]
+        );
+    }
+
+    #[test]
+    fn rooted_chord_as_string(){
+        let std = ChordStyle::Std(MStyle::Symbol, EStyle::Symbol);
+        assert_eq!(
+            &RootedChord::new(Note::CS1, &[_PER4,_PER5,_MIN7,_AUG9,_AUG13]).as_string(std),
+            "C♯-7(♮11)"
+        );
+        assert_eq!(
+            &RootedChord::new(Note::CS1, &[_MAJ2,_PER5,_MAJ7,_MIN9,_AUG11]).as_string(std),
+            "C♯Δ7sus2(♭9♯11)"
         );
     }
 }

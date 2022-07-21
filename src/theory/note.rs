@@ -17,6 +17,7 @@ pub struct Note(pub(crate) u32);
 impl Note{
     pub const MAX: Note = Note(1073741824); // 1 << 30
     pub const MIN: Note = Note(0);
+    pub const ZERO: Note = Note(0);
     pub const A1: Note  = Note(12);
     pub const AS1: Note = Note(13);
     pub const B1: Note  = Note(14);

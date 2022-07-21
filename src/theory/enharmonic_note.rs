@@ -231,6 +231,7 @@ impl AsEnharmonicNotes for String{
 #[cfg(test)]
 mod tests{
     use super::*;
+    use super::super::*;
 
     #[test]
     fn letter_to_string(){
