@@ -331,39 +331,60 @@ impl AsScale for Chord{
     }
 }
 
-// #[derive(PartialEq, Eq, Hash, Clone)]
-// pub struct RelativeChord{
-//     pub root: Note,
-//     pub chord: Chord,
-// }
-//
-// impl RelativeChord{
-//     pub fn from_chord(root: Note, chord: Chord) -> Self{
-//         Self{ root, chord }
-//     }
-//
-//     pub fn from_intervals(root: Note, intervals: &[Note]) -> Self{
-//         Self{ root, chord: Chord::new(intervals) }
-//     }
-//
-//     pub fn from_template(semis: Note, intervals: &[Note]) -> Self{
-//         Self{ root: semis, chord: Chord::new(intervals) }
-//     }
-//
-//     pub fn as_string(&self, lower: bool, styling: ChordStyling) -> String{
-//         let root = to_degree(self.root);
-//         self.chord.quality(root, lower, styling)
-//     }
-// }
-//
-// impl std::fmt::Display for RelativeChord{
-//     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result{
-//         let root = format!("<X{}{}>", if self.root >= 0 { "+" } else { "" }, self.root);
-//         let res = self.chord.quality(root, true, ChordStyling::Extended);
-//         write!(f, "{}", res)
-//     }
-// }
-//
+#[allow(non_camel_case_types)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub enum ScaleDegree{
+    I, bII, II, bIII, III, IV, bV, V, bVI, VI, bVII, VII
+}
+
+impl std::fmt::Display for ScaleDegree{
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result{
+        let res = match self{
+            Self::I    => "I",
+            Self::bII  => "bII",
+            Self::II   => "II",
+            Self::bIII => "bIII",
+            Self::III  => "III",
+            Self::IV   => "IV",
+            Self::bV   => "bV",
+            Self::V    => "V",
+            Self::bVI  => "bVI",
+            Self::VI   => "VI",
+            Self::bVII => "bVII",
+            Self::VII  => "VII",
+        };
+        write!(f, "{}", res)
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct RelativeChord{
+    pub degree: ScaleDegree,
+    pub chord: Chord,
+}
+
+impl RelativeChord{
+    pub fn new(degree: ScaleDegree, intervals: &[Note]) -> Self{
+        Self{ degree, chord: Chord::new(intervals) }
+    }
+
+    pub fn from_chord(degree: ScaleDegree, chord: Chord) -> Self{
+        Self{ degree, chord }
+    }
+
+    pub fn as_string(&self, style: ChordStyle) -> String{
+        self.chord.quality(self.degree.to_string(), style)
+    }
+}
+
+impl std::fmt::Display for RelativeChord{
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result{
+        let ext = ChordStyle::Extra(MStyle::Symbol, EStyle::Symbol);
+        let res = self.chord.quality(self.degree.to_string(), ext);
+        write!(f, "{}", res)
+    }
+}
+
 // pub fn print_chords(chords: &[Chord], sep: &str, styling: ChordStyling){
 //     let len = chords.len();
 //     if len == 0 { return; }
@@ -722,6 +743,56 @@ mod tests{
         assert_eq!(
             &RootedChord::new(Note::CS1, &[_MAJ2,_PER5,_MAJ7,_MIN9,_AUG11]).as_string(std),
             "C♯Δ7sus2(♭9♯11)"
+        );
+    }
+
+    #[test]
+    fn scale_degree_to_string(){
+        assert_eq!(&ScaleDegree::I.to_string(), "I");
+        assert_eq!(&ScaleDegree::bII.to_string(), "bII");
+        assert_eq!(&ScaleDegree::II.to_string(), "II");
+        assert_eq!(&ScaleDegree::bIII.to_string(), "bIII");
+        assert_eq!(&ScaleDegree::III.to_string(), "III");
+        assert_eq!(&ScaleDegree::IV.to_string(), "IV");
+        assert_eq!(&ScaleDegree::bV.to_string(), "bV");
+        assert_eq!(&ScaleDegree::V.to_string(), "V");
+        assert_eq!(&ScaleDegree::bVI.to_string(), "bVI");
+        assert_eq!(&ScaleDegree::VI.to_string(), "VI");
+        assert_eq!(&ScaleDegree::bVII.to_string(), "bVII");
+        assert_eq!(&ScaleDegree::VII.to_string(), "VII");
+    }
+
+    #[test]
+    fn relative_chord_new(){
+        assert_eq!(
+            RelativeChord::new(ScaleDegree::I, &MAJOR),
+            RelativeChord{ degree: ScaleDegree::I, chord: Chord::new(&MAJOR) }
+        );
+    }
+
+    #[test]
+    fn relative_chord_from_chord(){
+        let chord = Chord::new(&MINOR);
+        assert_eq!(
+            RelativeChord::from_chord(ScaleDegree::bV, chord.clone()),
+            RelativeChord{ degree: ScaleDegree::bV, chord: chord }
+        );
+    }
+
+    #[test]
+    fn relative_chord_as_string(){
+        let long = ChordStyle::Std(MStyle::Long, EStyle::Long);
+        assert_eq!(
+            &RelativeChord::new(ScaleDegree::bVII, &MAJOR_ELEVENTH_CHORD).as_string(long),
+            "bVIImaj11"
+        );
+    }
+
+    #[test]
+    fn relative_chord_to_string(){
+        assert_eq!(
+            &RelativeChord::new(ScaleDegree::II, &MINOR_NINTH_CHORD).to_string(),
+            "II-9"
         );
     }
 }
