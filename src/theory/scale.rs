@@ -286,35 +286,36 @@ impl AsChord for Steps{
 //     res.push(_OCTAVE - sum);
 //     res
 // }
-//
-// pub struct ScaleIterator<'a>{
-//     scale: &'a [Note],
-//     current: usize,
-//     len: usize,
-//     root: Note,
-// }
-//
-// impl<'a> Iterator for ScaleIterator<'a>{
-//     type Item = Note;
-//     fn next(&mut self) -> Option<Note>{
-//         if self.current >= self.len{
-//             self.current = 0;
-//         }
-//         let res = self.root;
-//         self.root += self.scale[self.current];
-//         self.current += 1;
-//         Some(res)
-//     }
-// }
-//
-// pub fn note_iter(root: Note, scale: &[Note]) -> ScaleIterator{
-//     ScaleIterator{
-//         scale,
-//         current: 0,
-//         len: scale.len(),
-//         root,
-//     }
-// }
+
+pub struct ScaleIterator<'a>{
+    scale: &'a [Interval],
+    current: usize,
+    len: usize,
+    root: Note,
+}
+
+impl<'a> Iterator for ScaleIterator<'a>{
+    type Item = Note;
+
+    fn next(&mut self) -> Option<Note>{
+        if self.current >= self.len{
+            self.current = 0;
+        }
+        let res = self.root;
+        self.root = self.root.add_interval(self.scale[self.current])?;
+        self.current += 1;
+        Some(res)
+    }
+}
+
+pub fn scale_iter(root: Note, scale: &[Interval]) -> ScaleIterator{
+    ScaleIterator{
+        scale,
+        current: 0,
+        len: scale.len(),
+        root,
+    }
+}
 
 pub struct ModeIterator<T: ModeTrait + VecWrapper>{
     wrapper: T,
@@ -387,7 +388,7 @@ mod tests{
     }
 
     #[test]
-    fn scale_iter(){
+    fn test_scale_iter(){
         let scale = Scale(vec![Note(0), Note(1), Note(2)]);
         let mut iter = scale.iter();
         assert_eq!(iter.next(), Some(&Note(0)));
@@ -714,5 +715,20 @@ mod tests{
         assert_eq!(iter.next(), Some(Steps(vec![Interval(2), Interval(3), Interval(1)])));
         assert_eq!(iter.next(), Some(Steps(vec![Interval(3), Interval(1), Interval(2)])));
         assert_eq!(iter.next(), None);
+    }
+
+    #[test]
+    fn scale_iterator(){
+        let major = crate::libr::ionian::steps();
+        let mut iter = scale_iter(Note::C1, &major.0);
+        assert_eq!(iter.next(), Some(Note::C1));
+        assert_eq!(iter.next(), Some(Note::D1));
+        assert_eq!(iter.next(), Some(Note::E1));
+        assert_eq!(iter.next(), Some(Note::F1));
+        assert_eq!(iter.next(), Some(Note::G1));
+        assert_eq!(iter.next(), Some(Note::A2));
+        assert_eq!(iter.next(), Some(Note::B2));
+        assert_eq!(iter.next(), Some(Note::C2));
+        assert_eq!(iter.next(), Some(Note::D2));
     }
 }

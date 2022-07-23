@@ -1,12 +1,9 @@
-use super::{ Note, Notes, Scale };
+use super::{ Note, Notes, Scale, Steps, scale_iter };
 use super::interval::*;
 use super::traits::{
-    VecWrapper, Wrapper, ToNamedInterval, AsScale, ToPC, ToRootedChord,
+    VecWrapper, Wrapper, ToNamedInterval, AsScale, ToPC, ToRootedChord, ToChord
 };
 use super::super::utils::{ is_sorted };
-// use super::note::*;
-// use super::scale::*;
-// use crate::utils::roman_numerals::to_roman_num;
 
 use std::collections::HashSet;
 
@@ -101,6 +98,18 @@ pub struct Chord(pub Vec<Note>);
 pub struct RootedChord{
     pub root: Note,
     pub chord: Chord,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct RelativeChord{
+    pub degree: ScaleDegree,
+    pub chord: Chord,
+}
+
+#[allow(non_camel_case_types)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub enum ScaleDegree{
+    I, bII, II, bIII, III, IV, bV, V, bVI, VI, bVII, VII
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -331,12 +340,6 @@ impl AsScale for Chord{
     }
 }
 
-#[allow(non_camel_case_types)]
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub enum ScaleDegree{
-    I, bII, II, bIII, III, IV, bV, V, bVI, VI, bVII, VII
-}
-
 impl std::fmt::Display for ScaleDegree{
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result{
         let res = match self{
@@ -355,12 +358,6 @@ impl std::fmt::Display for ScaleDegree{
         };
         write!(f, "{}", res)
     }
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub struct RelativeChord{
-    pub degree: ScaleDegree,
-    pub chord: Chord,
 }
 
 impl RelativeChord{
@@ -385,28 +382,19 @@ impl std::fmt::Display for RelativeChord{
     }
 }
 
-// pub fn print_chords(chords: &[Chord], sep: &str, styling: ChordStyling){
-//     let len = chords.len();
-//     if len == 0 { return; }
-//     for chord in chords.iter().take(len - 1){
-//         print!("{}{}", chord.as_string(styling), sep);
-//     }
-//     println!("{}", &chords[len - 1].as_string(styling));
-// }
-//
-// pub fn scale_chords(steps: &Steps, chord_size: usize) -> Vec<Chord>{
-//     let len = steps.len();
-//     let mut chords = Vec::new();
-//     for (i, _) in note_iter(0, &steps.0).enumerate().take(len){
-//         let mut chord = Vec::new();
-//         for note in note_iter(0, &steps.0).skip(i).step_by(2).take(chord_size){
-//             chord.push(note);
-//         }
-//         chords.push(Scale(chord).into_chord());
-//     }
-//     chords
-// }
-//
+pub fn scale_chords(steps: &Steps, chord_size: usize) -> Vec<Chord>{
+    let len = steps.len();
+    let mut chords = Vec::new();
+    for (i, _) in scale_iter(Note::ZERO, &steps.0).enumerate().take(len){
+        let mut chord = Vec::new();
+        for note in scale_iter(Note::ZERO, &steps.0).skip(i).step_by(2).take(chord_size){
+            chord.push(note);
+        }
+        chords.push(Scale(chord).to_chord());
+    }
+    chords
+}
+
 // pub fn rooted_scale_chords(steps: &Steps, tonic: Note, chord_size: usize) -> Vec<RootedChord>{
 //     let len = steps.len();
 //     let mut chords = Vec::new();
@@ -793,6 +781,23 @@ mod tests{
         assert_eq!(
             &RelativeChord::new(ScaleDegree::II, &MINOR_NINTH_CHORD).to_string(),
             "II-9"
+        );
+    }
+
+    #[test]
+    fn test_scale_chords(){
+        let chords = scale_chords(&crate::libr::ionian::steps(), 3);
+        assert_eq!(
+            chords,
+            vec![
+                Chord::new(&MAJOR),
+                Chord::new(&MINOR),
+                Chord::new(&MINOR),
+                Chord::new(&MAJOR),
+                Chord::new(&MAJOR),
+                Chord::new(&MINOR),
+                Chord::new(&MINOR_DIMINISHED)
+            ]
         );
     }
 }
