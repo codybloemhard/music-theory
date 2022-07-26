@@ -1,10 +1,10 @@
 extern crate music_theory;
 use music_theory::theory::*;
-use music_theory::libr::scales::*;
-use music_theory::libr::infos::*;
-use music_theory::query::*;
-use music_theory::utils::*;
-use fnrs::Sequence;
+// use music_theory::libr::scales::*;
+// use music_theory::libr::infos::*;
+// use music_theory::query::*;
+// use music_theory::utils::*;
+// use fnrs::Sequence;
 
 // jazzbøt
 #[cfg(not(tarpaulin))]
