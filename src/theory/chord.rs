@@ -3,7 +3,7 @@ use super::interval::*;
 use super::traits::{
     VecWrapper, Wrapper, ToNamedInterval, AsScale, ToPC, ToRootedChord, ToChord
 };
-use super::super::utils::{ is_sorted };
+use super::super::utils::{ is_sorted, to_roman_num };
 
 use std::collections::HashSet;
 
@@ -395,36 +395,27 @@ pub fn scale_chords(steps: &Steps, chord_size: usize) -> Vec<Chord>{
     chords
 }
 
-// pub fn rooted_scale_chords(steps: &Steps, tonic: Note, chord_size: usize) -> Vec<RootedChord>{
-//     let len = steps.len();
-//     let mut chords = Vec::new();
-//     for (i, _) in note_iter(tonic, &steps.0).enumerate().take(len){
-//         let mut chord = Vec::new();
-//         for note in note_iter(tonic, &steps.0).skip(i).step_by(2).take(chord_size){
-//             chord.push(note);
-//         }
-//         chords.push(RootedChord::from_scale(Scale(chord)));
-//     }
-//     chords
-// }
-//
-// pub fn strs_scale_chords_roman(steps: &Steps, size: usize, styling: ChordStyling) -> Vec<String>{
-//     let chords = scale_chords(steps, size);
-//     let mut res = Vec::new();
-//     for (i, chord) in chords.iter().enumerate(){
-//         res.push(chord.quality(to_roman_num(i + 1), true, styling));
-//     }
-//     res
-// }
-//
-// pub fn strs_scale_chords(steps: &Steps, tonic: Note, size: usize, styling: ChordStyling) -> Vec<String>{
-//     let chords = rooted_scale_chords(steps, tonic, size);
-//     let mut res = Vec::new();
-//     for chord in chords.iter(){
-//         res.push(chord.as_string(true, styling));
-//     }
-//     res
-// }
+pub fn rooted_scale_chords(steps: &Steps, tonic: Note, chord_size: usize) -> Vec<RootedChord>{
+    let len = steps.len();
+    let mut chords = Vec::new();
+    for (i, _) in scale_iter(tonic, &steps.0).enumerate().take(len){
+        let mut chord = Vec::new();
+        for note in scale_iter(tonic, &steps.0).skip(i).step_by(2).take(chord_size){
+            chord.push(note);
+        }
+        chords.push(Scale(chord).to_rooted_chord());
+    }
+    chords
+}
+
+pub fn strs_scale_chords_roman(steps: &Steps, size: usize, style: ChordStyle) -> Vec<String>{
+    let chords = scale_chords(steps, size);
+    let mut res = Vec::new();
+    for (i, chord) in chords.iter().enumerate(){
+        res.push(chord.quality(to_roman_num(i + 1), style));
+    }
+    res
+}
 
 #[cfg(test)]
 mod tests{
@@ -797,6 +788,41 @@ mod tests{
                 Chord::new(&MAJOR),
                 Chord::new(&MINOR),
                 Chord::new(&MINOR_DIMINISHED)
+            ]
+        );
+    }
+
+    #[test]
+    fn test_rooted_scale_chords(){
+        let chords = rooted_scale_chords(&crate::libr::ionian::steps(), Note::C1, 3);
+        assert_eq!(
+            chords,
+            vec![
+                RootedChord{ root: Note::C1, chord: Chord::new(&MAJOR) },
+                RootedChord{ root: Note::D1, chord: Chord::new(&MINOR) },
+                RootedChord{ root: Note::E1, chord: Chord::new(&MINOR) },
+                RootedChord{ root: Note::F1, chord: Chord::new(&MAJOR) },
+                RootedChord{ root: Note::G1, chord: Chord::new(&MAJOR) },
+                RootedChord{ root: Note::A2, chord: Chord::new(&MINOR) },
+                RootedChord{ root: Note::B2, chord: Chord::new(&MINOR_DIMINISHED) }
+            ]
+        );
+    }
+
+    #[test]
+    fn test_strs_scale_chords_roman(){
+        let style = ChordStyle::Std(MStyle::Long, EStyle::Long);
+        let chords = strs_scale_chords_roman(&crate::libr::ionian::steps(), 3, style);
+        assert_eq!(
+            chords,
+            vec![
+                String::from("Imaj"),
+                String::from("IImin"),
+                String::from("IIImin"),
+                String::from("IVmaj"),
+                String::from("Vmaj"),
+                String::from("VImin"),
+                String::from("VIIdim"),
             ]
         );
     }
