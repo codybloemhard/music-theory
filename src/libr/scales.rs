@@ -1,6 +1,8 @@
 use crate::theory::{ Steps, Mode, Interval, Scale, AsScaleTry, ToScaleTry, Note };
 use crate::theory::traits::{ ModeIteratorSpawner, VecWrapper, Wrapper };
 
+use std::fmt::Write;
+
 pub struct ScaleObj{
     pub steps: Steps,
     pub fam_name: String,
@@ -199,7 +201,7 @@ impl HeptatonicScaleNamer{
             let d = nameless.0[i] - base_scale.0[i];
             if d == Interval::ROOT { continue; }
             let d = nameless.0[i] - ionian.0[i];
-            base_name.push_str(&format!(" {}{}", d, i + 1));
+            let _ = write!(base_name, " {}{}", d, i + 1);
         }
         Some(base_name)
     }

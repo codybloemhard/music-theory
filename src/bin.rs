@@ -2,7 +2,7 @@ extern crate music_theory;
 use music_theory::theory::*;
 // use music_theory::libr::scales::*;
 // use music_theory::libr::infos::*;
-// use music_theory::query::*;
+use music_theory::query::*;
 // use music_theory::utils::*;
 // use fnrs::Sequence;
 
@@ -34,9 +34,9 @@ fn main(){
 
 #[cfg(not(tarpaulin))]
 fn dotest(){
-    let style = ChordStyle::Spelled;
-    println!("{}", Scale::wrap(vec![Note::C1,Note::E1,Note::G1,Note::AS2,Note::D2,Note::F2])
-             .unwrap().to_chord().quality(String::from("C"), style));
+    let style = ChordStyle::Extra(MStyle::Symbol, EStyle::Symbol);
+    print!("{}", scales_and_chords_printout(style));
+
 //     for named in vec![C,CS,E,F,G,GS,AS].to_scale(3).0 {
 //         print!("{}, ", named.to_pc());
 //     }

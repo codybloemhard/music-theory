@@ -7,6 +7,7 @@ use crate::utils::ImplAssign;
 
 use std::cmp::Ordering;
 use std::ops::{ Add, Sub };
+use std::fmt::Write;
 
 pub(crate) const _SEMI: Note = Note(1);
 pub(crate) const _WHOLE: Note = Note(2);
@@ -433,15 +434,15 @@ impl<T> ToNamedOctaveInterval for T where T: ToInterval{
 }
 
 impl AsIonianRelativeStringTry for Intervals{
-    fn as_ionian_relative_string_try(&self) -> Option<String>{
+    fn as_ionian_relative_string_try(&self, nonnat: bool) -> Option<String>{
         if self.len() != 7{
             return None;
         }
         let mut res = String::new();
         for (i, int) in self.iter().enumerate().take(7){
-            let prefix = int.to_string();
+            let prefix = if nonnat { int.to_string_non_nat() } else { int.to_string() };
             res.push_str(&prefix);
-            res.push_str(&format!("{} ", i + 1));
+            let _ = write!(res, "{} ", i + 1);
         }
         res.pop();
         Some(res)
@@ -826,17 +827,17 @@ mod tests{
     #[test]
     fn intervals_as_ionian_relative_string_try(){
         assert_eq!(
-            vec![Interval(0)].as_ionian_relative_string_try(),
+            vec![Interval(0)].as_ionian_relative_string_try(false),
             None
         );
         assert_eq!(
             vec![Interval(0), Interval(0), Interval(0), Interval(0),
-                    Interval(0), Interval(0), Interval(0)].as_ionian_relative_string_try(),
+                    Interval(0), Interval(0), Interval(0)].as_ionian_relative_string_try(false),
             Some(String::from("♮1 ♮2 ♮3 ♮4 ♮5 ♮6 ♮7"))
         );
         assert_eq!(
             vec![Interval(-2), Interval(-1), Interval(0), Interval(1),
-                    Interval(2), Interval(3), Interval(4)].as_ionian_relative_string_try(),
+                    Interval(2), Interval(3), Interval(4)].as_ionian_relative_string_try(false),
             Some(String::from("♭♭1 ♭2 ♮3 ♯4 ♯♯5 ♯♯♯6 ♯♯♯♯7"))
         );
         let scalea = vec![PC::C, PC::D, PC::E, PC::F, PC::G, PC::A, PC::B]
@@ -844,8 +845,8 @@ mod tests{
         let scaleb = vec![PC::A, PC::B, PC::C, PC::D, PC::E, PC::F, PC::G]
             .to_scale_try(Note(1)).unwrap().to_steps(true);
         assert_eq!(
-            scaleb.to_relative_intervals(&scalea).unwrap().to_ionian_relative_string_try(),
-            Some(String::from("♮1 ♮2 ♭3 ♮4 ♮5 ♭6 ♭7"))
+            scaleb.to_relative_intervals(&scalea).unwrap().to_ionian_relative_string_try(true),
+            Some(String::from("1 2 ♭3 4 5 ♭6 ♭7"))
         );
     }
 }

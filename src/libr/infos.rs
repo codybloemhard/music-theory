@@ -1,7 +1,3 @@
-// use crate::libr::scales::{get_all_scale_objs,ionian,HeptatonicScaleNamer};
-// use crate::theory::scale::RelativeTrait;
-// use crate::theory::note::{ToRelative};
-// use crate::theory::chord::{strs_scale_chords_roman,ChordStyling};
 
 pub trait Intercalatable{
     type InterType;
@@ -89,7 +85,6 @@ mod tests{
 
     #[test]
     fn intercalate(){
-
         assert_eq!(&vec!["X".to_string()].intercalate(",".to_string()), "X");
         assert_eq!(
             &vec!["X", "Y", "Z"].iter()

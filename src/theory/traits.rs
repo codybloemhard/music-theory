@@ -210,16 +210,16 @@ impl<T: AsRelativeIntervals> ToRelativeIntervals for T{
 }
 
 pub trait AsIonianRelativeStringTry{
-    fn as_ionian_relative_string_try(&self) -> Option<String>;
+    fn as_ionian_relative_string_try(&self, nonnat: bool) -> Option<String>;
 }
 
 pub trait ToIonianRelativeStringTry{
-    fn to_ionian_relative_string_try(self) -> Option<String>;
+    fn to_ionian_relative_string_try(self, nonnat: bool) -> Option<String>;
 }
 
 impl<T: AsIonianRelativeStringTry> ToIonianRelativeStringTry for T{
-    fn to_ionian_relative_string_try(self) -> Option<String>{
-        self.as_ionian_relative_string_try()
+    fn to_ionian_relative_string_try(self, nonnat: bool) -> Option<String>{
+        self.as_ionian_relative_string_try(nonnat)
     }
 }
 

@@ -237,7 +237,6 @@ impl AsRelativeIntervals for Steps{
     fn as_relative_intervals(&self, reference: &Self) -> Option<Intervals>{
         if self.0.len() != reference.0.len() { return None; }
         if self.0.is_empty() { return None; }
-        // std::ops::AddAssign<_> to use +=
         let mut acc_a = Interval(0);
         let mut acc_b = Interval(0);
         let mut res = Vec::new();
