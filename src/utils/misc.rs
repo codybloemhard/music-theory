@@ -25,10 +25,10 @@ mod tests{
 
     #[test]
     fn test_is_sorted(){
-        assert_eq!(is_sorted(&[0]), true);
-        assert_eq!(is_sorted(&[0, 1]), true);
-        assert_eq!(is_sorted(&[1, 1]), true);
-        assert_eq!(is_sorted(&[3, 1]), false);
-        assert_eq!(is_sorted(&[3, 4, 3, 5]), false);
+        assert!(is_sorted(&[0]));
+        assert!(is_sorted(&[0, 1]));
+        assert!(is_sorted(&[1, 1]));
+        assert!(!is_sorted(&[3, 1]));
+        assert!(!is_sorted(&[3, 4, 3, 5]));
     }
 }

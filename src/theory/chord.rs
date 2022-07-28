@@ -411,12 +411,12 @@ mod tests{
 
     #[test]
     fn chord_same_intervals(){
-        assert_eq!(Chord(vec![Note(4), Note(7)]).same_intervals(&MAJOR), true);
+        assert!(Chord(vec![Note(4), Note(7)]).same_intervals(MAJOR));
     }
 
     #[test]
     fn chord_normalized(){
-        assert_eq!(Chord::new(&MAJOR).normalized(), Chord::new(&MAJOR));
+        assert_eq!(Chord::new(MAJOR).normalized(), Chord::new(MAJOR));
         assert_eq!(
             Chord::new(&[_MAJ3, _PER5, _OCTAVE, _MAJ9, _PER12]).normalized(),
             Chord::new(&[_MAJ2, _MAJ3, _PER5])
@@ -588,7 +588,7 @@ mod tests{
             Scale(vec![Note::F1])
         );
         assert_eq!(
-            Chord::new(&MAJOR_SEVENTH_CHORD).to_scale(Note::F1),
+            Chord::new(MAJOR_SEVENTH_CHORD).to_scale(Note::F1),
             Scale(vec![Note::F1, Note::A2, Note::C2, Note::E2])
         );
     }
@@ -596,7 +596,7 @@ mod tests{
     #[test]
     fn rooted_chord_new(){
         assert_eq!(
-            RootedChord::new(Note::A4, &MAJOR_SIXTH_CHORD),
+            RootedChord::new(Note::A4, MAJOR_SIXTH_CHORD),
             RootedChord{ root: Note::A4, chord: Chord(vec![_MAJ3, _PER5, _MAJ6]) }
         );
     }
@@ -604,7 +604,7 @@ mod tests{
     #[test]
     fn rooted_chord_from_chord(){
         assert_eq!(
-            RootedChord::from_chord(Note::A4, Chord::new(&MU_CHORD)),
+            RootedChord::from_chord(Note::A4, Chord::new(MU_CHORD)),
             RootedChord{ root: Note::A4, chord: Chord(vec![_MAJ2, _MAJ3, _PER5]) }
         );
     }
@@ -616,7 +616,7 @@ mod tests{
             Scale(vec![Note::A4])
         );
         assert_eq!(
-            RootedChord{ root: Note::A1, chord: Chord::new(&MAJOR) }.to_scale(),
+            RootedChord{ root: Note::A1, chord: Chord::new(MAJOR) }.to_scale(),
             Scale(vec![Note::A1, Note::CS1, Note::E1])
         );
     }
@@ -631,13 +631,13 @@ mod tests{
 
     #[test]
     fn rooted_chord_as_chordtone_wholetone_scale(){
-        assert_eq!(RootedChord::new(Note::F1, &MAJOR).as_chordtone_wholetone_scale(), None);
+        assert_eq!(RootedChord::new(Note::F1, MAJOR).as_chordtone_wholetone_scale(), None);
         assert_eq!(
-            RootedChord::new(Note::F1, &MAJOR_SEVENTH_CHORD).as_chordtone_wholetone_scale(),
+            RootedChord::new(Note::F1, MAJOR_SEVENTH_CHORD).as_chordtone_wholetone_scale(),
             Some(Scale(vec![Note::F1, Note::G1, Note::A2, Note::B2, Note::C2, Note::D2, Note::E2]))
         );
         assert_eq!(
-            RootedChord::new(Note::A1, &MINOR_SEVENTH_CHORD).as_chordtone_wholetone_scale(),
+            RootedChord::new(Note::A1, MINOR_SEVENTH_CHORD).as_chordtone_wholetone_scale(),
             Some(Scale(vec![Note::A1, Note::B1, Note::C1, Note::D1, Note::E1, Note::FS1, Note::G1]))
         );
     }
@@ -707,17 +707,17 @@ mod tests{
     #[test]
     fn relative_chord_new(){
         assert_eq!(
-            RelativeChord::new(ScaleDegree::I, &MAJOR),
-            RelativeChord{ degree: ScaleDegree::I, chord: Chord::new(&MAJOR) }
+            RelativeChord::new(ScaleDegree::I, MAJOR),
+            RelativeChord{ degree: ScaleDegree::I, chord: Chord::new(MAJOR) }
         );
     }
 
     #[test]
     fn relative_chord_from_chord(){
-        let chord = Chord::new(&MINOR);
+        let chord = Chord::new(MINOR);
         assert_eq!(
             RelativeChord::from_chord(ScaleDegree::bV, chord.clone()),
-            RelativeChord{ degree: ScaleDegree::bV, chord: chord }
+            RelativeChord{ degree: ScaleDegree::bV, chord }
         );
     }
 
@@ -725,7 +725,7 @@ mod tests{
     fn relative_chord_as_string(){
         let long = ChordStyle::Std(MStyle::Long, EStyle::Long);
         assert_eq!(
-            &RelativeChord::new(ScaleDegree::bVII, &MAJOR_ELEVENTH_CHORD).as_string(long),
+            &RelativeChord::new(ScaleDegree::bVII, MAJOR_ELEVENTH_CHORD).as_string(long),
             "bVIImaj11"
         );
     }
@@ -733,7 +733,7 @@ mod tests{
     #[test]
     fn relative_chord_to_string(){
         assert_eq!(
-            &RelativeChord::new(ScaleDegree::II, &MINOR_NINTH_CHORD).to_string(),
+            &RelativeChord::new(ScaleDegree::II, MINOR_NINTH_CHORD).to_string(),
             "II-9"
         );
     }

@@ -175,13 +175,13 @@ mod tests{
         assert_eq!(
             chords,
             vec![
-                Chord::new(&MAJOR),
-                Chord::new(&MINOR),
-                Chord::new(&MINOR),
-                Chord::new(&MAJOR),
-                Chord::new(&MAJOR),
-                Chord::new(&MINOR),
-                Chord::new(&MINOR_DIMINISHED)
+                Chord::new(MAJOR),
+                Chord::new(MINOR),
+                Chord::new(MINOR),
+                Chord::new(MAJOR),
+                Chord::new(MAJOR),
+                Chord::new(MINOR),
+                Chord::new(MINOR_DIMINISHED)
             ]
         );
     }
@@ -192,13 +192,13 @@ mod tests{
         assert_eq!(
             chords,
             vec![
-                RootedChord{ root: Note::C1, chord: Chord::new(&MAJOR) },
-                RootedChord{ root: Note::D1, chord: Chord::new(&MINOR) },
-                RootedChord{ root: Note::E1, chord: Chord::new(&MINOR) },
-                RootedChord{ root: Note::F1, chord: Chord::new(&MAJOR) },
-                RootedChord{ root: Note::G1, chord: Chord::new(&MAJOR) },
-                RootedChord{ root: Note::A2, chord: Chord::new(&MINOR) },
-                RootedChord{ root: Note::B2, chord: Chord::new(&MINOR_DIMINISHED) }
+                RootedChord{ root: Note::C1, chord: Chord::new(MAJOR) },
+                RootedChord{ root: Note::D1, chord: Chord::new(MINOR) },
+                RootedChord{ root: Note::E1, chord: Chord::new(MINOR) },
+                RootedChord{ root: Note::F1, chord: Chord::new(MAJOR) },
+                RootedChord{ root: Note::G1, chord: Chord::new(MAJOR) },
+                RootedChord{ root: Note::A2, chord: Chord::new(MINOR) },
+                RootedChord{ root: Note::B2, chord: Chord::new(MINOR_DIMINISHED) }
             ]
         );
     }

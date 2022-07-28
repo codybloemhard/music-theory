@@ -383,7 +383,7 @@ mod tests{
 
     #[test]
     fn scale_is_empty(){
-        assert_eq!(Scale(vec![Note(0)]).is_empty(), false);
+        assert!(!Scale(vec![Note(0)]).is_empty());
     }
 
     #[test]
@@ -399,19 +399,19 @@ mod tests{
     #[test]
     fn contains(){
         let scale = Scale(vec![Note(0), Note(1), Note(2)]);
-        assert_eq!(scale.contains(&Note(0)), true);
-        assert_eq!(scale.contains(&Note(1)), true);
-        assert_eq!(scale.contains(&Note(2)), true);
-        assert_eq!(scale.contains(&Note(3)), false);
+        assert!(scale.contains(&Note(0)));
+        assert!(scale.contains(&Note(1)));
+        assert!(scale.contains(&Note(2)));
+        assert!(!scale.contains(&Note(3)));
     }
 
     #[test]
     fn contains_all(){
         let scale = Scale(vec![Note(0), Note(1), Note(2)]);
-        assert_eq!(scale.contains_all(&[Note(0)]), true);
-        assert_eq!(scale.contains_all(&[Note(0), Note(1)]), true);
-        assert_eq!(scale.contains_all(&[Note(0), Note(1), Note(2)]), true);
-        assert_eq!(scale.contains_all(&[Note(0), Note(1), Note(2), Note(3)]), false);
+        assert!(scale.contains_all(&[Note(0)]));
+        assert!(scale.contains_all(&[Note(0), Note(1)]));
+        assert!(scale.contains_all(&[Note(0), Note(1), Note(2)]));
+        assert!(!scale.contains_all(&[Note(0), Note(1), Note(2), Note(3)]));
     }
 
     #[test]
@@ -421,7 +421,7 @@ mod tests{
 
     #[test]
     fn steps_is_empty(){
-        assert_eq!(Steps(vec![Interval(1)]).is_empty(), false);
+        assert!(!Steps(vec![Interval(1)]).is_empty());
     }
 
     #[test]
@@ -469,7 +469,7 @@ mod tests{
         assert_eq!(scale.clone().mode(1), Scale(vec![Note(1), Note(2), Note(0)]));
         assert_eq!(scale.clone().mode(2), Scale(vec![Note(2), Note(0), Note(1)]));
         assert_eq!(scale.clone().mode(3), scale);
-        assert_eq!(scale.clone().mode(1), scale.clone().next_mode());
+        assert_eq!(scale.clone().mode(1), scale.next_mode());
     }
 
     #[test]
@@ -507,7 +507,7 @@ mod tests{
         assert_eq!(steps.clone().mode(1), Steps(vec![Interval(2), Interval(3), Interval(1)]));
         assert_eq!(steps.clone().mode(2), Steps(vec![Interval(3), Interval(1), Interval(2)]));
         assert_eq!(steps.clone().mode(3), steps);
-        assert_eq!(steps.clone().mode(1), steps.clone().next_mode());
+        assert_eq!(steps.clone().mode(1), steps.next_mode());
     }
 
     #[test]
@@ -630,13 +630,13 @@ mod tests{
             Steps(vec![
                 Interval(4), Interval(3), Interval(4)
             ]).to_chord(),
-            Chord::new(&MAJOR_SEVENTH_CHORD)
+            Chord::new(MAJOR_SEVENTH_CHORD)
         );
         assert_eq!(
             Steps(vec![
                 Interval(0), Interval(4), Interval(3), Interval(4)
             ]).to_chord(),
-            Chord::new(&MAJOR_SEVENTH_CHORD)
+            Chord::new(MAJOR_SEVENTH_CHORD)
         );
     }
 

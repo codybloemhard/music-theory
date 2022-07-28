@@ -305,7 +305,7 @@ mod tests{
             assert_eq!(note, note.shift_octave(0));
             assert_eq!(note.inside() + 36, note.with_octave(3).inside());
             assert_eq!(note.to_pc(), note.shift_octave(12345).to_pc());
-            assert_eq!(Note::MAX.with_octave(u16::MAX) < Note::MAX, true);
+            assert!(Note::MAX.with_octave(u16::MAX) < Note::MAX);
             assert_eq!(Note::MAX.shift_octave(i16::MAX), Note::MAX);
             assert_eq!(Note::MIN.shift_octave(i16::MIN), Note::MIN);
         }

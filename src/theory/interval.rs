@@ -511,6 +511,7 @@ mod tests{
     }
 
     #[test]
+    #[allow(clippy::double_neg)]
     fn neg(){
         assert_eq!(-Interval(0), Interval(0));
         assert_eq!(-Interval(1), Interval(-1));
@@ -643,8 +644,8 @@ mod tests{
         assert_eq!(Interval(-1).with_octave(2), Interval(-25));
         assert_eq!(Interval(-38).with_octave(1), Interval(-14));
         assert_eq!(Interval(-38).with_octave(0), Interval(-2));
-        assert_eq!(Interval(0).with_octave(u16::MAX) < Interval::MAX, true);
-        assert_eq!(Interval(0).with_octave(u16::MAX) < Interval::MAX, true);
+        assert!(Interval(0).with_octave(u16::MAX) < Interval::MAX);
+        assert!(Interval(0).with_octave(u16::MAX) < Interval::MAX);
         assert_eq!(Interval(0).shift_octave(2), Interval(24));
         assert_eq!(Interval(0).shift_octave(-2), Interval(-24));
         assert_eq!(Interval(1).shift_octave(-2), Interval(-23));
@@ -717,7 +718,7 @@ mod tests{
         for i in 0..24{
             let itry = Interval(i).to_named_interval_try();
             let imod = Interval(i).to_named_interval_mod();
-            assert_eq!(if itry.is_some() { itry.unwrap() == imod } else { true }, true);
+            assert!(if itry.is_some() { itry.unwrap() == imod } else { true });
         }
         assert_eq!(Interval(-1).to_named_interval_mod(), NamedInterval::Maj7);
         assert_eq!(Interval(-2).to_named_interval_mod(), NamedInterval::Min7);
@@ -759,7 +760,7 @@ mod tests{
         for i in 0..24{
             let itry = Interval(i).to_named_octave_interval_try();
             let imod = Interval(i).to_named_octave_interval_mod();
-            assert_eq!(if itry.is_some() { itry.unwrap() == imod } else { true }, true);
+            assert!(if itry.is_some() { itry.unwrap() == imod } else { true });
         }
         assert_eq!(Interval(-1).to_named_octave_interval_mod(), NamedOctaveInterval::Maj7);
         assert_eq!(Interval(-2).to_named_octave_interval_mod(), NamedOctaveInterval::Min7);

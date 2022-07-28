@@ -200,7 +200,7 @@ mod tests{
     #[test]
     fn to_letter_try(){
         for pc in PC::ALL{
-            assert_eq!(pc.to_letter_try().is_some(), true);
+            assert!(pc.to_letter_try().is_some());
         }
     }
 
@@ -218,9 +218,9 @@ mod tests{
             vec![PC::A, PC::C, PC::E, PC::G, PC::B].to_scale_try(Note(1)),
             Some(Scale(vec![Note::A1, Note::C1, Note::E1, Note::G1, Note::B2]))
         );
-        assert_eq!(vec![PC::A, PC::B].to_scale_try(Note(u16::MAX as u32)).is_some(), true);
+        assert!(vec![PC::A, PC::B].to_scale_try(Note(u16::MAX as u32)).is_some());
         assert_eq!(vec![PC::A, PC::B].to_scale_try(Note(u16::MAX as u32 + 1)), None);
-        assert_eq!(vec![PC::G, PC::A].to_scale_try(Note(u16::MAX as u32)).is_some(), false);
+        assert!(vec![PC::G, PC::A].to_scale_try(Note(u16::MAX as u32)).is_none());
     }
 
     #[test]

@@ -341,7 +341,7 @@ mod tests{
         for obj in objs{
             let mut steps = obj.steps;
             for mode in obj.modes.clone(){
-                if &mode != ""{
+                if !mode.is_empty(){
                     assert_eq!(namer.name(&steps), Some(mode));
                 }
                 steps.next_mode_mut();
