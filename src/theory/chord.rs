@@ -110,13 +110,13 @@ pub enum ScaleDegree{
     I, bII, II, bIII, III, IV, bV, V, bVI, VI, bVII, VII
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(usize)]
-pub enum MStyle{ Long = 0, Short = 1, Symbol = 2 }
+pub enum MStyle{ Long = 0, Short = 1, #[default] Symbol = 2 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(usize)]
-pub enum EStyle{ Long = 0, Symbol = 2 }
+pub enum EStyle{ Long = 0, #[default] Symbol = 2 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum ChordStyle{

@@ -1,10 +1,6 @@
-// use crate::theory::note::{ Steps, Scale, Relative, IntoPCs, PCs, PC, NoteSequence, ToScale, IntoScale, ToRelative, ToNote };
-// use crate::theory::scale::{ notes_to_octave_scale, StepsTrait, ModeIteratorSpawner };
-// use crate::theory::interval::{ _SEMI };
-// use crate::libr::scales::{get_all_scale_objs, ModeObj,ionian};
-
 use crate::theory::{ Steps, Chord, scale_iter, Scale, Note, RootedChord };
 use crate::theory::traits::{ VecWrapper, ToChord, ToRootedChord };
+use crate::libr::{ ModeObj, get_all_scale_objs };
 
 // use fnrs::Sequence;
 
@@ -34,23 +30,22 @@ pub fn find_rooted_scale_chords(steps: &Steps, tonic: Note, chord_size: usize) -
     chords
 }
 
+pub fn find_scale(scale: &Scale) -> Option<ModeObj>{
+    let steps = scale.as_octave_steps()?;
+    let scales = get_all_scale_objs();
+    for sc in scales{
+        if let Some((mode, msteps)) = sc.steps.clone().mode_nr_of_this(&steps){
+            return Option::Some(ModeObj{
+                steps: msteps,
+                fam_name: sc.family_name(),
+                mode_name: sc.get_mode_name(mode),
+                mode_nr: mode,
+            });
+        }
+    }
+    Option::None
+}
 
-// pub fn find_scale(scale: &Scale) -> Option<ModeObj>{
-//     let steps = Steps(notes_to_octave_scale(scale));
-//     let scales = get_all_scale_objs();
-//     for sc in scales{
-//         if let Some((mode,msteps)) = sc.steps.clone().mode_nr_of_this(&steps){
-//             return Option::Some(ModeObj{
-//                 steps: msteps,
-//                 fam_name: sc.family_name(),
-//                 mode_name: sc.get_mode_name(mode as u8),
-//                 mode_nr: mode,
-//             });
-//         }
-//     }
-//     Option::None
-// }
-//
 // pub fn find_scale_superstring(scale: &Scale) -> Vec<(PC,ModeObj)>{
 //     let pcs = scale.clone().into_pcs();
 //     let scales = get_all_scale_objs();
@@ -200,6 +195,52 @@ mod tests{
                 RootedChord{ root: Note::A2, chord: Chord::new(MINOR) },
                 RootedChord{ root: Note::B2, chord: Chord::new(MINOR_DIMINISHED) }
             ]
+        );
+    }
+
+    #[test]
+    fn test_find_scale(){
+        let hs = Interval(1);
+        let ws = Interval(2);
+        let ts = Interval(3);
+        assert_eq!(
+            find_scale(&Scale(vec![
+                Note::C1, Note::D1, Note::E1, Note::F1, Note::G1, Note::A2, Note::B2
+            ])),
+            Some(ModeObj {
+                steps: Steps(vec![ws, ws, hs, ws, ws, ws, hs]),
+                fam_name: "Ionian".to_string(),
+                mode_name: "Ionian".to_string(),
+                mode_nr: 0
+            })
+        );
+        assert_eq!(
+            find_scale(&Scale(vec![
+                Note::A1, Note::B1, Note::C1, Note::D1, Note::E1, Note::F1, Note::G1
+            ])),
+            Some(ModeObj {
+                steps: Steps(vec![ws, hs, ws, ws, hs, ws, ws]),
+                fam_name: "Ionian".to_string(),
+                mode_name: "Aeolian".to_string(),
+                mode_nr: 5
+            })
+        );
+        assert_eq!(
+            find_scale(&Scale(vec![
+                Note::A1, Note::B1, Note::C1, Note::D1, Note::E1, Note::F1, Note::GS1
+            ])),
+            Some(ModeObj {
+                steps: Steps(vec![ws, hs, ws, ws, hs, ts, hs]),
+                fam_name: "Harmonic Minor".to_string(),
+                mode_name: "Harmonic Minor".to_string(),
+                mode_nr: 0
+            })
+        );
+        assert_eq!(
+            find_scale(&Scale(vec![
+                Note::A1, Note::B1, Note::C1, Note::D1, Note::E1, Note::F1
+            ])),
+            None
         );
     }
 }

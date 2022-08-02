@@ -14,8 +14,31 @@ pub struct Scale(pub(crate) Notes);
 #[derive(Debug, Default, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct Steps(pub(crate) Intervals);
 
+impl Scale{
+    pub fn as_octave_steps(&self) -> Option<Steps>{
+        if self.is_empty(){ return None; }
+        let mut res = Vec::new();
+        let mut last = self.0[0];
+        let mut sum = Interval::ROOT;
+        for note in self.iter().skip(1){
+            let diff = *note - last;
+            if diff.0 < 0 { return None; }
+            if diff.0 == 0 { continue; }
+            res.push(diff);
+            last = *note;
+            sum += diff;
+        }
+        if sum > Interval::OCTAVE { return None; }
+        if sum == Interval::OCTAVE {
+            return Some(Steps(res));
+        }
+        res.push(Interval::OCTAVE - sum);
+        Some(Steps(res))
+    }
+}
+
 impl Steps{
-    pub fn mode_nr_of_this(&self, mode: &Steps) -> Option<usize>{
+    pub fn mode_nr_of_this(&self, mode: &Steps) -> Option<(usize, Steps)>{
         if mode.len() != self.len() {
             return None;
         }
@@ -23,7 +46,7 @@ impl Steps{
         let mut copy = self.clone();
         for i in 0..=len{
             if copy.0 == mode.0{
-                return Some(i);
+                return Some((i, copy));
             }
             copy.next_mode_mut();
         }
@@ -264,27 +287,6 @@ impl AsChord for Steps{
         chord.normalized()
     }
 }
-
-// pub fn notes_to_octave_scale(scale: &Scale) -> Notes{
-//     let mut res = Vec::new();
-//     if scale.0.is_empty(){ return res; }
-//     let mut last = scale.0[0];
-//     let mut sum = 0;
-//     for note in scale.0.iter().skip(1){
-//         let diff = note - last;
-//         res.push(diff);
-//         last = *note;
-//         sum += diff;
-//     }
-//     if sum > _OCTAVE{
-//         return Vec::new();
-//     }
-//     if sum == _OCTAVE{
-//         return res;
-//     }
-//     res.push(_OCTAVE - sum);
-//     res
-// }
 
 pub struct ScaleIterator<'a>{
     scale: &'a [Interval],
@@ -588,7 +590,13 @@ mod tests{
         let major = Steps(vec![Interval(2), Interval(2), Interval(1), Interval(2),
             Interval(2), Interval(2), Interval(1)]);
         let minor = major.clone().mode(5);
-        assert_eq!(major.mode_nr_of_this(&minor), Some(5));
+        assert_eq!(
+            major.mode_nr_of_this(&minor),
+            Some((5, Steps(vec![
+                Interval(2), Interval(1), Interval(2), Interval(2),
+                Interval(1), Interval(2), Interval(2)
+            ])))
+        );
         assert_eq!(
             Steps(vec![Interval(1), Interval(1)]).mode_nr_of_this(&Steps(vec![Interval(1)])),
             None
@@ -729,5 +737,35 @@ mod tests{
         assert_eq!(iter.next(), Some(Note::B2));
         assert_eq!(iter.next(), Some(Note::C2));
         assert_eq!(iter.next(), Some(Note::D2));
+    }
+
+    #[test]
+    fn scale_as_octave_steps(){
+        assert_eq!( // C Major
+            Scale(vec![Note::C1, Note::D1, Note::E1, Note::F1, Note::G1, Note::A2, Note::B2])
+                .as_octave_steps(),
+            Some(Steps(vec![Interval(2), Interval(2), Interval(1), Interval(2),
+                        Interval(2), Interval(2), Interval(1)]))
+        );
+        assert_eq!(
+            Scale(vec![Note::A1, Note::B1, Note::C1, Note::D1, Note::E1, Note::F1, Note::G1])
+                .as_octave_steps(),
+            Some(Steps(vec![Interval(2), Interval(2), Interval(1), Interval(2),
+                        Interval(2), Interval(2), Interval(1)]).mode(5))
+        );
+        assert_eq!(
+            Scale(vec![Note::A1, Note::B1, Note::A1, Note::B1]).as_octave_steps(),
+            None
+        );
+        assert_eq!(
+            Scale(vec![Note::A1, Note::B1, Note::A1, Note::B1]).as_octave_steps(),
+            None
+        );
+        assert_eq!( // C Major
+            Scale(vec![Note::C1, Note::D1, Note::E1, Note::F1, Note::G1, Note::A2, Note::B2, Note::C2])
+                .as_octave_steps(),
+            Some(Steps(vec![Interval(2), Interval(2), Interval(1), Interval(2),
+                        Interval(2), Interval(2), Interval(1)]))
+        );
     }
 }
