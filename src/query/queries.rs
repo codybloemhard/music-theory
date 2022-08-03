@@ -1,8 +1,10 @@
-use crate::theory::{ Steps, Chord, scale_iter, Scale, Note, RootedChord };
-use crate::theory::traits::{ VecWrapper, ToChord, ToRootedChord };
+use crate::theory::{ Steps, Chord, scale_iter, Scale, Note, RootedChord, PC };
+use crate::theory::traits::{
+    VecWrapper, ToChord, ToRootedChord, ToPCs, ModeIteratorSpawner, ToScaleTry
+};
 use crate::libr::{ ModeObj, get_all_scale_objs };
 
-// use fnrs::Sequence;
+use fnrs::Sequence;
 
 pub fn find_scale_chords(steps: &Steps, chord_size: usize) -> Vec<Chord>{
     let len = steps.len();
@@ -46,31 +48,32 @@ pub fn find_scale(scale: &Scale) -> Option<ModeObj>{
     Option::None
 }
 
-// pub fn find_scale_superstring(scale: &Scale) -> Vec<(PC,ModeObj)>{
-//     let pcs = scale.clone().into_pcs();
-//     let scales = get_all_scale_objs();
-//     let mut res = Vec::new();
-//     for sc in scales{
-//         for (i,mode) in sc.steps.clone().mode_iter().enumerate(){
-//             for j in 0..12{
-//                 let tonic = j * _SEMI;
-//                 let modescale = mode.clone().into_scale(tonic).into_pcs();
-//                 if modescale.has_seq(&pcs){
-//                     res.push((modescale[0],
-//                         ModeObj{
-//                             steps: mode.clone(),
-//                             fam_name: sc.family_name(),
-//                             mode_name: sc.get_mode_name(i as u8),
-//                             mode_nr: i,
-//                         })
-//                     );
-//                 }
-//             }
-//         }
-//     }
-//     res
-// }
-//
+pub fn find_scale_superstring(scale: &Scale) -> Vec<(PC, ModeObj)>{
+    let pcs = scale.clone().to_pcs();
+    let scales = get_all_scale_objs();
+    let mut res = Vec::new();
+    for sc in scales{
+        for (i, mode) in sc.steps.clone().mode_iter().enumerate(){
+            for j in 0..12{
+                let tonic = Note(j);
+                // shouldn't be able to fail as it does not depend on input
+                let modescale = mode.clone().to_scale_try(tonic).unwrap().to_pcs();
+                if modescale.has_seq(&pcs){
+                    res.push((modescale[0],
+                        ModeObj{
+                            steps: mode.clone(),
+                            fam_name: sc.family_name(),
+                            mode_name: sc.get_mode_name(i),
+                            mode_nr: i,
+                        })
+                    );
+                }
+            }
+        }
+    }
+    res
+}
+
 // // Finds all the scales that are a super set of the set of notes given.
 // // When same_tonic == true, it only gives scales that have the same note as the
 // // first note in the set(ordered set shortly) as the tonic.
@@ -242,5 +245,25 @@ mod tests{
             ])),
             None
         );
+    }
+
+    #[test]
+    fn test_find_scale_superstring(){
+        let scale = Scale(vec![Note::C1, Note::D1, Note::E1, Note::F1, Note::G1]);
+        let mut res = find_scale_superstring(&scale)
+            .into_iter().map(|(pc, mo)| (pc, mo.fam_name, mo.mode_nr));
+        assert_eq!(res.next(), Some((PC::C, "Ionian".to_string(), 0)));
+        assert_eq!(res.next(), Some((PC::A, "Ionian".to_string(), 2)));
+        assert_eq!(res.next(), Some((PC::As, "Ionian".to_string(), 3)));
+        assert_eq!(res.next(), Some((PC::C, "Ionian".to_string(), 4)));
+        assert_eq!(res.next(), Some((PC::A, "Ionian".to_string(), 5)));
+        assert_eq!(res.next(), Some((PC::B, "Ionian".to_string(), 6)));
+        assert_eq!(res.next(), Some((PC::C, "Harmonic Major".to_string(), 0)));
+        assert_eq!(res.next(), Some((PC::Gs, "Harmonic Major".to_string(), 5)));
+        assert_eq!(res.next(), Some((PC::B, "Harmonic Major".to_string(), 6)));
+        assert_eq!(res.next(), Some((PC::Gs, "Melodic Minor".to_string(), 2)));
+        assert_eq!(res.next(), Some((PC::As, "Melodic Minor".to_string(), 3)));
+        assert_eq!(res.next(), Some((PC::C, "Melodic Minor".to_string(), 4)));
+        assert_eq!(res.next(), None);
     }
 }
