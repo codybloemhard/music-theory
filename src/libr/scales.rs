@@ -125,7 +125,7 @@ DefScale!(hungarian_major, "Hungarian Major",
     "Hungarian Major", "", "", "", "", "", ""
 );
 
-DefScale!(neapolitan_minor, "Neopolitan Minor",
+DefScale!(neapolitan_minor, "Neapolitan Minor",
     vec![SEMI, WHOLE, WHOLE, WHOLE, SEMI, MIN3, SEMI],
     "Neapolitan Minor", "", "Mixolydian Augmented", "Lydian Minor", "", "", ""
 );

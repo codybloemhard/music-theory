@@ -1,8 +1,9 @@
-use crate::theory::{ Steps, Chord, scale_iter, Scale, Note, RootedChord, PC };
+use crate::theory::{ Steps, Chord, scale_iter, Scale, Note, RootedChord, PC, Interval };
 use crate::theory::traits::{
-    VecWrapper, ToChord, ToRootedChord, ToPCs, ModeIteratorSpawner, ToScaleTry
+    VecWrapper, ToChord, ToRootedChord, ToPCs, ModeIteratorSpawner, ToScaleTry, ToNote, AsScaleTry,
+    AsRelativeIntervals
 };
-use crate::libr::{ ModeObj, get_all_scale_objs };
+use crate::libr::{ ModeObj, get_all_scale_objs, ionian };
 
 use fnrs::Sequence;
 
@@ -73,94 +74,89 @@ pub fn find_scale_superstring(scale: &Scale) -> Vec<(PC, ModeObj)>{
     }
     res
 }
-
-// // Finds all the scales that are a super set of the set of notes given.
-// // When same_tonic == true, it only gives scales that have the same note as the
-// // first note in the set(ordered set shortly) as the tonic.
-// pub fn find_scale_superset(scale: PCs, same_tonic: bool) -> Vec<(PC,ModeObj)>{
-//     let target_tonic = scale[0].to_note();
-//     let scales = get_all_scale_objs();
-//     let mut res = Vec::new();
-//     for sc in scales{
-//         for (i,mode) in sc.steps.clone().mode_iter().enumerate(){
-//             for tonic in 0..12{
-//                 let tonic_note = tonic * _SEMI;
-//                 if same_tonic && tonic_note != target_tonic { continue; }
-//                 let notes = mode.clone().into_scale(tonic_note).into_pcs();
-//                 let mut has = true;
-//                 'outer: for a in &scale{
-//                     for b in &notes{
-//                         if a == b { continue 'outer; }
-//                     }
-//                     has = false;
-//                 }
-//                 if has {
-//                     res.push(
-//                         (notes[0],ModeObj{
-//                             steps: mode.clone(),
-//                             fam_name: sc.family_name(),
-//                             mode_name: sc.get_mode_name(i as u8),
-//                             mode_nr: i,
-//                         })
-//                     );
-//                 }
-//             }
-//         }
-//     }
-//     res
-// }
-// // Finds all the scales where the input is the I chord
-// pub fn find_chordscales(pcs: &[PC]) -> Vec<ModeObj>{
-//     let mut res = Vec::new();
-//     if pcs.is_empty() { return res; }
-//     let tonic = pcs[0].to_note();
-//     let scales = get_all_scale_objs();
-//     for sc in scales{
-//         'outer: for (i,mode) in sc.steps.clone().mode_iter().enumerate(){
-//             let modescale = mode.to_scale(tonic).into_pcs();
-//             for j in 0..pcs.len(){
-//                 if j * 2 > modescale.len() - 1 {
-//                     continue 'outer;
-//                 }
-//                 if pcs[j] != modescale[j * 2]{
-//                     continue 'outer;
-//                 }
-//             }
-//             res.push(
-//                 ModeObj{
-//                     steps: mode.clone(),
-//                     fam_name: sc.family_name(),
-//                     mode_name: sc.get_mode_name(i as u8),
-//                     mode_nr: i,
-//                 }
-//             );
-//         }
-//     }
-//     res
-// }
-// // Finds all the scales with the given relative properties
-// pub fn find_scale_from_ionian_relative(rel: Relative) -> Vec<ModeObj>{
-//     let scales = get_all_scale_objs();
-//     let mut res = Vec::new();
-//     for sc in scales{
-//         'outer: for (i,mode) in sc.steps.clone().mode_iter().enumerate(){
-//             let rl = mode.to_relative(&ionian::steps()).unwrap();
-//             if rel.len() != rl.len() { continue; }
-//             for (i, rn) in rel.0.iter().enumerate(){
-//                 if rn != &rl.0[i] { continue 'outer; }
-//             }
-//             res.push(
-//                 ModeObj{
-//                     steps: mode.clone(),
-//                     fam_name: sc.family_name(),
-//                     mode_name: sc.get_mode_name(i as u8),
-//                     mode_nr: i,
-//                 }
-//             );
-//         }
-//     }
-//     res
-// }
+// Finds all the scales that are a super set of the set of notes given.
+// When same_tonic == true, it only gives scales that have the same note as the
+// first note in the set(ordered set shortly) as the tonic.
+pub fn find_scale_superset(scale: &[PC], same_tonic: bool) -> Vec<(PC, ModeObj)>{
+    let target_tonic = scale[0].to_note().0;
+    let scales = get_all_scale_objs();
+    let mut res = Vec::new();
+    for sc in scales{
+        for (i, mode) in sc.steps.clone().mode_iter().enumerate(){
+            for tonic in 0..12{
+                if same_tonic && tonic != target_tonic { continue; }
+                let notes = mode.clone().to_scale_try(Note(tonic)).unwrap().to_pcs();
+                let mut has = true;
+                'outer: for a in scale{
+                    for b in &notes{
+                        if a == b { continue 'outer; }
+                    }
+                    has = false;
+                }
+                if has {
+                    res.push(
+                        (notes[0], ModeObj{
+                            steps: mode.clone(),
+                            fam_name: sc.family_name(),
+                            mode_name: sc.get_mode_name(i),
+                            mode_nr: i,
+                        })
+                    );
+                }
+            }
+        }
+    }
+    res
+}
+// Finds all the scales where the input is the I chord
+pub fn find_chordscales(pcs: &[PC]) -> Vec<ModeObj>{
+    let mut res = Vec::new();
+    if pcs.is_empty() { return res; }
+    let tonic = pcs[0].to_note();
+    let scales = get_all_scale_objs();
+    for sc in scales{
+        'outer: for (i, mode) in sc.steps.clone().mode_iter().enumerate(){
+            let modescale = mode.as_scale_try(tonic).unwrap().to_pcs();
+            for j in 0..pcs.len(){
+                if j * 2 > modescale.len() - 1 {
+                    continue 'outer;
+                }
+                if pcs[j] != modescale[j * 2]{
+                    continue 'outer;
+                }
+            }
+            res.push(
+                ModeObj{
+                    steps: mode.clone(),
+                    fam_name: sc.family_name(),
+                    mode_name: sc.get_mode_name(i),
+                    mode_nr: i,
+                }
+            );
+        }
+    }
+    res
+}
+// Finds all the scales with the given relative properties
+pub fn find_scale_from_ionian_relative(rel: &[Interval]) -> Option<ModeObj>{
+    let scales = get_all_scale_objs();
+    for sc in scales{
+        'outer: for (i, mode) in sc.steps.clone().mode_iter().enumerate(){
+            let rl = mode.as_relative_intervals(&ionian::steps()).unwrap();
+            if rel.len() != rl.len() { continue; }
+            for (i, rn) in rel.iter().enumerate(){
+                if rn != &rl[i] { continue 'outer; }
+            }
+            return Some(ModeObj{
+                steps: mode,
+                fam_name: sc.family_name(),
+                mode_name: sc.get_mode_name(i),
+                mode_nr: i,
+            });
+        }
+    }
+    None
+}
 
 #[cfg(test)]
 mod tests{
@@ -265,5 +261,52 @@ mod tests{
         assert_eq!(res.next(), Some((PC::As, "Melodic Minor".to_string(), 3)));
         assert_eq!(res.next(), Some((PC::C, "Melodic Minor".to_string(), 4)));
         assert_eq!(res.next(), None);
+    }
+
+    #[test]
+    fn test_find_scale_superset(){
+        let scale = Scale(vec![Note::C1, Note::D1, Note::E1, Note::F1, Note::G1]).to_pcs();
+        let res = find_scale_superset(&scale, false);
+        assert_eq!(res.len(), 35);
+        let mut res = find_scale_superset(&scale, true)
+            .into_iter().map(|(pc, mo)| (pc, mo.fam_name, mo.mode_nr));
+        assert_eq!(res.next(), Some((PC::C, "Ionian".to_string(), 0)));
+        assert_eq!(res.next(), Some((PC::C, "Ionian".to_string(), 4)));
+        assert_eq!(res.next(), Some((PC::C, "Harmonic Major".to_string(), 0)));
+        assert_eq!(res.next(), Some((PC::C, "Melodic Minor".to_string(), 4)));
+        assert_eq!(res.next(), Some((PC::C, "Enigmatic Major".to_string(), 3)));
+        assert_eq!(res.next(), None);
+    }
+
+    #[test]
+    fn test_find_chord_scales(){
+        let mut res = find_chordscales(&[PC::F, PC::A, PC::C, PC::E])
+            .into_iter().map(|mo| (mo.fam_name, mo.mode_nr));
+        assert_eq!(res.next(), Some(("Ionian".to_string(), 0)));
+        assert_eq!(res.next(), Some(("Ionian".to_string(), 3)));
+        assert_eq!(res.next(), Some(("Harmonic Minor".to_string(), 5)));
+        assert_eq!(res.next(), Some(("Harmonic Major".to_string(), 0)));
+        assert_eq!(res.next(), Some(("Double Harmonic Major".to_string(), 0)));
+        assert_eq!(res.next(), Some(("Double Harmonic Major".to_string(), 1)));
+        assert_eq!(res.next(), Some(("Neapolitan Minor".to_string(), 1)));
+        assert_eq!(res.next(), Some(("Neapolitan Minor".to_string(), 5)));
+        assert_eq!(res.next(), None);
+    }
+
+    #[test]
+    fn test_find_scale_from_ionian_relative(){
+        let res = find_scale_from_ionian_relative(
+            &[Interval::NAT, Interval::NAT, Interval::NAT, Interval::NAT,
+            Interval::NAT, Interval::NAT, Interval::NAT]
+        ).unwrap();
+        assert_eq!(&res.fam_name, "Ionian");
+        assert_eq!(res.mode_nr, 0);
+        assert_eq!(
+            find_scale_from_ionian_relative(&[
+                Interval::NAT, Interval::FLAT, Interval::NAT, Interval::NAT,
+                Interval::NAT, Interval::NAT, Interval::NAT
+            ]),
+            None
+        );
     }
 }

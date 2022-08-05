@@ -105,6 +105,12 @@ impl Interval{
     pub const SEMI: Self = Self(1);
     pub const WHOLE: Self = Self(2);
 
+    pub const FLAT2: Self = Self(-2);
+    pub const FLAT: Self = Self(-1);
+    pub const NAT: Self = Self(0);
+    pub const SHARP: Self = Self(1);
+    pub const SHARP2: Self = Self(2);
+
     pub const ROOT: Self = Self(0);
     pub const MIN2: Self = Self(1);
     pub const MAJ2: Self = Self(2);
