@@ -12,17 +12,6 @@ use std::collections::{ HashSet, HashMap };
 use std::mem;
 use std::fmt::Write;
 
-pub fn step_chords_string(steps: &Steps, root: Note, style: ChordStyle) -> String{
-    let mut string = String::new();
-    let triads = scale_chords_root_printout(steps, root.to_pc().to_string(), 3, style)
-        .intercalate_with_end(", ".to_string(), "\n".to_string());
-    string.push_str(&triads);
-    let tetrads = scale_chords_root_printout(steps, root.to_pc().to_string(), 4, style)
-        .intercalate_with_end(", ".to_string(), "\n".to_string());
-    string.push_str(&tetrads);
-    string
-}
-
 // return (header, content)
 #[cfg(not(tarpaulin))]
 pub fn notes_analysis(input_string: String, style: ChordStyle) -> Vec<(String, String)>{
@@ -77,7 +66,7 @@ pub fn notes_analysis(input_string: String, style: ChordStyle) -> Vec<(String, S
     let root = scale.0[0];
     let steps = scale.as_steps(true);
     let ctonic = pcs[0];
-    let _rchord = RootedChord::from_scale(scale.clone()).unwrap();
+    let _rchord = scale.as_rooted_chord();
     let mut included = HashSet::new();
     let ens_string = ens.into_iter()
         .map(|en| { let mut string = en.to_string(); string.push_str(", "); string })

@@ -1,5 +1,5 @@
-use super::find_scale_chords;
-use crate::theory::{ Steps, ChordStyle, AsRelativeIntervals, ToIonianRelativeStringTry };
+use super::{ find_scale_chords, find_rooted_scale_chords };
+use crate::theory::{ Note, Steps, ChordStyle, AsRelativeIntervals, ToIonianRelativeStringTry };
 use crate::utils::to_roman_num;
 use crate::libr::{ ionian, HeptatonicScaleNamer, get_all_scale_objs, Intercalatable };
 
@@ -14,15 +14,26 @@ pub fn scale_chords_roman_printout(steps: &Steps, size: usize, style: ChordStyle
     res
 }
 
-pub fn scale_chords_root_printout(steps: &Steps, root: String, size: usize, style: ChordStyle)
+pub fn scale_chords_root_printout(steps: &Steps, root: Note, size: usize, style: ChordStyle)
     -> Vec<String>
 {
-    let chords = find_scale_chords(steps, size);
+    let chords = find_rooted_scale_chords(steps, root, size);
     let mut res = Vec::new();
     for chord in chords{
-        res.push(chord.quality(root.clone(), style));
+        res.push(chord.as_string(style));
     }
     res
+}
+
+pub fn step_chords_string(steps: &Steps, root: Note, style: ChordStyle) -> String{
+    let mut string = String::new();
+    let triads = scale_chords_root_printout(steps, root, 3, style)
+        .intercalate_with_end(", ".to_string(), "\n".to_string());
+    string.push_str(&triads);
+    let tetrads = scale_chords_root_printout(steps, root, 4, style)
+        .intercalate_with_end(", ".to_string(), "\n".to_string());
+    string.push_str(&tetrads);
+    string
 }
 
 pub fn scales_and_chords_printout(style: ChordStyle) -> String{
@@ -62,7 +73,7 @@ mod tests{
     #[test]
     fn test_scale_chords_roman_printout(){
         let style = ChordStyle::Std(MStyle::Long, EStyle::Long);
-        let chords = scale_chords_roman_printout(&crate::libr::ionian::steps(), 3, style);
+        let chords = scale_chords_roman_printout(&ionian::steps(), 3, style);
         assert_eq!(
             chords,
             vec![
@@ -78,6 +89,34 @@ mod tests{
     }
 
     #[test]
+    fn test_scale_chords_root_printout(){
+        let style = ChordStyle::Std(MStyle::Long, EStyle::Long);
+        let chords = scale_chords_root_printout(&ionian::steps(), Note::C1, 3, style);
+        assert_eq!(
+            chords,
+            vec![
+                String::from("Cmaj"),
+                String::from("Dmin"),
+                String::from("Emin"),
+                String::from("Fmaj"),
+                String::from("Gmaj"),
+                String::from("Amin"),
+                String::from("Bdim"),
+            ]
+        );
+    }
+
+    #[test]
+    fn test_step_chords_string(){
+        let style = ChordStyle::Std(MStyle::Long, EStyle::Long);
+        let po = step_chords_string(&ionian::steps(), Note(3), style);
+        assert_eq!(
+            po,
+            "Cmaj, Dmin, Emin, Fmaj, Gmaj, Amin, Bdim\nCmaj7, Dmin7, Emin7, Fmaj7, G7, Amin7, Bø\n"
+        );
+    }
+
+    #[test]
     fn test_scales_and_chords_printout(){
         let style = ChordStyle::Std(MStyle::Long, EStyle::Long);
         let snc = scales_and_chords_printout(style);
@@ -86,5 +125,5 @@ mod tests{
         assert_eq!(lines[36], "\tIdim, IIaug, IIImin, IVmaj, Vmaj, VIdim, VIImin");
         assert_eq!(lines[58], "Harmonic Major");
         assert_eq!(lines[287], "\t1 ♭2 ♭♭3 ♭4 5 ♭6 7");
-	}
+    }
 }
