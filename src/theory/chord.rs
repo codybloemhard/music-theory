@@ -256,6 +256,16 @@ impl RootedChord{
         Self{ root, chord }
     }
 
+    pub fn from_scale(scale: Scale) -> Option<Self>{
+        if scale.is_empty() { return Some(Self::default()); }
+        let root = scale.0[0];
+        let chord = Chord::wrap(scale.0)?;
+        Some(Self{
+            root,
+            chord,
+        })
+    }
+
     pub fn as_scale(&self) -> Scale{
         let mut scale = vec![self.root];
         for int in &self.chord.0{

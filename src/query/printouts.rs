@@ -14,6 +14,17 @@ pub fn scale_chords_roman_printout(steps: &Steps, size: usize, style: ChordStyle
     res
 }
 
+pub fn scale_chords_root_printout(steps: &Steps, root: String, size: usize, style: ChordStyle)
+    -> Vec<String>
+{
+    let chords = find_scale_chords(steps, size);
+    let mut res = Vec::new();
+    for chord in chords{
+        res.push(chord.quality(root.clone(), style));
+    }
+    res
+}
+
 pub fn scales_and_chords_printout(style: ChordStyle) -> String{
     let namer = HeptatonicScaleNamer::new();
     let objs = get_all_scale_objs();
