@@ -295,7 +295,7 @@ mod tests{
             for i in -25..25{
                 let res = &EnharmonicNote{ letter: l, accidental: Interval(i) }.to_string();
                 assert_eq!(res.chars().next(), l.to_string().chars().next());
-                assert_eq!(res.chars().count(), i.abs().max(1) as usize + 1);
+                assert_eq!(res.chars().count(), i.unsigned_abs() as usize + 1);
             }
         }
     }

@@ -12,6 +12,8 @@ use std::collections::{ HashSet, HashMap };
 use std::mem;
 use std::fmt::Write;
 
+use vec_string::*;
+
 // return (header, content)
 #[cfg(not(tarpaulin))]
 pub fn notes_analysis(input_string: String, style: ChordStyle) -> Vec<(String, String)>{
@@ -66,7 +68,7 @@ pub fn notes_analysis(input_string: String, style: ChordStyle) -> Vec<(String, S
     let root = scale.0[0];
     let steps = scale.as_steps(true);
     let ctonic = pcs[0];
-    let _rchord = scale.as_rooted_chord();
+    let rchord = scale.as_rooted_chord();
     let mut included = HashSet::new();
     let ens_string = ens.into_iter()
         .map(|en| { let mut string = en.to_string(); string.push_str(", "); string })
@@ -75,7 +77,7 @@ pub fn notes_analysis(input_string: String, style: ChordStyle) -> Vec<(String, S
     let mut string = format!("Your input: {}\n", ens_string);
     let _ = writeln!(string, "Numbered pitchclasses: {:?}",
         pcs.iter().map(|pc| *pc as u32).collect::<Vec<_>>());
-    let _ = writeln!(string, "Named pitchclasses: {:?}", pcs);
+    let _ = writeln!(string, "Named pitchclasses: {:?}", pcs.vec_string());
     res.push(("Input".to_string(), mem::take(&mut string)));
 
     if scale.len() == 7{ // we have an heptatonic scale on our hands
@@ -102,17 +104,17 @@ pub fn notes_analysis(input_string: String, style: ChordStyle) -> Vec<(String, S
         res.push(("Heptatonic Scale".to_string(), mem::take(&mut string)));
     }
 
-    // let inversions = {
-    //     let mut inversions = rchord.all_inversions();
-    //     inversions.pop();
-    //     inversions
-    // };
-    // inversions
-    //     .into_iter().map(|c| (c.as_string(true, style),c))
-    //     .filter(|(s,_)| !s.contains('[') && !s.is_empty())
-    //     .map(|(mut s,c)| { s.push_str(&format!(": {:?}", c.to_scale().into_pcs())); s })
-    //     .for_each(|s| { string.push_str(&format!("{}\n", s)); });
-    // res.push(("Inversions".to_string(), mem::take(&mut string)));
+    let inversions = {
+        let mut inversions = rchord.as_all_inversions();
+        inversions.pop();
+        inversions
+    };
+    inversions
+        .into_iter().map(|c| (c.as_string(style), c))
+        .filter(|(s, _)| !s.contains('[') && !s.is_empty())
+        .map(|(mut s, c)| { let _ = write!(s, ": {}", c.to_scale().to_pcs().vec_string()); s })
+        .for_each(|s| { let _ = writeln!(string, "{}", s); });
+    res.push(("Inversions".to_string(), mem::take(&mut string)));
 
     // rchord
     //     .clone().into_subseq_chords()
@@ -122,19 +124,20 @@ pub fn notes_analysis(input_string: String, style: ChordStyle) -> Vec<(String, S
     //     .for_each(|s| { string.push_str(&format!("{}\n", s)); });
     // res.push(("Sub Chords".to_string(), mem::take(&mut string)));
 
-    // let ctwts = rchord.to_chordtone_wholetone_scale();
-    // let mo = find_scale(&ctwts);
-    // if let Some(m) = mo{
-    //     included.insert((ctonic, m.steps.clone()));
-    //     let spelled_out = spell_out(m.steps.to_scale_try(root).unwrap());
-    //     string.push_str(&mode_format(map_pc_to_en(ctonic), m, spelled_out));
-    // }
+    if let Some(ctwts) = rchord.as_chordtone_wholetone_scale(){
+        let mo = find_scale(&ctwts);
+        if let Some(m) = mo{
+            included.insert((ctonic, m.steps.clone()));
+            let spelled_out = spell_out(m.steps.as_scale_try(root).unwrap());
+            let _ = write!(string, "{}", mode_format(map_pc_to_en(ctonic), m, spelled_out));
+        }
 
-    // if !ctwts.is_empty() {
-    //     let ctwts = ctwts.into_steps();
-    //     string.push_str(&print_step_chords(&ctwts, root, style));
-    // }
-    res.push(("Chordtone Wholetone Scale".to_string(), mem::take(&mut string)));
+        if !ctwts.is_empty() {
+            let ctwts = ctwts.to_steps(true);
+            let _ = write!(string, "{}", step_chords_string(&ctwts, root, style));
+        }
+        res.push(("Chordtone Wholetone Scale".to_string(), mem::take(&mut string)));
+    }
 
     for modeobj in find_chordscales(&pcs){
         if included.contains(&(ctonic, modeobj.steps.clone())) { continue; }
@@ -160,13 +163,5 @@ pub fn notes_analysis(input_string: String, style: ChordStyle) -> Vec<(String, S
     }
     res.push(("Super Sets".to_string(), mem::take(&mut string)));
     res
-}
-
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn it_works() {
-        assert_eq!(2 + 2, 4);
-    }
 }
 

@@ -166,13 +166,13 @@ impl Interval{
         Self::new(self.0.abs())
     }
 
-    pub fn to_string_non_nat(&self) -> String{
+    pub fn to_string_nat(&self) -> String{
         let mut string = String::new();
         let i = self.0.abs();
         match self.0.cmp(&0){
             Ordering::Less    => { for _ in 0..i { string.push('♭'); } },
             Ordering::Greater => { for _ in 0..i { string.push('♯'); } },
-            Ordering::Equal   => {  }
+            Ordering::Equal   => { string.push('♮'); },
         }
         string
     }
@@ -235,7 +235,7 @@ impl std::fmt::Display for Interval{
         match self.0.cmp(&0){
             Ordering::Less    => { for _ in 0..i { string.push('♭'); } },
             Ordering::Greater => { for _ in 0..i { string.push('♯'); } },
-            Ordering::Equal   => { string.push('♮'); },
+            Ordering::Equal   => {  }
         }
         write!(f, "{}", string)
     }
@@ -446,7 +446,7 @@ impl AsIonianRelativeStringTry for Intervals{
         }
         let mut res = String::new();
         for (i, int) in self.iter().enumerate().take(7){
-            let prefix = if nonnat { int.to_string_non_nat() } else { int.to_string() };
+            let prefix = if nonnat { int.to_string() } else { int.to_string_nat() };
             res.push_str(&prefix);
             let _ = write!(res, "{} ", i + 1);
         }
@@ -571,7 +571,7 @@ mod tests{
 
     #[test]
     fn interval_to_string(){
-        assert_eq!(&Interval(0).to_string(), "♮");
+        assert_eq!(&Interval(0).to_string(), "");
         assert_eq!(&Interval(1).to_string(), "♯");
         assert_eq!(&Interval(10).to_string(), "♯♯♯♯♯♯♯♯♯♯");
         assert_eq!(&Interval(-1).to_string(), "♭");
@@ -579,12 +579,12 @@ mod tests{
     }
 
     #[test]
-    fn interval_to_string_non_nat(){
-        assert_eq!(&Interval(0).to_string_non_nat(), "");
-        assert_eq!(&Interval(1).to_string_non_nat(), "♯");
-        assert_eq!(&Interval(10).to_string_non_nat(), "♯♯♯♯♯♯♯♯♯♯");
-        assert_eq!(&Interval(-1).to_string_non_nat(), "♭");
-        assert_eq!(&Interval(-10).to_string_non_nat(), "♭♭♭♭♭♭♭♭♭♭");
+    fn interval_to_string_nat(){
+        assert_eq!(&Interval(0).to_string_nat(), "♮");
+        assert_eq!(&Interval(1).to_string_nat(), "♯");
+        assert_eq!(&Interval(10).to_string_nat(), "♯♯♯♯♯♯♯♯♯♯");
+        assert_eq!(&Interval(-1).to_string_nat(), "♭");
+        assert_eq!(&Interval(-10).to_string_nat(), "♭♭♭♭♭♭♭♭♭♭");
     }
 
     #[test]
