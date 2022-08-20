@@ -53,6 +53,14 @@ macro_rules! ImplVecWrapper{
                 true
             }
         }
+
+        impl crate::theory::traits::AsSubs for $type{
+            fn as_subs(&self, max_len: Option<usize>) -> Vec<Self>{
+                use crate::utils::sub_vecs;
+                let subs = sub_vecs(&self.0, max_len);
+                subs.into_iter().map(|s| Self(s)).collect::<Vec<_>>()
+            }
+        }
     }
 }
 
@@ -85,6 +93,10 @@ pub trait ModeTrait{
 
 pub trait ModeIteratorSpawner<T: ModeTrait + VecWrapper>{
     fn mode_iter(self) -> ModeIterator<T>;
+}
+
+pub trait AsSubs where Self: Sized{
+    fn as_subs(&self, max_len: Option<usize>) -> Vec<Self>;
 }
 
 // Conversion Traits

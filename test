@@ -1,0 +1,543 @@
+
+running 148 tests
+test libr::infos::tests::format_even_test ... ok
+test libr::infos::tests::format_to_grid_auto_test ... ok
+test libr::infos::tests::intercalate ... ok
+test libr::scales::tests::family_name ... ok
+test libr::scales::tests::clone_steps ... ok
+test libr::scales::tests::get_mode_name ... ok
+test libr::scales::tests::get_modes ... ok
+test libr::scales::tests::mode_obj_to_string ... ok
+test libr::scales::tests::obj ... ok
+test libr::scales::tests::steps ... ok
+test libr::scales::tests::heptatonic_scale_namer_new ... ok
+test libr::scales::tests::test_get_all_scale_objs ... ok
+test query::printouts::tests::test_scale_chords_root_printout ... ok
+test query::printouts::tests::test_scale_chords_roman_printout ... ok
+test query::queries::tests::test_find_rooted_scale_chords ... ok
+test query::queries::tests::test_find_scale_chords ... ok
+test theory::chord::tests::chord_as_scale ... ok
+test theory::chord::tests::chord_new ... ok
+test theory::chord::tests::chord_same_intervals ... ok
+test theory::chord::tests::chord_normalized ... ok
+test theory::chord::tests::chord_unwrap ... ok
+test theory::chord::tests::chord_wrap ... ok
+test libr::scales::tests::heptotonic_scale_namer_default ... ok
+test query::queries::tests::test_find_scale ... ok
+test query::queries::tests::test_find_scale_from_ionian_relative ... ok
+test theory::chord::tests::relative_chord_from_chord ... ok
+test theory::chord::tests::relative_chord_new ... ok
+test theory::chord::tests::rooted_chord_as_chordtone_wholetone_scale ... ok
+test theory::chord::tests::rooted_chord_as_all_inversions ... ok
+test theory::chord::tests::relative_chord_as_string ... ok
+test theory::chord::tests::relative_chord_to_string ... ok
+test theory::chord::tests::rooted_chord_as_scale ... ok
+test theory::chord::tests::rooted_chord_as_inversion ... ok
+test theory::chord::tests::rooted_chord_from_chord ... ok
+test query::queries::tests::test_find_chord_scales ... ok
+test theory::chord::tests::rooted_chord_new ... ok
+test theory::chord::tests::rooted_chord_normalized ... ok
+test query::printouts::tests::test_step_chords_string ... ok
+test theory::chord::tests::scale_degree_to_string ... ok
+test theory::enharmonic_note::tests::enharmonic_note_to_pc ... ok
+test theory::enharmonic_note::tests::letter_cyclic ... ok
+test theory::enharmonic_note::tests::enharmonic_note_cyclic ... ok
+test theory::enharmonic_note::tests::letter_to_enharmonic_note ... ok
+test theory::chord::tests::rooted_chord_as_string ... ok
+test theory::enharmonic_note::tests::letter_to_note ... ok
+test theory::enharmonic_note::tests::letter_to_pc ... ok
+test theory::enharmonic_note::tests::letter_to_string ... ok
+test theory::enharmonic_note::tests::string_to_letter_try ... ok
+test theory::enharmonic_note::tests::unwrap ... ok
+test theory::enharmonic_note::tests::wrap ... ok
+test theory::enharmonic_note::tests::string_to_enharmonic_notes ... ok
+test theory::interval::tests::abs ... ok
+test theory::enharmonic_note::tests::string_to_enharmonic_note_try ... ok
+test libr::scales::tests::heptatonic_scale_namer_name ... ok
+test theory::interval::tests::add ... ok
+test theory::interval::tests::interval_generatable_partial_order ... ok
+test theory::interval::tests::interval_mod ... ok
+test theory::interval::tests::interval_to_named_interval ... ok
+test theory::interval::tests::interval_to_named_octave_interval ... ok
+test theory::interval::tests::interval_to_string ... ok
+test theory::interval::tests::interval_to_string_nat ... ok
+test theory::interval::tests::named_interval_to_interval ... ok
+test theory::interval::tests::intervals_as_ionian_relative_string_try ... ok
+test theory::interval::tests::named_interval_to_named_octave_interval ... ok
+test theory::interval::tests::named_octave_interval_cyclic ... ok
+test theory::interval::tests::named_interval_to_string ... ok
+test theory::interval::tests::named_octave_interval_from_int ... ok
+test theory::enharmonic_note::tests::spelled_as ... ok
+test theory::interval::tests::named_octave_interval_to_interval ... ok
+test theory::interval::tests::named_octave_interval_to_named_interval ... ok
+test theory::interval::tests::named_octave_interval_to_string ... ok
+test theory::interval::tests::neg ... ok
+test theory::interval::tests::neg_add_sub ... ok
+test theory::interval::tests::new ... ok
+test theory::interval::tests::new_try ... ok
+test theory::interval::tests::octave_shiftable ... ok
+test theory::interval::tests::sub ... ok
+test theory::interval::tests::unwrap ... ok
+test theory::interval::tests::wrap ... ok
+test theory::note::tests::add ... ok
+test theory::note::tests::add_interval ... ok
+test theory::note::tests::generatable_partial_order ... ok
+test theory::note::tests::mul ... ok
+test theory::note::tests::new ... ok
+test theory::note::tests::note_to_pc ... ok
+test theory::note::tests::octave_shiftable ... ok
+test theory::note::tests::rem ... ok
+test theory::note::tests::sub ... ok
+test theory::note::tests::to_enharmonic_note ... ok
+test theory::note::tests::to_letter_try ... ok
+test theory::note::tests::to_note_to_pc ... ok
+test theory::note::tests::to_pitch ... ok
+test theory::note::tests::unwrap ... ok
+test theory::note::tests::wrap ... ok
+test theory::pc::tests::cyclic ... ok
+test theory::pc::tests::pcs_as_scale_try ... ok
+test theory::pc::tests::pcs_as_steps_try ... ok
+test theory::pc::tests::to_enharmonic_note ... ok
+test theory::pc::tests::to_letter_try ... ok
+test theory::pc::tests::to_note ... ok
+test theory::pc::tests::to_string ... ok
+test theory::scale::tests::contains ... ok
+test theory::scale::tests::contains_all ... ok
+test theory::scale::tests::mode_iterator ... ok
+test theory::scale::tests::mode_nr_of_this ... ok
+test theory::scale::tests::scale_as_chord ... ok
+test theory::scale::tests::scale_as_enharmonic_notes ... ok
+test theory::scale::tests::scale_as_enharmonic_notes_with_start ... ok
+test theory::scale::tests::scale_as_octave_steps ... ok
+test theory::scale::tests::scale_as_pcs ... ok
+test theory::scale::tests::scale_is_empty ... ok
+test theory::scale::tests::scale_as_steps ... ok
+test theory::scale::tests::scale_iterator ... ok
+test theory::scale::tests::scale_len ... ok
+test theory::note::tests::mul_assign ... ok
+test theory::note::tests::u32_to_note ... ok
+test theory::scale::tests::scale_mode ... ok
+test theory::scale::tests::scale_next_mode ... ok
+test theory::scale::tests::scale_next_mode_mut ... ok
+test theory::scale::tests::scale_unwrap ... ok
+test theory::scale::tests::scale_wrap ... ok
+test theory::interval::tests::sub_assign ... ok
+test theory::scale::tests::steps_as_chord ... ok
+test theory::scale::tests::steps_as_relative_intervals ... ok
+test theory::note::tests::rem_assign ... ok
+test theory::scale::tests::steps_is_empty ... ok
+test theory::scale::tests::steps_as_scale ... ok
+test theory::scale::tests::steps_iter ... ok
+test theory::scale::tests::steps_len ... ok
+test theory::scale::tests::steps_mode ... ok
+test theory::scale::tests::steps_next_mode ... ok
+test theory::scale::tests::steps_next_mode_mut ... ok
+test theory::scale::tests::steps_unwrap ... ok
+test theory::scale::tests::steps_wrap ... ok
+test theory::scale::tests::test_scale_iter ... ok
+test utils::misc::tests::test_is_sorted ... ok
+test utils::roman_numerals::tests::test ... ok
+test theory::interval::tests::add_assign ... ok
+test theory::note::tests::add_assign ... ok
+test query::queries::tests::test_find_scale_superset ... ok
+test theory::enharmonic_note::tests::enharmonic_note_to_string ... ok
+test query::queries::tests::test_find_scale_superstring ... ok
+test theory::interval::tests::add_interval ... ok
+test theory::chord::tests::test_chords_strings ... ok
+test theory::interval::tests::named_octave_interval_from_int_panic_0 - should panic ... ok
+test theory::interval::tests::named_octave_interval_from_int_panic_1 - should panic ... ok
+test utils::misc::tests::test_sub_vecs ... FAILED
+test query::printouts::tests::test_scales_and_chords_printout ... ok
+
+failures:
+
+---- utils::misc::tests::test_sub_vecs stdout ----
+thread 'utils::misc::tests::test_sub_vecs' panicked at 'assertion failed: `(left == right)`
+  left: `[[], [0], [1], [], [0], [2], [], [0], [0, 1], [], [0], [0, 2], [], [0], [1, 2], [], [0], [0, 1, 2], [], [1], [0], [], [1], [2], [], [1], [0, 1], [], [1], [0, 2], [], [1], [1, 2], [], [1], [0, 1, 2], [], [2], [0], [], [2], [1], [], [2], [0, 1], [], [2], [0, 2], [], [2], [1, 2], [], [2], [0, 1, 2], [], [0, 1], [0], [], [0, 1], [1], [], [0, 1], [2], [], [0, 1], [0, 2], [], [0, 1], [1, 2], [], [0, 1], [0, 1, 2], [], [0, 2], [0], [], [0, 2], [1], [], [0, 2], [2], [], [0, 2], [0, 1], [], [0, 2], [1, 2], [], [0, 2], [0, 1, 2], [], [1, 2], [0], [], [1, 2], [1], [], [1, 2], [2], [], [1, 2], [0, 1], [], [1, 2], [0, 2], [], [1, 2], [0, 1, 2], [], [0, 1, 2], [0], [], [0, 1, 2], [1], [], [0, 1, 2], [2], [], [0, 1, 2], [0, 1], [], [0, 1, 2], [0, 2], [], [0, 1, 2], [1, 2], [0], [], [1], [0], [], [2], [0], [], [0, 1], [0], [], [0, 2], [0], [], [1, 2], [0], [], [0, 1, 2], [0], [1], [], [0], [1], [2], [0], [1], [0, 1], [0], [1], [0, 2], [0], [1], [1, 2], [0], [1], [0, 1, 2], [0], [2], [], [0], [2], [1], [0], [2], [0, 1], [0], [2], [0, 2], [0], [2], [1, 2], [0], [2], [0, 1, 2], [0], [0, 1], [], [0], [0, 1], [1], [0], [0, 1], [2], [0], [0, 1], [0, 2], [0], [0, 1], [1, 2], [0], [0, 1], [0, 1, 2], [0], [0, 2], [], [0], [0, 2], [1], [0], [0, 2], [2], [0], [0, 2], [0, 1], [0], [0, 2], [1, 2], [0], [0, 2], [0, 1, 2], [0], [1, 2], [], [0], [1, 2], [1], [0], [1, 2], [2], [0], [1, 2], [0, 1], [0], [1, 2], [0, 2], [0], [1, 2], [0, 1, 2], [0], [0, 1, 2], [], [0], [0, 1, 2], [1], [0], [0, 1, 2], [2], [0], [0, 1, 2], [0, 1], [0], [0, 1, 2], [0, 2], [0], [0, 1, 2], [1, 2], [1], [], [0], [1], [], [2], [1], [], [0, 1], [1], [], [0, 2], [1], [], [1, 2], [1], [], [0, 1, 2], [1], [0], [], [1], [0], [2], [1], [0], [0, 1], [1], [0], [0, 2], [1], [0], [1, 2], [1], [0], [0, 1, 2], [1], [2], [], [1], [2], [0], [1], [2], [0, 1], [1], [2], [0, 2], [1], [2], [1, 2], [1], [2], [0, 1, 2], [1], [0, 1], [], [1], [0, 1], [0], [1], [0, 1], [2], [1], [0, 1], [0, 2], [1], [0, 1], [1, 2], [1], [0, 1], [0, 1, 2], [1], [0, 2], [], [1], [0, 2], [0], [1], [0, 2], [2], [1], [0, 2], [0, 1], [1], [0, 2], [1, 2], [1], [0, 2], [0, 1, 2], [1], [1, 2], [], [1], [1, 2], [0], [1], [1, 2], [2], [1], [1, 2], [0, 1], [1], [1, 2], [0, 2], [1], [1, 2], [0, 1, 2], [1], [0, 1, 2], [], [1], [0, 1, 2], [0], [1], [0, 1, 2], [2], [1], [0, 1, 2], [0, 1], [1], [0, 1, 2], [0, 2], [1], [0, 1, 2], [1, 2], [2], [], [0], [2], [], [1], [2], [], [0, 1], [2], [], [0, 2], [2], [], [1, 2], [2], [], [0, 1, 2], [2], [0], [], [2], [0], [1], [2], [0], [0, 1], [2], [0], [0, 2], [2], [0], [1, 2], [2], [0], [0, 1, 2], [2], [1], [], [2], [1], [0], [2], [1], [0, 1], [2], [1], [0, 2], [2], [1], [1, 2], [2], [1], [0, 1, 2], [2], [0, 1], [], [2], [0, 1], [0], [2], [0, 1], [1], [2], [0, 1], [0, 2], [2], [0, 1], [1, 2], [2], [0, 1], [0, 1, 2], [2], [0, 2], [], [2], [0, 2], [0], [2], [0, 2], [1], [2], [0, 2], [0, 1], [2], [0, 2], [1, 2], [2], [0, 2], [0, 1, 2], [2], [1, 2], [], [2], [1, 2], [0], [2], [1, 2], [1], [2], [1, 2], [0, 1], [2], [1, 2], [0, 2], [2], [1, 2], [0, 1, 2], [2], [0, 1, 2], [], [2], [0, 1, 2], [0], [2], [0, 1, 2], [1], [2], [0, 1, 2], [0, 1], [2], [0, 1, 2], [0, 2], [2], [0, 1, 2], [1, 2], [0, 1], [], [0], [0, 1], [], [1], [0, 1], [], [2], [0, 1], [], [0, 2], [0, 1], [], [1, 2], [0, 1], [], [0, 1, 2], [0, 1], [0], [], [0, 1], [0], [1], [0, 1], [0], [2], [0, 1], [0], [0, 2], [0, 1], [0], [1, 2], [0, 1], [0], [0, 1, 2], [0, 1], [1], [], [0, 1], [1], [0], [0, 1], [1], [2], [0, 1], [1], [0, 2], [0, 1], [1], [1, 2], [0, 1], [1], [0, 1, 2], [0, 1], [2], [], [0, 1], [2], [0], [0, 1], [2], [1], [0, 1], [2], [0, 2], [0, 1], [2], [1, 2], [0, 1], [2], [0, 1, 2], [0, 1], [0, 2], [], [0, 1], [0, 2], [0], [0, 1], [0, 2], [1], [0, 1], [0, 2], [2], [0, 1], [0, 2], [1, 2], [0, 1], [0, 2], [0, 1, 2], [0, 1], [1, 2], [], [0, 1], [1, 2], [0], [0, 1], [1, 2], [1], [0, 1], [1, 2], [2], [0, 1], [1, 2], [0, 2], [0, 1], [1, 2], [0, 1, 2], [0, 1], [0, 1, 2], [], [0, 1], [0, 1, 2], [0], [0, 1], [0, 1, 2], [1], [0, 1], [0, 1, 2], [2], [0, 1], [0, 1, 2], [0, 2], [0, 1], [0, 1, 2], [1, 2], [0, 2], [], [0], [0, 2], [], [1], [0, 2], [], [2], [0, 2], [], [0, 1], [0, 2], [], [1, 2], [0, 2], [], [0, 1, 2], [0, 2], [0], [], [0, 2], [0], [1], [0, 2], [0], [2], [0, 2], [0], [0, 1], [0, 2], [0], [1, 2], [0, 2], [0], [0, 1, 2], [0, 2], [1], [], [0, 2], [1], [0], [0, 2], [1], [2], [0, 2], [1], [0, 1], [0, 2], [1], [1, 2], [0, 2], [1], [0, 1, 2], [0, 2], [2], [], [0, 2], [2], [0], [0, 2], [2], [1], [0, 2], [2], [0, 1], [0, 2], [2], [1, 2], [0, 2], [2], [0, 1, 2], [0, 2], [0, 1], [], [0, 2], [0, 1], [0], [0, 2], [0, 1], [1], [0, 2], [0, 1], [2], [0, 2], [0, 1], [1, 2], [0, 2], [0, 1], [0, 1, 2], [0, 2], [1, 2], [], [0, 2], [1, 2], [0], [0, 2], [1, 2], [1], [0, 2], [1, 2], [2], [0, 2], [1, 2], [0, 1], [0, 2], [1, 2], [0, 1, 2], [0, 2], [0, 1, 2], [], [0, 2], [0, 1, 2], [0], [0, 2], [0, 1, 2], [1], [0, 2], [0, 1, 2], [2], [0, 2], [0, 1, 2], [0, 1], [0, 2], [0, 1, 2], [1, 2], [1, 2], [], [0], [1, 2], [], [1], [1, 2], [], [2], [1, 2], [], [0, 1], [1, 2], [], [0, 2], [1, 2], [], [0, 1, 2], [1, 2], [0], [], [1, 2], [0], [1], [1, 2], [0], [2], [1, 2], [0], [0, 1], [1, 2], [0], [0, 2], [1, 2], [0], [0, 1, 2], [1, 2], [1], [], [1, 2], [1], [0], [1, 2], [1], [2], [1, 2], [1], [0, 1], [1, 2], [1], [0, 2], [1, 2], [1], [0, 1, 2], [1, 2], [2], [], [1, 2], [2], [0], [1, 2], [2], [1], [1, 2], [2], [0, 1], [1, 2], [2], [0, 2], [1, 2], [2], [0, 1, 2], [1, 2], [0, 1], [], [1, 2], [0, 1], [0], [1, 2], [0, 1], [1], [1, 2], [0, 1], [2], [1, 2], [0, 1], [0, 2], [1, 2], [0, 1], [0, 1, 2], [1, 2], [0, 2], [], [1, 2], [0, 2], [0], [1, 2], [0, 2], [1], [1, 2], [0, 2], [2], [1, 2], [0, 2], [0, 1], [1, 2], [0, 2], [0, 1, 2], [1, 2], [0, 1, 2], [], [1, 2], [0, 1, 2], [0], [1, 2], [0, 1, 2], [1], [1, 2], [0, 1, 2], [2], [1, 2], [0, 1, 2], [0, 1], [1, 2], [0, 1, 2], [0, 2], [0, 1, 2], [], [0], [0, 1, 2], [], [1], [0, 1, 2], [], [2], [0, 1, 2], [], [0, 1], [0, 1, 2], [], [0, 2], [0, 1, 2], [], [1, 2], [0, 1, 2], [0], [], [0, 1, 2], [0], [1], [0, 1, 2], [0], [2], [0, 1, 2], [0], [0, 1], [0, 1, 2], [0], [0, 2], [0, 1, 2], [0], [1, 2], [0, 1, 2], [1], [], [0, 1, 2], [1], [0], [0, 1, 2], [1], [2], [0, 1, 2], [1], [0, 1], [0, 1, 2], [1], [0, 2], [0, 1, 2], [1], [1, 2], [0, 1, 2], [2], [], [0, 1, 2], [2], [0], [0, 1, 2], [2], [1], [0, 1, 2], [2], [0, 1], [0, 1, 2], [2], [0, 2], [0, 1, 2], [2], [1, 2], [0, 1, 2], [0, 1], [], [0, 1, 2], [0, 1], [0], [0, 1, 2], [0, 1], [1], [0, 1, 2], [0, 1], [2], [0, 1, 2], [0, 1], [0, 2], [0, 1, 2], [0, 1], [1, 2], [0, 1, 2], [0, 2], [], [0, 1, 2], [0, 2], [0], [0, 1, 2], [0, 2], [1], [0, 1, 2], [0, 2], [2], [0, 1, 2], [0, 2], [0, 1], [0, 1, 2], [0, 2], [1, 2], [0, 1, 2], [1, 2], [], [0, 1, 2], [1, 2], [0], [0, 1, 2], [1, 2], [1], [0, 1, 2], [1, 2], [2], [0, 1, 2], [1, 2], [0, 1], [0, 1, 2], [1, 2], [0, 2]]`,
+ right: `[[], [0], [1], [2], [0, 1], [0, 2], [1, 2], [0, 1, 2]]`', src/utils/misc.rs:47:9
+stack backtrace:
+   0: rust_begin_unwind
+             at /rustc/4b91a6ea7258a947e59c6522cd5898e7c0a6a88f/library/std/src/panicking.rs:584:5
+   1: core::panicking::panic_fmt
+             at /rustc/4b91a6ea7258a947e59c6522cd5898e7c0a6a88f/library/core/src/panicking.rs:142:14
+   2: core::panicking::assert_failed_inner
+   3: core::panicking::assert_failed
+             at /rustc/4b91a6ea7258a947e59c6522cd5898e7c0a6a88f/library/core/src/panicking.rs:181:5
+   4: music_theory::utils::misc::tests::test_sub_vecs
+             at ./src/utils/misc.rs:47:9
+   5: music_theory::utils::misc::tests::test_sub_vecs::{{closure}}
+             at ./src/utils/misc.rs:46:5
+   6: core::ops::function::FnOnce::call_once
+             at /rustc/4b91a6ea7258a947e59c6522cd5898e7c0a6a88f/library/core/src/ops/function.rs:248:5
+   7: core::ops::function::FnOnce::call_once
+             at /rustc/4b91a6ea7258a947e59c6522cd5898e7c0a6a88f/library/core/src/ops/function.rs:248:5
+note: Some details are omitted, run with `RUST_BACKTRACE=full` for a verbose backtrace.
+
+
+failures:
+    utils::misc::tests::test_sub_vecs
+
+test result: FAILED. 147 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+
+running 148 tests
+test libr::infos::tests::format_even_test ... ok
+test libr::scales::tests::clone_steps ... ok
+test libr::infos::tests::intercalate ... ok
+test libr::scales::tests::family_name ... ok
+test libr::infos::tests::format_to_grid_auto_test ... ok
+test libr::scales::tests::get_mode_name ... ok
+test libr::scales::tests::get_modes ... ok
+test libr::scales::tests::mode_obj_to_string ... ok
+test libr::scales::tests::steps ... ok
+test libr::scales::tests::obj ... ok
+test libr::scales::tests::test_get_all_scale_objs ... ok
+test libr::scales::tests::heptatonic_scale_namer_new ... ok
+test query::printouts::tests::test_scale_chords_roman_printout ... ok
+test query::printouts::tests::test_scale_chords_root_printout ... ok
+test query::queries::tests::test_find_rooted_scale_chords ... ok
+test query::queries::tests::test_find_scale_chords ... ok
+test theory::chord::tests::chord_as_scale ... ok
+test theory::chord::tests::chord_new ... ok
+test theory::chord::tests::chord_normalized ... ok
+test theory::chord::tests::chord_same_intervals ... ok
+test theory::chord::tests::chord_unwrap ... ok
+test theory::chord::tests::chord_wrap ... ok
+test query::queries::tests::test_find_scale ... ok
+test theory::chord::tests::relative_chord_from_chord ... ok
+test theory::chord::tests::relative_chord_new ... ok
+test theory::chord::tests::relative_chord_as_string ... ok
+test theory::chord::tests::rooted_chord_as_chordtone_wholetone_scale ... ok
+test query::queries::tests::test_find_chord_scales ... ok
+test theory::chord::tests::relative_chord_to_string ... ok
+test theory::chord::tests::rooted_chord_as_scale ... ok
+test theory::chord::tests::rooted_chord_as_inversion ... ok
+test theory::chord::tests::rooted_chord_as_all_inversions ... ok
+test theory::chord::tests::rooted_chord_from_chord ... ok
+test theory::chord::tests::rooted_chord_new ... ok
+test theory::chord::tests::rooted_chord_normalized ... ok
+test theory::chord::tests::scale_degree_to_string ... ok
+test theory::enharmonic_note::tests::enharmonic_note_to_pc ... ok
+test libr::scales::tests::heptotonic_scale_namer_default ... ok
+test theory::enharmonic_note::tests::letter_cyclic ... ok
+test theory::chord::tests::rooted_chord_as_string ... ok
+test theory::enharmonic_note::tests::letter_to_enharmonic_note ... ok
+test theory::enharmonic_note::tests::letter_to_note ... ok
+test theory::enharmonic_note::tests::enharmonic_note_cyclic ... ok
+test theory::enharmonic_note::tests::letter_to_pc ... ok
+test theory::enharmonic_note::tests::letter_to_string ... ok
+test query::queries::tests::test_find_scale_from_ionian_relative ... ok
+test theory::enharmonic_note::tests::string_to_letter_try ... ok
+test theory::enharmonic_note::tests::unwrap ... ok
+test theory::enharmonic_note::tests::string_to_enharmonic_note_try ... ok
+test theory::interval::tests::abs ... ok
+test query::printouts::tests::test_step_chords_string ... ok
+test theory::enharmonic_note::tests::wrap ... ok
+test theory::enharmonic_note::tests::string_to_enharmonic_notes ... ok
+test theory::interval::tests::add ... ok
+test theory::interval::tests::interval_generatable_partial_order ... ok
+test theory::interval::tests::interval_mod ... ok
+test theory::interval::tests::interval_to_named_interval ... ok
+test theory::interval::tests::interval_to_named_octave_interval ... ok
+test theory::interval::tests::interval_to_string_nat ... ok
+test theory::interval::tests::interval_to_string ... ok
+test theory::interval::tests::named_interval_to_interval ... ok
+test theory::interval::tests::named_interval_to_named_octave_interval ... ok
+test theory::interval::tests::named_octave_interval_cyclic ... ok
+test theory::interval::tests::named_octave_interval_from_int ... ok
+test theory::interval::tests::intervals_as_ionian_relative_string_try ... ok
+test theory::interval::tests::named_interval_to_string ... ok
+test theory::interval::tests::named_octave_interval_to_interval ... ok
+test theory::interval::tests::named_octave_interval_to_named_interval ... ok
+test theory::interval::tests::neg ... ok
+test theory::interval::tests::named_octave_interval_to_string ... ok
+test theory::interval::tests::neg_add_sub ... ok
+test theory::interval::tests::new ... ok
+test theory::interval::tests::new_try ... ok
+test theory::interval::tests::octave_shiftable ... ok
+test theory::interval::tests::sub ... ok
+test theory::enharmonic_note::tests::spelled_as ... ok
+test theory::interval::tests::unwrap ... ok
+test theory::interval::tests::wrap ... ok
+test theory::note::tests::add ... ok
+test theory::note::tests::add_interval ... ok
+test theory::note::tests::generatable_partial_order ... ok
+test theory::note::tests::mul ... ok
+test theory::note::tests::new ... ok
+test theory::note::tests::note_to_pc ... ok
+test theory::note::tests::octave_shiftable ... ok
+test theory::note::tests::rem ... ok
+test theory::note::tests::sub ... ok
+test theory::note::tests::to_enharmonic_note ... ok
+test theory::note::tests::to_letter_try ... ok
+test theory::note::tests::to_note_to_pc ... ok
+test theory::note::tests::to_pitch ... ok
+test theory::note::tests::unwrap ... ok
+test theory::note::tests::wrap ... ok
+test theory::pc::tests::cyclic ... ok
+test theory::pc::tests::pcs_as_scale_try ... ok
+test theory::pc::tests::pcs_as_steps_try ... ok
+test theory::pc::tests::to_enharmonic_note ... ok
+test theory::pc::tests::to_letter_try ... ok
+test theory::pc::tests::to_note ... ok
+test theory::pc::tests::to_string ... ok
+test theory::scale::tests::contains ... ok
+test theory::scale::tests::contains_all ... ok
+test theory::scale::tests::mode_iterator ... ok
+test theory::scale::tests::mode_nr_of_this ... ok
+test theory::scale::tests::scale_as_chord ... ok
+test theory::scale::tests::scale_as_enharmonic_notes ... ok
+test theory::note::tests::rem_assign ... ok
+test theory::note::tests::u32_to_note ... ok
+test theory::scale::tests::scale_as_octave_steps ... ok
+test theory::scale::tests::scale_as_pcs ... ok
+test theory::scale::tests::scale_as_steps ... ok
+test theory::scale::tests::scale_is_empty ... ok
+test theory::scale::tests::scale_iterator ... ok
+test theory::scale::tests::scale_len ... ok
+test libr::scales::tests::heptatonic_scale_namer_name ... ok
+test theory::scale::tests::scale_mode ... ok
+test theory::scale::tests::scale_next_mode ... ok
+test theory::enharmonic_note::tests::enharmonic_note_to_string ... ok
+test theory::scale::tests::scale_next_mode_mut ... ok
+test theory::scale::tests::scale_unwrap ... ok
+test theory::scale::tests::scale_wrap ... ok
+test theory::scale::tests::scale_as_enharmonic_notes_with_start ... ok
+test theory::scale::tests::steps_as_chord ... ok
+test theory::scale::tests::steps_as_relative_intervals ... ok
+test theory::scale::tests::steps_is_empty ... ok
+test theory::scale::tests::steps_iter ... ok
+test theory::scale::tests::steps_as_scale ... ok
+test theory::scale::tests::steps_len ... ok
+test theory::scale::tests::steps_mode ... ok
+test theory::scale::tests::steps_next_mode ... ok
+test theory::scale::tests::steps_next_mode_mut ... ok
+test theory::scale::tests::steps_unwrap ... ok
+test theory::scale::tests::steps_wrap ... ok
+test theory::scale::tests::test_scale_iter ... ok
+test utils::misc::tests::test_is_sorted ... ok
+test utils::roman_numerals::tests::test ... ok
+test theory::note::tests::mul_assign ... ok
+test theory::note::tests::add_assign ... ok
+test theory::interval::tests::sub_assign ... ok
+test theory::interval::tests::add_assign ... ok
+test query::queries::tests::test_find_scale_superstring ... ok
+test theory::chord::tests::test_chords_strings ... ok
+test theory::interval::tests::add_interval ... ok
+test theory::interval::tests::named_octave_interval_from_int_panic_0 - should panic ... ok
+test theory::interval::tests::named_octave_interval_from_int_panic_1 - should panic ... ok
+test utils::misc::tests::test_sub_vecs ... FAILED
+test query::queries::tests::test_find_scale_superset ... ok
+test query::printouts::tests::test_scales_and_chords_printout ... ok
+
+failures:
+
+---- utils::misc::tests::test_sub_vecs stdout ----
+thread 'utils::misc::tests::test_sub_vecs' panicked at 'assertion failed: `(left == right)`
+  left: `[[[], [0], [1]], [[], [0], [2]], [[], [0], [0, 1]], [[], [0], [0, 2]], [[], [0], [1, 2]], [[], [0], [0, 1, 2]], [[], [1], [0]], [[], [1], [2]], [[], [1], [0, 1]], [[], [1], [0, 2]], [[], [1], [1, 2]], [[], [1], [0, 1, 2]], [[], [2], [0]], [[], [2], [1]], [[], [2], [0, 1]], [[], [2], [0, 2]], [[], [2], [1, 2]], [[], [2], [0, 1, 2]], [[], [0, 1], [0]], [[], [0, 1], [1]], [[], [0, 1], [2]], [[], [0, 1], [0, 2]], [[], [0, 1], [1, 2]], [[], [0, 1], [0, 1, 2]], [[], [0, 2], [0]], [[], [0, 2], [1]], [[], [0, 2], [2]], [[], [0, 2], [0, 1]], [[], [0, 2], [1, 2]], [[], [0, 2], [0, 1, 2]], [[], [1, 2], [0]], [[], [1, 2], [1]], [[], [1, 2], [2]], [[], [1, 2], [0, 1]], [[], [1, 2], [0, 2]], [[], [1, 2], [0, 1, 2]], [[], [0, 1, 2], [0]], [[], [0, 1, 2], [1]], [[], [0, 1, 2], [2]], [[], [0, 1, 2], [0, 1]], [[], [0, 1, 2], [0, 2]], [[], [0, 1, 2], [1, 2]], [[0], [], [1]], [[0], [], [2]], [[0], [], [0, 1]], [[0], [], [0, 2]], [[0], [], [1, 2]], [[0], [], [0, 1, 2]], [[0], [1], []], [[0], [1], [2]], [[0], [1], [0, 1]], [[0], [1], [0, 2]], [[0], [1], [1, 2]], [[0], [1], [0, 1, 2]], [[0], [2], []], [[0], [2], [1]], [[0], [2], [0, 1]], [[0], [2], [0, 2]], [[0], [2], [1, 2]], [[0], [2], [0, 1, 2]], [[0], [0, 1], []], [[0], [0, 1], [1]], [[0], [0, 1], [2]], [[0], [0, 1], [0, 2]], [[0], [0, 1], [1, 2]], [[0], [0, 1], [0, 1, 2]], [[0], [0, 2], []], [[0], [0, 2], [1]], [[0], [0, 2], [2]], [[0], [0, 2], [0, 1]], [[0], [0, 2], [1, 2]], [[0], [0, 2], [0, 1, 2]], [[0], [1, 2], []], [[0], [1, 2], [1]], [[0], [1, 2], [2]], [[0], [1, 2], [0, 1]], [[0], [1, 2], [0, 2]], [[0], [1, 2], [0, 1, 2]], [[0], [0, 1, 2], []], [[0], [0, 1, 2], [1]], [[0], [0, 1, 2], [2]], [[0], [0, 1, 2], [0, 1]], [[0], [0, 1, 2], [0, 2]], [[0], [0, 1, 2], [1, 2]], [[1], [], [0]], [[1], [], [2]], [[1], [], [0, 1]], [[1], [], [0, 2]], [[1], [], [1, 2]], [[1], [], [0, 1, 2]], [[1], [0], []], [[1], [0], [2]], [[1], [0], [0, 1]], [[1], [0], [0, 2]], [[1], [0], [1, 2]], [[1], [0], [0, 1, 2]], [[1], [2], []], [[1], [2], [0]], [[1], [2], [0, 1]], [[1], [2], [0, 2]], [[1], [2], [1, 2]], [[1], [2], [0, 1, 2]], [[1], [0, 1], []], [[1], [0, 1], [0]], [[1], [0, 1], [2]], [[1], [0, 1], [0, 2]], [[1], [0, 1], [1, 2]], [[1], [0, 1], [0, 1, 2]], [[1], [0, 2], []], [[1], [0, 2], [0]], [[1], [0, 2], [2]], [[1], [0, 2], [0, 1]], [[1], [0, 2], [1, 2]], [[1], [0, 2], [0, 1, 2]], [[1], [1, 2], []], [[1], [1, 2], [0]], [[1], [1, 2], [2]], [[1], [1, 2], [0, 1]], [[1], [1, 2], [0, 2]], [[1], [1, 2], [0, 1, 2]], [[1], [0, 1, 2], []], [[1], [0, 1, 2], [0]], [[1], [0, 1, 2], [2]], [[1], [0, 1, 2], [0, 1]], [[1], [0, 1, 2], [0, 2]], [[1], [0, 1, 2], [1, 2]], [[2], [], [0]], [[2], [], [1]], [[2], [], [0, 1]], [[2], [], [0, 2]], [[2], [], [1, 2]], [[2], [], [0, 1, 2]], [[2], [0], []], [[2], [0], [1]], [[2], [0], [0, 1]], [[2], [0], [0, 2]], [[2], [0], [1, 2]], [[2], [0], [0, 1, 2]], [[2], [1], []], [[2], [1], [0]], [[2], [1], [0, 1]], [[2], [1], [0, 2]], [[2], [1], [1, 2]], [[2], [1], [0, 1, 2]], [[2], [0, 1], []], [[2], [0, 1], [0]], [[2], [0, 1], [1]], [[2], [0, 1], [0, 2]], [[2], [0, 1], [1, 2]], [[2], [0, 1], [0, 1, 2]], [[2], [0, 2], []], [[2], [0, 2], [0]], [[2], [0, 2], [1]], [[2], [0, 2], [0, 1]], [[2], [0, 2], [1, 2]], [[2], [0, 2], [0, 1, 2]], [[2], [1, 2], []], [[2], [1, 2], [0]], [[2], [1, 2], [1]], [[2], [1, 2], [0, 1]], [[2], [1, 2], [0, 2]], [[2], [1, 2], [0, 1, 2]], [[2], [0, 1, 2], []], [[2], [0, 1, 2], [0]], [[2], [0, 1, 2], [1]], [[2], [0, 1, 2], [0, 1]], [[2], [0, 1, 2], [0, 2]], [[2], [0, 1, 2], [1, 2]], [[0, 1], [], [0]], [[0, 1], [], [1]], [[0, 1], [], [2]], [[0, 1], [], [0, 2]], [[0, 1], [], [1, 2]], [[0, 1], [], [0, 1, 2]], [[0, 1], [0], []], [[0, 1], [0], [1]], [[0, 1], [0], [2]], [[0, 1], [0], [0, 2]], [[0, 1], [0], [1, 2]], [[0, 1], [0], [0, 1, 2]], [[0, 1], [1], []], [[0, 1], [1], [0]], [[0, 1], [1], [2]], [[0, 1], [1], [0, 2]], [[0, 1], [1], [1, 2]], [[0, 1], [1], [0, 1, 2]], [[0, 1], [2], []], [[0, 1], [2], [0]], [[0, 1], [2], [1]], [[0, 1], [2], [0, 2]], [[0, 1], [2], [1, 2]], [[0, 1], [2], [0, 1, 2]], [[0, 1], [0, 2], []], [[0, 1], [0, 2], [0]], [[0, 1], [0, 2], [1]], [[0, 1], [0, 2], [2]], [[0, 1], [0, 2], [1, 2]], [[0, 1], [0, 2], [0, 1, 2]], [[0, 1], [1, 2], []], [[0, 1], [1, 2], [0]], [[0, 1], [1, 2], [1]], [[0, 1], [1, 2], [2]], [[0, 1], [1, 2], [0, 2]], [[0, 1], [1, 2], [0, 1, 2]], [[0, 1], [0, 1, 2], []], [[0, 1], [0, 1, 2], [0]], [[0, 1], [0, 1, 2], [1]], [[0, 1], [0, 1, 2], [2]], [[0, 1], [0, 1, 2], [0, 2]], [[0, 1], [0, 1, 2], [1, 2]], [[0, 2], [], [0]], [[0, 2], [], [1]], [[0, 2], [], [2]], [[0, 2], [], [0, 1]], [[0, 2], [], [1, 2]], [[0, 2], [], [0, 1, 2]], [[0, 2], [0], []], [[0, 2], [0], [1]], [[0, 2], [0], [2]], [[0, 2], [0], [0, 1]], [[0, 2], [0], [1, 2]], [[0, 2], [0], [0, 1, 2]], [[0, 2], [1], []], [[0, 2], [1], [0]], [[0, 2], [1], [2]], [[0, 2], [1], [0, 1]], [[0, 2], [1], [1, 2]], [[0, 2], [1], [0, 1, 2]], [[0, 2], [2], []], [[0, 2], [2], [0]], [[0, 2], [2], [1]], [[0, 2], [2], [0, 1]], [[0, 2], [2], [1, 2]], [[0, 2], [2], [0, 1, 2]], [[0, 2], [0, 1], []], [[0, 2], [0, 1], [0]], [[0, 2], [0, 1], [1]], [[0, 2], [0, 1], [2]], [[0, 2], [0, 1], [1, 2]], [[0, 2], [0, 1], [0, 1, 2]], [[0, 2], [1, 2], []], [[0, 2], [1, 2], [0]], [[0, 2], [1, 2], [1]], [[0, 2], [1, 2], [2]], [[0, 2], [1, 2], [0, 1]], [[0, 2], [1, 2], [0, 1, 2]], [[0, 2], [0, 1, 2], []], [[0, 2], [0, 1, 2], [0]], [[0, 2], [0, 1, 2], [1]], [[0, 2], [0, 1, 2], [2]], [[0, 2], [0, 1, 2], [0, 1]], [[0, 2], [0, 1, 2], [1, 2]], [[1, 2], [], [0]], [[1, 2], [], [1]], [[1, 2], [], [2]], [[1, 2], [], [0, 1]], [[1, 2], [], [0, 2]], [[1, 2], [], [0, 1, 2]], [[1, 2], [0], []], [[1, 2], [0], [1]], [[1, 2], [0], [2]], [[1, 2], [0], [0, 1]], [[1, 2], [0], [0, 2]], [[1, 2], [0], [0, 1, 2]], [[1, 2], [1], []], [[1, 2], [1], [0]], [[1, 2], [1], [2]], [[1, 2], [1], [0, 1]], [[1, 2], [1], [0, 2]], [[1, 2], [1], [0, 1, 2]], [[1, 2], [2], []], [[1, 2], [2], [0]], [[1, 2], [2], [1]], [[1, 2], [2], [0, 1]], [[1, 2], [2], [0, 2]], [[1, 2], [2], [0, 1, 2]], [[1, 2], [0, 1], []], [[1, 2], [0, 1], [0]], [[1, 2], [0, 1], [1]], [[1, 2], [0, 1], [2]], [[1, 2], [0, 1], [0, 2]], [[1, 2], [0, 1], [0, 1, 2]], [[1, 2], [0, 2], []], [[1, 2], [0, 2], [0]], [[1, 2], [0, 2], [1]], [[1, 2], [0, 2], [2]], [[1, 2], [0, 2], [0, 1]], [[1, 2], [0, 2], [0, 1, 2]], [[1, 2], [0, 1, 2], []], [[1, 2], [0, 1, 2], [0]], [[1, 2], [0, 1, 2], [1]], [[1, 2], [0, 1, 2], [2]], [[1, 2], [0, 1, 2], [0, 1]], [[1, 2], [0, 1, 2], [0, 2]], [[0, 1, 2], [], [0]], [[0, 1, 2], [], [1]], [[0, 1, 2], [], [2]], [[0, 1, 2], [], [0, 1]], [[0, 1, 2], [], [0, 2]], [[0, 1, 2], [], [1, 2]], [[0, 1, 2], [0], []], [[0, 1, 2], [0], [1]], [[0, 1, 2], [0], [2]], [[0, 1, 2], [0], [0, 1]], [[0, 1, 2], [0], [0, 2]], [[0, 1, 2], [0], [1, 2]], [[0, 1, 2], [1], []], [[0, 1, 2], [1], [0]], [[0, 1, 2], [1], [2]], [[0, 1, 2], [1], [0, 1]], [[0, 1, 2], [1], [0, 2]], [[0, 1, 2], [1], [1, 2]], [[0, 1, 2], [2], []], [[0, 1, 2], [2], [0]], [[0, 1, 2], [2], [1]], [[0, 1, 2], [2], [0, 1]], [[0, 1, 2], [2], [0, 2]], [[0, 1, 2], [2], [1, 2]], [[0, 1, 2], [0, 1], []], [[0, 1, 2], [0, 1], [0]], [[0, 1, 2], [0, 1], [1]], [[0, 1, 2], [0, 1], [2]], [[0, 1, 2], [0, 1], [0, 2]], [[0, 1, 2], [0, 1], [1, 2]], [[0, 1, 2], [0, 2], []], [[0, 1, 2], [0, 2], [0]], [[0, 1, 2], [0, 2], [1]], [[0, 1, 2], [0, 2], [2]], [[0, 1, 2], [0, 2], [0, 1]], [[0, 1, 2], [0, 2], [1, 2]], [[0, 1, 2], [1, 2], []], [[0, 1, 2], [1, 2], [0]], [[0, 1, 2], [1, 2], [1]], [[0, 1, 2], [1, 2], [2]], [[0, 1, 2], [1, 2], [0, 1]], [[0, 1, 2], [1, 2], [0, 2]]]`,
+ right: `[[[], [0], [1], [2], [0, 1], [0, 2], [1, 2], [0, 1, 2]]]`', src/utils/misc.rs:47:9
+stack backtrace:
+   0: rust_begin_unwind
+             at /rustc/4b91a6ea7258a947e59c6522cd5898e7c0a6a88f/library/std/src/panicking.rs:584:5
+   1: core::panicking::panic_fmt
+             at /rustc/4b91a6ea7258a947e59c6522cd5898e7c0a6a88f/library/core/src/panicking.rs:142:14
+   2: core::panicking::assert_failed_inner
+   3: core::panicking::assert_failed
+             at /rustc/4b91a6ea7258a947e59c6522cd5898e7c0a6a88f/library/core/src/panicking.rs:181:5
+   4: music_theory::utils::misc::tests::test_sub_vecs
+             at ./src/utils/misc.rs:47:9
+   5: music_theory::utils::misc::tests::test_sub_vecs::{{closure}}
+             at ./src/utils/misc.rs:46:5
+   6: core::ops::function::FnOnce::call_once
+             at /rustc/4b91a6ea7258a947e59c6522cd5898e7c0a6a88f/library/core/src/ops/function.rs:248:5
+   7: core::ops::function::FnOnce::call_once
+             at /rustc/4b91a6ea7258a947e59c6522cd5898e7c0a6a88f/library/core/src/ops/function.rs:248:5
+note: Some details are omitted, run with `RUST_BACKTRACE=full` for a verbose backtrace.
+
+
+failures:
+    utils::misc::tests::test_sub_vecs
+
+test result: FAILED. 147 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+
+running 148 tests
+test libr::infos::tests::format_even_test ... ok
+test libr::infos::tests::intercalate ... ok
+test libr::scales::tests::family_name ... ok
+test libr::scales::tests::clone_steps ... ok
+test libr::scales::tests::get_mode_name ... ok
+test libr::infos::tests::format_to_grid_auto_test ... ok
+test libr::scales::tests::get_modes ... ok
+test libr::scales::tests::mode_obj_to_string ... ok
+test libr::scales::tests::obj ... ok
+test libr::scales::tests::steps ... ok
+test libr::scales::tests::test_get_all_scale_objs ... ok
+test query::printouts::tests::test_scale_chords_roman_printout ... ok
+test libr::scales::tests::heptatonic_scale_namer_new ... ok
+test query::printouts::tests::test_scale_chords_root_printout ... ok
+test query::queries::tests::test_find_scale_chords ... ok
+test query::queries::tests::test_find_rooted_scale_chords ... ok
+test libr::scales::tests::heptotonic_scale_namer_default ... ok
+test theory::chord::tests::chord_as_scale ... ok
+test theory::chord::tests::chord_new ... ok
+test theory::chord::tests::chord_unwrap ... ok
+test theory::chord::tests::chord_wrap ... ok
+test theory::chord::tests::chord_same_intervals ... ok
+test theory::chord::tests::chord_normalized ... ok
+test theory::chord::tests::relative_chord_from_chord ... ok
+test theory::chord::tests::relative_chord_new ... ok
+test query::printouts::tests::test_step_chords_string ... ok
+test theory::chord::tests::relative_chord_as_string ... ok
+test theory::chord::tests::rooted_chord_as_chordtone_wholetone_scale ... ok
+test theory::chord::tests::rooted_chord_as_all_inversions ... ok
+test theory::chord::tests::rooted_chord_as_scale ... ok
+test theory::chord::tests::rooted_chord_as_inversion ... ok
+test theory::chord::tests::rooted_chord_from_chord ... ok
+test theory::chord::tests::rooted_chord_new ... ok
+test query::queries::tests::test_find_scale ... ok
+test theory::chord::tests::rooted_chord_normalized ... ok
+test query::queries::tests::test_find_chord_scales ... ok
+test theory::chord::tests::relative_chord_to_string ... ok
+test theory::chord::tests::scale_degree_to_string ... ok
+test theory::enharmonic_note::tests::enharmonic_note_to_pc ... ok
+test theory::enharmonic_note::tests::letter_cyclic ... ok
+test theory::enharmonic_note::tests::enharmonic_note_cyclic ... ok
+test theory::enharmonic_note::tests::letter_to_enharmonic_note ... ok
+test theory::chord::tests::rooted_chord_as_string ... ok
+test theory::enharmonic_note::tests::letter_to_note ... ok
+test theory::enharmonic_note::tests::letter_to_pc ... ok
+test theory::enharmonic_note::tests::letter_to_string ... ok
+test theory::enharmonic_note::tests::string_to_letter_try ... ok
+test theory::enharmonic_note::tests::unwrap ... ok
+test theory::enharmonic_note::tests::wrap ... ok
+test theory::enharmonic_note::tests::string_to_enharmonic_note_try ... ok
+test theory::interval::tests::abs ... ok
+test theory::interval::tests::add ... ok
+test theory::enharmonic_note::tests::string_to_enharmonic_notes ... ok
+test query::queries::tests::test_find_scale_from_ionian_relative ... ok
+test theory::interval::tests::interval_generatable_partial_order ... ok
+test theory::interval::tests::interval_mod ... ok
+test theory::interval::tests::interval_to_named_interval ... ok
+test theory::interval::tests::interval_to_named_octave_interval ... ok
+test theory::interval::tests::interval_to_string ... ok
+test theory::interval::tests::interval_to_string_nat ... ok
+test theory::interval::tests::named_interval_to_interval ... ok
+test theory::interval::tests::named_interval_to_named_octave_interval ... ok
+test theory::interval::tests::named_octave_interval_cyclic ... ok
+test theory::interval::tests::named_octave_interval_from_int ... ok
+test theory::interval::tests::named_interval_to_string ... ok
+test libr::scales::tests::heptatonic_scale_namer_name ... ok
+test theory::interval::tests::intervals_as_ionian_relative_string_try ... ok
+test theory::interval::tests::named_octave_interval_to_interval ... ok
+test theory::interval::tests::named_octave_interval_to_named_interval ... ok
+test theory::interval::tests::named_octave_interval_to_string ... ok
+test theory::interval::tests::neg ... ok
+test theory::interval::tests::neg_add_sub ... ok
+test theory::interval::tests::new ... ok
+test theory::interval::tests::new_try ... ok
+test theory::interval::tests::octave_shiftable ... ok
+test theory::interval::tests::sub ... ok
+test theory::interval::tests::unwrap ... ok
+test theory::note::tests::add ... ok
+test theory::interval::tests::wrap ... ok
+test theory::note::tests::generatable_partial_order ... ok
+test theory::note::tests::add_interval ... ok
+test theory::note::tests::mul ... ok
+test theory::enharmonic_note::tests::spelled_as ... ok
+test theory::note::tests::new ... ok
+test theory::note::tests::note_to_pc ... ok
+test theory::note::tests::octave_shiftable ... ok
+test theory::note::tests::rem ... ok
+test theory::note::tests::sub ... ok
+test theory::note::tests::to_enharmonic_note ... ok
+test theory::note::tests::to_letter_try ... ok
+test theory::note::tests::to_note_to_pc ... ok
+test theory::note::tests::to_pitch ... ok
+test theory::note::tests::unwrap ... ok
+test theory::note::tests::wrap ... ok
+test theory::pc::tests::cyclic ... ok
+test theory::pc::tests::pcs_as_scale_try ... ok
+test theory::pc::tests::pcs_as_steps_try ... ok
+test theory::pc::tests::to_enharmonic_note ... ok
+test theory::pc::tests::to_letter_try ... ok
+test theory::pc::tests::to_note ... ok
+test theory::pc::tests::to_string ... ok
+test theory::scale::tests::contains ... ok
+test theory::scale::tests::contains_all ... ok
+test theory::scale::tests::mode_iterator ... ok
+test theory::scale::tests::mode_nr_of_this ... ok
+test theory::scale::tests::scale_as_chord ... ok
+test theory::scale::tests::scale_as_enharmonic_notes ... ok
+test theory::scale::tests::scale_as_enharmonic_notes_with_start ... ok
+test theory::note::tests::rem_assign ... ok
+test theory::scale::tests::scale_as_pcs ... ok
+test theory::scale::tests::scale_as_octave_steps ... ok
+test theory::scale::tests::scale_as_steps ... ok
+test theory::scale::tests::scale_is_empty ... ok
+test theory::scale::tests::scale_iterator ... ok
+test theory::scale::tests::scale_len ... ok
+test theory::scale::tests::scale_mode ... ok
+test theory::scale::tests::scale_next_mode ... ok
+test theory::scale::tests::scale_next_mode_mut ... ok
+test theory::scale::tests::scale_unwrap ... ok
+test theory::scale::tests::scale_wrap ... ok
+test theory::scale::tests::steps_as_chord ... ok
+test theory::scale::tests::steps_as_relative_intervals ... ok
+test theory::scale::tests::steps_is_empty ... ok
+test theory::scale::tests::steps_as_scale ... ok
+test theory::interval::tests::add_assign ... ok
+test theory::scale::tests::steps_iter ... ok
+test theory::scale::tests::steps_len ... ok
+test theory::scale::tests::steps_next_mode ... ok
+test theory::scale::tests::steps_mode ... ok
+test theory::note::tests::u32_to_note ... ok
+test theory::scale::tests::steps_next_mode_mut ... ok
+test theory::scale::tests::steps_unwrap ... ok
+test theory::scale::tests::steps_wrap ... ok
+test theory::scale::tests::test_scale_iter ... ok
+test utils::misc::tests::test_is_sorted ... ok
+test utils::roman_numerals::tests::test ... ok
+test theory::enharmonic_note::tests::enharmonic_note_to_string ... ok
+test theory::note::tests::mul_assign ... ok
+test theory::note::tests::add_assign ... ok
+test query::queries::tests::test_find_scale_superstring ... ok
+test theory::interval::tests::sub_assign ... ok
+test theory::chord::tests::test_chords_strings ... ok
+test query::queries::tests::test_find_scale_superset ... ok
+test theory::interval::tests::add_interval ... ok
+test theory::interval::tests::named_octave_interval_from_int_panic_0 - should panic ... ok
+test theory::interval::tests::named_octave_interval_from_int_panic_1 - should panic ... ok
+test utils::misc::tests::test_sub_vecs ... FAILED
+test query::printouts::tests::test_scales_and_chords_printout ... ok
+
+failures:
+
+---- utils::misc::tests::test_sub_vecs stdout ----
+thread 'utils::misc::tests::test_sub_vecs' panicked at 'assertion failed: `(left == right)`
+  left: `[[[], [0], [1]], [[], [0], [2]], [[], [0], [0, 1]], [[], [0], [0, 2]], [[], [0], [1, 2]], [[], [0], [0, 1, 2]], [[], [1], [0]], [[], [1], [2]], [[], [1], [0, 1]], [[], [1], [0, 2]], [[], [1], [1, 2]], [[], [1], [0, 1, 2]], [[], [2], [0]], [[], [2], [1]], [[], [2], [0, 1]], [[], [2], [0, 2]], [[], [2], [1, 2]], [[], [2], [0, 1, 2]], [[], [0, 1], [0]], [[], [0, 1], [1]], [[], [0, 1], [2]], [[], [0, 1], [0, 2]], [[], [0, 1], [1, 2]], [[], [0, 1], [0, 1, 2]], [[], [0, 2], [0]], [[], [0, 2], [1]], [[], [0, 2], [2]], [[], [0, 2], [0, 1]], [[], [0, 2], [1, 2]], [[], [0, 2], [0, 1, 2]], [[], [1, 2], [0]], [[], [1, 2], [1]], [[], [1, 2], [2]], [[], [1, 2], [0, 1]], [[], [1, 2], [0, 2]], [[], [1, 2], [0, 1, 2]], [[], [0, 1, 2], [0]], [[], [0, 1, 2], [1]], [[], [0, 1, 2], [2]], [[], [0, 1, 2], [0, 1]], [[], [0, 1, 2], [0, 2]], [[], [0, 1, 2], [1, 2]], [[0], [], [1]], [[0], [], [2]], [[0], [], [0, 1]], [[0], [], [0, 2]], [[0], [], [1, 2]], [[0], [], [0, 1, 2]], [[0], [1], []], [[0], [1], [2]], [[0], [1], [0, 1]], [[0], [1], [0, 2]], [[0], [1], [1, 2]], [[0], [1], [0, 1, 2]], [[0], [2], []], [[0], [2], [1]], [[0], [2], [0, 1]], [[0], [2], [0, 2]], [[0], [2], [1, 2]], [[0], [2], [0, 1, 2]], [[0], [0, 1], []], [[0], [0, 1], [1]], [[0], [0, 1], [2]], [[0], [0, 1], [0, 2]], [[0], [0, 1], [1, 2]], [[0], [0, 1], [0, 1, 2]], [[0], [0, 2], []], [[0], [0, 2], [1]], [[0], [0, 2], [2]], [[0], [0, 2], [0, 1]], [[0], [0, 2], [1, 2]], [[0], [0, 2], [0, 1, 2]], [[0], [1, 2], []], [[0], [1, 2], [1]], [[0], [1, 2], [2]], [[0], [1, 2], [0, 1]], [[0], [1, 2], [0, 2]], [[0], [1, 2], [0, 1, 2]], [[0], [0, 1, 2], []], [[0], [0, 1, 2], [1]], [[0], [0, 1, 2], [2]], [[0], [0, 1, 2], [0, 1]], [[0], [0, 1, 2], [0, 2]], [[0], [0, 1, 2], [1, 2]], [[1], [], [0]], [[1], [], [2]], [[1], [], [0, 1]], [[1], [], [0, 2]], [[1], [], [1, 2]], [[1], [], [0, 1, 2]], [[1], [0], []], [[1], [0], [2]], [[1], [0], [0, 1]], [[1], [0], [0, 2]], [[1], [0], [1, 2]], [[1], [0], [0, 1, 2]], [[1], [2], []], [[1], [2], [0]], [[1], [2], [0, 1]], [[1], [2], [0, 2]], [[1], [2], [1, 2]], [[1], [2], [0, 1, 2]], [[1], [0, 1], []], [[1], [0, 1], [0]], [[1], [0, 1], [2]], [[1], [0, 1], [0, 2]], [[1], [0, 1], [1, 2]], [[1], [0, 1], [0, 1, 2]], [[1], [0, 2], []], [[1], [0, 2], [0]], [[1], [0, 2], [2]], [[1], [0, 2], [0, 1]], [[1], [0, 2], [1, 2]], [[1], [0, 2], [0, 1, 2]], [[1], [1, 2], []], [[1], [1, 2], [0]], [[1], [1, 2], [2]], [[1], [1, 2], [0, 1]], [[1], [1, 2], [0, 2]], [[1], [1, 2], [0, 1, 2]], [[1], [0, 1, 2], []], [[1], [0, 1, 2], [0]], [[1], [0, 1, 2], [2]], [[1], [0, 1, 2], [0, 1]], [[1], [0, 1, 2], [0, 2]], [[1], [0, 1, 2], [1, 2]], [[2], [], [0]], [[2], [], [1]], [[2], [], [0, 1]], [[2], [], [0, 2]], [[2], [], [1, 2]], [[2], [], [0, 1, 2]], [[2], [0], []], [[2], [0], [1]], [[2], [0], [0, 1]], [[2], [0], [0, 2]], [[2], [0], [1, 2]], [[2], [0], [0, 1, 2]], [[2], [1], []], [[2], [1], [0]], [[2], [1], [0, 1]], [[2], [1], [0, 2]], [[2], [1], [1, 2]], [[2], [1], [0, 1, 2]], [[2], [0, 1], []], [[2], [0, 1], [0]], [[2], [0, 1], [1]], [[2], [0, 1], [0, 2]], [[2], [0, 1], [1, 2]], [[2], [0, 1], [0, 1, 2]], [[2], [0, 2], []], [[2], [0, 2], [0]], [[2], [0, 2], [1]], [[2], [0, 2], [0, 1]], [[2], [0, 2], [1, 2]], [[2], [0, 2], [0, 1, 2]], [[2], [1, 2], []], [[2], [1, 2], [0]], [[2], [1, 2], [1]], [[2], [1, 2], [0, 1]], [[2], [1, 2], [0, 2]], [[2], [1, 2], [0, 1, 2]], [[2], [0, 1, 2], []], [[2], [0, 1, 2], [0]], [[2], [0, 1, 2], [1]], [[2], [0, 1, 2], [0, 1]], [[2], [0, 1, 2], [0, 2]], [[2], [0, 1, 2], [1, 2]], [[0, 1], [], [0]], [[0, 1], [], [1]], [[0, 1], [], [2]], [[0, 1], [], [0, 2]], [[0, 1], [], [1, 2]], [[0, 1], [], [0, 1, 2]], [[0, 1], [0], []], [[0, 1], [0], [1]], [[0, 1], [0], [2]], [[0, 1], [0], [0, 2]], [[0, 1], [0], [1, 2]], [[0, 1], [0], [0, 1, 2]], [[0, 1], [1], []], [[0, 1], [1], [0]], [[0, 1], [1], [2]], [[0, 1], [1], [0, 2]], [[0, 1], [1], [1, 2]], [[0, 1], [1], [0, 1, 2]], [[0, 1], [2], []], [[0, 1], [2], [0]], [[0, 1], [2], [1]], [[0, 1], [2], [0, 2]], [[0, 1], [2], [1, 2]], [[0, 1], [2], [0, 1, 2]], [[0, 1], [0, 2], []], [[0, 1], [0, 2], [0]], [[0, 1], [0, 2], [1]], [[0, 1], [0, 2], [2]], [[0, 1], [0, 2], [1, 2]], [[0, 1], [0, 2], [0, 1, 2]], [[0, 1], [1, 2], []], [[0, 1], [1, 2], [0]], [[0, 1], [1, 2], [1]], [[0, 1], [1, 2], [2]], [[0, 1], [1, 2], [0, 2]], [[0, 1], [1, 2], [0, 1, 2]], [[0, 1], [0, 1, 2], []], [[0, 1], [0, 1, 2], [0]], [[0, 1], [0, 1, 2], [1]], [[0, 1], [0, 1, 2], [2]], [[0, 1], [0, 1, 2], [0, 2]], [[0, 1], [0, 1, 2], [1, 2]], [[0, 2], [], [0]], [[0, 2], [], [1]], [[0, 2], [], [2]], [[0, 2], [], [0, 1]], [[0, 2], [], [1, 2]], [[0, 2], [], [0, 1, 2]], [[0, 2], [0], []], [[0, 2], [0], [1]], [[0, 2], [0], [2]], [[0, 2], [0], [0, 1]], [[0, 2], [0], [1, 2]], [[0, 2], [0], [0, 1, 2]], [[0, 2], [1], []], [[0, 2], [1], [0]], [[0, 2], [1], [2]], [[0, 2], [1], [0, 1]], [[0, 2], [1], [1, 2]], [[0, 2], [1], [0, 1, 2]], [[0, 2], [2], []], [[0, 2], [2], [0]], [[0, 2], [2], [1]], [[0, 2], [2], [0, 1]], [[0, 2], [2], [1, 2]], [[0, 2], [2], [0, 1, 2]], [[0, 2], [0, 1], []], [[0, 2], [0, 1], [0]], [[0, 2], [0, 1], [1]], [[0, 2], [0, 1], [2]], [[0, 2], [0, 1], [1, 2]], [[0, 2], [0, 1], [0, 1, 2]], [[0, 2], [1, 2], []], [[0, 2], [1, 2], [0]], [[0, 2], [1, 2], [1]], [[0, 2], [1, 2], [2]], [[0, 2], [1, 2], [0, 1]], [[0, 2], [1, 2], [0, 1, 2]], [[0, 2], [0, 1, 2], []], [[0, 2], [0, 1, 2], [0]], [[0, 2], [0, 1, 2], [1]], [[0, 2], [0, 1, 2], [2]], [[0, 2], [0, 1, 2], [0, 1]], [[0, 2], [0, 1, 2], [1, 2]], [[1, 2], [], [0]], [[1, 2], [], [1]], [[1, 2], [], [2]], [[1, 2], [], [0, 1]], [[1, 2], [], [0, 2]], [[1, 2], [], [0, 1, 2]], [[1, 2], [0], []], [[1, 2], [0], [1]], [[1, 2], [0], [2]], [[1, 2], [0], [0, 1]], [[1, 2], [0], [0, 2]], [[1, 2], [0], [0, 1, 2]], [[1, 2], [1], []], [[1, 2], [1], [0]], [[1, 2], [1], [2]], [[1, 2], [1], [0, 1]], [[1, 2], [1], [0, 2]], [[1, 2], [1], [0, 1, 2]], [[1, 2], [2], []], [[1, 2], [2], [0]], [[1, 2], [2], [1]], [[1, 2], [2], [0, 1]], [[1, 2], [2], [0, 2]], [[1, 2], [2], [0, 1, 2]], [[1, 2], [0, 1], []], [[1, 2], [0, 1], [0]], [[1, 2], [0, 1], [1]], [[1, 2], [0, 1], [2]], [[1, 2], [0, 1], [0, 2]], [[1, 2], [0, 1], [0, 1, 2]], [[1, 2], [0, 2], []], [[1, 2], [0, 2], [0]], [[1, 2], [0, 2], [1]], [[1, 2], [0, 2], [2]], [[1, 2], [0, 2], [0, 1]], [[1, 2], [0, 2], [0, 1, 2]], [[1, 2], [0, 1, 2], []], [[1, 2], [0, 1, 2], [0]], [[1, 2], [0, 1, 2], [1]], [[1, 2], [0, 1, 2], [2]], [[1, 2], [0, 1, 2], [0, 1]], [[1, 2], [0, 1, 2], [0, 2]], [[0, 1, 2], [], [0]], [[0, 1, 2], [], [1]], [[0, 1, 2], [], [2]], [[0, 1, 2], [], [0, 1]], [[0, 1, 2], [], [0, 2]], [[0, 1, 2], [], [1, 2]], [[0, 1, 2], [0], []], [[0, 1, 2], [0], [1]], [[0, 1, 2], [0], [2]], [[0, 1, 2], [0], [0, 1]], [[0, 1, 2], [0], [0, 2]], [[0, 1, 2], [0], [1, 2]], [[0, 1, 2], [1], []], [[0, 1, 2], [1], [0]], [[0, 1, 2], [1], [2]], [[0, 1, 2], [1], [0, 1]], [[0, 1, 2], [1], [0, 2]], [[0, 1, 2], [1], [1, 2]], [[0, 1, 2], [2], []], [[0, 1, 2], [2], [0]], [[0, 1, 2], [2], [1]], [[0, 1, 2], [2], [0, 1]], [[0, 1, 2], [2], [0, 2]], [[0, 1, 2], [2], [1, 2]], [[0, 1, 2], [0, 1], []], [[0, 1, 2], [0, 1], [0]], [[0, 1, 2], [0, 1], [1]], [[0, 1, 2], [0, 1], [2]], [[0, 1, 2], [0, 1], [0, 2]], [[0, 1, 2], [0, 1], [1, 2]], [[0, 1, 2], [0, 2], []], [[0, 1, 2], [0, 2], [0]], [[0, 1, 2], [0, 2], [1]], [[0, 1, 2], [0, 2], [2]], [[0, 1, 2], [0, 2], [0, 1]], [[0, 1, 2], [0, 2], [1, 2]], [[0, 1, 2], [1, 2], []], [[0, 1, 2], [1, 2], [0]], [[0, 1, 2], [1, 2], [1]], [[0, 1, 2], [1, 2], [2]], [[0, 1, 2], [1, 2], [0, 1]], [[0, 1, 2], [1, 2], [0, 2]]]`,
+ right: `[[[], [0], [1], [2], [0, 1], [0, 2], [1, 2], [0, 1, 2]]]`', src/utils/misc.rs:48:9
+stack backtrace:
+   0: rust_begin_unwind
+             at /rustc/4b91a6ea7258a947e59c6522cd5898e7c0a6a88f/library/std/src/panicking.rs:584:5
+   1: core::panicking::panic_fmt
+             at /rustc/4b91a6ea7258a947e59c6522cd5898e7c0a6a88f/library/core/src/panicking.rs:142:14
+   2: core::panicking::assert_failed_inner
+   3: core::panicking::assert_failed
+             at /rustc/4b91a6ea7258a947e59c6522cd5898e7c0a6a88f/library/core/src/panicking.rs:181:5
+   4: music_theory::utils::misc::tests::test_sub_vecs
+             at ./src/utils/misc.rs:48:9
+   5: music_theory::utils::misc::tests::test_sub_vecs::{{closure}}
+             at ./src/utils/misc.rs:47:5
+   6: core::ops::function::FnOnce::call_once
+             at /rustc/4b91a6ea7258a947e59c6522cd5898e7c0a6a88f/library/core/src/ops/function.rs:248:5
+   7: core::ops::function::FnOnce::call_once
+             at /rustc/4b91a6ea7258a947e59c6522cd5898e7c0a6a88f/library/core/src/ops/function.rs:248:5
+note: Some details are omitted, run with `RUST_BACKTRACE=full` for a verbose backtrace.
+
+
+failures:
+    utils::misc::tests::test_sub_vecs
+
+test result: FAILED. 147 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+

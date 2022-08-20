@@ -399,7 +399,7 @@ mod tests{
     }
 
     #[test]
-    fn contains(){
+    fn scale_contains(){
         let scale = Scale(vec![Note(0), Note(1), Note(2)]);
         assert!(scale.contains(&Note(0)));
         assert!(scale.contains(&Note(1)));
@@ -408,12 +408,39 @@ mod tests{
     }
 
     #[test]
-    fn contains_all(){
+    fn scale_contains_all(){
         let scale = Scale(vec![Note(0), Note(1), Note(2)]);
         assert!(scale.contains_all(&[Note(0)]));
         assert!(scale.contains_all(&[Note(0), Note(1)]));
         assert!(scale.contains_all(&[Note(0), Note(1), Note(2)]));
         assert!(!scale.contains_all(&[Note(0), Note(1), Note(2), Note(3)]));
+    }
+
+    #[test]
+    fn scale_as_subs(){
+        let (c, d, e) = (Note::C1, Note::D1, Note::E1);
+        let scale = Scale(vec![c, d, e]);
+        assert_eq!(
+            scale.as_subs(None),
+            vec![
+                Scale(vec![]),
+                Scale(vec![c]),
+                Scale(vec![d]),
+                Scale(vec![e]),
+                Scale(vec![c, d]),
+                Scale(vec![d, c]),
+                Scale(vec![c, e]),
+                Scale(vec![e, c]),
+                Scale(vec![d, e]),
+                Scale(vec![e, d]),
+                Scale(vec![c, d, e]),
+                Scale(vec![c, e, d]),
+                Scale(vec![d, c, e]),
+                Scale(vec![d, e, c]),
+                Scale(vec![e, c, d]),
+                Scale(vec![e, d, c]),
+            ]
+        );
     }
 
     #[test]

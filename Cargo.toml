@@ -22,5 +22,6 @@ path = "src/bin.rs"
 
 [dependencies]
 fnrs = "0.1.4"
+itertools = "0.10.3"
 lapp = "0.4.0"
 vec-string = "0.1.1"

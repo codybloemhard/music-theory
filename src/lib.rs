@@ -116,13 +116,12 @@ pub fn notes_analysis(input_string: String, style: ChordStyle) -> Vec<(String, S
         .for_each(|s| { let _ = writeln!(string, "{}", s); });
     res.push(("Inversions".to_string(), mem::take(&mut string)));
 
-    // rchord
-    //     .clone().into_subseq_chords()
-    //     .into_iter().map(|c| (c.as_string(true, style),c))
-    //     .filter(|(s,_)| !s.contains('[') /* && !s.contains('(') */ && !s.is_empty())
-    //     .map(|(mut s,c)| { s.push_str(&format!(": {:?}", c.to_scale().into_pcs())); s })
-    //     .for_each(|s| { string.push_str(&format!("{}\n", s)); });
-    // res.push(("Sub Chords".to_string(), mem::take(&mut string)));
+    rchord
+        .as_subs(Some(7))
+        .into_iter().map(|c| (c.as_string(style), c))
+        .filter(|(s, _)| !s.contains('[') /* && !s.contains('(') */ && !s.is_empty())
+        .for_each(|(s, c)| { let _ = writeln!(string, "{}: {:?}", s, c.to_scale().to_pcs()); });
+    res.push(("Sub Chords".to_string(), mem::take(&mut string)));
 
     if let Some(ctwts) = rchord.as_chordtone_wholetone_scale(){
         let mo = find_scale(&ctwts);

@@ -1,3 +1,4 @@
+use itertools::*;
 
 macro_rules! ImplAssign{ ($assigntrait:ty, $implementee:ty, $funcname:ident, $innerfunc:ident) => {
         impl $assigntrait for $implementee{
@@ -19,6 +20,18 @@ pub fn is_sorted<T: PartialOrd + Copy>(v: &[T]) -> bool{
     true
 }
 
+pub fn sub_vecs<'a, T>(arr: &'a[T], max_len: Option<usize>) -> Vec<Vec<T>>
+    where
+        &'a[T]: IntoIterator,
+        T: Copy
+{
+    arr.iter().copied()
+        .powerset()
+        .filter(|ps| ps.len() <= max_len.unwrap_or(usize::MAX))
+        .flat_map(|ps| { let l = ps.len(); ps.into_iter().permutations(l).collect::<Vec<_>>() })
+        .collect::<Vec<_>>()
+}
+
 #[cfg(test)]
 mod tests{
     use super::*;
@@ -30,5 +43,40 @@ mod tests{
         assert!(is_sorted(&[1, 1]));
         assert!(!is_sorted(&[3, 1]));
         assert!(!is_sorted(&[3, 4, 3, 5]));
+    }
+
+    #[test]
+    fn test_sub_vecs(){
+        assert_eq!(
+            sub_vecs(&[0, 1], None),
+            vec![
+                vec![],
+                vec![0],
+                vec![1],
+                vec![0, 1],
+                vec![1, 0],
+            ]
+        );
+        assert_eq!(
+            sub_vecs(&[0, 1, 2], None),
+            vec![
+                vec![],
+                vec![0],
+                vec![1],
+                vec![2],
+                vec![0, 1],
+                vec![1, 0],
+                vec![0, 2],
+                vec![2, 0],
+                vec![1, 2],
+                vec![2, 1],
+                vec![0, 1, 2],
+                vec![0, 2, 1],
+                vec![1, 0, 2],
+                vec![1, 2, 0],
+                vec![2, 0, 1],
+                vec![2, 1, 0],
+            ]
+        );
     }
 }

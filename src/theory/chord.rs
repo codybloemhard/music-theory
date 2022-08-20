@@ -1,9 +1,11 @@
 use super::{ Note, Notes, Scale };
 use super::interval::*;
 use super::traits::{
-    VecWrapper, Wrapper, ToNamedInterval, AsScale, ToPC, ToRootedChord
+    VecWrapper, Wrapper, ToNamedInterval, AsScale, ToPC, ToRootedChord, AsSubs
 };
 use super::super::utils::{ is_sorted };
+
+use itertools::*;
 
 pub const NUM_SUPS: [char; 10] = ['⁰', '¹', '²', '³', '⁴', '⁵', '⁶', '⁷', '⁸', '⁹'];
 pub const NUM_SUBS: [char; 10] = ['₀', '₁', '₂', '₃', '₄', '₅', '₆', '₇', '₈', '₉'];
@@ -14,6 +16,7 @@ pub const BASE_SHORT: [&str; 5] = ["", "M", "m", "aug", "dim"];
 pub const BASE_SYM: [&str; 5] = ["", "Δ", "-", "+", "°"];
 pub const BASES: [[&str; 5]; 3] = [BASE_LONG, BASE_SHORT, BASE_SYM];
 
+pub const POWER: &[Note] = &[_PER5];
 pub const MAJOR: &[Note] = &[_MAJ3, _PER5];
 pub const MINOR: &[Note] = &[_MIN3, _PER5];
 pub const MINOR_AUGMENTED: &[Note] = &[_MIN3, _AUG5];
@@ -53,6 +56,7 @@ pub const DOMINANT_THIRTEENTH_CHORD: &[Note] = &[_MAJ3, _PER5, _MIN7, _MAJ9, _MA
 pub type ChordBook = &'static [(&'static [Note], &'static str, usize, bool)];
 
 pub const STD_CHORD_BOOK: ChordBook = &[
+    (POWER, "power", 0, false),
     (MAJOR, "", 1, false),
     (MINOR, "", 2, false),
     (MINOR_AUGMENTED, "", 23, true),
@@ -338,6 +342,14 @@ impl AsScale for Chord{
     }
 }
 
+impl AsSubs for RootedChord{
+    fn as_subs(&self, max_len: Option<usize>) -> Vec<Self>{
+        let scale = self.as_scale();
+        let sub_scales = scale.as_subs(max_len);
+        sub_scales.into_iter().map(|s| s.to_rooted_chord()).dedup().collect::<Vec<_>>()
+    }
+}
+
 impl std::fmt::Display for ScaleDegree{
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result{
         let res = match self{
@@ -441,7 +453,7 @@ mod tests{
         let verbose = ChordStyle::Extra(MStyle::Long, EStyle::Long);
 
         assert_eq!(&Chord::new(&[_MIN3]).as_string(std), "X[♭3]");
-        assert_eq!(&Chord::new(&[_PER5]).as_string(std), "XΔno3");
+        assert_eq!(&Chord::new(&[_PER5]).as_string(std), "Xpower");
         assert_eq!(&Chord::new(&[_MAJ3,_PER5]).as_string(spl), "X[♮3♮5]");
         assert_eq!(&Chord::new(&[_MAJ3,_PER5]).as_string(std), "XΔ");
         assert_eq!(&Chord::new(&[_MAJ3,_PER5]).as_string(ext), "XΔ");
@@ -736,5 +748,27 @@ mod tests{
             &RelativeChord::new(ScaleDegree::II, MINOR_NINTH_CHORD).to_string(),
             "II-9"
         );
+    }
+
+    #[test]
+    fn rooted_chord_as_subs(){
+        let (x, y, z) = (Note(0), Note(1), Note(2));
+        let rc = Scale(vec![x, y, z]).to_rooted_chord();
+        let mut iter = rc.as_subs(None).into_iter();
+        // because (zero, []) happens to be the same as (x, []) here
+        // assert_eq!(iter.next(), Some(RootedChord{ root: Note::ZERO, chord: Chord(vec![]) }));
+        assert_eq!(iter.next(), Some(RootedChord{ root: x, chord: Chord(vec![]) }));
+        assert_eq!(iter.next(), Some(RootedChord{ root: y, chord: Chord(vec![]) }));
+        assert_eq!(iter.next(), Some(RootedChord{ root: z, chord: Chord(vec![]) }));
+        assert_eq!(iter.next(), Some(RootedChord{ root: x, chord: Chord(vec![Note(1)]) }));
+        assert_eq!(iter.next(), Some(RootedChord{ root: y, chord: Chord(vec![Note(11)]) }));
+        assert_eq!(iter.next(), Some(RootedChord{ root: x, chord: Chord(vec![Note(2)]) }));
+        assert_eq!(iter.next(), Some(RootedChord{ root: z, chord: Chord(vec![Note(10)]) }));
+        assert_eq!(iter.next(), Some(RootedChord{ root: y, chord: Chord(vec![Note(1)]) }));
+        assert_eq!(iter.next(), Some(RootedChord{ root: z, chord: Chord(vec![Note(11)]) }));
+        assert_eq!(iter.next(), Some(RootedChord{ root: x, chord: Chord(vec![Note(1), Note(2)]) }));
+        assert_eq!(iter.next(), Some(RootedChord{ root: y, chord: Chord(vec![Note(1), Note(11)]) }));
+        assert_eq!(iter.next(), Some(RootedChord{ root: z, chord: Chord(vec![Note(10), Note(11)]) }));
+        assert_eq!(iter.next(), None);
     }
 }

@@ -1,8 +1,9 @@
 use super::traits::{
     Cyclic, ToNote, ToPC, ToLetterTry, ToEnharmonicNote, AsScaleTry, OctaveShiftable,
-    AsSteps, AsStepsTry
+    AsSteps, AsStepsTry, AsSubs
 };
 use super::{ Note, _Note, Letter, Interval, EnharmonicNote, Scale, Octave, Steps };
+use crate::utils::sub_vecs;
 
 pub const A:  PC = PC::A;
 pub const AS: PC = PC::As;
@@ -61,6 +62,12 @@ impl Cyclic for PC{
 
     fn prev(self) -> Self{
         (self as _Note + 11).to_pc()
+    }
+}
+
+impl AsSubs for PCs{
+    fn as_subs(&self, max_len: Option<usize>) -> Vec<Self>{
+        sub_vecs(self, max_len)
     }
 }
 
@@ -229,6 +236,20 @@ mod tests{
             vec![PC::C, PC::D, PC::E, PC::F, PC::G, PC::A, PC::B].to_steps_try(true),
             Some(Steps(vec![Interval(2), Interval(2), Interval(1), Interval(2),
                         Interval(2), Interval(2), Interval(1)]))
+        );
+    }
+
+    #[test]
+    fn as_subs(){
+        assert_eq!(
+            vec![PC::A, PC::B].as_subs(None),
+            vec![
+                vec![],
+                vec![PC::A],
+                vec![PC::B],
+                vec![PC::A, PC::B],
+                vec![PC::B, PC::A],
+            ]
         );
     }
 }
