@@ -417,6 +417,16 @@ mod tests{
     }
 
     #[test]
+    fn scale_contains_any(){
+        let scale = Scale(vec![Note(0), Note(1), Note(2)]);
+        assert!(scale.contains_any(&[Note(0)]));
+        assert!(scale.contains_any(&[Note(1)]));
+        assert!(scale.contains_any(&[Note(2)]));
+        assert!(scale.contains_any(&[Note(3245), Note(2)]));
+        assert!(!scale.contains_any(&[Note(3)]));
+    }
+
+    #[test]
     fn scale_as_subs(){
         let (c, d, e) = (Note::C1, Note::D1, Note::E1);
         let scale = Scale(vec![c, d, e]);
