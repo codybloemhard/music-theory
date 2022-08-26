@@ -3,7 +3,7 @@ use super::traits::{
     Cyclic, ToNamedOctaveInterval, Wrapper, AsIonianRelativeStringTry
 };
 use super::note::{ Note, Octave, OctaveShift };
-use crate::utils::ImplAssign;
+use crate::utils::{ impl_op, impl_op_assign };
 
 use std::cmp::Ordering;
 use std::ops::{ Add, Sub };
@@ -209,24 +209,10 @@ impl std::ops::Neg for Interval{
     }
 }
 
-impl std::ops::Add for Interval{
-    type Output = Self;
-
-    fn add(self, other: Self) -> Self{
-        Self::new(self.0 + other.0)
-    }
-}
-
-impl std::ops::Sub for Interval{
-    type Output = Self;
-
-    fn sub(self, other: Self) -> Self{
-        Self::new(self.0 - other.0)
-    }
-}
-
-ImplAssign!(std::ops::AddAssign, Interval, add_assign, add);
-ImplAssign!(std::ops::SubAssign, Interval, sub_assign, sub);
+impl_op!(std::ops::Add, Interval, Interval, add, add, Self::new);
+impl_op!(std::ops::Sub, Interval, Interval, sub, sub, Self::new);
+impl_op_assign!(std::ops::AddAssign, Interval, add_assign, add);
+impl_op_assign!(std::ops::SubAssign, Interval, sub_assign, sub);
 
 impl std::fmt::Display for Interval{
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result{

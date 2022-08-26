@@ -3,7 +3,7 @@ use super::traits::{
     ToEnharmonicNote, Wrapper
 };
 use super::{ Interval, _OCTAVE, PC, Letter, EnharmonicNote };
-use crate::utils::ImplAssign;
+use crate::utils::{ impl_op, impl_op_assign };
 
 use std::ops::{ Add, Mul, Rem };
 
@@ -14,35 +14,41 @@ pub type OctaveShift = i16;
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct Note(pub(crate) u32);
 
+macro_rules! define_notes{
+    ($octave: expr,
+        $an: ident, $as: ident, $bn: ident, $cn: ident, $cs: ident, $dn: ident, $ds: ident,
+        $en: ident, $fn: ident, $fs: ident, $gn: ident, $gs: ident
+    ) => {
+        pub const $an: Note = Note(0 + $octave * 12);
+        pub const $as: Note = Note(1 + $octave * 12);
+        pub const $bn: Note = Note(2 + $octave * 12);
+        pub const $cn: Note = Note(3 + $octave * 12);
+        pub const $cs: Note = Note(4 + $octave * 12);
+        pub const $dn: Note = Note(5 + $octave * 12);
+        pub const $ds: Note = Note(6 + $octave * 12);
+        pub const $en: Note = Note(7 + $octave * 12);
+        pub const $fn: Note = Note(8 + $octave * 12);
+        pub const $fs: Note = Note(9 + $octave * 12);
+        pub const $gn: Note = Note(10 + $octave * 12);
+        pub const $gs: Note = Note(11 + $octave * 12);
+    }
+}
+
 impl Note{
     pub const MAX: Note = Note(1073741824); // 1 << 30
     pub const MIN: Note = Note(0);
     pub const ZERO: Note = Note(0);
-    pub const A1: Note  = Note(12);
-    pub const AS1: Note = Note(13);
-    pub const B1: Note  = Note(14);
-    pub const C1: Note  = Note(15);
-    pub const CS1: Note = Note(16);
-    pub const D1: Note  = Note(17);
-    pub const DS1: Note = Note(18);
-    pub const E1: Note  = Note(19);
-    pub const F1: Note  = Note(20);
-    pub const FS1: Note = Note(21);
-    pub const G1: Note  = Note(22);
-    pub const GS1: Note = Note(23);
-    pub const A2: Note  = Note(24);
-    pub const AS2: Note = Note(25);
-    pub const B2: Note  = Note(26);
-    pub const C2: Note  = Note(27);
-    pub const CS2: Note = Note(28);
-    pub const D2: Note  = Note(29);
-    pub const DS2: Note = Note(30);
-    pub const E2: Note  = Note(31);
-    pub const F2: Note  = Note(32);
-    pub const FS2: Note = Note(33);
-    pub const G2: Note  = Note(34);
-    pub const GS2: Note = Note(35);
-    pub const A4:  Note = Note(48);
+
+    define_notes!(0, A0, AS0, B0, C0, CS0, D0, DS0, E0, F0, FS0, G0, GS0);
+    define_notes!(1, A1, AS1, B1, C1, CS1, D1, DS1, E1, F1, FS1, G1, GS1);
+    define_notes!(2, A2, AS2, B2, C2, CS2, D2, DS2, E2, F2, FS2, G2, GS2);
+    define_notes!(3, A3, AS3, B3, C3, CS3, D3, DS3, E3, F3, FS3, G3, GS3);
+    define_notes!(4, A4, AS4, B4, C4, CS4, D4, DS4, E4, F4, FS4, G4, GS4);
+    define_notes!(5, A5, AS5, B5, C5, CS5, D5, DS5, E5, F5, FS5, G5, GS5);
+    define_notes!(6, A6, AS6, B6, C6, CS6, D6, DS6, E6, F6, FS6, G6, GS6);
+    define_notes!(7, A7, AS7, B7, C7, CS7, D7, DS7, E7, F7, FS7, G7, GS7);
+    define_notes!(8, A8, AS8, B8, C8, CS8, D8, DS8, E8, F8, FS8, G8, GS8);
+    define_notes!(9, A9, AS9, B9, C9, CS9, D9, DS9, E9, F9, FS9, G9, GS9);
 
     pub fn new(note: u32) -> Self{
         Self(note.min(Self::MAX.0))
@@ -69,14 +75,6 @@ impl Note{
 
 // General implementations
 
-impl std::ops::Add for Note{
-    type Output = Self;
-
-    fn add(self, other: Self) -> Self{
-        Self::new(self.0 + other.0)
-    }
-}
-
 impl std::ops::Sub for Note{
     type Output = Interval;
 
@@ -85,25 +83,12 @@ impl std::ops::Sub for Note{
     }
 }
 
-impl std::ops::Rem for Note{
-    type Output = Self;
-
-    fn rem(self, modulus: Self) -> Self::Output{
-        Self(self.0 % modulus.0)
-    }
-}
-
-impl std::ops::Mul for Note{
-    type Output = Self;
-
-    fn mul(self, other: Self) -> Self::Output{
-        Self::new(self.0 * other.0)
-    }
-}
-
-ImplAssign!(std::ops::AddAssign, Note, add_assign, add);
-ImplAssign!(std::ops::RemAssign, Note, rem_assign, rem);
-ImplAssign!(std::ops::MulAssign, Note, mul_assign, mul);
+impl_op!(std::ops::Add, Note, Note, add, add, Self::new);
+impl_op!(std::ops::Rem, Note, Note, rem, rem, Self);
+impl_op!(std::ops::Mul, Note, Note, mul, mul, Self::new);
+impl_op_assign!(std::ops::AddAssign, Note, add_assign, add);
+impl_op_assign!(std::ops::RemAssign, Note, rem_assign, rem);
+impl_op_assign!(std::ops::MulAssign, Note, mul_assign, mul);
 
 impl Wrapper for Note{
     type Inner = _Note;

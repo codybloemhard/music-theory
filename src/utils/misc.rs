@@ -1,15 +1,30 @@
 use itertools::*;
 
-macro_rules! ImplAssign{ ($assigntrait:ty, $implementee:ty, $funcname:ident, $innerfunc:ident) => {
+macro_rules! impl_op{
+    ($assigntrait: ty, $implementee: ty, $outtype: ty, $funcname: ident, $innerfunc: ident,
+     $wrapping: path
+    ) => {
         impl $assigntrait for $implementee{
-            fn $funcname(&mut self, other: Self){
+            type Output = $outtype;
+
+            fn $funcname(self, other: Self) -> Self::Output{
+                $wrapping(self.0.$innerfunc(other.0))
+            }
+        }
+    }
+}
+pub(crate) use impl_op;
+
+macro_rules! impl_op_assign{
+    ($assigntrait:ty, $implementee:ty, $funcname:ident, $innerfunc:ident) => {
+        impl $assigntrait for $implementee{
+            fn $funcname(&mut self, other: Self) {
                 *self = self.$innerfunc(other);
             }
         }
     }
 }
-
-pub(crate) use ImplAssign;
+pub(crate) use impl_op_assign;
 
 pub fn is_sorted<T: PartialOrd + Copy>(v: &[T]) -> bool{
     let mut last = v[0];
