@@ -454,6 +454,17 @@ mod tests{
     }
 
     #[test]
+    fn scale_indexing(){
+        let (c, d, e) = (Note::C1, Note::D1, Note::E1);
+        let mut scale = Scale(vec![c, d, e]);
+        assert_eq!(scale[0], c);
+        assert_eq!(scale[1], d);
+        assert_eq!(scale[2], e);
+        scale[0] = d;
+        assert_eq!(scale[0], d);
+    }
+
+    #[test]
     fn steps_len(){
         assert_eq!(Steps(vec![Interval(1), Interval(2)]).len(), 2);
     }
