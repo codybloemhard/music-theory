@@ -5,7 +5,7 @@ use super::traits::{
 use super::{ Interval, _OCTAVE, PC, Letter, EnharmonicNote };
 use crate::utils::{ impl_op, impl_op_assign };
 
-use std::ops::{ Add, Mul, Rem };
+use std::ops::{ Add, Sub, Mul, Rem, AddAssign, RemAssign, MulAssign, RangeBounds, Bound };
 
 pub type _Note = u32;
 pub type Octave = u16;
@@ -75,7 +75,7 @@ impl Note{
 
 // General implementations
 
-impl std::ops::Sub for Note{
+impl Sub for Note{
     type Output = Interval;
 
     fn sub(self, other: Self) -> Interval{
@@ -83,12 +83,24 @@ impl std::ops::Sub for Note{
     }
 }
 
-impl_op!(std::ops::Add, Note, Note, add, add, Self::new);
-impl_op!(std::ops::Rem, Note, Note, rem, rem, Self);
-impl_op!(std::ops::Mul, Note, Note, mul, mul, Self::new);
-impl_op_assign!(std::ops::AddAssign, Note, add_assign, add);
-impl_op_assign!(std::ops::RemAssign, Note, rem_assign, rem);
-impl_op_assign!(std::ops::MulAssign, Note, mul_assign, mul);
+impl_op!(Add, Note, Note, add, add, Self::new);
+impl_op!(Rem, Note, Note, rem, rem, Self);
+impl_op!(Mul, Note, Note, mul, mul, Self::new);
+impl_op_assign!(AddAssign, Note, add_assign, add);
+impl_op_assign!(RemAssign, Note, rem_assign, rem);
+impl_op_assign!(MulAssign, Note, mul_assign, mul);
+
+// Is tested but tarpaulin doesn't see it?
+#[cfg(not(tarpaulin))]
+impl RangeBounds<Note> for Note{
+    fn start_bound(&self) -> Bound<&Self>{
+        Bound::Included(&Self::MIN)
+    }
+
+    fn end_bound(&self) -> Bound<&Self>{
+        Bound::Excluded(&Self::MAX)
+    }
+}
 
 impl Wrapper for Note{
     type Inner = _Note;
@@ -263,6 +275,19 @@ mod tests{
             assert_eq!(z, x * y);
         }
         }
+    }
+
+    #[test]
+    fn range_bounds(){
+        assert_eq!((Note::F1..Note::C2).start_bound(), Bound::Included(&Note::F1));
+        assert_eq!((Note::F1..Note::C2).end_bound(), Bound::Excluded(&Note::C2));
+        assert!((Note::F1..Note::C2).contains(&Note::F1));
+        assert!((Note::F1..Note::C2).contains(&Note::G1));
+        assert!(!(Note::F1..Note::C2).contains(&Note::C2));
+        // assert_eq!(
+        //     (Note::A1..Note::C1).collect::<Vec<_>>(),
+        //     vec![Note::A1, Note::AS1, Note::B1]
+        // );
     }
 
     #[test]

@@ -5,6 +5,8 @@ use super::traits::{
 use super::{ Note, _Note, Letter, Interval, EnharmonicNote, Scale, Octave, Steps };
 use crate::utils::sub_vecs;
 
+use std::ops::{ RangeBounds, Bound };
+
 pub const A:  PC = PC::A;
 pub const AS: PC = PC::As;
 pub const B:  PC = PC::B;
@@ -34,6 +36,18 @@ impl PC{
 }
 
 pub type PCs = Vec<PC>;
+
+// Is tested but tarpaulin doesn't see it?
+#[cfg(not(tarpaulin))]
+impl RangeBounds<PC> for PC{
+    fn start_bound(&self) -> Bound<&Self>{
+        Bound::Included(&Self::A)
+    }
+
+    fn end_bound(&self) -> Bound<&Self>{
+        Bound::Included(&Self::Gs)
+    }
+}
 
 impl std::fmt::Display for PC{
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result{
@@ -150,7 +164,17 @@ impl AsStepsTry for PCs{
 
 #[cfg(test)]
 mod tests{
+    use super::*;
     use super::super::*;
+
+    #[test]
+    fn range_bounds(){
+        assert_eq!((PC::C..PC::F).start_bound(), Bound::Included(&PC::C));
+        assert_eq!((PC::C..PC::F).end_bound(), Bound::Excluded(&PC::F));
+        assert!((PC::C..PC::F).contains(&PC::C));
+        assert!(!(PC::C..PC::F).contains(&PC::F));
+        assert!((PC::C..PC::F).contains(&PC::E));
+    }
 
     #[test]
     fn to_note(){
