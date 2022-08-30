@@ -288,7 +288,7 @@ impl RootedChord{
         for (i, note) in scale.iter().enumerate().take(4){
             res.push(*note);
             if i >= 3 { continue; }
-            let between = if scale.len() > i + 4 { scale.0[i + 4].0 - _OCTAVE.0 }
+            let between = if scale.len() > i + 4 { scale[i + 4].0 - _OCTAVE.0 }
             else { note.0 + _MAJ2.0 };
             res.push(Note(between));
         }
@@ -298,9 +298,9 @@ impl RootedChord{
     pub fn as_inversion(&self) -> Self{
         let mut scale = self.as_scale();
         if scale.is_empty() { return Self::default(); }
-        let mut root = scale.0[0];
+        let mut root = scale[0];
         if scale.len() == 1 { return Self::new(root, &[]); }
-        let top = scale.0[scale.len() - 1];
+        let top = scale[scale.len() - 1];
         while root < top {
             root += _OCTAVE;
         }

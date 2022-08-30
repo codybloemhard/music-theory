@@ -61,6 +61,20 @@ macro_rules! ImplVecWrapper{
                 subs.into_iter().map(|s| Self(s)).collect::<Vec<_>>()
             }
         }
+
+        impl std::ops::Index<usize> for $type{
+            type Output = $item;
+
+            fn index(&self, index: usize) -> &Self::Output{
+                &self.0[index]
+            }
+        }
+
+        impl std::ops::IndexMut<usize> for $type{
+            fn index_mut(&mut self, index: usize) -> &mut Self::Output{
+                &mut self.0[index]
+            }
+        }
     }
 }
 

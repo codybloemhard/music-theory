@@ -185,7 +185,7 @@ impl HeptatonicScaleNamer{
             let mut dp = 0;
             let mut du = 0;
             for i in 0..7{
-                let d = nameless.0[i] - scale.0[i];
+                let d = nameless[i] - scale[i];
                 if d == Interval::ROOT { continue; }
                 dp += 1;
                 du += d.abs().unwrap();
@@ -198,9 +198,9 @@ impl HeptatonicScaleNamer{
             base_name = name.to_string();
         }
         for i in 0..7{
-            let d = nameless.0[i] - base_scale.0[i];
+            let d = nameless[i] - base_scale[i];
             if d == Interval::ROOT { continue; }
-            let d = nameless.0[i] - ionian.0[i];
+            let d = nameless[i] - ionian[i];
             let _ = write!(base_name, " {}{}", d, i + 1);
         }
         Some(base_name)

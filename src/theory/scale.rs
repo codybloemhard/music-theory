@@ -18,7 +18,7 @@ impl Scale{
     pub fn as_octave_steps(&self) -> Option<Steps>{
         if self.is_empty(){ return None; }
         let mut res = Vec::new();
-        let mut last = self.0[0];
+        let mut last = self[0];
         let mut sum = Interval::ROOT;
         for note in self.iter().skip(1){
             let diff = *note - last;
@@ -126,7 +126,7 @@ impl ModeTrait for Steps{
 impl AsSteps for Scale{
     fn as_steps(&self, complete_octave_cycle: bool) -> Steps{
         if self.0.is_empty() { return Steps::default(); }
-        let mut last = self.0[0];
+        let mut last = self[0];
         let mut intervals = Vec::new();
         for note in self.iter().skip(1){
             let diff = *note - last;
@@ -134,7 +134,7 @@ impl AsSteps for Scale{
             last = *note;
         }
         if complete_octave_cycle {
-            intervals.push(self.0[0] - last + Interval::OCTAVE);
+            intervals.push(self[0] - last + Interval::OCTAVE);
         }
         Steps(intervals)
     }
@@ -153,7 +153,7 @@ impl AsPCs for Scale{
 impl AsChord for Scale{
     fn as_chord(&self) -> Chord{
         if self.is_empty() { return Chord(Vec::new()); }
-        let root = self.0[0];
+        let root = self[0];
         let mut intervals = vec![];
         for note in self.iter().skip(1){
             let mut diff = note.0 as i32 - root.0 as i32;
@@ -203,11 +203,11 @@ fn as_enharmonic_notes_with_start_heptatonic(scale: &Scale, start: Option<Enharm
     let mut res = Vec::new();
     if scale.is_empty() { return res; }
     let (skip, mut target_letter) = if let Some(en) = start{
-        if en.to_note() != scale.0[0] { return res; }
+        if en.to_note() != scale[0] { return res; }
         res.push(en);
         (1, en.next().letter)
     } else {
-        (0, scale.0[0].to_enharmonic_note().letter)
+        (0, scale[0].to_enharmonic_note().letter)
     };
     for note in scale.iter().skip(skip){
         let en = note.to_enharmonic_note();
@@ -237,8 +237,8 @@ impl AsEnharmonicNotesWithStart for Scale{
 impl AsRootedChord for Scale{
     fn as_rooted_chord(&self) -> RootedChord{
         if self.is_empty() { RootedChord{ root: Note::ZERO, chord: Chord(vec![]) } }
-        else if self.len() == 1 { RootedChord{ root: self.0[0], chord: Chord(vec![]) } }
-        else { RootedChord::from_chord(self.0[0], self.as_chord()) }
+        else if self.len() == 1 { RootedChord{ root: self[0], chord: Chord(vec![]) } }
+        else { RootedChord::from_chord(self[0], self.as_chord()) }
     }
 }
 
@@ -266,8 +266,8 @@ impl AsRelativeIntervals for Steps{
         for i in 0..self.0.len(){
             let diff = acc_a - acc_b;
             res.push(diff);
-            acc_a += self.0[i];
-            acc_b += reference.0[i];
+            acc_a += self[i];
+            acc_b += reference[i];
         }
         Some(res)
     }
