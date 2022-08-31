@@ -1,13 +1,13 @@
 [package]
 name = "music-theory-query"
-version = "0.1.15"
+version = "0.2.0"
 authors = ["Cody Bloemhard <codybloemhard@gmail.com>"]
 edition = "2021"
 description = "Music theory queries"
 readme = "README.md"
 license = "GPL-3.0"
 repository = "https://github.com/codybloemhard/music-theory"
-# keywords = ["text"]
+keywords = ["music", "library"]
 # categories = ["command-line-interface"]
 
 [lib]
