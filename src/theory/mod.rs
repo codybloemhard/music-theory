@@ -10,6 +10,7 @@ pub mod scale;
 pub mod chord;
 /// An interval is a distance between notes.
 pub mod interval;
+/// An enharmonic note is a note that takes into account enharmonic spelling.
 pub mod enharmonic_note;
 
 pub use traits::*;
