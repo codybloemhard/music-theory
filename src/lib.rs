@@ -1,6 +1,10 @@
 //! Rust library for music theory objects and queries.
 //! The main types are:
 //! - [Note][crate::theory::note::Note]
+//! - [PC][crate::theory::pc::PC]
+//! - [Interval][crate::theory::interval::Interval]
+//! - [NamedInterval][crate::theory::interval::NamedInterval]
+//! - [NamedOctaveInterval][crate::theory::interval::NamedOctaveInterval]
 
 pub mod theory;
 #[macro_use]

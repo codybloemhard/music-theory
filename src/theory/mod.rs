@@ -8,6 +8,7 @@ pub mod note;
 pub mod pc;
 pub mod scale;
 pub mod chord;
+/// An interval is a distance between notes.
 pub mod interval;
 pub mod enharmonic_note;
 

@@ -1,3 +1,5 @@
+#![deny(missing_docs)]
+
 use super::traits::{
     GeneratablePartialOrder, OctaveShiftable, AddInterval, ToInterval, ToNamedInterval,
     Cyclic, ToNamedOctaveInterval, Wrapper, AsIonianRelativeStringTry
@@ -51,109 +53,143 @@ pub(crate) const _AUG6: Note = Note(10);
 pub(crate) const _DIM8: Note = Note(11);
 pub(crate) const _AUG7: Note = Note(12);
 
+/// An interval is a distance between notes.
+/// ```
+/// use music_theory::theory::*;
+/// assert_eq!(Note::C2 - Note::A2, Interval::new(3));
+/// ```
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct Interval(pub(crate) i32);
 
+/// Type defined for convenience.
 pub type Intervals = Vec<Interval>;
 
+/// An interval with a distinct name
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum NamedInterval{
-    Root = 0,
-    Min2 = 1,
-    Maj2 = 2,
-    Min3 = 3,
-    Maj3 = 4,
-    Per4 = 5,
-    Trit = 6,
-    Per5 = 7,
-    Min6 = 8,
-    Maj6 = 9,
-    Min7 = 10,
-    Maj7 = 11,
-    Per8 = 12,
-    Min9 = 13,
-    Maj9 = 14,
-    Aug9 = 15,
-    Min11 = 16,
-    Maj11 = 17,
-    Aug11 = 18,
-    Min13 = 20,
-    Maj13 = 21,
+    /// The root interval is an interval of zero.
+    Root = 0, /// Minor second interval.
+    Min2 = 1, /// Major second interval.
+    Maj2 = 2, /// Minor third interval.
+    Min3 = 3, /// Major third interval.
+    Maj3 = 4, /// Perfect fourth interval.
+    Per4 = 5, /// Tritone interval.
+    Trit = 6, /// Perfect fifth interval.
+    Per5 = 7, /// Minor sixth interval.
+    Min6 = 8, /// Major sixth interval.
+    Maj6 = 9, /// Minor seventh interval.
+    Min7 = 10, /// Major seventh interval.
+    Maj7 = 11, /// Perfect eight interval, same as an octave.
+    Per8 = 12, /// Minor nineth interval, octave equivalent to a minor second.
+    Min9 = 13, /// Major nineth interval, octave equivalent to a major second.
+    Maj9 = 14, /// Augmented nineth interval, octave equivalent to a minor third.
+    Aug9 = 15, /// Minor eleventh interval, octave equivalent to a major third.
+    Min11 = 16, /// Major eleventh interval, octave equivalent to a perfect fourth.
+    Maj11 = 17, /// Augmented eleventh interval, octave equivalent to a tritone.
+    Aug11 = 18, /// Minor thirteenth interval, octave equivalent to a minor sixth.
+    Min13 = 20, /// Major thirteenth interval, octave equivalent to a major sixth.
+    Maj13 = 21, /// Augmented thirteenth interval, octave equivalent to a minor seventh.
     Aug13 = 22,
 }
 
+/// An interval within the octave with a distinct name.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum NamedOctaveInterval{
-    Root = 0,
-    Min2 = 1,
-    Maj2 = 2,
-    Min3 = 3,
-    Maj3 = 4,
-    Per4 = 5,
-    Trit = 6,
-    Per5 = 7,
-    Min6 = 8,
-    Maj6 = 9,
-    Min7 = 10,
+    /// The root interval is an interval of zero.
+    Root = 0, /// Minor second interval.
+    Min2 = 1, /// Major second interval.
+    Maj2 = 2, /// Minor third interval.
+    Min3 = 3, /// Major third interval.
+    Maj3 = 4, /// Perfect fourth interval.
+    Per4 = 5, /// Tritone interval.
+    Trit = 6, /// Perfect fifth interval.
+    Per5 = 7, /// Minor sixth interval.
+    Min6 = 8, /// Major sixth interval.
+    Maj6 = 9, /// Minor seventh interval.
+    Min7 = 10, /// Major seventh interval.
     Maj7 = 11,
 }
 
 impl Interval{
+    /// The biggest valid interval.
     pub const MAX: Self = Self(1 << 30);
+    /// The smallest valid interval.
     pub const MIN: Self = Self(-1 << 30);
 
+    /// One semi tone
     pub const SEMI: Self = Self(1);
+    /// One whole tone
     pub const WHOLE: Self = Self(2);
 
+    /// The interval equivalent of two flats on a note.
     pub const FLAT2: Self = Self(-2);
+    /// The interval equivalent of a flat on a note.
     pub const FLAT: Self = Self(-1);
+    /// The interval equivelant of a natural accidental.
     pub const NAT: Self = Self(0);
+    /// The interval equivelant of a sharp on a note.
     pub const SHARP: Self = Self(1);
+    /// The interval equivalent of two sharps on a note.
     pub const SHARP2: Self = Self(2);
 
-    pub const ROOT: Self = Self(0);
-    pub const MIN2: Self = Self(1);
-    pub const MAJ2: Self = Self(2);
-    pub const MIN3: Self = Self(3);
-    pub const MAJ3: Self = Self(4);
-    pub const PER4: Self = Self(5);
-    pub const TRIT: Self = Self(6);
-    pub const PER5: Self = Self(7);
-    pub const MIN6: Self = Self(8);
-    pub const MAJ6: Self = Self(9);
-    pub const MIN7: Self = Self(10);
-    pub const MAJ7: Self = Self(11);
-    pub const OCTAVE: Self = Self(12);
-    pub const MIN9: Self = Self(13);
-    pub const MAJ9: Self = Self(14);
-    pub const AUG9: Self = Self(15);
-    pub const MIN11: Self = Self(16);
-    pub const MAJ11: Self = Self(17);
-    pub const AUG11: Self = Self(18);
-    pub const PER12: Self = Self(19);
-    pub const MIN13: Self = Self(20);
-    pub const MAJ13: Self = Self(21);
+    /// The root interval, a distance of zero..
+    pub const ROOT: Self = Self(0); /// Minor second.
+    pub const MIN2: Self = Self(1); /// Major second.
+    pub const MAJ2: Self = Self(2); /// Minor third.
+    pub const MIN3: Self = Self(3); /// Major third.
+    pub const MAJ3: Self = Self(4); /// Perfect fourth.
+    pub const PER4: Self = Self(5); /// Tritone.
+    pub const TRIT: Self = Self(6); /// Perfect fifth.
+    pub const PER5: Self = Self(7); /// Minor sixth.
+    pub const MIN6: Self = Self(8); /// Major sixth.
+    pub const MAJ6: Self = Self(9); /// Minor seventh.
+    pub const MIN7: Self = Self(10); /// Major seventh.
+    pub const MAJ7: Self = Self(11); /// Octave.
+    pub const OCTAVE: Self = Self(12); /// Minor nineth.
+    pub const MIN9: Self = Self(13); /// Major nineth.
+    pub const MAJ9: Self = Self(14); /// Augmented nineth.
+    pub const AUG9: Self = Self(15); /// Minor eleventh.
+    pub const MIN11: Self = Self(16); /// Major eleventh.
+    pub const MAJ11: Self = Self(17); /// Augmented eleventh.
+    pub const AUG11: Self = Self(18); /// Perfect twelve, octave equivalent of a perfect fifth.
+    pub const PER12: Self = Self(19); /// Minor thirteenth.
+    pub const MIN13: Self = Self(20); /// Major thirteenth.
+    pub const MAJ13: Self = Self(21); /// Augmented thirteenth.
     pub const AUG13: Self = Self(22);
 
-    pub const DIM2: Self = Self(0);
-    pub const AUG1: Self = Self(1);
-    pub const DIM3: Self = Self(2);
-    pub const AUG2: Self = Self(3);
-    pub const DIM4: Self = Self(4);
-    pub const AUG3: Self = Self(5);
-    pub const DIM5: Self = Self(6);
-    pub const AUG4: Self = Self(6);
-    pub const DIM6: Self = Self(7);
-    pub const AUG5: Self = Self(8);
-    pub const DIM7: Self = Self(9);
-    pub const AUG6: Self = Self(10);
-    pub const DIM8: Self = Self(11);
+    /// Diminished second, octave equivalent of the root.
+    pub const DIM2: Self = Self(0); /// Augmented first, octave equivalent of a minor second.
+    pub const AUG1: Self = Self(1); /// Diminished third, octave equivalent of a major second.
+    pub const DIM3: Self = Self(2); /// Augmented second, octave equivalent of a minor third.
+    pub const AUG2: Self = Self(3); /// Diminished fourth, octave equivalent of a major third.
+    pub const DIM4: Self = Self(4); /// Augmented third, octave equivalent of a perfect fourth.
+    pub const AUG3: Self = Self(5); /// Diminished fifth, octave equivalent of a tritone.
+    pub const DIM5: Self = Self(6); /// Augmented fourth, octave equivalent of a tritone.
+    pub const AUG4: Self = Self(6); /// Diminished sixth, octave equivalent of a perfect fifth.
+    pub const DIM6: Self = Self(7); /// Augmented fifth, octave equivalent of a minor sixth.
+    pub const AUG5: Self = Self(8); /// Diminished seventh, octave equivalent of a major sixth.
+    pub const DIM7: Self = Self(9); /// Augmented sixth, octave equivalent of a minor seventh.
+    pub const AUG6: Self = Self(10); /// Diminished eight, octave equivalent of a major seventh.
+    pub const DIM8: Self = Self(11); /// Augmented seventh, octave equivalent of an octave.
     pub const AUG7: Self = Self(12);
 
+    /// Create a new interval from an integer.
+    /// Will be clamped if needed to ensure the interval is valid.
+    /// ```
+    /// use music_theory::theory::*;
+    /// assert_eq!(Note::B2 - Note::A2, Interval::new(2));
+    /// ```
     pub fn new(i: i32) -> Self{
         Self(i.min(Self::MAX.0).max(Self::MIN.0))
     }
 
+    /// Create a new interval from an integer.
+    /// If the integer is out of range of valid intervals, it will return `None`.
+    /// ```
+    /// use music_theory::theory::*;
+    /// assert_eq!(Interval::new_try(7), Some(Interval::PER5));
+    /// assert_eq!(Interval::new_try((1 << 30) + 1), None)
+    /// ```
     pub fn new_try(i: i32) -> Option<Self>{
         if i > Self::MAX.0 || i < Self::MIN.0 {
             None
@@ -162,10 +198,22 @@ impl Interval{
         }
     }
 
+    /// Returns the absolute value of the interval.
+    /// ```
+    /// use music_theory::theory::*;
+    /// assert_eq!(Interval::FLAT2.abs(), Interval::SHARP2);
+    /// ```
     pub fn abs(self) -> Self{
         Self::new(self.0.abs())
     }
 
+    /// Returns the interval spelled out in accidentals.
+    /// Will spell the zero interval with a natural accidental.
+    /// ```
+    /// use music_theory::theory::*;
+    /// assert_eq!(&Interval::FLAT2.to_string_nat(), "♭♭");
+    /// assert_eq!(&Interval::ROOT.to_string_nat(), "♮");
+    /// ```
     pub fn to_string_nat(&self) -> String{
         let mut string = String::new();
         let i = self.0.abs();
@@ -179,6 +227,11 @@ impl Interval{
 }
 
 impl NamedInterval{
+    /// All named intervals so you iterate over them.
+    /// ```
+    /// use music_theory::theory::*;
+    /// assert_eq!(NamedInterval::ALL.iter().copied().next(), Some(NamedInterval::Root));
+    /// ```
     pub const ALL: [Self; 22] = [
         Self::Root, Self::Min2, Self::Maj2, Self::Min3, Self::Maj3,
         Self::Per4, Self::Trit, Self::Per5, Self::Min6, Self::Maj6,
@@ -189,6 +242,11 @@ impl NamedInterval{
 }
 
 impl NamedOctaveInterval{
+    /// All named octave intervals so you iterate over them.
+    /// ```
+    /// use music_theory::theory::*;
+    /// assert_eq!(NamedOctaveInterval::ALL.iter().copied().next(), Some(NamedOctaveInterval::Root));
+    /// ```
     pub const ALL: [Self; 12] = [
         Self::Root, Self::Min2, Self::Maj2,
         Self::Min3, Self::Maj3, Self::Per4,
