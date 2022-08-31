@@ -4,6 +4,7 @@ pub mod traits;
 /// This is one of the core values used in computations.
 /// It does not take enharmonic spelling into account.
 pub mod note;
+/// PC stands for Pitch Class.
 pub mod pc;
 pub mod scale;
 pub mod chord;

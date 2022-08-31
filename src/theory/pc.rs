@@ -1,3 +1,5 @@
+#![deny(missing_docs)]
+
 use super::traits::{
     Cyclic, ToNote, ToPC, ToLetterTry, ToEnharmonicNote, AsScaleTry, OctaveShiftable,
     AsSteps, AsStepsTry, AsSubs
@@ -7,34 +9,52 @@ use crate::utils::sub_vecs;
 
 use std::ops::{ RangeBounds, Bound };
 
-pub const A:  PC = PC::A;
-pub const AS: PC = PC::As;
-pub const B:  PC = PC::B;
-pub const C:  PC = PC::C;
-pub const CS: PC = PC::Cs;
-pub const D:  PC = PC::D;
-pub const DS: PC = PC::Ds;
-pub const E:  PC = PC::E;
-pub const F:  PC = PC::F;
-pub const FS: PC = PC::Fs;
-pub const G:  PC = PC::G;
+/// First of twelve pitch classes.
+pub const A:  PC = PC::A; /// Second of twelve pitch classes.
+pub const AS: PC = PC::As; /// Third of twelve pitch classes.
+pub const B:  PC = PC::B; /// Fourth of twelve pitch classes.
+pub const C:  PC = PC::C; /// Fifth of twelve pitch classes.
+pub const CS: PC = PC::Cs; /// Sixth of twelve pitch classes.
+pub const D:  PC = PC::D; /// Seventh of twelve pitch classes.
+pub const DS: PC = PC::Ds; /// Eighth of twelve pitch classes.
+pub const E:  PC = PC::E; /// Nineth of twelve pitch classes.
+pub const F:  PC = PC::F; /// Tenth of twelve pitch classes.
+pub const FS: PC = PC::Fs; /// Eleventh of twelve pitch classes.
+pub const G:  PC = PC::G; /// Twelveth of twelve pitch classes.
 pub const GS: PC = PC::Gs;
 
-// PitchClass
+/// Pitch Class
+/// There are twelve pitchclasses, one for every note in the octave.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(u32)]
 pub enum PC{
-    A = 0, As = 1, B = 2, C = 3, Cs = 4, D = 5,
-    Ds = 6, E = 7, F = 8, Fs = 9, G = 10, Gs = 11
+    #[allow(missing_docs)] A = 0,
+    #[allow(missing_docs)] As = 1,
+    #[allow(missing_docs)] B = 2,
+    #[allow(missing_docs)] C = 3,
+    #[allow(missing_docs)] Cs = 4,
+    #[allow(missing_docs)] D = 5,
+    #[allow(missing_docs)] Ds = 6,
+    #[allow(missing_docs)] E = 7,
+    #[allow(missing_docs)] F = 8,
+    #[allow(missing_docs)] Fs = 9,
+    #[allow(missing_docs)] G = 10,
+    #[allow(missing_docs)] Gs = 11
 }
 
 impl PC{
+    /// All pitch classes in an array so you can iterate over them.
+    /// ```
+    /// use music_theory::theory::*;
+    /// assert_eq!(PC::ALL.iter().copied().next(), Some(PC::A));
+    /// ```
     pub const ALL: [PC; 12] = [
         PC::A, PC::As, PC::B, PC::C, PC::Cs, PC::D,
         PC::Ds, PC::E, PC::F, PC::Fs, PC::G, PC::Gs
     ];
 }
 
+/// Type defined for convenience.
 pub type PCs = Vec<PC>;
 
 // Is tested but tarpaulin doesn't see it?
