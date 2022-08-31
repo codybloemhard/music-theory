@@ -1,3 +1,7 @@
+//! Rust library for music theory objects and queries.
+//! The main types are:
+//! - [Note][crate::theory::note::Note]
+
 pub mod theory;
 #[macro_use]
 pub mod utils;
@@ -14,7 +18,7 @@ use std::fmt::Write;
 
 use vec_string::*;
 
-// return (header, content)
+/// return (header, content)
 #[cfg(not(tarpaulin))]
 pub fn notes_analysis(input_string: String, style: ChordStyle) -> Vec<(String, String)>{
     // Remove duplicate notes

@@ -1,5 +1,8 @@
 #[macro_use]
 pub mod traits;
+/// A single musical note.
+/// This is one of the core values used in computations.
+/// It does not take enharmonic spelling into account.
 pub mod note;
 pub mod pc;
 pub mod scale;
