@@ -10,9 +10,9 @@ use fnrs::Sequence;
 pub fn find_scale_chords(steps: &Steps, chord_size: usize) -> Vec<Chord>{
     let len = steps.len();
     let mut chords = Vec::new();
-    for (i, _) in scale_iter(Note::ZERO, &steps.0).enumerate().take(len){
+    for (i, _) in scale_iter(Note::ZERO, steps).enumerate().take(len){
         let mut chord = Vec::new();
-        for note in scale_iter(Note::ZERO, &steps.0).skip(i).step_by(2).take(chord_size){
+        for note in scale_iter(Note::ZERO, steps).skip(i).step_by(2).take(chord_size){
             chord.push(note);
         }
         chords.push(Scale(chord).to_chord());
@@ -23,9 +23,9 @@ pub fn find_scale_chords(steps: &Steps, chord_size: usize) -> Vec<Chord>{
 pub fn find_rooted_scale_chords(steps: &Steps, tonic: Note, chord_size: usize) -> Vec<RootedChord>{
     let len = steps.len();
     let mut chords = Vec::new();
-    for (i, _) in scale_iter(tonic, &steps.0).enumerate().take(len){
+    for (i, _) in scale_iter(tonic, steps).enumerate().take(len){
         let mut chord = Vec::new();
-        for note in scale_iter(tonic, &steps.0).skip(i).step_by(2).take(chord_size){
+        for note in scale_iter(tonic, steps).skip(i).step_by(2).take(chord_size){
             chord.push(note);
         }
         chords.push(Scale(chord).to_rooted_chord());

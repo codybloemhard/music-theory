@@ -7,6 +7,8 @@
 //! - [NamedOctaveInterval][crate::theory::interval::NamedOctaveInterval]
 //! - [Letter][crate::theory::enharmonic_note::Letter]
 //! - [EnharmonicNote][crate::theory::enharmonic_note::EnharmonicNote]
+//! - [Scale][crate::theory::scale::Scale]
+//! - [Steps][crate::theory::scale::Steps]
 
 pub mod theory;
 #[macro_use]

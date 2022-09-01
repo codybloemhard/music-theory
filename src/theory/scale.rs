@@ -1,3 +1,5 @@
+#![deny(missing_docs)]
+
 use super::{ Note, _Note, Interval, PCs, Intervals, EnharmonicNote, Chord, RootedChord };
 use super::traits::{
     Wrapper, VecWrapper, ModeTrait, AsScaleTry, AsSteps, AddInterval, ToPC, AsPCs,
@@ -5,16 +7,72 @@ use super::traits::{
     ToEnharmonicNote, ToNote, ModeIteratorSpawner, AsChord, AsRootedChord
 };
 
+/// A mode is an index into all possible modes.
+/// ```
+/// use music_theory::theory::*;
+/// let W = Interval::WHOLE;
+/// let S = Interval::SEMI;
+/// assert_eq!(
+///     Steps::wrap(
+///         vec![W, W, S, W, W, W, S] // Ionian mode
+///     ).unwrap().mode(2 /* this is the mode type (usize) */),
+///     Steps::wrap(
+///         vec![S, W, W, W, S, W, W] // Phrygian mode
+///     ).unwrap()
+/// );
+/// ```
 pub type Mode = usize;
+/// Type defined for convenience.
 pub type Notes = Vec<Note>;
 
+/// A scale is a list of notes.
+/// For example, the C2 Major scale contains the notes [C2, D2, E2, F2, G2, A3, B3].
+/// ```
+/// use music_theory::theory::*;
+/// let scale = Scale::wrap(
+///     vec![Note::C1, Note::D1, Note::E1, Note::F1, Note::G1, Note::A2, Note::B2]
+/// ).unwrap();
+/// assert!(scale.contains_all(&[Note::E1, Note::A2]));
+/// ```
 #[derive(Debug, Default, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct Scale(pub(crate) Notes);
 
+/// A Steps object is a list of intervals.
+/// In this case, the list of notes is represented by the intervals between the notes.
+/// The scale formulas build from half steps and whole steps such as \[W,W,H,W,W,W,H\] for the C
+/// Major scale are an example of Steps.
+/// Steps can also contain negative intervals, and as big leaps as the
+/// [Interval][crate::theory::interval::Interval] type allows.
+/// ```
+/// use music_theory::theory::*;
+/// let W = Interval::WHOLE;
+/// let S = Interval::SEMI;
+/// let steps = Steps::wrap(vec![W, W, S, W, W, W, S]).unwrap(); /* wraps into Option<Steps> so
+/// when you unwrap again you have Steps. */
+/// assert_eq!(
+///     steps.to_scale_try(Note::C1),
+///     Scale::wrap(
+///         vec![Note::C1, Note::D1, Note::E1, Note::F1, Note::G1, Note::A2, Note::B2]
+///     )
+/// );
+/// ```
 #[derive(Debug, Default, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct Steps(pub(crate) Intervals);
 
 impl Scale{
+    /// Will try to convert the scale to steps that define an octave scale.
+    /// This means it needs to fit into one octave.
+    /// It will add a last step so the steps wrap back onto the first note.
+    /// ```
+    /// use music_theory::theory::*;
+    /// let W = Interval::WHOLE;
+    /// let H = Interval::SEMI;
+    /// assert_eq!( // C Major
+    ///     Scale::wrap(vec![Note::C1, Note::D1, Note::E1, Note::F1, Note::G1, Note::A2, Note::B2])
+    ///         .unwrap().as_octave_steps(),
+    ///     Steps::wrap(vec![W, W, H, W, W, W, H])
+    /// );
+    /// ```
     pub fn as_octave_steps(&self) -> Option<Steps>{
         if self.is_empty(){ return None; }
         let mut res = Vec::new();
@@ -38,6 +96,21 @@ impl Scale{
 }
 
 impl Steps{
+    /// Will try to return an index and a copy of the mode.
+    /// For example, calling `mode_nr_of_this` on a Ionian mode with a Dorian mode should return
+    /// the index of `1`.
+    /// The index is zero based so giving itself as in input return an index of `0`.
+    /// ```
+    /// use music_theory::theory::*;
+    /// let W = Interval::WHOLE;
+    /// let H = Interval::SEMI;
+    /// let major = Steps::wrap(vec![W, W, H, W, W, W, H]).unwrap();
+    /// let minor = major.clone().mode(5);
+    /// assert_eq!(
+    ///     major.mode_nr_of_this(&minor),
+    ///     Some((5, Steps::wrap(vec![ W, H, W, W, H, W, W]).unwrap()))
+    /// );
+    /// ```
     pub fn mode_nr_of_this(&self, mode: &Steps) -> Option<(usize, Steps)>{
         if mode.len() != self.len() {
             return None;
@@ -288,6 +361,18 @@ impl AsChord for Steps{
     }
 }
 
+/// Scale iterator iterates over a scale and yields notes.
+/// You can take a `ScaleIterator` from [Steps][crate::theory::scale::Steps] and let it
+/// generate notes from the steps.
+/// ```
+/// use music_theory::theory::*;
+/// let major = music_theory::libr::ionian::steps();
+/// let mut iter = scale_iter(Note::C1, &major);
+/// assert_eq!(
+///     iter.take(7).collect::<Vec<_>>(),
+///     vec![Note::C1, Note::D1, Note::E1, Note::F1, Note::G1, Note::A2, Note::B2]
+/// );
+/// ```
 pub struct ScaleIterator<'a>{
     scale: &'a [Interval],
     current: usize,
@@ -309,15 +394,39 @@ impl<'a> Iterator for ScaleIterator<'a>{
     }
 }
 
-pub fn scale_iter(root: Note, scale: &[Interval]) -> ScaleIterator{
+/// Generate a [ScaleIterator][crate::theory::scale::ScaleIterator] from steps.
+/// ```
+/// use music_theory::theory::*;
+/// let major = music_theory::libr::ionian::steps();
+/// let mut iter = scale_iter(Note::C1, &major);
+/// assert_eq!(
+///     iter.take(7).collect::<Vec<_>>(),
+///     vec![Note::C1, Note::D1, Note::E1, Note::F1, Note::G1, Note::A2, Note::B2]
+/// );
+/// ```
+pub fn scale_iter(root: Note, scale: &Steps) -> ScaleIterator{
     ScaleIterator{
-        scale,
+        scale: &scale.0,
         current: 0,
         len: scale.len(),
         root,
     }
 }
 
+/// The `ModeIterator` iterates over modes.
+/// Anything that is [Clone][std::clone::Clone] +
+/// [ModeTrait][crate::theory::traits::ModeTrait] +
+/// [VecWrapper][crate::theory::traits::VecWrapper] can spawn a `ModeIterator`.
+/// ```
+/// use music_theory::theory::*;
+/// let W = Interval::WHOLE;
+/// let H = Interval::SEMI;
+/// let mut iter = music_theory::libr::ionian::steps().mode_iter();
+/// assert_eq!(
+///     iter.next().unwrap().unwrap(),
+///     vec![W, W, H, W, W, W, H]
+/// );
+/// ```
 pub struct ModeIterator<T: ModeTrait + VecWrapper>{
     wrapper: T,
     current: usize,
@@ -775,7 +884,7 @@ mod tests{
     #[test]
     fn scale_iterator(){
         let major = crate::libr::ionian::steps();
-        let mut iter = scale_iter(Note::C1, &major.0);
+        let mut iter = scale_iter(Note::C1, &major);
         assert_eq!(iter.next(), Some(Note::C1));
         assert_eq!(iter.next(), Some(Note::D1));
         assert_eq!(iter.next(), Some(Note::E1));

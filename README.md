@@ -11,6 +11,9 @@ provides:
     - finding chord scales
     - finding sub chords
 
+I maintain a test coverage of 100%.
+This does not mean no bugs exist, but trying to write good tests is a priority.
+
 The [theory frog](https://codyb.xyz/theory-frog.html) web app is made using this library.
 It shows some the things it can do.
 
