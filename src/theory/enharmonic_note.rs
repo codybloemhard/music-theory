@@ -20,6 +20,8 @@ pub enum Letter{
 }
 
 /// An enhamonic note is a note that takes into account the enharmonic spelling.
+///
+/// Example:
 /// ```
 /// use music_theory::theory::*;
 /// let en = EnharmonicNote::wrap((Letter::A, Interval::SHARP)).unwrap();
@@ -33,6 +35,8 @@ pub struct EnharmonicNote{
 
 impl Letter{
     /// All letters so you can iterate over them.
+    ///
+    /// Example:
     /// ```
     /// use music_theory::theory::*;
     /// assert_eq!(Letter::ALL.iter().copied().next(), Some(Letter::A));
@@ -46,6 +50,8 @@ impl Letter{
 impl EnharmonicNote{
     /// Spell an enharmonic note as an enharmonic note with a different base note but with the same
     /// note value.
+    ///
+    /// Example:
     /// ```
     /// use music_theory::theory::*;
     /// let en = EnharmonicNote::wrap((Letter::A, Interval::ROOT)).unwrap();

@@ -12,12 +12,16 @@ use std::ops::{ Add, Sub, Mul, Rem, AddAssign, RemAssign, MulAssign, RangeBounds
 // only used internally
 pub(crate) type _Note = u32;
 /// Octave.
+///
+/// Example:
 /// ```
 /// use music_theory::theory::*;
 /// assert_eq!(Note::A4.with_octave(5), Note::A5);
 /// ```
 pub type Octave = u16;
 /// Can be negative to shift down into the octave range.
+///
+/// Example:
 /// ```
 /// use music_theory::theory::*;
 /// assert_eq!(Note::A4.shift_octave(-1), Note::A3);
@@ -26,6 +30,8 @@ pub type OctaveShift = i16;
 
 /// The main note type.
 /// Does not take into account enharmonic spelling.
+///
+/// Example:
 /// ```
 /// use music_theory::theory::*;
 /// assert_eq!(Note::new(0), Note::A0);
@@ -55,18 +61,24 @@ macro_rules! define_notes{
 
 impl Note{
     /// Biggest valid `Note` value.
+    ///
+    /// Example:
     /// ```
     /// use music_theory::theory::*;
     /// assert_eq!(Note::MAX + Note::C3, Note::MAX);
     /// ```
     pub const MAX: Note = Note(1073741824); // 1 << 30
     /// Smallest valid `Note` value.
+    ///
+    /// Example:
     /// ```
     /// use music_theory::theory::*;
     /// assert_eq!(Note::MIN.shift_octave(-1), Note::MIN);
     /// ```
     pub const MIN: Note = Note(0);
     /// The zeroth `Note`, the same as `Note::MIN`.
+    ///
+    /// Example:
     /// ```
     /// use music_theory::theory::*;
     /// assert_eq!(Note::ZERO, Note::MIN);
@@ -86,6 +98,8 @@ impl Note{
 
     /// Create a new valid note.
     /// Will be clamped if nessesary.
+    ///
+    /// Example:
     /// ```
     /// use music_theory::theory::*;
     /// assert_eq!(Note::new(12), Note::A1);
@@ -96,6 +110,8 @@ impl Note{
 
     /// Returns the inner value.
     /// You can not set the inner value directly to prevent invalid notes.
+    ///
+    /// Example:
     /// ```
     /// use music_theory::theory::*;
     /// assert_eq!(Note::A2.inside(), 24);
@@ -114,6 +130,8 @@ impl Note{
 
     /// Return the pitch in hertz.
     /// `Note::A4` has an inner value of 48 and a pitch of 440 hz.
+    ///
+    /// Example:
     /// ```
     /// use music_theory::theory::*;
     /// assert_eq!(Note::A4.to_pitch(), 440.0);

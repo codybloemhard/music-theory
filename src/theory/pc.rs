@@ -44,6 +44,8 @@ pub enum PC{
 
 impl PC{
     /// All pitch classes in an array so you can iterate over them.
+    ///
+    /// Example:
     /// ```
     /// use music_theory::theory::*;
     /// assert_eq!(PC::ALL.iter().copied().next(), Some(PC::A));

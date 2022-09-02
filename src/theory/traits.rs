@@ -1,6 +1,6 @@
 use super::{
     Note, PC, PCs, Octave, OctaveShift, Interval, NamedInterval, NamedOctaveInterval, Letter,
-    EnharmonicNote, Mode, Scale, Steps, Intervals, ModeIterator, Chord, RootedChord
+    EnharmonicNote, Mode, Scale, Steps, Intervals, ModeIterator, Chord, RootedChord, ScaleIterator
 };
 
 use std::marker::Sized;
@@ -107,6 +107,10 @@ pub trait ModeTrait{
 
 pub trait ModeIteratorSpawner<T: ModeTrait + VecWrapper>{
     fn mode_iter(self) -> ModeIterator<T>;
+}
+
+pub trait ScaleIteratorSpawner{
+    fn scale_iter(&self, root: Note) -> ScaleIterator;
 }
 
 pub trait AsSubs where Self: Sized{

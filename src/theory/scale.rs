@@ -4,10 +4,12 @@ use super::{ Note, _Note, Interval, PCs, Intervals, EnharmonicNote, Chord, Roote
 use super::traits::{
     Wrapper, VecWrapper, ModeTrait, AsScaleTry, AsSteps, AddInterval, ToPC, AsPCs,
     AsRelativeIntervals, AsEnharmonicNotes, AsEnharmonicNotesWithStart, Cyclic,
-    ToEnharmonicNote, ToNote, ModeIteratorSpawner, AsChord, AsRootedChord
+    ToEnharmonicNote, ToNote, ModeIteratorSpawner, AsChord, AsRootedChord, ScaleIteratorSpawner
 };
 
 /// A mode is an index into all possible modes.
+///
+/// Example:
 /// ```
 /// use music_theory::theory::*;
 /// let W = Interval::WHOLE;
@@ -27,6 +29,8 @@ pub type Notes = Vec<Note>;
 
 /// A scale is a list of notes.
 /// For example, the C2 Major scale contains the notes [C2, D2, E2, F2, G2, A3, B3].
+///
+/// Example:
 /// ```
 /// use music_theory::theory::*;
 /// let scale = Scale::wrap(
@@ -43,6 +47,8 @@ pub struct Scale(pub(crate) Notes);
 /// Major scale are an example of Steps.
 /// Steps can also contain negative intervals, and as big leaps as the
 /// [Interval][crate::theory::interval::Interval] type allows.
+///
+/// Example:
 /// ```
 /// use music_theory::theory::*;
 /// let W = Interval::WHOLE;
@@ -63,6 +69,8 @@ impl Scale{
     /// Will try to convert the scale to steps that define an octave scale.
     /// This means it needs to fit into one octave.
     /// It will add a last step so the steps wrap back onto the first note.
+    ///
+    /// Example:
     /// ```
     /// use music_theory::theory::*;
     /// let W = Interval::WHOLE;
@@ -100,6 +108,8 @@ impl Steps{
     /// For example, calling `mode_nr_of_this` on a Ionian mode with a Dorian mode should return
     /// the index of `1`.
     /// The index is zero based so giving itself as in input return an index of `0`.
+    ///
+    /// Example:
     /// ```
     /// use music_theory::theory::*;
     /// let W = Interval::WHOLE;
@@ -364,10 +374,12 @@ impl AsChord for Steps{
 /// Scale iterator iterates over a scale and yields notes.
 /// You can take a `ScaleIterator` from [Steps][crate::theory::scale::Steps] and let it
 /// generate notes from the steps.
+///
+/// Example:
 /// ```
 /// use music_theory::theory::*;
 /// let major = music_theory::libr::ionian::steps();
-/// let mut iter = scale_iter(Note::C1, &major);
+/// let mut iter = major.scale_iter(Note::C1);
 /// assert_eq!(
 ///     iter.take(7).collect::<Vec<_>>(),
 ///     vec![Note::C1, Note::D1, Note::E1, Note::F1, Note::G1, Note::A2, Note::B2]
@@ -394,22 +406,14 @@ impl<'a> Iterator for ScaleIterator<'a>{
     }
 }
 
-/// Generate a [ScaleIterator][crate::theory::scale::ScaleIterator] from steps.
-/// ```
-/// use music_theory::theory::*;
-/// let major = music_theory::libr::ionian::steps();
-/// let mut iter = scale_iter(Note::C1, &major);
-/// assert_eq!(
-///     iter.take(7).collect::<Vec<_>>(),
-///     vec![Note::C1, Note::D1, Note::E1, Note::F1, Note::G1, Note::A2, Note::B2]
-/// );
-/// ```
-pub fn scale_iter(root: Note, scale: &Steps) -> ScaleIterator{
-    ScaleIterator{
-        scale: &scale.0,
-        current: 0,
-        len: scale.len(),
-        root,
+impl ScaleIteratorSpawner for Steps{
+    fn scale_iter(&self, root: Note) -> ScaleIterator{
+        ScaleIterator{
+            scale: &self.0,
+            current: 0,
+            len: self.len(),
+            root,
+        }
     }
 }
 
@@ -417,6 +421,8 @@ pub fn scale_iter(root: Note, scale: &Steps) -> ScaleIterator{
 /// Anything that is [Clone][std::clone::Clone] +
 /// [ModeTrait][crate::theory::traits::ModeTrait] +
 /// [VecWrapper][crate::theory::traits::VecWrapper] can spawn a `ModeIterator`.
+///
+/// Example:
 /// ```
 /// use music_theory::theory::*;
 /// let W = Interval::WHOLE;
@@ -884,7 +890,7 @@ mod tests{
     #[test]
     fn scale_iterator(){
         let major = crate::libr::ionian::steps();
-        let mut iter = scale_iter(Note::C1, &major);
+        let mut iter = major.scale_iter(Note::C1);
         assert_eq!(iter.next(), Some(Note::C1));
         assert_eq!(iter.next(), Some(Note::D1));
         assert_eq!(iter.next(), Some(Note::E1));

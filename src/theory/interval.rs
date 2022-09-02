@@ -54,6 +54,8 @@ pub(crate) const _DIM8: Note = Note(11);
 pub(crate) const _AUG7: Note = Note(12);
 
 /// An interval is a distance between notes.
+///
+/// Example:
 /// ```
 /// use music_theory::theory::*;
 /// assert_eq!(Note::C2 - Note::A2, Interval::new(3));
@@ -175,6 +177,8 @@ impl Interval{
 
     /// Create a new interval from an integer.
     /// Will be clamped if needed to ensure the interval is valid.
+    ///
+    /// Example:
     /// ```
     /// use music_theory::theory::*;
     /// assert_eq!(Note::B2 - Note::A2, Interval::new(2));
@@ -185,6 +189,8 @@ impl Interval{
 
     /// Create a new interval from an integer.
     /// If the integer is out of range of valid intervals, it will return `None`.
+    ///
+    /// Example:
     /// ```
     /// use music_theory::theory::*;
     /// assert_eq!(Interval::new_try(7), Some(Interval::PER5));
@@ -199,6 +205,8 @@ impl Interval{
     }
 
     /// Returns the absolute value of the interval.
+    ///
+    /// Example:
     /// ```
     /// use music_theory::theory::*;
     /// assert_eq!(Interval::FLAT2.abs(), Interval::SHARP2);
@@ -209,6 +217,8 @@ impl Interval{
 
     /// Returns the interval spelled out in accidentals.
     /// Will spell the zero interval with a natural accidental.
+    ///
+    /// Example:
     /// ```
     /// use music_theory::theory::*;
     /// assert_eq!(&Interval::FLAT2.to_string_nat(), "♭♭");
@@ -228,6 +238,8 @@ impl Interval{
 
 impl NamedInterval{
     /// All named intervals so you iterate over them.
+    ///
+    /// Example:
     /// ```
     /// use music_theory::theory::*;
     /// assert_eq!(NamedInterval::ALL.iter().copied().next(), Some(NamedInterval::Root));
@@ -243,6 +255,8 @@ impl NamedInterval{
 
 impl NamedOctaveInterval{
     /// All named octave intervals so you iterate over them.
+    ///
+    /// Example:
     /// ```
     /// use music_theory::theory::*;
     /// assert_eq!(NamedOctaveInterval::ALL.iter().copied().next(), Some(NamedOctaveInterval::Root));
