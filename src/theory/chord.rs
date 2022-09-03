@@ -1,3 +1,5 @@
+#![deny(missing_docs)]
+
 use super::{ Note, Notes, Scale };
 use super::interval::*;
 use super::traits::{
@@ -7,55 +9,61 @@ use super::super::utils::{ is_sorted };
 
 use itertools::*;
 
-pub const NUM_SUPS: [char; 10] = ['⁰', '¹', '²', '³', '⁴', '⁵', '⁶', '⁷', '⁸', '⁹'];
-pub const NUM_SUBS: [char; 10] = ['₀', '₁', '₂', '₃', '₄', '₅', '₆', '₇', '₈', '₉'];
+const _NUM_SUPS: [char; 10] = ['⁰', '¹', '²', '³', '⁴', '⁵', '⁶', '⁷', '⁸', '⁹'];
+const _NUM_SUBS: [char; 10] = ['₀', '₁', '₂', '₃', '₄', '₅', '₆', '₇', '₈', '₉'];
 
 // base strings: 0 none, 1 major, 2 minor, 3 aug, 4 dim
-pub const BASE_LONG: [&str; 5] = ["", "maj", "min", "aug", "dim"];
-pub const BASE_SHORT: [&str; 5] = ["", "M", "m", "aug", "dim"];
-pub const BASE_SYM: [&str; 5] = ["", "Δ", "-", "+", "°"];
-pub const BASES: [[&str; 5]; 3] = [BASE_LONG, BASE_SHORT, BASE_SYM];
+const BASE_LONG: [&str; 5] = ["", "maj", "min", "aug", "dim"];
+const BASE_SHORT: [&str; 5] = ["", "M", "m", "aug", "dim"];
+const BASE_SYM: [&str; 5] = ["", "Δ", "-", "+", "°"];
+const BASES: [[&str; 5]; 3] = [BASE_LONG, BASE_SHORT, BASE_SYM];
 
-pub const POWER: &[Note] = &[_PER5];
-pub const MAJOR: &[Note] = &[_MAJ3, _PER5];
-pub const MINOR: &[Note] = &[_MIN3, _PER5];
-pub const MINOR_AUGMENTED: &[Note] = &[_MIN3, _AUG5];
-pub const MAJOR_AUGMENTED: &[Note] = &[_MAJ3, _AUG5];
-pub const MINOR_DIMINISHED: &[Note] = &[_MIN3, _DIM5];
-pub const MAJOR_DIMINISHED: &[Note] = &[_MAJ3, _DIM5];
-pub const SUS2: &[Note] = &[_MAJ2, _PER5];
-pub const SUS4: &[Note] = &[_PER4, _PER5];
-pub const SUPER_SUS: &[Note] = &[_MAJ2, _PER4];
-pub const PHRYGIAN: &[Note] = &[_MIN2, _PER5];
-pub const LYDIAN: &[Note] = &[_AUG4, _PER5];
-pub const LOCRIAN2: &[Note] = &[_MIN2, _DIM5];
-pub const LOCRIAN4: &[Note] = &[_PER4, _DIM5];
-pub const SUPER_LOCRIAN: &[Note] = &[_MIN2, _PER4, _DIM5];
-pub const MAJOR_SIXTH_CHORD: &[Note] = &[_MAJ3, _PER5, _MAJ6];
-pub const MINOR_SIXTH_CHORD: &[Note] = &[_MIN3, _PER5, _MAJ6];
-pub const MAJOR_SEVENTH_CHORD: &[Note] = &[_MAJ3, _PER5, _MAJ7];
-pub const MINOR_SEVENTH_CHORD: &[Note] = &[_MIN3, _PER5, _MIN7];
-pub const DOMINANT_SEVENTH: &[Note] = &[_MAJ3, _PER5, _MIN7];
-pub const MINOR_MAJOR_SEVENTH: &[Note] = &[_MIN3, _PER5, _MAJ7];
-pub const HALF_DIMINISHED_SEVENTH: &[Note] = &[_MIN3, _DIM5, _MIN7];
-pub const DIMINISHED_SEVENTH_CHORD: &[Note] = &[_MIN3, _DIM5, _DIM7];
-pub const AUGMENTED_SEVENTH_CHORD: &[Note] = &[_MAJ3, _AUG5, _MIN7];
-pub const MU_CHORD: &[Note] = &[_MAJ2, _MAJ3, _PER5];
-pub const SIX_NINE_CHORD: &[Note] = &[_MAJ3, _PER5, _MAJ6, _MAJ9];
-pub const MAJOR_NINTH_CHORD: &[Note] = &[_MAJ3, _PER5, _MAJ7, _MAJ9];
-pub const MINOR_NINTH_CHORD: &[Note] = &[_MIN3, _PER5, _MIN7, _MAJ9];
-pub const DOMINANT_NINTH_CHORD: &[Note] = &[_MAJ3, _PER5, _MIN7, _MAJ9];
-pub const MAJOR_ELEVENTH_CHORD: &[Note] = &[_MAJ3, _PER5, _MAJ7, _MAJ9, _MAJ11];
-pub const MINOR_ELEVENTH_CHORD: &[Note] = &[_MIN3, _PER5, _MIN7, _MAJ9, _MAJ11];
-pub const DOMINANT_ELEVENTH_CHORD: &[Note] = &[_MAJ3, _PER5, _MIN7, _MAJ9, _MAJ11];
-pub const MAJOR_THIRTEENTH_CHORD: &[Note] = &[_MAJ3, _PER5, _MAJ7, _MAJ9, _MAJ11, _MAJ13];
-pub const MINOR_THIRTEENTH_CHORD: &[Note] = &[_MIN3, _PER5, _MIN7, _MAJ9, _MAJ11, _MAJ13];
-pub const DOMINANT_THIRTEENTH_CHORD: &[Note] = &[_MAJ3, _PER5, _MIN7, _MAJ9, _MAJ11, _MAJ13];
+macro_rules! dcc{
+    ($id: ident, $val: expr) => {
+        #[allow(missing_docs)] pub const $id: &[Note] = $val;
+    }
+}
+
+dcc!(POWER, &[_PER5]);
+dcc!(MAJOR, &[_MAJ3, _PER5]);
+dcc!(MINOR, &[_MIN3, _PER5]);
+dcc!(MINOR_AUGMENTED, &[_MIN3, _AUG5]);
+dcc!(MAJOR_AUGMENTED, &[_MAJ3, _AUG5]);
+dcc!(MINOR_DIMINISHED, &[_MIN3, _DIM5]);
+dcc!(MAJOR_DIMINISHED, &[_MAJ3, _DIM5]);
+dcc!(SUS2, &[_MAJ2, _PER5]);
+dcc!(SUS4, &[_PER4, _PER5]);
+dcc!(SUPER_SUS, &[_MAJ2, _PER4]);
+dcc!(PHRYGIAN, &[_MIN2, _PER5]);
+dcc!(LYDIAN, &[_AUG4, _PER5]);
+dcc!(LOCRIAN2, &[_MIN2, _DIM5]);
+dcc!(LOCRIAN4, &[_PER4, _DIM5]);
+dcc!(SUPER_LOCRIAN, &[_MIN2, _PER4, _DIM5]);
+dcc!(MAJOR_SIXTH_CHORD, &[_MAJ3, _PER5, _MAJ6]);
+dcc!(MINOR_SIXTH_CHORD, &[_MIN3, _PER5, _MAJ6]);
+dcc!(MAJOR_SEVENTH_CHORD, &[_MAJ3, _PER5, _MAJ7]);
+dcc!(MINOR_SEVENTH_CHORD, &[_MIN3, _PER5, _MIN7]);
+dcc!(DOMINANT_SEVENTH, &[_MAJ3, _PER5, _MIN7]);
+dcc!(MINOR_MAJOR_SEVENTH, &[_MIN3, _PER5, _MAJ7]);
+dcc!(HALF_DIMINISHED_SEVENTH, &[_MIN3, _DIM5, _MIN7]);
+dcc!(DIMINISHED_SEVENTH_CHORD, &[_MIN3, _DIM5, _DIM7]);
+dcc!(AUGMENTED_SEVENTH_CHORD, &[_MAJ3, _AUG5, _MIN7]);
+dcc!(MU_CHORD, &[_MAJ2, _MAJ3, _PER5]);
+dcc!(SIX_NINE_CHORD, &[_MAJ3, _PER5, _MAJ6, _MAJ9]);
+dcc!(MAJOR_NINTH_CHORD, &[_MAJ3, _PER5, _MAJ7, _MAJ9]);
+dcc!(MINOR_NINTH_CHORD, &[_MIN3, _PER5, _MIN7, _MAJ9]);
+dcc!(DOMINANT_NINTH_CHORD, &[_MAJ3, _PER5, _MIN7, _MAJ9]);
+dcc!(MAJOR_ELEVENTH_CHORD, &[_MAJ3, _PER5, _MAJ7, _MAJ9, _MAJ11]);
+dcc!(MINOR_ELEVENTH_CHORD, &[_MIN3, _PER5, _MIN7, _MAJ9, _MAJ11]);
+dcc!(DOMINANT_ELEVENTH_CHORD, &[_MAJ3, _PER5, _MIN7, _MAJ9, _MAJ11]);
+dcc!(MAJOR_THIRTEENTH_CHORD, &[_MAJ3, _PER5, _MAJ7, _MAJ9, _MAJ11, _MAJ13]);
+dcc!(MINOR_THIRTEENTH_CHORD, &[_MIN3, _PER5, _MIN7, _MAJ9, _MAJ11, _MAJ13]);
+dcc!(DOMINANT_THIRTEENTH_CHORD, &[_MAJ3, _PER5, _MIN7, _MAJ9, _MAJ11, _MAJ13]);
 
 // (pattern, name, base string, extended collection?)
-pub type ChordBook = &'static [(&'static [Note], &'static str, usize, bool)];
+type ChordBook = &'static [(&'static [Note], &'static str, usize, bool)];
 
-pub const STD_CHORD_BOOK: ChordBook = &[
+const STD_CHORD_BOOK: ChordBook = &[
     (POWER, "power", 0, false),
     (MAJOR, "", 1, false),
     (MINOR, "", 2, false),
@@ -93,39 +101,132 @@ pub const STD_CHORD_BOOK: ChordBook = &[
     (DOMINANT_THIRTEENTH_CHORD, "13", 0, false),
 ];
 
+/// A `Chord` only encodes the quality of the the chord.
+/// No root from which it is build is defined.
+///
+/// Example:
+/// ```
+/// use music_theory::theory::*;
+/// let chord = Chord::new(&MAJOR);
+/// assert!(chord.contains_all(&POWER));
+/// ```
 #[derive(Debug, Default, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct Chord(pub Vec<Note>);
 
+/// Wrapper around [Chord][crate::theory::chord::Chord].
+/// Also has a root note and extra functionality around that.
+///
+/// Example:
+/// ```
+/// use music_theory::theory::*;
+/// let chord = RootedChord::new(Note::C2, &MAJOR);
+/// assert_eq!(chord.to_scale().unwrap(), vec![Note::C2, Note::E2, Note::G2]);
+/// ```
 #[derive(Debug, Default, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct RootedChord{
+    /// The root note from which the chord is build.
     pub root: Note,
+    /// The quality of the chord.
     pub chord: Chord,
 }
 
+/// Relative chord is a chord build not from a specific root note but a scale degree.
+/// Could be used for example to define chord progressions (eg. II -> V -> I).
+///
+/// Example:
+/// ```
+/// use music_theory::theory::*;
+/// assert_eq!(
+///     RelativeChord::new(ScaleDegree::I, MAJOR),
+///     RelativeChord{ degree: ScaleDegree::I, chord: Chord::new(MAJOR) }
+/// );
+/// ```
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct RelativeChord{
+    /// The degree from which the chord is buld.
     pub degree: ScaleDegree,
+    /// The quality of the chord.
     pub chord: Chord,
 }
 
+/// Scale degree, one of twelve variants for each chromatic note.
+///
+/// Example:
+/// ```
+/// use music_theory::theory::*;
+/// assert_eq!(
+///     RelativeChord::new(ScaleDegree::I, MAJOR),
+///     RelativeChord{ degree: ScaleDegree::I, chord: Chord::new(MAJOR) }
+/// );
+/// ```
 #[allow(non_camel_case_types)]
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum ScaleDegree{
-    I, bII, II, bIII, III, IV, bV, V, bVI, VI, bVII, VII
+    #[allow(missing_docs)] I,
+    #[allow(missing_docs)] bII,
+    #[allow(missing_docs)] II,
+    #[allow(missing_docs)] bIII,
+    #[allow(missing_docs)] III,
+    #[allow(missing_docs)] IV,
+    #[allow(missing_docs)] bV,
+    #[allow(missing_docs)] V,
+    #[allow(missing_docs)] bVI,
+    #[allow(missing_docs)] VI,
+    #[allow(missing_docs)] bVII,
+    #[allow(missing_docs)] VII
 }
 
+/// The formatting style of the main base chord quality
+///
+/// Example:
+/// ```
+/// use music_theory::theory::*;
+/// assert_eq!(MStyle::default(), MStyle::Symbol);
+/// ```
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(usize)]
-pub enum MStyle{ Long = 0, Short = 1, #[default] Symbol = 2 }
+pub enum MStyle{
+    /// Use long qualities such as "maj", "min", "aug"
+    Long = 0,
+    /// Use short qualities such as "M", "m", "aug"
+    Short = 1,
+    /// Use symbols such as "Δ", "-", "+"
+    #[default]
+    Symbol = 2
+}
 
+/// The formatting style of the extra chord quality
+///
+/// Example:
+/// ```
+/// use music_theory::theory::*;
+/// assert_eq!(EStyle::default(), EStyle::Symbol);
+/// ```
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(usize)]
-pub enum EStyle{ Long = 0, #[default] Symbol = 2 }
+pub enum EStyle{
+    /// Use long qualities such as "maj", "min", "aug"
+    Long = 0,
+    /// Use symbols such as "Δ", "-", "+"
+    #[default]
+    Symbol = 2
+}
 
+/// Style that determines how a chord will be formatted or styled
+///
+/// Example:
+/// ```
+/// use music_theory::theory::*;
+/// let std = ChordStyle::Std(MStyle::Symbol, EStyle::Symbol);
+/// assert_eq!(&Chord::new(&MINOR_MAJOR_SEVENTH).as_string(std), "X-Δ");
+/// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum ChordStyle{
+    /// Only use standard base chord variants
     Std(MStyle, EStyle),
+    /// Use some extra base chord variants
     Extra(MStyle, EStyle),
+    /// Spell out the chord in terms of intervals
     Spelled,
 }
 
@@ -148,16 +249,37 @@ impl Wrapper for Chord{
 }
 
 impl Chord{
+    /// Create a chord from an array of unsigned note intervals.
+    ///
+    /// Example:
+    /// ```
+    /// use music_theory::theory::*;
+    /// let chord = Chord::new(&MAJOR);
+    /// assert!(chord.contains_all(&POWER));
+    /// ```
     pub fn new(intervals: &[Note]) -> Self{
         let mut ints = intervals.to_owned();
         ints.sort();
         Chord(ints)
     }
 
+    /// Returns true if the blueprint is the same as the inner wrapper value.
+    ///
+    /// Example:
+    /// ```
+    /// use music_theory::theory::*;
+    /// let chord = Chord::new(&MAJOR);
+    /// assert!(chord.same_intervals(&MAJOR));
+    /// ```
     pub fn same_intervals(&self, blueprint: &[Note]) -> bool{
         self.0 == blueprint
     }
 
+    /// Returns a normalised version of the chord.
+    /// Intervals will be mapped into one octave (from Z to Z_12).
+    /// The intervals will also be sorted duplicates will be removed.
+    /// This means any form of voicing will be lost and the core quality will remain.
+    // TODO: docs, interval api
     pub fn normalized(self) -> Self{
         let mut res = Vec::new();
         let mut grid = [false; 12];
@@ -172,6 +294,22 @@ impl Chord{
         Chord(res)
     }
 
+    /// Returns the quality of a chord as a string.
+    /// Takes a [ChordStyle][crate::theory::chord::ChordStyle] to determine the formatting
+    /// style.
+    /// The base string is a prefix to the stringified quality.
+    /// The algorithm works with normalised chords and does not take into account voicing, it aims
+    /// to determine the core quality of the chord.
+    /// It is not an exhaustive search style or optimalisation style algorithm and may not produce
+    /// the very best quality you could assign to the input.
+    ///
+    /// Example:
+    /// ```
+    /// use music_theory::theory::*;
+    /// let std = ChordStyle::Std(MStyle::Symbol, EStyle::Symbol);
+    /// let base = String::from("BASESTRING");
+    /// assert_eq!(&Chord::new(&MINOR_MAJOR_SEVENTH).quality(base, std), "BASESTRING-Δ");
+    /// ```
     pub fn quality(&self, basestr: String, style: ChordStyle) -> String{
         fn spelled_out(mut basestr: String, notes: &[Note]) -> String{
             basestr.push('[');
@@ -248,20 +386,52 @@ impl Chord{
         }
     }
 
+    /// Stringify the chord
+    ///
+    /// Example:
+    /// ```
+    /// use music_theory::theory::*;
+    /// let std = ChordStyle::Std(MStyle::Symbol, EStyle::Symbol);
+    /// assert_eq!(&Chord::new(&MINOR_MAJOR_SEVENTH).as_string(std), "X-Δ");
+    /// ```
     pub fn as_string(&self, style: ChordStyle) -> String{
         self.quality("X".to_string(), style)
     }
 }
 
 impl RootedChord{
+    /// Create an new `RootedChord` from a root note and some unsigned intervals.
+    ///
+    /// Example:
+    /// ```
+    /// use music_theory::theory::*;
+    /// let chord = RootedChord::new(Note::C2, &MAJOR);
+    /// assert_eq!(chord.to_scale().unwrap(), vec![Note::C2, Note::E2, Note::G2]);
+    /// ```
     pub fn new(root: Note, intervals: &[Note]) -> Self{
         Self{ root, chord: Chord::new(intervals) }
     }
 
+    /// Create an `RootedChord` from a root note and a chord.
+    ///
+    /// Example:
+    /// ```
+    /// use music_theory::theory::*;
+    /// let chord = RootedChord::from_chord(Note::C2, Chord::new(&MAJOR));
+    /// assert_eq!(chord.to_scale().unwrap(), vec![Note::C2, Note::E2, Note::G2]);
+    /// ```
     pub fn from_chord(root: Note, chord: Chord) -> Self{
         Self{ root, chord }
     }
 
+    /// Convert the `RootedChord` to a [Scale][crate::theory::scale::Scale].
+    ///
+    /// Example:
+    /// ```
+    /// use music_theory::theory::*;
+    /// let chord = RootedChord::new(Note::C2, &MAJOR);
+    /// assert_eq!(chord.as_scale().unwrap(), vec![Note::C2, Note::E2, Note::G2]);
+    /// ```
     pub fn as_scale(&self) -> Scale{
         let mut scale = vec![self.root];
         for int in &self.chord.0{
@@ -270,10 +440,20 @@ impl RootedChord{
         Scale(scale)
     }
 
+    /// Ownership taking version of `as_scale`.
+    ///
+    /// Example:
+    /// ```
+    /// use music_theory::theory::*;
+    /// let chord = RootedChord::new(Note::C2, &MAJOR);
+    /// assert_eq!(chord.to_scale().unwrap(), vec![Note::C2, Note::E2, Note::G2]);
+    /// ```
     pub fn to_scale(self) -> Scale{
         self.as_scale()
     }
 
+    /// Returns a normalised version of the `RootedChord`.
+    // TODO: docs and intervals api
     pub fn normalized(self) -> Self{
         Self {
             root: self.root % _OCTAVE,
@@ -281,6 +461,18 @@ impl RootedChord{
         }
     }
 
+    /// Attempts to find a chordtone wholetone scale for the `RootedChord`.
+    ///
+    /// Example:
+    /// ```
+    /// use music_theory::theory::*;
+    /// assert_eq!(
+    ///     RootedChord::new(Note::F1, MAJOR_SEVENTH_CHORD).as_chordtone_wholetone_scale(),
+    ///     Some(Scale::wrap(
+    ///         vec![Note::F1, Note::G1, Note::A2, Note::B2, Note::C2, Note::D2, Note::E2]
+    ///     )).unwrap()
+    /// );
+    /// ```
     pub fn as_chordtone_wholetone_scale(&self) -> Option<Scale>{
         let mut res = Vec::new();
         let scale = self.as_scale();
@@ -295,6 +487,18 @@ impl RootedChord{
         Some(Scale(res))
     }
 
+    /// Returns a `RootedChord` that is the next inversion of the current one.
+    ///
+    /// Example:
+    /// ```
+    /// use music_theory::theory::*;
+    /// assert_eq!(
+    ///     Scale::wrap(vec![Note::A1, Note::C1, Note::E1, Note::G1])
+    ///         .unwrap().as_rooted_chord().to_inversion(),
+    ///     Scale::wrap(vec![Note::C1, Note::E1, Note::G1, Note::A2])
+    ///         .unwrap().as_rooted_chord(),
+    /// );
+    /// ```
     pub fn as_inversion(&self) -> Self{
         let mut scale = self.as_scale();
         if scale.is_empty() { return Self::default(); }
@@ -309,10 +513,38 @@ impl RootedChord{
         scale.to_rooted_chord()
     }
 
+    /// Ownership taking version of `as_inversion`.
+    ///
+    /// Example:
+    /// ```
+    /// use music_theory::theory::*;
+    /// assert_eq!(
+    ///     Scale::wrap(vec![Note::A1, Note::C1, Note::E1, Note::G1])
+    ///         .unwrap().to_rooted_chord().to_inversion(),
+    ///     Scale::wrap(vec![Note::C1, Note::E1, Note::G1, Note::A2])
+    ///         .unwrap().to_rooted_chord(),
+    /// );
+    /// ```
     pub fn to_inversion(self) -> Self{
         self.as_inversion()
     }
 
+    /// Returns a vector of all inversions of the `RootedChord`.
+    ///
+    /// Example:
+    /// ```
+    /// use music_theory::theory::*;
+    /// assert_eq!(
+    ///     Scale::wrap(vec![Note::A1, Note::C1, Note::E1, Note::G1])
+    ///         .unwrap().to_rooted_chord().as_all_inversions(),
+    ///     vec![
+    ///         Scale::wrap(vec![Note::C1, Note::E1, Note::G1, Note::A2]).unwrap().to_rooted_chord(),
+    ///         Scale::wrap(vec![Note::E1, Note::G1, Note::A1, Note::C2]).unwrap().to_rooted_chord(),
+    ///         Scale::wrap(vec![Note::G1, Note::A2, Note::C2, Note::E2]).unwrap().to_rooted_chord(),
+    ///         Scale::wrap(vec![Note::A2, Note::C2, Note::E2, Note::G2]).unwrap().to_rooted_chord(),
+    ///     ]
+    /// );
+    /// ```
     pub fn as_all_inversions(&self) -> Vec<Self>{
         let len = self.chord.len() + 1;
         let mut inv = self.clone();
@@ -324,10 +556,34 @@ impl RootedChord{
         res
     }
 
+    /// Ownership taking version of `as_all_inversions`.
+    ///
+    /// Example:
+    /// ```
+    /// use music_theory::theory::*;
+    /// assert_eq!(
+    ///     Scale::wrap(vec![Note::A1, Note::C1, Note::E1, Note::G1])
+    ///         .unwrap().to_rooted_chord().to_all_inversions(),
+    ///     vec![
+    ///         Scale::wrap(vec![Note::C1, Note::E1, Note::G1, Note::A2]).unwrap().to_rooted_chord(),
+    ///         Scale::wrap(vec![Note::E1, Note::G1, Note::A1, Note::C2]).unwrap().to_rooted_chord(),
+    ///         Scale::wrap(vec![Note::G1, Note::A2, Note::C2, Note::E2]).unwrap().to_rooted_chord(),
+    ///         Scale::wrap(vec![Note::A2, Note::C2, Note::E2, Note::G2]).unwrap().to_rooted_chord(),
+    ///     ]
+    /// );
+    /// ```
     pub fn to_all_inversions(self) -> Vec<Self>{
         self.as_all_inversions()
     }
 
+    /// Stringify the `RootedChord`.
+    ///
+    /// Example:
+    /// ```
+    /// use music_theory::theory::*;
+    /// let std = ChordStyle::Std(MStyle::Symbol, EStyle::Symbol);
+    /// assert_eq!(&RootedChord::new(Note::C2, &MINOR_MAJOR_SEVENTH).as_string(std), "C-Δ");
+    /// ```
     pub fn as_string(&self, style: ChordStyle) -> String{
         let root = self.root.to_pc().to_string();
         self.chord.quality(root, style)
@@ -373,14 +629,40 @@ impl std::fmt::Display for ScaleDegree{
 }
 
 impl RelativeChord{
+    /// Create a new `RelativeChord` from a [ScaleDegree][crate::theory::chord::ScaleDegree]
+    /// and the chord intervals.
+    ///
+    /// Example:
+    /// ```
+    /// use music_theory::theory::*;
+    /// let chord = RelativeChord::new(ScaleDegree::I, &MAJOR);
+    /// assert!(chord.chord.contains_all(&POWER));
+    /// ```
     pub fn new(degree: ScaleDegree, intervals: &[Note]) -> Self{
         Self{ degree, chord: Chord::new(intervals) }
     }
 
+    /// Create a new 'RelativeChord' from a [ScaleDegree][crate::theory::chord::ScaleDegree]
+    /// and a chord.
+    ///
+    /// Example:
+    /// ```
+    /// use music_theory::theory::*;
+    /// let chord = RelativeChord::from_chord(ScaleDegree::I, Chord::new(&MAJOR_SEVENTH_CHORD));
+    /// assert!(chord.chord.contains_all(&MAJOR));
+    /// ```
     pub fn from_chord(degree: ScaleDegree, chord: Chord) -> Self{
         Self{ degree, chord }
     }
 
+    /// Stringify the `RelativeChord`.
+    ///
+    /// Example:
+    /// ```
+    /// use music_theory::theory::*;
+    /// let std = ChordStyle::Std(MStyle::Symbol, EStyle::Symbol);
+    /// assert_eq!(&RelativeChord::new(ScaleDegree::II, &MINOR_MAJOR_SEVENTH).as_string(std), "II-Δ");
+    /// ```
     pub fn as_string(&self, style: ChordStyle) -> String{
         self.chord.quality(self.degree.to_string(), style)
     }

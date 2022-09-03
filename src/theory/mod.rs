@@ -6,8 +6,9 @@ pub mod traits;
 pub mod note;
 /// PC stands for Pitch Class.
 pub mod pc;
-/// Scales are lists of notes. Variants are Scale and Steps.
+/// Scales are lists of notes. Variants are `Scale` and `Steps`.
 pub mod scale;
+/// Chords are stacks of notes. Variants are `Chord`, `RootedChord` and `RelativeChord`.
 pub mod chord;
 /// An interval is a distance between notes.
 pub mod interval;

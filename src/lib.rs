@@ -9,6 +9,9 @@
 //! - [EnharmonicNote][crate::theory::enharmonic_note::EnharmonicNote]
 //! - [Scale][crate::theory::scale::Scale]
 //! - [Steps][crate::theory::scale::Steps]
+//! - [Chord][crate::theory::chord::Chord]
+//! - [RootedChord][crate::theory::chord::RootedChord]
+//! - [RelativeChord][crate::theory::chord::RelativeChord]
 
 pub mod theory;
 #[macro_use]
