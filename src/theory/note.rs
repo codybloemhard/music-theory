@@ -4,7 +4,10 @@ use super::traits::{
     ToNote, ToPC, OctaveShiftable, GeneratablePartialOrder, AddInterval, ToLetterTry,
     ToEnharmonicNote, Wrapper
 };
-use super::{ Interval, _OCTAVE, PC, Letter, EnharmonicNote };
+use super::{
+    Interval, interval::note_interval::{ OCTAVE },
+    PC, Letter, EnharmonicNote
+};
 use crate::utils::{ impl_op, impl_op_assign };
 
 use std::ops::{ Add, Sub, Mul, Rem, AddAssign, RemAssign, MulAssign, RangeBounds, Bound };
@@ -138,7 +141,7 @@ impl Note{
     /// ```
     pub fn to_pitch(&self) -> f32{
         let x = self.0 as i32 - 48;
-        (2.0f32).powf(x as f32 / _OCTAVE.0 as f32) * 440.0f32
+        (2.0f32).powf(x as f32 / OCTAVE.0 as f32) * 440.0f32
     }
 }
 
@@ -201,11 +204,11 @@ impl GeneratablePartialOrder for Note{
 
 impl OctaveShiftable for Note{
     fn with_octave(self, octave: Octave) -> Note{
-        (((self.0 % _OCTAVE.0) as i32 + octave as i32 * _OCTAVE.0 as i32) as _Note).to_note()
+        (((self.0 % OCTAVE.0) as i32 + octave as i32 * OCTAVE.0 as i32) as _Note).to_note()
     }
 
     fn shift_octave(self, shift: OctaveShift) -> Note{
-        ((self.0 as i32 + shift as i32 * _OCTAVE.0 as i32).max(0) as _Note).to_note()
+        ((self.0 as i32 + shift as i32 * OCTAVE.0 as i32).max(0) as _Note).to_note()
     }
 }
 
@@ -256,6 +259,7 @@ impl ToEnharmonicNote for Note{
 mod tests{
     use super::*;
     use crate::theory::*;
+    use crate::interval::note_interval::{ SEMI, WHOLE, MIN3 };
 
     #[test]
     fn to_pitch(){
@@ -284,7 +288,7 @@ mod tests{
     fn add(){
         assert_eq!(Note(0) + Note(0), Note(0));
         assert_eq!(Note(1) + Note(0), Note(1));
-        assert_eq!(_SEMI + _WHOLE, _MIN3);
+        assert_eq!(SEMI + WHOLE, MIN3);
         assert_eq!(Note::MAX + Note(1), Note::MAX);
     }
 

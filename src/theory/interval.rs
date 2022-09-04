@@ -6,52 +6,59 @@ use super::traits::{
 };
 use super::note::{ Note, Octave, OctaveShift };
 use crate::utils::{ impl_op, impl_op_assign };
+use self::note_interval::*;
 
 use std::cmp::Ordering;
 use std::ops::{ Add, Sub, Bound, RangeBounds };
 use std::fmt::Write;
 
-pub(crate) const _SEMI: Note = Note(1);
-pub(crate) const _WHOLE: Note = Note(2);
+/// Intervals but inside a [Note][crate::theory::Note] type.
+#[allow(missing_docs)]
+pub mod note_interval{
+    use super::Note;
 
-pub(crate) const _ROOT: Note = Note(0);
-pub(crate) const _MIN2: Note = Note(1);
-pub(crate) const _MAJ2: Note = Note(2);
-pub(crate) const _MIN3: Note = Note(3);
-pub(crate) const _MAJ3: Note = Note(4);
-pub(crate) const _PER4: Note = Note(5);
-pub(crate) const _TRIT: Note = Note(6);
-pub(crate) const _PER5: Note = Note(7);
-pub(crate) const _MIN6: Note = Note(8);
-pub(crate) const _MAJ6: Note = Note(9);
-pub(crate) const _MIN7: Note = Note(10);
-pub(crate) const _MAJ7: Note = Note(11);
-pub(crate) const _OCTAVE: Note = Note(12);
-pub(crate) const _MIN9: Note = Note(13);
-pub(crate) const _MAJ9: Note = Note(14);
-pub(crate) const _AUG9: Note = Note(15);
-pub(crate) const _MIN11: Note = Note(16);
-pub(crate) const _MAJ11: Note = Note(17);
-pub(crate) const _AUG11: Note = Note(18);
-pub(crate) const _PER12: Note = Note(19);
-pub(crate) const _MIN13: Note = Note(20);
-pub(crate) const _MAJ13: Note = Note(21);
-pub(crate) const _AUG13: Note = Note(22);
+    pub const SEMI: Note = Note(1);
+    pub const WHOLE: Note = Note(2);
 
-pub(crate) const _DIM2: Note = Note(0);
-pub(crate) const _AUG1: Note = Note(1);
-pub(crate) const _DIM3: Note = Note(2);
-pub(crate) const _AUG2: Note = Note(3);
-pub(crate) const _DIM4: Note = Note(4);
-pub(crate) const _AUG3: Note = Note(5);
-pub(crate) const _DIM5: Note = Note(6);
-pub(crate) const _AUG4: Note = Note(6);
-pub(crate) const _DIM6: Note = Note(7);
-pub(crate) const _AUG5: Note = Note(8);
-pub(crate) const _DIM7: Note = Note(9);
-pub(crate) const _AUG6: Note = Note(10);
-pub(crate) const _DIM8: Note = Note(11);
-pub(crate) const _AUG7: Note = Note(12);
+    pub const ROOT: Note = Note(0);
+    pub const MIN2: Note = Note(1);
+    pub const MAJ2: Note = Note(2);
+    pub const MIN3: Note = Note(3);
+    pub const MAJ3: Note = Note(4);
+    pub const PER4: Note = Note(5);
+    pub const TRIT: Note = Note(6);
+    pub const PER5: Note = Note(7);
+    pub const MIN6: Note = Note(8);
+    pub const MAJ6: Note = Note(9);
+    pub const MIN7: Note = Note(10);
+    pub const MAJ7: Note = Note(11);
+    pub const OCTAVE: Note = Note(12);
+    pub const MIN9: Note = Note(13);
+    pub const MAJ9: Note = Note(14);
+    pub const AUG9: Note = Note(15);
+    pub const MIN11: Note = Note(16);
+    pub const MAJ11: Note = Note(17);
+    pub const AUG11: Note = Note(18);
+    pub const PER12: Note = Note(19);
+    pub const MIN13: Note = Note(20);
+    pub const MAJ13: Note = Note(21);
+    pub const AUG13: Note = Note(22);
+
+    pub const DIM2: Note = Note(0);
+    pub const AUG1: Note = Note(1);
+    pub const DIM3: Note = Note(2);
+    pub const AUG2: Note = Note(3);
+    pub const DIM4: Note = Note(4);
+    pub const AUG3: Note = Note(5);
+    pub const DIM5: Note = Note(6);
+    pub const AUG4: Note = Note(6);
+    pub const DIM6: Note = Note(7);
+    pub const AUG5: Note = Note(8);
+    pub const DIM7: Note = Note(9);
+    pub const AUG6: Note = Note(10);
+    pub const DIM8: Note = Note(11);
+    pub const AUG7: Note = Note(12);
+}
 
 /// An interval is a distance between notes.
 ///
@@ -213,6 +220,17 @@ impl Interval{
     /// ```
     pub fn abs(self) -> Self{
         Self::new(self.0.abs())
+    }
+
+    /// Returns the absolute value of the interval inside a [Note][Note] type.
+    ///
+    /// Example:
+    /// ```
+    /// use music_theory::theory::*;
+    /// assert_eq!(Interval::MIN3.abs_note(), note_interval::MIN3);
+    /// ```
+    pub fn abs_note(self) -> Note{
+        Note::new(self.0.unsigned_abs())
     }
 
     /// Returns the interval spelled out in accidentals.
@@ -391,16 +409,16 @@ impl OctaveShiftable for Interval{
     fn with_octave(self, octave: Octave) -> Self{
         match self.0.cmp(&0){
             Ordering::Less =>
-                Interval((self.0 % _OCTAVE.0 as i32) - octave as i32 * _OCTAVE.0 as i32),
+                Interval((self.0 % OCTAVE.0 as i32) - octave as i32 * OCTAVE.0 as i32),
             Ordering::Equal =>
                 Interval(0),
             Ordering::Greater =>
-                Interval((self.0 % _OCTAVE.0 as i32) + octave as i32 * _OCTAVE.0 as i32),
+                Interval((self.0 % OCTAVE.0 as i32) + octave as i32 * OCTAVE.0 as i32),
         }
     }
 
     fn shift_octave(self, shift: OctaveShift) -> Self{
-        Interval::new(self.0 + shift as i32 * _OCTAVE.0 as i32)
+        Interval::new(self.0 + shift as i32 * OCTAVE.0 as i32)
     }
 }
 
@@ -585,6 +603,15 @@ mod tests{
         assert_eq!(Interval(-1).abs(), Interval(1));
         assert_eq!(Interval::MAX.abs(), Interval::MAX);
         assert_eq!(Interval::MIN.abs(), Interval::MAX);
+    }
+
+    #[test]
+    fn abs_note(){
+        assert_eq!(Interval(0).abs_note(), Note(0));
+        assert_eq!(Interval(1).abs_note(), Note(1));
+        assert_eq!(Interval(-1).abs_note(), Note(1));
+        assert_eq!(Interval::MIN.abs_note(), Note::MAX);
+        assert_eq!(Interval::MAX.abs_note(), Note::MAX);
     }
 
     #[test]
