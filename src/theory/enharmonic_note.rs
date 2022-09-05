@@ -1,5 +1,3 @@
-#![deny(missing_docs)]
-
 use super::traits::{
     Wrapper, Cyclic, ToPC, ToNote, ToLetterTry, ToEnharmonicNote, ToEnharmonicNoteTry,
     AsEnharmonicNotes

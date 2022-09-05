@@ -7,6 +7,18 @@ use crate::libr::{ ModeObj, get_all_scale_objs, ionian };
 
 use fnrs::Sequence;
 
+/// Given a scale in the form of [Steps][Steps], find all the chords build from each scale degree.
+/// `chord_size` determines the size of the chord, so 4 will result in chords with 4 notes.
+///
+/// Example:
+/// ```
+/// use music_theory::{ theory::*, query::*, libr };
+/// let chords = find_scale_chords(&libr::ionian::steps(), 3);
+/// assert_eq!(
+///     (&chords[0], &chords[6]),
+///     (&Chord::new(MAJOR), &Chord::new(MINOR_DIMINISHED))
+/// );
+/// ```
 pub fn find_scale_chords(steps: &Steps, chord_size: usize) -> Vec<Chord>{
     let len = steps.len();
     let mut chords = Vec::new();
@@ -20,6 +32,23 @@ pub fn find_scale_chords(steps: &Steps, chord_size: usize) -> Vec<Chord>{
     chords
 }
 
+/// Given a scale in the form of [Steps][Steps], find all the rooted chord build from each scale
+/// degree.
+/// `tonic` determines the tonic/root/first note of the scale.
+/// `chord_size` determines the size of the chord, so 4 will result in chords with 4 notes.
+///
+/// Example:
+/// ```
+/// use music_theory::{ theory::*, query::*, libr };
+/// let chords = find_rooted_scale_chords(&libr::ionian::steps(), Note::C1, 3);
+/// assert_eq!(
+///     (&chords[0], &chords[6]),
+///     (
+///         &RootedChord{ root: Note::C1, chord: Chord::new(MAJOR) },
+///         &RootedChord{ root: Note::B2, chord: Chord::new(MINOR_DIMINISHED) }
+///     )
+/// );
+/// ```
 pub fn find_rooted_scale_chords(steps: &Steps, tonic: Note, chord_size: usize) -> Vec<RootedChord>{
     let len = steps.len();
     let mut chords = Vec::new();
@@ -33,6 +62,18 @@ pub fn find_rooted_scale_chords(steps: &Steps, tonic: Note, chord_size: usize) -
     chords
 }
 
+/// Given a [Scale][Scale], try to find a matching [ModeObj][ModeObj].
+///
+/// Example:
+/// ```
+/// use music_theory::{ theory::*, query::*, libr::* };
+/// let mo = find_scale(&Scale::wrap(vec![
+///     Note::A1, Note::B1, Note::C1, Note::D1, Note::E1, Note::F1, Note::G1
+/// ]).unwrap()).unwrap();
+/// assert_eq!(&mo.fam_name, "Ionian");
+/// assert_eq!(&mo.mode_name, "Aeolian");
+/// assert_eq!(mo.mode_nr, 5);
+/// ```
 pub fn find_scale(scale: &Scale) -> Option<ModeObj>{
     let steps = scale.as_octave_steps()?;
     let scales = get_all_scale_objs();
@@ -49,6 +90,22 @@ pub fn find_scale(scale: &Scale) -> Option<ModeObj>{
     Option::None
 }
 
+/// Given an [Scale][Scale], try to find all super strings.
+/// A super string is a super sequence that contains the sub string uninterrupted.
+/// For example "abcd" is a super string of "bc" but not of "bd".
+/// Output does not come in [Scale][Scale] form but as pairs of [PC][PC] and [ModeObj][ModeObj].
+/// The relevant [Scale][Scale] can be constructed from this if needed.
+///
+/// Example:
+/// ```
+/// use music_theory::{ theory::*, query::* };
+/// let scale = Scale::wrap(vec![Note::C1, Note::D1, Note::E1, Note::F1, Note::G1]).unwrap();
+/// let mut res = find_scale_superstring(&scale)
+///     .into_iter().map(|(pc, mo)| (pc, mo.fam_name, mo.mode_nr));
+/// assert_eq!(res.next(), Some((PC::C, "Ionian".to_string(), 0)));
+/// assert_eq!(res.next(), Some((PC::A, "Ionian".to_string(), 2)));
+/// assert_eq!(res.next(), Some((PC::As, "Ionian".to_string(), 3)));
+/// ```
 pub fn find_scale_superstring(scale: &Scale) -> Vec<(PC, ModeObj)>{
     let pcs = scale.clone().to_pcs();
     let scales = get_all_scale_objs();
@@ -74,9 +131,25 @@ pub fn find_scale_superstring(scale: &Scale) -> Vec<(PC, ModeObj)>{
     }
     res
 }
-// Finds all the scales that are a super set of the set of notes given.
-// When same_tonic == true, it only gives scales that have the same note as the
-// first note in the set(ordered set shortly) as the tonic.
+
+/// Finds all the scales that are a super set of the set of notes given.
+/// When `same_tonic` is true, it only gives scales that have the same note as the
+/// first note in the set(ordered set shortly) as the tonic.
+/// Output does not come in [Scale][Scale] form but as pairs of [PC][PC] and [ModeObj][ModeObj].
+/// The relevant [Scale][Scale] can be constructed from this if needed.
+///
+/// Example:
+/// ```
+/// use music_theory::{ theory::*, query::* };
+/// let scale = vec![PC::C, PC::D, PC::E, PC::F, PC::G];
+/// let res = find_scale_superset(&scale, false);
+/// assert_eq!(res.len(), 35);
+/// let mut res = find_scale_superset(&scale, true)
+///     .into_iter().map(|(pc, mo)| (pc, mo.fam_name, mo.mode_nr));
+/// assert_eq!(res.next(), Some((PC::C, "Ionian".to_string(), 0)));
+/// assert_eq!(res.next(), Some((PC::C, "Ionian".to_string(), 4)));
+/// assert_eq!(res.next(), Some((PC::C, "Harmonic Major".to_string(), 0)));
+/// ```
 pub fn find_scale_superset(scale: &[PC], same_tonic: bool) -> Vec<(PC, ModeObj)>{
     let target_tonic = scale[0].to_note().0;
     let scales = get_all_scale_objs();
@@ -108,7 +181,18 @@ pub fn find_scale_superset(scale: &[PC], same_tonic: bool) -> Vec<(PC, ModeObj)>
     }
     res
 }
-// Finds all the scales where the input is the I chord
+
+/// Finds all the scales where the input is the I chord.
+///
+/// Example:
+/// ```
+/// use music_theory::{ theory::*, query::* };
+/// let mut res = find_chordscales(&[PC::F, PC::A, PC::C, PC::E])
+///     .into_iter().map(|mo| (mo.fam_name, mo.mode_nr));
+/// assert_eq!(res.next(), Some(("Ionian".to_string(), 0)));
+/// assert_eq!(res.next(), Some(("Ionian".to_string(), 3)));
+/// assert_eq!(res.next(), Some(("Harmonic Minor".to_string(), 5)));
+/// ```
 pub fn find_chordscales(pcs: &[PC]) -> Vec<ModeObj>{
     let mut res = Vec::new();
     if pcs.is_empty() { return res; }
@@ -137,7 +221,19 @@ pub fn find_chordscales(pcs: &[PC]) -> Vec<ModeObj>{
     }
     res
 }
-// Finds all the scales with the given relative properties
+
+/// Finds all the scales with the given relative properties.
+///
+/// Example:
+/// ```
+/// use music_theory::{ theory::*, query::* };
+/// let res = find_scale_from_ionian_relative(
+///     &[Interval::NAT, Interval::NAT, Interval::NAT, Interval::NAT,
+///     Interval::NAT, Interval::NAT, Interval::NAT]
+/// ).unwrap();
+/// assert_eq!(&res.fam_name, "Ionian");
+/// assert_eq!(res.mode_nr, 0);
+/// ```
 pub fn find_scale_from_ionian_relative(rel: &[Interval]) -> Option<ModeObj>{
     let scales = get_all_scale_objs();
     for sc in scales{
@@ -265,7 +361,7 @@ mod tests{
 
     #[test]
     fn test_find_scale_superset(){
-        let scale = Scale(vec![Note::C1, Note::D1, Note::E1, Note::F1, Note::G1]).to_pcs();
+        let scale = vec![PC::C, PC::D, PC::E, PC::F, PC::G];
         let res = find_scale_superset(&scale, false);
         assert_eq!(res.len(), 35);
         let mut res = find_scale_superset(&scale, true)

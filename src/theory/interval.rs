@@ -1,5 +1,3 @@
-#![deny(missing_docs)]
-
 use super::traits::{
     GeneratablePartialOrder, OctaveShiftable, AddInterval, ToInterval, ToNamedInterval,
     Cyclic, ToNamedOctaveInterval, Wrapper, AsIonianRelativeStringTry

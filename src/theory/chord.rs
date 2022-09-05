@@ -1,5 +1,3 @@
-#![deny(missing_docs)]
-
 use super::{ Note, Notes, Scale };
 use super::interval::{ *, note_interval::* };
 use super::traits::{

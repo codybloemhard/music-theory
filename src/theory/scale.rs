@@ -1,5 +1,3 @@
-#![deny(missing_docs)]
-
 use super::{ Note, _Note, Interval, PCs, Intervals, EnharmonicNote, Chord, RootedChord };
 use super::traits::{
     Wrapper, VecWrapper, ModeTrait, AsScaleTry, AsSteps, AddInterval, ToPC, AsPCs,

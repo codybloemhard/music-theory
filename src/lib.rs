@@ -18,6 +18,7 @@ pub mod theory;
 #[macro_use]
 pub mod utils;
 pub mod libr;
+/// Queries such as searches.
 pub mod query;
 
 use theory::*;
