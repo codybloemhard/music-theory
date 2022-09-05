@@ -1,5 +1,3 @@
-#![deny(missing_docs)]
-
 use super::traits::{
     ToNote, ToPC, OctaveShiftable, GeneratablePartialOrder, AddInterval, ToLetterTry,
     ToEnharmonicNote, Wrapper

@@ -13,6 +13,7 @@
 //! - [RootedChord][crate::theory::chord::RootedChord]
 //! - [RelativeChord][crate::theory::chord::RelativeChord]
 
+/// Music theory core functionality.
 pub mod theory;
 #[macro_use]
 pub mod utils;
