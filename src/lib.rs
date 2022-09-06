@@ -29,6 +29,7 @@ pub mod query;
 use theory::*;
 use libr::*;
 use query::*;
+use utils::*;
 
 use std::collections::{ HashSet, HashMap };
 use std::mem;

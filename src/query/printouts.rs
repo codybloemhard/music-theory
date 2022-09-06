@@ -1,7 +1,7 @@
 use super::{ find_scale_chords, find_rooted_scale_chords };
 use crate::theory::{ Note, Steps, ChordStyle, AsRelativeIntervals, ToIonianRelativeStringTry };
-use crate::utils::to_roman_num;
-use crate::libr::{ ionian, HeptatonicScaleNamer, get_all_scale_objs, Intercalatable };
+use crate::utils::{ to_roman_num, Intercalatable  };
+use crate::libr::{ ionian, HeptatonicScaleNamer, get_all_scale_objs };
 
 use std::fmt::Write;
 
