@@ -1,8 +1,13 @@
 
+/// The ability to intercalate.
 pub trait Intercalatable{
+    /// The seperator's type.
     type InterType;
+    /// The output's type.
     type JoinType;
+    /// Intercalate with `val` and join the result together.
     fn intercalate(self, val: Self::InterType) -> Self::JoinType;
+    /// Intercalate with 'val', push `end` and join the result together.
     fn intercalate_with_end(self, val: Self::InterType, end: Self::InterType) -> Self::JoinType;
 }
 
@@ -31,6 +36,21 @@ impl Intercalatable for Vec<String>{
     }
 }
 
+/// Space strings out evenly.
+/// `strings` are the strings to be spaced out.
+/// `space` is how many characters of space each string is allowed, the widht of the spacing.
+/// `end` will be pushed onto the end of the output.
+///
+/// Example:
+/// ```
+/// use music_theory::libr::infos::*;
+/// let v = vec![
+///     "AAAA".to_string(),
+///     "BBBBBBBB".to_string(),
+///     "CCCC".to_string()
+/// ];
+/// assert_eq!(&format_even(&v, 6, "\n"), "AAAA  BBBBB`CCCC  \n");
+/// ```
 pub fn format_even(strings: &[String], spaces: usize, end: &str) -> String{
     let mut res = String::new();
     for string in strings{
@@ -54,6 +74,30 @@ pub fn format_even(strings: &[String], spaces: usize, end: &str) -> String{
     res
 }
 
+/// Space out strings in a grid.
+/// `strings` are the strings to be spaced out in the grid.
+/// `width` is the size in characters that each grid slot has.
+/// `padding` is the size in characters that sits between the columns.
+///
+/// Example:
+/// ```
+/// use music_theory::libr::infos::*;
+/// let v = vec![
+///     "X", "XX", "XXX", "XXXX", "XXXXXX", "XXXXX",
+///     "Y", "YY", "YYY", "YYYY", "YYYYYY", "YYYYY",
+///     "Z", "ZZ", "ZZZ", "ZZZZ", "ZZZZZZ", "ZZZZZ"
+/// ].iter().map(|x| x.to_string()).collect::<Vec<_>>();
+/// let res = format_to_grid_auto(&v, 20, 2);
+/// ```
+/// Result:
+/// ```text
+/// X       XX      XXX
+/// XXXX    XXXXXX  XXXXX
+/// Y       YY      YYY
+/// YYYY    YYYYYY  YYYYY
+/// Z       ZZ      ZZZ
+/// ZZZZ    ZZZZZZ  ZZZZZ
+/// ```
 pub fn format_to_grid_auto(strings: &[String], width: usize, padding: usize) -> String{
     let mut res = String::new();
     let mut longest = 0;

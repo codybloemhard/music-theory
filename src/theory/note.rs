@@ -2,15 +2,41 @@ use super::traits::{
     ToNote, ToPC, OctaveShiftable, GeneratablePartialOrder, AddInterval, ToLetterTry,
     ToEnharmonicNote, Wrapper
 };
-use super::{ Interval, _OCTAVE, PC, Letter, EnharmonicNote };
+use super::{
+    Interval, interval::note_interval::{ OCTAVE },
+    PC, Letter, EnharmonicNote
+};
 use crate::utils::{ impl_op, impl_op_assign };
 
 use std::ops::{ Add, Sub, Mul, Rem, AddAssign, RemAssign, MulAssign, RangeBounds, Bound };
 
-pub type _Note = u32;
+// only used internally
+pub(crate) type _Note = u32;
+/// Octave.
+///
+/// Example:
+/// ```
+/// use music_theory::theory::*;
+/// assert_eq!(Note::A4.with_octave(5), Note::A5);
+/// ```
 pub type Octave = u16;
+/// Can be negative to shift down into the octave range.
+///
+/// Example:
+/// ```
+/// use music_theory::theory::*;
+/// assert_eq!(Note::A4.shift_octave(-1), Note::A3);
+/// ```
 pub type OctaveShift = i16;
 
+/// The main note type.
+/// Does not take into account enharmonic spelling.
+///
+/// Example:
+/// ```
+/// use music_theory::theory::*;
+/// assert_eq!(Note::new(0), Note::A0);
+/// ```
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct Note(pub(crate) u32);
 
@@ -19,24 +45,45 @@ macro_rules! define_notes{
         $an: ident, $as: ident, $bn: ident, $cn: ident, $cs: ident, $dn: ident, $ds: ident,
         $en: ident, $fn: ident, $fs: ident, $gn: ident, $gs: ident
     ) => {
-        pub const $an: Note = Note(0 + $octave * 12);
-        pub const $as: Note = Note(1 + $octave * 12);
-        pub const $bn: Note = Note(2 + $octave * 12);
-        pub const $cn: Note = Note(3 + $octave * 12);
-        pub const $cs: Note = Note(4 + $octave * 12);
-        pub const $dn: Note = Note(5 + $octave * 12);
-        pub const $ds: Note = Note(6 + $octave * 12);
-        pub const $en: Note = Note(7 + $octave * 12);
-        pub const $fn: Note = Note(8 + $octave * 12);
-        pub const $fs: Note = Note(9 + $octave * 12);
-        pub const $gn: Note = Note(10 + $octave * 12);
-        pub const $gs: Note = Note(11 + $octave * 12);
+        #[allow(missing_docs)] pub const $an: Note = Note(0 + $octave * 12);
+        #[allow(missing_docs)] pub const $as: Note = Note(1 + $octave * 12);
+        #[allow(missing_docs)] pub const $bn: Note = Note(2 + $octave * 12);
+        #[allow(missing_docs)] pub const $cn: Note = Note(3 + $octave * 12);
+        #[allow(missing_docs)] pub const $cs: Note = Note(4 + $octave * 12);
+        #[allow(missing_docs)] pub const $dn: Note = Note(5 + $octave * 12);
+        #[allow(missing_docs)] pub const $ds: Note = Note(6 + $octave * 12);
+        #[allow(missing_docs)] pub const $en: Note = Note(7 + $octave * 12);
+        #[allow(missing_docs)] pub const $fn: Note = Note(8 + $octave * 12);
+        #[allow(missing_docs)] pub const $fs: Note = Note(9 + $octave * 12);
+        #[allow(missing_docs)] pub const $gn: Note = Note(10 + $octave * 12);
+        #[allow(missing_docs)] pub const $gs: Note = Note(11 + $octave * 12);
     }
 }
 
 impl Note{
+    /// Biggest valid `Note` value.
+    ///
+    /// Example:
+    /// ```
+    /// use music_theory::theory::*;
+    /// assert_eq!(Note::MAX + Note::C3, Note::MAX);
+    /// ```
     pub const MAX: Note = Note(1073741824); // 1 << 30
+    /// Smallest valid `Note` value.
+    ///
+    /// Example:
+    /// ```
+    /// use music_theory::theory::*;
+    /// assert_eq!(Note::MIN.shift_octave(-1), Note::MIN);
+    /// ```
     pub const MIN: Note = Note(0);
+    /// The zeroth `Note`, the same as `Note::MIN`.
+    ///
+    /// Example:
+    /// ```
+    /// use music_theory::theory::*;
+    /// assert_eq!(Note::ZERO, Note::MIN);
+    /// ```
     pub const ZERO: Note = Note(0);
 
     define_notes!(0, A0, AS0, B0, C0, CS0, D0, DS0, E0, F0, FS0, G0, GS0);
@@ -50,10 +97,26 @@ impl Note{
     define_notes!(8, A8, AS8, B8, C8, CS8, D8, DS8, E8, F8, FS8, G8, GS8);
     define_notes!(9, A9, AS9, B9, C9, CS9, D9, DS9, E9, F9, FS9, G9, GS9);
 
+    /// Create a new valid note.
+    /// Will be clamped if nessesary.
+    ///
+    /// Example:
+    /// ```
+    /// use music_theory::theory::*;
+    /// assert_eq!(Note::new(12), Note::A1);
+    /// ```
     pub fn new(note: u32) -> Self{
         Self(note.min(Self::MAX.0))
     }
 
+    /// Returns the inner value.
+    /// You can not set the inner value directly to prevent invalid notes.
+    ///
+    /// Example:
+    /// ```
+    /// use music_theory::theory::*;
+    /// assert_eq!(Note::A2.inside(), 24);
+    /// ```
     pub fn inside(&self) -> u32{
         self.0
     }
@@ -66,10 +129,17 @@ impl Note{
     48                                              // A4
     */
 
-    // note 48 is A4 at 440 hz
+    /// Return the pitch in hertz.
+    /// `Note::A4` has an inner value of 48 and a pitch of 440 hz.
+    ///
+    /// Example:
+    /// ```
+    /// use music_theory::theory::*;
+    /// assert_eq!(Note::A4.to_pitch(), 440.0);
+    /// ```
     pub fn to_pitch(&self) -> f32{
         let x = self.0 as i32 - 48;
-        (2.0f32).powf(x as f32 / _OCTAVE.0 as f32) * 440.0f32
+        (2.0f32).powf(x as f32 / OCTAVE.0 as f32) * 440.0f32
     }
 }
 
@@ -132,11 +202,11 @@ impl GeneratablePartialOrder for Note{
 
 impl OctaveShiftable for Note{
     fn with_octave(self, octave: Octave) -> Note{
-        (((self.0 % _OCTAVE.0) as i32 + octave as i32 * _OCTAVE.0 as i32) as _Note).to_note()
+        (((self.0 % OCTAVE.0) as i32 + octave as i32 * OCTAVE.0 as i32) as _Note).to_note()
     }
 
     fn shift_octave(self, shift: OctaveShift) -> Note{
-        ((self.0 as i32 + shift as i32 * _OCTAVE.0 as i32).max(0) as _Note).to_note()
+        ((self.0 as i32 + shift as i32 * OCTAVE.0 as i32).max(0) as _Note).to_note()
     }
 }
 
@@ -187,6 +257,7 @@ impl ToEnharmonicNote for Note{
 mod tests{
     use super::*;
     use crate::theory::*;
+    use crate::interval::note_interval::{ SEMI, WHOLE, MIN3 };
 
     #[test]
     fn to_pitch(){
@@ -215,7 +286,7 @@ mod tests{
     fn add(){
         assert_eq!(Note(0) + Note(0), Note(0));
         assert_eq!(Note(1) + Note(0), Note(1));
-        assert_eq!(_SEMI + _WHOLE, _MIN3);
+        assert_eq!(SEMI + WHOLE, MIN3);
         assert_eq!(Note::MAX + Note(1), Note::MAX);
     }
 

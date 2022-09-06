@@ -3,39 +3,87 @@ use crate::theory::traits::{ ModeIteratorSpawner, VecWrapper, Wrapper };
 
 use std::fmt::Write;
 
+/// Scale Object.
+/// Contains information on a scale family.
 pub struct ScaleObj{
+    /// Steps describe the base scale in the family.
     pub steps: Steps,
+    /// Family name of this scale family.
     pub fam_name: String,
+    /// Names of the modes of the scale family.
     pub modes: Vec<String>,
 }
 
+/// Mode Object.
+/// Contains information on a mode.
 #[derive(Debug, Default, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct ModeObj{
+    /// Steps describe the scale.
     pub steps: Steps,
+    /// Family name of the scale family it comes from.
     pub fam_name: String,
+    /// Name of this mode.
     pub mode_name: String,
+    /// The mode number this is in the scale family it comes from.
     pub mode_nr: usize,
 }
 
 impl ScaleObj{
+    /// Get a clone of the steps.
+    ///
+    /// Example:
+    /// ```
+    /// use music_theory::theory::*;
+    /// use music_theory::libr::scales::*;
+    /// let major = ionian::obj();
+    /// let steps = major.clone_steps();
+    /// assert_eq!(steps.len(), 7);
+    /// ```
     pub fn clone_steps(&self) -> Steps{
         self.steps.clone()
     }
 
+    /// Get a clone of the family name.
+    ///
+    /// Example:
+    /// ```
+    /// use music_theory::theory::*;
+    /// use music_theory::libr::scales::*;
+    /// let major = ionian::obj();
+    /// assert_eq!(&major.family_name(), "Ionian");
+    /// ```
     pub fn family_name(&self) -> String{
         self.fam_name.clone()
     }
 
+    /// Get the name of the Nth mode of this scale family.
+    ///
+    /// Example:
+    /// ```
+    /// use music_theory::theory::*;
+    /// use music_theory::libr::scales::*;
+    /// let major = ionian::obj();
+    /// assert_eq!(&major.get_mode_name(2), "Phrygian");
+    /// ```
     pub fn get_mode_name(&self, mode: Mode) -> String{
         let m = mode as usize % self.steps.len();
         let name = self.modes[m].clone();
         if name.is_empty(){
             String::from("")
-        }else{
+        } else {
             name
         }
     }
 
+    /// Get all the modes as a vector of [ModeObj][ModeObj].
+    ///
+    /// Example:
+    /// ```
+    /// use music_theory::theory::*;
+    /// use music_theory::libr::scales::*;
+    /// let modes = ionian::obj().get_modes();
+    /// assert_eq!(&modes[6].mode_name, "Locrian");
+    /// ```
     pub fn get_modes(self) -> Vec<ModeObj>{
         let fname = self.family_name();
         let mut res = Vec::new();
@@ -59,6 +107,15 @@ impl std::fmt::Display for ModeObj{
     }
 }
 
+/// Get all the scale objects in the library in a vector.
+///
+/// Example:
+/// ```
+/// use music_theory::theory::*;
+/// use music_theory::libr::scales::*;
+/// let objs = get_all_scale_objs();
+/// assert_eq!(objs.len(), 10); // there are ten scale families in the library currently.
+/// ```
 pub fn get_all_scale_objs() -> Vec<ScaleObj>{
     vec![
         ionian::obj(),
@@ -70,16 +127,19 @@ pub fn get_all_scale_objs() -> Vec<ScaleObj>{
     ]
 }
 
-macro_rules! DefScale{
+macro_rules! def_scale{
     ($modname:ident, $name:expr, $steps:expr, $( $mode:expr ),* ) => {
+        /// A module named after a scale family with functions to get it's data.
         pub mod $modname{
             use crate::theory::{ Steps };
             use super::*;
 
+            /// Get the steps of this scale family.
             pub fn steps() -> Steps{
                 Steps($steps)
             }
 
+            /// Get the [ScaleObj][ScaleObj] of this scale family.
             pub fn obj() -> ScaleObj{
                 let modes = vec![
                     $(
@@ -100,62 +160,72 @@ const SEMI: Interval = Interval::SEMI;
 const WHOLE: Interval = Interval::WHOLE;
 const MIN3: Interval = Interval::MIN3;
 
-DefScale!(ionian, "Ionian",
+def_scale!(ionian, "Ionian",
     vec![WHOLE, WHOLE, SEMI, WHOLE, WHOLE, WHOLE, SEMI],
     "Ionian", "Dorian", "Phrygian", "Lydian", "Mixolidian", "Aeolian", "Locrian"
 );
 
-DefScale!(harmonic_minor, "Harmonic Minor",
+def_scale!(harmonic_minor, "Harmonic Minor",
     vec![WHOLE, SEMI, WHOLE, WHOLE, SEMI, MIN3, SEMI],
     "Harmonic Minor", "", "", "", "Phrygian Dominant", "", "Superlocrian"
 );
 
-DefScale!(harmonic_major, "Harmonic Major",
+def_scale!(harmonic_major, "Harmonic Major",
     vec![WHOLE, WHOLE, SEMI, WHOLE, SEMI, MIN3, SEMI],
     "Harmonic Major" ,"", "Super Phrygian", "Lydian Diminished", "", "" ,""
 );
 
-DefScale!(byzantine, "Double Harmonic Major",
+def_scale!(byzantine, "Double Harmonic Major",
     vec![SEMI, MIN3, SEMI, WHOLE, SEMI, MIN3, SEMI],
     "Byzantine", "", "Ultra Phrygian", "Hungarian Minor", "Oriental", "", ""
 );
 
-DefScale!(hungarian_major, "Hungarian Major",
+def_scale!(hungarian_major, "Hungarian Major",
     vec![MIN3, SEMI, WHOLE, SEMI, WHOLE, SEMI, WHOLE],
     "Hungarian Major", "", "", "", "", "", ""
 );
 
-DefScale!(neapolitan_minor, "Neapolitan Minor",
+def_scale!(neapolitan_minor, "Neapolitan Minor",
     vec![SEMI, WHOLE, WHOLE, WHOLE, SEMI, MIN3, SEMI],
     "Neapolitan Minor", "", "Mixolydian Augmented", "Lydian Minor", "", "", ""
 );
 
-DefScale!(neapolitan_major, "Neapolitan Major",
+def_scale!(neapolitan_major, "Neapolitan Major",
     vec![SEMI, WHOLE, WHOLE, WHOLE, WHOLE, WHOLE, SEMI],
     "Neapolitan Major", "", "", "", "", "", ""
 );
 
-DefScale!(melodic_minor, "Melodic Minor",
+def_scale!(melodic_minor, "Melodic Minor",
     vec![WHOLE, SEMI, WHOLE, WHOLE, WHOLE, WHOLE, SEMI],
     "Melodic Minor", "", "Lydian Augmented", "Lydian Dominant", "Melodic Major", "", "Altered Scale"
 );
 
-DefScale!(enigmatic_major, "Enigmatic Major",
+def_scale!(enigmatic_major, "Enigmatic Major",
     vec![SEMI, MIN3, WHOLE, WHOLE, WHOLE, SEMI, SEMI], "Enigmatic Major",
     "Enigmatic Major", "", "", "", "", "", ""
 );
 
-DefScale!(enigmatic_minor, "Enigmatic Minor",
+def_scale!(enigmatic_minor, "Enigmatic Minor",
     vec![SEMI, WHOLE, MIN3, SEMI, MIN3, SEMI, SEMI],
     "Enigmatic Minor", "", "", "", "", "", ""
 );
 
+/// A struct that has methods used for naming scales that are seven (7) notes in length.
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct HeptatonicScaleNamer{
     basis: Vec<(Scale, String)>,
 }
 
 impl HeptatonicScaleNamer{
+    /// Generate a new `HeptatonicScaleName`.
+    ///
+    /// Example:
+    /// ```
+    /// use music_theory::theory::*;
+    /// use music_theory::libr::scales::*;
+    /// let namer = HeptatonicScaleNamer::new();
+    /// assert_eq!(namer.name(&ionian::steps()), Some(String::from("Ionian")));
+    /// ```
     pub fn new() -> Self{
         let scales = get_all_scale_objs();
         let mut basis = Vec::new();
@@ -173,6 +243,22 @@ impl HeptatonicScaleNamer{
         Self{ basis }
     }
 
+    /// Given the input steps, try to return a good name for this scale/mode.
+    ///
+    /// Example:
+    /// ```
+    /// use music_theory::theory::*;
+    /// use music_theory::libr::scales::*;
+    /// let namer = HeptatonicScaleNamer::new();
+    /// assert_eq!(
+    ///     namer.name(
+    ///         &vec![PC::C, PC::Cs, PC::E, PC::F, PC::G, PC::A, PC::B]
+    ///         .to_scale_try(Note::ZERO).unwrap()
+    ///         .to_steps(true)
+    ///     ),
+    ///     Some(String::from("Ionian ♭2"))
+    /// );
+    /// ```
     pub fn name(&self, steps: &Steps) -> Option<String>{
         let nameless = steps.as_scale_try(Note(0))?;
         if nameless.len() != 7 { return None; }

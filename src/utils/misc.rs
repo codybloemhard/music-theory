@@ -26,6 +26,15 @@ macro_rules! impl_op_assign{
 }
 pub(crate) use impl_op_assign;
 
+/// Check if a slice is sorted.
+/// Somehow this is not stable in std...
+///
+/// Example:
+/// ```
+/// use music_theory::utils::misc::*;
+/// assert!(!is_sorted(&[6, 7, 6, 9]));
+/// assert!(is_sorted(&[3, 4, 4, 5]));
+/// ```
 pub fn is_sorted<T: PartialOrd + Copy>(v: &[T]) -> bool{
     let mut last = v[0];
     for x in v{
@@ -35,6 +44,27 @@ pub fn is_sorted<T: PartialOrd + Copy>(v: &[T]) -> bool{
     true
 }
 
+/// Generate subsets of a slice.
+/// `max_len` is the maximum length of the subsets generated.
+/// No subsets larger than `max_len` will be generated.
+/// It's a way to reduce output size.
+/// The output size of this grows really fast with the input size so be aware:
+/// 2, 5, 16, 65, 326, 1957, 13700, 109601, 986410, 9864101, 108505112.
+///
+/// Example:
+/// ```
+/// use music_theory::utils::misc::*;
+/// assert_eq!(
+///     sub_vecs(&[0, 1], None),
+///     vec![
+///         vec![],
+///         vec![0],
+///         vec![1],
+///         vec![0, 1],
+///         vec![1, 0],
+///     ]
+/// );
+/// ```
 pub fn sub_vecs<'a, T>(arr: &'a[T], max_len: Option<usize>) -> Vec<Vec<T>>
     where
         &'a[T]: IntoIterator,

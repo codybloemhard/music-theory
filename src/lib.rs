@@ -1,7 +1,29 @@
+//! Rust library for music theory objects and queries.
+//! The main types are:
+//! - [Note][crate::theory::note::Note]
+//! - [PC][crate::theory::pc::PC]
+//! - [Interval][crate::theory::interval::Interval]
+//! - [NamedInterval][crate::theory::interval::NamedInterval]
+//! - [NamedOctaveInterval][crate::theory::interval::NamedOctaveInterval]
+//! - [Letter][crate::theory::enharmonic_note::Letter]
+//! - [EnharmonicNote][crate::theory::enharmonic_note::EnharmonicNote]
+//! - [Scale][crate::theory::scale::Scale]
+//! - [Steps][crate::theory::scale::Steps]
+//! - [Chord][crate::theory::chord::Chord]
+//! - [RootedChord][crate::theory::chord::RootedChord]
+//! - [RelativeChord][crate::theory::chord::RelativeChord]
+
+#![forbid(unsafe_code)]
+#![deny(missing_docs)]
+
+/// Music theory core functionality.
 pub mod theory;
+/// Utilities that don't have to do with music theory directly.
 #[macro_use]
 pub mod utils;
+/// Library of data and related types and functionality.
 pub mod libr;
+/// Queries such as searches.
 pub mod query;
 
 use theory::*;
@@ -14,7 +36,7 @@ use std::fmt::Write;
 
 use vec_string::*;
 
-// return (header, content)
+/// return (header, content)
 #[cfg(not(tarpaulin))]
 pub fn notes_analysis(input_string: String, style: ChordStyle) -> Vec<(String, String)>{
     // Remove duplicate notes

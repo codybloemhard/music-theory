@@ -4,12 +4,27 @@ use super::traits::{
 };
 use super::{ Note, PC, Interval };
 
+/// A letter represents one of the letters musical notes can start with.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(u32)]
 pub enum Letter{
-    A = 0, B = 1, C = 2, D = 3, E = 4, F = 5, G = 6
+    #[allow(missing_docs)] A = 0,
+    #[allow(missing_docs)] B = 1,
+    #[allow(missing_docs)] C = 2,
+    #[allow(missing_docs)] D = 3,
+    #[allow(missing_docs)] E = 4,
+    #[allow(missing_docs)] F = 5,
+    #[allow(missing_docs)] G = 6
 }
 
+/// An enhamonic note is a note that takes into account the enharmonic spelling.
+///
+/// Example:
+/// ```
+/// use music_theory::theory::*;
+/// let en = EnharmonicNote::wrap((Letter::A, Interval::SHARP)).unwrap();
+/// assert_eq!(en.unwrap(), (Letter::A, Interval::SHARP));
+/// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct EnharmonicNote{
     pub(crate) letter: Letter,
@@ -17,6 +32,13 @@ pub struct EnharmonicNote{
 }
 
 impl Letter{
+    /// All letters so you can iterate over them.
+    ///
+    /// Example:
+    /// ```
+    /// use music_theory::theory::*;
+    /// assert_eq!(Letter::ALL.iter().copied().next(), Some(Letter::A));
+    /// ```
     pub const ALL: [Letter; 7] = [
         Letter::A, Letter::B, Letter::C, Letter::D,
         Letter::E, Letter::F, Letter::G
@@ -24,6 +46,18 @@ impl Letter{
 }
 
 impl EnharmonicNote{
+    /// Spell an enharmonic note as an enharmonic note with a different base note but with the same
+    /// note value.
+    ///
+    /// Example:
+    /// ```
+    /// use music_theory::theory::*;
+    /// let en = EnharmonicNote::wrap((Letter::A, Interval::ROOT)).unwrap();
+    /// let respelled = en.spelled_as(Letter::B);
+    /// assert_eq!(en.to_pc().to_note(), Note::ZERO);
+    /// assert_eq!(respelled.to_pc().to_note(), Note::ZERO);
+    /// assert_eq!(respelled.unwrap(), (Letter::B, Interval::FLAT2));
+    /// ```
     pub fn spelled_as(&self, letter: Letter) -> Self{
         if self.letter == letter { return *self; }
         let up = {
