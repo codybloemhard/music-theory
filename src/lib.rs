@@ -13,10 +13,12 @@
 //! - [RootedChord][crate::theory::chord::RootedChord]
 //! - [RelativeChord][crate::theory::chord::RelativeChord]
 
-#[forbid(unsafe_code)]
+#![forbid(unsafe_code)]
+#![deny(missing_docs)]
 
 /// Music theory core functionality.
 pub mod theory;
+/// Utilities that don't have to do with music theory directly.
 #[macro_use]
 pub mod utils;
 /// Library of data and related types and functionality.

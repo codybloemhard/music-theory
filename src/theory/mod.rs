@@ -1,5 +1,3 @@
-#![deny(missing_docs)]
-
 /// All traits defined in this crate.
 #[macro_use]
 pub mod traits;
