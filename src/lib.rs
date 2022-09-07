@@ -31,11 +31,13 @@ use libr::*;
 use query::*;
 use utils::*;
 
-use std::collections::{ HashSet, HashMap };
-use std::mem;
-use std::fmt::Write;
-
 use vec_string::*;
+
+use std::{
+    collections::{ HashSet, HashMap },
+    fmt::Write,
+    mem,
+};
 
 /// return (header, content)
 #[cfg(not(tarpaulin))]

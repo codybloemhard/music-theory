@@ -1,5 +1,7 @@
-use crate::theory::{ Steps, Mode, Interval, Scale, AsScaleTry, ToScaleTry, Note };
-use crate::theory::traits::{ ModeIteratorSpawner, VecWrapper, Wrapper };
+use crate::theory::{
+    traits::{ ModeIteratorSpawner, VecWrapper, Wrapper },
+    Steps, Mode, Interval, Scale, AsScaleTry, ToScaleTry, Note,
+};
 
 use std::fmt::Write;
 

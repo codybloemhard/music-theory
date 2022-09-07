@@ -1,12 +1,14 @@
-use super::traits::{
-    ToNote, ToPC, OctaveShiftable, GeneratablePartialOrder, AddInterval, ToLetterTry,
-    ToEnharmonicNote, Wrapper
+use crate::{
+    utils::{ impl_op, impl_op_assign },
+    theory::{
+        traits::{
+            ToNote, ToPC, OctaveShiftable, GeneratablePartialOrder, AddInterval, ToLetterTry,
+            ToEnharmonicNote, Wrapper
+        },
+        interval::note_interval::OCTAVE,
+        Interval, PC, Letter, EnharmonicNote
+    },
 };
-use super::{
-    Interval, interval::note_interval::{ OCTAVE },
-    PC, Letter, EnharmonicNote
-};
-use crate::utils::{ impl_op, impl_op_assign };
 
 use std::ops::{ Add, Sub, Mul, Rem, AddAssign, RemAssign, MulAssign, RangeBounds, Bound };
 

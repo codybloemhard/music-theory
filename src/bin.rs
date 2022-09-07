@@ -1,6 +1,5 @@
 extern crate music_theory;
-use music_theory::theory::*;
-use music_theory::query::*;
+use music_theory::{ theory::*, query::* };
 
 // jazzbøt
 #[cfg(not(tarpaulin))]

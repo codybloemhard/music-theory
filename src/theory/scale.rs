@@ -1,8 +1,10 @@
-use super::{ Note, _Note, Interval, PCs, Intervals, EnharmonicNote, Chord, RootedChord };
-use super::traits::{
-    Wrapper, VecWrapper, ModeTrait, AsScaleTry, AsSteps, AddInterval, ToPC, AsPCs,
-    AsRelativeIntervals, AsEnharmonicNotes, AsEnharmonicNotesWithStart, Cyclic,
-    ToEnharmonicNote, ToNote, ModeIteratorSpawner, AsChord, AsRootedChord, ScaleIteratorSpawner
+use super::{
+    traits::{
+        Wrapper, VecWrapper, ModeTrait, AsScaleTry, AsSteps, AddInterval, ToPC, AsPCs,
+        AsRelativeIntervals, AsEnharmonicNotes, AsEnharmonicNotesWithStart, Cyclic,
+        ToEnharmonicNote, ToNote, ModeIteratorSpawner, AsChord, AsRootedChord, ScaleIteratorSpawner
+    },
+    Note, _Note, Interval, PCs, Intervals, EnharmonicNote, Chord, RootedChord
 };
 
 /// A mode is an index into all possible modes.

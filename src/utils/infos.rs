@@ -43,7 +43,7 @@ impl Intercalatable for Vec<String>{
 ///
 /// Example:
 /// ```
-/// use music_theory::libr::infos::*;
+/// use music_theory::utils::infos::*;
 /// let v = vec![
 ///     "AAAA".to_string(),
 ///     "BBBBBBBB".to_string(),
@@ -81,7 +81,7 @@ pub fn format_even(strings: &[String], spaces: usize, end: &str) -> String{
 ///
 /// Example:
 /// ```
-/// use music_theory::libr::infos::*;
+/// use music_theory::utils::infos::*;
 /// let v = vec![
 ///     "X", "XX", "XXX", "XXXX", "XXXXXX", "XXXXX",
 ///     "Y", "YY", "YYY", "YYYY", "YYYYYY", "YYYYY",

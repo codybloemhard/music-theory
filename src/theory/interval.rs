@@ -1,9 +1,13 @@
-use super::traits::{
-    GeneratablePartialOrder, OctaveShiftable, AddInterval, ToInterval, ToNamedInterval,
-    Cyclic, ToNamedOctaveInterval, Wrapper, AsIonianRelativeStringTry
+use crate::{
+    utils::{ impl_op, impl_op_assign },
+    theory::{
+        traits::{
+            GeneratablePartialOrder, OctaveShiftable, AddInterval, ToInterval, ToNamedInterval,
+            Cyclic, ToNamedOctaveInterval, Wrapper, AsIonianRelativeStringTry
+        },
+        note::{ Note, Octave, OctaveShift },
+    },
 };
-use super::note::{ Note, Octave, OctaveShift };
-use crate::utils::{ impl_op, impl_op_assign };
 use self::note_interval::*;
 
 use std::cmp::Ordering;

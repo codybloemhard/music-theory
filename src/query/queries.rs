@@ -1,9 +1,13 @@
-use crate::theory::{ Steps, Chord, Scale, Note, RootedChord, PC, Interval };
-use crate::theory::traits::{
-    VecWrapper, ToChord, ToRootedChord, ToPCs, ModeIteratorSpawner, ToScaleTry, ToNote, AsScaleTry,
-    AsRelativeIntervals, ScaleIteratorSpawner
+use crate::{
+    libr::{ ModeObj, get_all_scale_objs, ionian },
+    theory::{
+        traits::{
+            VecWrapper, ToChord, ToRootedChord, ToPCs, ModeIteratorSpawner, ToScaleTry, ToNote,
+            AsScaleTry, AsRelativeIntervals, ScaleIteratorSpawner
+        },
+        Steps, Chord, Scale, Note, RootedChord, PC, Interval
+    },
 };
-use crate::libr::{ ModeObj, get_all_scale_objs, ionian };
 
 use fnrs::Sequence;
 

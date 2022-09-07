@@ -1,8 +1,10 @@
-use super::traits::{
-    Wrapper, Cyclic, ToPC, ToNote, ToLetterTry, ToEnharmonicNote, ToEnharmonicNoteTry,
-    AsEnharmonicNotes
+use super::{
+    traits::{
+        Wrapper, Cyclic, ToPC, ToNote, ToLetterTry, ToEnharmonicNote, ToEnharmonicNoteTry,
+        AsEnharmonicNotes
+    },
+    Note, PC, Interval
 };
-use super::{ Note, PC, Interval };
 
 /// A letter represents one of the letters musical notes can start with.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]

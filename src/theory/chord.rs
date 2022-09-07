@@ -1,9 +1,11 @@
-use super::{ Note, Notes, Scale };
-use super::interval::{ *, note_interval::* };
-use super::traits::{
-    VecWrapper, Wrapper, ToNamedInterval, AsScale, ToPC, ToRootedChord, AsSubs
+use crate::{
+    utils::is_sorted,
+    theory::{
+        interval::{ *, note_interval::* },
+        traits::{ VecWrapper, Wrapper, ToNamedInterval, AsScale, ToPC, ToRootedChord, AsSubs },
+        Note, Notes, Scale
+    },
 };
-use super::super::utils::{ is_sorted };
 
 use itertools::*;
 

@@ -1,9 +1,13 @@
-use super::traits::{
-    Cyclic, ToNote, ToPC, ToLetterTry, ToEnharmonicNote, AsScaleTry, OctaveShiftable,
-    AsSteps, AsStepsTry, AsSubs
+use crate::{
+    theory::{
+        traits::{
+            Cyclic, ToNote, ToPC, ToLetterTry, ToEnharmonicNote, AsScaleTry, OctaveShiftable,
+            AsSteps, AsStepsTry, AsSubs
+        },
+        Note, _Note, Letter, Interval, EnharmonicNote, Scale, Octave, Steps
+    },
+    utils::sub_vecs
 };
-use super::{ Note, _Note, Letter, Interval, EnharmonicNote, Scale, Octave, Steps };
-use crate::utils::sub_vecs;
 
 use std::ops::{ RangeBounds, Bound };
 
