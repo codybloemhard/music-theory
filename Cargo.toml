@@ -1,12 +1,12 @@
 [package]
 name = "music-theory-query"
-version = "0.2.1"
+version = "0.2.2"
 authors = ["Cody Bloemhard <codybloemhard@gmail.com>"]
 edition = "2021"
 description = "Music theory queries"
 readme = "README.md"
 license = "GPL-3.0"
-repository = "https://github.com/codybloemhard/music-theory"
+repository = "https://gitlab.com/codybloemhard/music-theory"
 keywords = ["music", "library"]
 # categories = ["command-line-interface"]
 
