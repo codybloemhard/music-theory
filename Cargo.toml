@@ -1,6 +1,6 @@
 [package]
 name = "music-theory-query"
-version = "0.2.2"
+version = "0.2.3"
 authors = ["Cody Bloemhard <codybloemhard@gmail.com>"]
 edition = "2021"
 description = "Music theory queries"

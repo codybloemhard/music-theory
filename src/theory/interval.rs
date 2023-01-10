@@ -290,7 +290,7 @@ impl NamedOctaveInterval{
 }
 
 pub(crate) fn _interval_mod(i: i32) -> i32{
-    ((i % 12) + 12) % 12
+    i.rem_euclid(12)
 }
 
 impl std::ops::Neg for Interval{
