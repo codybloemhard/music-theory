@@ -2,8 +2,10 @@ use crate::{
     utils::is_sorted,
     theory::{
         interval::{ *, note_interval::* },
-        traits::{ VecWrapper, Wrapper, ToNamedInterval, AsScale, ToPC, ToRootedChord, AsSubs },
-        Note, Notes, Scale
+        traits::{
+            VecWrapper, Wrapper, ToNamedInterval, AsScale, ToNote, ToPC, ToRootedChord, AsSubs
+        },
+        Note, Notes, Scale, PC
     },
 };
 
@@ -651,6 +653,31 @@ impl std::fmt::Display for ScaleDegree{
     }
 }
 
+impl ToPC for ScaleDegree{
+    fn to_pc(self) -> PC{
+        match self{
+            Self::I    => PC::A,
+            Self::bII  => PC::As,
+            Self::II   => PC::B,
+            Self::bIII => PC::C,
+            Self::III  => PC::Cs,
+            Self::IV   => PC::D,
+            Self::bV   => PC::Ds,
+            Self::V    => PC::E,
+            Self::bVI  => PC::F,
+            Self::VI   => PC::Fs,
+            Self::bVII => PC::G,
+            Self::VII  => PC::Gs,
+        }
+    }
+}
+
+impl ToNote for ScaleDegree{
+    fn to_note(self) -> Note{
+        self.to_pc().to_note()
+    }
+}
+
 impl RelativeChord{
     /// Create a new `RelativeChord` from a [ScaleDegree][crate::theory::chord::ScaleDegree]
     /// and the chord intervals.
@@ -1069,6 +1096,38 @@ mod tests{
         assert_eq!(&ScaleDegree::VI.to_string(), "VI");
         assert_eq!(&ScaleDegree::bVII.to_string(), "bVII");
         assert_eq!(&ScaleDegree::VII.to_string(), "VII");
+    }
+
+    #[test]
+    fn scale_degree_to_pc(){
+        assert_eq!(ScaleDegree::I.to_pc(), PC::A);
+        assert_eq!(ScaleDegree::bII.to_pc(), PC::As);
+        assert_eq!(ScaleDegree::II.to_pc(), PC::B);
+        assert_eq!(ScaleDegree::bIII.to_pc(), PC::C);
+        assert_eq!(ScaleDegree::III.to_pc(), PC::Cs);
+        assert_eq!(ScaleDegree::IV.to_pc(), PC::D);
+        assert_eq!(ScaleDegree::bV.to_pc(), PC::Ds);
+        assert_eq!(ScaleDegree::V.to_pc(), PC::E);
+        assert_eq!(ScaleDegree::bVI.to_pc(), PC::F);
+        assert_eq!(ScaleDegree::VI.to_pc(), PC::Fs);
+        assert_eq!(ScaleDegree::bVII.to_pc(), PC::G);
+        assert_eq!(ScaleDegree::VII.to_pc(), PC::Gs);
+    }
+
+    #[test]
+    fn scale_degree_to_note(){
+        assert_eq!(ScaleDegree::I.to_note(), Note::A0);
+        assert_eq!(ScaleDegree::bII.to_note(), Note::AS0);
+        assert_eq!(ScaleDegree::II.to_note(), Note::B0);
+        assert_eq!(ScaleDegree::bIII.to_note(), Note::C0);
+        assert_eq!(ScaleDegree::III.to_note(), Note::CS0);
+        assert_eq!(ScaleDegree::IV.to_note(), Note::D0);
+        assert_eq!(ScaleDegree::bV.to_note(), Note::DS0);
+        assert_eq!(ScaleDegree::V.to_note(), Note::E0);
+        assert_eq!(ScaleDegree::bVI.to_note(), Note::F0);
+        assert_eq!(ScaleDegree::VI.to_note(), Note::FS0);
+        assert_eq!(ScaleDegree::bVII.to_note(), Note::G0);
+        assert_eq!(ScaleDegree::VII.to_note(), Note::GS0);
     }
 
     #[test]
