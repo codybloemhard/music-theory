@@ -258,7 +258,7 @@ impl ToEnharmonicNoteTry for String{
 
 impl AsEnharmonicNotes for String{
     fn as_enharmonic_notes(&self) -> Vec<EnharmonicNote>{
-        self.split(',').into_iter().filter_map(
+        self.split(',').filter_map(
             |s| s.to_string().to_enharmonic_note_try()
         ).collect::<Vec<_>>()
     }

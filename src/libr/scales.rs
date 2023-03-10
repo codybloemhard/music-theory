@@ -68,7 +68,7 @@ impl ScaleObj{
     /// assert_eq!(&major.get_mode_name(2), "Phrygian");
     /// ```
     pub fn get_mode_name(&self, mode: Mode) -> String{
-        let m = mode as usize % self.steps.len();
+        let m = mode % self.steps.len();
         let name = self.modes[m].clone();
         if name.is_empty(){
             String::from("")

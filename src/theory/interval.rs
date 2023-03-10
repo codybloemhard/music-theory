@@ -306,7 +306,6 @@ impl_op!(std::ops::Sub, Interval, Interval, sub, sub, Self::new);
 impl_op_assign!(std::ops::AddAssign, Interval, add_assign, add);
 impl_op_assign!(std::ops::SubAssign, Interval, sub_assign, sub);
 
-
 // Is tested but tarpaulin doesn't see it?
 #[cfg(not(tarpaulin))]
 impl RangeBounds<Interval> for Interval{
@@ -426,7 +425,7 @@ impl OctaveShiftable for Interval{
 
 impl AddInterval for Interval{
     fn add_interval(self, interval: Interval) -> Option<Self>{
-        let res = (self.0 as i32).checked_add(interval.0)?;
+        let res = self.0.checked_add(interval.0)?;
         match res < Self::MIN.0 || res > Self::MAX.0{
             true => None,
             false => Some(Self(res)),
