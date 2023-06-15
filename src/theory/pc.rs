@@ -4,12 +4,12 @@ use crate::{
             Cyclic, ToNote, ToPC, ToLetterTry, ToEnharmonicNote, AsScaleTry, OctaveShiftable,
             AsSteps, AsStepsTry, AsSubs
         },
-        Note, _Note, Letter, Interval, EnharmonicNote, Scale, Octave, Steps
+        Note, _Note, Letter, Interval, EnharmonicNote, Scale, Octave, Steps, ScaleDegree
     },
-    utils::sub_vecs
+    utils::sub_vecs,
 };
 
-use std::ops::{ RangeBounds, Bound };
+use std::ops::{ RangeBounds, Bound, Add, AddAssign };
 
 /// First of twelve pitch classes.
 pub const A:  PC = PC::A; /// Second of twelve pitch classes.
@@ -56,6 +56,34 @@ impl PC{
         PC::A, PC::As, PC::B, PC::C, PC::Cs, PC::D,
         PC::Ds, PC::E, PC::F, PC::Fs, PC::G, PC::Gs
     ];
+}
+
+impl Add for PC{
+    type Output = PC;
+
+    fn add(self, other: Self) -> Self{
+        (self.to_note() + other.to_note()).to_pc()
+    }
+}
+
+impl AddAssign for PC{
+    fn add_assign(&mut self, other: Self){
+        *self = self.add(other);
+    }
+}
+
+impl Add<ScaleDegree> for PC {
+    type Output = PC;
+
+    fn add(self, rhs: ScaleDegree) -> Self{
+        self + rhs.to_pc()
+    }
+}
+
+impl AddAssign<ScaleDegree> for PC{
+    fn add_assign(&mut self, other: ScaleDegree){
+        *self = self.add(other.to_pc())
+    }
 }
 
 /// Type defined for convenience.
@@ -205,6 +233,44 @@ mod tests{
         for (i, pc) in PC::ALL.iter().enumerate(){
             assert_eq!(pc.to_note().inside() as usize, i);
         }
+    }
+
+    #[test]
+    fn add(){
+        assert_eq!(PC::A + PC::A, PC::A);
+        assert_eq!(PC::C + PC::A, PC::C);
+        assert_eq!(PC::Gs + PC::As, PC::A);
+    }
+
+    #[test]
+    fn add_assign(){
+        for x in PC::ALL.into_iter(){
+            for y in PC::ALL.into_iter(){
+                let mut z = x;
+                z += y;
+                assert_eq!(z, x + y);
+            }
+        }
+    }
+
+    #[test]
+    fn add_scale_degree(){
+        for pc in PC::ALL.into_iter(){
+            assert_eq!(pc, pc + ScaleDegree::I);
+        }
+        assert_eq!(PC::C + ScaleDegree::V, PC::G);
+    }
+
+    #[test]
+    fn add_assign_scale_degree(){
+        for pc in PC::ALL.into_iter(){
+            let mut x = pc;
+            x += ScaleDegree::I;
+            assert_eq!(pc, x);
+        }
+        let mut x = PC::A;
+        x += ScaleDegree::V;
+        assert_eq!(x, PC::E);
     }
 
     #[test]

@@ -162,7 +162,7 @@ pub struct RelativeChord{
 /// );
 /// ```
 #[allow(non_camel_case_types)]
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum ScaleDegree{
     #[allow(missing_docs)] I,
     #[allow(missing_docs)] bII,
@@ -633,6 +633,21 @@ impl AsSubs for RootedChord{
     }
 }
 
+impl ScaleDegree{
+
+    /// All scale degrees in an array so you can iterate over them.
+    ///
+    /// Example:
+    /// ```
+    /// use music_theory::theory::*;
+    /// assert_eq!(ScaleDegree::ALL.iter().copied().next(), Some(ScaleDegree::I));
+    /// ```
+    pub const ALL: [Self; 12] = [
+        Self::I, Self::bII, Self::II, Self::bIII, Self::III, Self::IV, Self::bV,
+        Self::V, Self::bVI, Self::VI, Self::bVII, Self::VII
+    ];
+}
+
 impl std::fmt::Display for ScaleDegree{
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result{
         let res = match self{
@@ -715,6 +730,38 @@ impl RelativeChord{
     /// ```
     pub fn as_string(&self, style: ChordStyle) -> String{
         self.chord.quality(self.degree.to_string(), style)
+    }
+
+    /// Convert to a [RootedChord][crate::theory::chord::RootedChord].
+    ///
+    /// Example:
+    /// ```
+    /// use music_theory::theory::*;
+    /// let rel_chord = RelativeChord::new(ScaleDegree::I, &MAJOR);
+    /// let root_chord = RootedChord::new(Note::C0, &MAJOR);
+    /// assert_eq!(rel_chord.to_rooted_chord_with_pc(PC::C), root_chord);
+    /// ```
+    pub fn to_rooted_chord_with_pc(self, tonic: PC) -> RootedChord{
+        RootedChord{
+            root: (tonic + self.degree).to_note(),
+            chord: self.chord,
+        }
+    }
+
+    /// Convert to a [RootedChord][crate::theory::chord::RootedChord].
+    ///
+    /// Example:
+    /// ```
+    /// use music_theory::theory::*;
+    /// let rel_chord = RelativeChord::new(ScaleDegree::I, &MAJOR);
+    /// let root_chord = RootedChord::new(Note::C2, &MAJOR);
+    /// assert_eq!(rel_chord.to_rooted_chord_with_note(Note::C2), root_chord);
+    /// ```
+    pub fn to_rooted_chord_with_note(self, tonic: Note) -> RootedChord{
+        RootedChord{
+            root: tonic + self.degree.to_note(),
+            chord: self.chord,
+        }
     }
 }
 
@@ -1162,6 +1209,20 @@ mod tests{
             &RelativeChord::new(ScaleDegree::II, MINOR_NINTH_CHORD).to_string(),
             "II-9"
         );
+    }
+
+    #[test]
+    fn relative_chord_to_rooted_chord_with_pc(){
+        let rel_chord = RelativeChord::new(ScaleDegree::I, &MAJOR);
+        let root_chord = RootedChord::new(Note::C0, &MAJOR);
+        assert_eq!(rel_chord.to_rooted_chord_with_pc(PC::C), root_chord);
+    }
+
+    #[test]
+    pub fn relative_chord_to_rooted_chord_with_note(){
+        let rel_chord = RelativeChord::new(ScaleDegree::I, &MAJOR);
+        let root_chord = RootedChord::new(Note::C2, &MAJOR);
+        assert_eq!(rel_chord.to_rooted_chord_with_note(Note::C2), root_chord);
     }
 
     #[test]
