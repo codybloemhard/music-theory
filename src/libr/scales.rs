@@ -7,6 +7,7 @@ use std::fmt::Write;
 
 /// Scale Object.
 /// Contains information on a scale family.
+#[derive(Debug, Default, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct ScaleObj{
     /// Steps describe the base scale in the family.
     pub steps: Steps,
