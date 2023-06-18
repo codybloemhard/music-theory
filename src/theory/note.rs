@@ -143,6 +143,18 @@ impl Note{
         let x = self.0 as i32 - 48;
         (2.0f32).powf(x as f32 / OCTAVE.0 as f32) * 440.0f32
     }
+
+    /// Return the equivalent MIDI note.
+    /// `Note::A4` has an inner value of 48 and a MIDI note number of 69.
+    ///
+    /// Example:
+    /// ```
+    /// use music_theory::theory::*;
+    /// assert_eq!(Note::A4.to_midi_note(), 69);
+    /// ```
+    pub fn to_midi_note(&self) -> u8{
+        self.0.min(127) as u8 + 21
+    }
 }
 
 // General implementations
@@ -275,6 +287,11 @@ mod tests{
     #[test]
     fn to_pitch(){
         assert_eq!(Note::A4.to_pitch().round() as i32, 440);
+    }
+
+    #[test]
+    fn to_midi_note(){
+        assert_eq!(Note::A4.to_midi_note(), 69);
     }
 
     #[test]
