@@ -147,6 +147,12 @@ impl Note{
 
 // General implementations
 
+impl std::fmt::Display for Note{
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result{
+        write!(f, "{}{}", self.to_pc(), self.0 / 12)
+    }
+}
+
 impl Sub for Note{
     type Output = Interval;
 
@@ -260,6 +266,11 @@ mod tests{
     use super::*;
     use crate::theory::*;
     use crate::interval::note_interval::{ SEMI, WHOLE, MIN3 };
+
+    #[test]
+    fn to_string(){
+        assert_eq!(&Note::A4.to_string(), "A4");
+    }
 
     #[test]
     fn to_pitch(){
