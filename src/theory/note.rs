@@ -196,7 +196,7 @@ impl Wrapper for Note{
     type Inner = _Note;
 
     fn wrap(note: Self::Inner) -> Option<Self>{
-        if note > Self::MAX.0 || note < Self::MIN.0{
+        if note > Self::MAX.0 {
             None
         } else {
             Some(Self(note))

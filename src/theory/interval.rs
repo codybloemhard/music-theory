@@ -206,7 +206,7 @@ impl Interval{
     /// assert_eq!(Interval::new_try((1 << 30) + 1), None)
     /// ```
     pub fn new_try(i: i32) -> Option<Self>{
-        if i > Self::MAX.0 || i < Self::MIN.0 {
+        if !(Self::MIN.0 ..= Self::MAX.0).contains(&i) {
             None
         } else {
             Some(Self(i))
@@ -354,7 +354,7 @@ impl Wrapper for Interval{
     type Inner = i32;
 
     fn wrap(interval: Self::Inner) -> Option<Self>{
-        if interval > Self::MAX.0 || interval < Self::MIN.0{
+        if !(Self::MIN.0 ..= Self::MAX.0).contains(&interval){
             None
         } else {
             Some(Self(interval))
@@ -426,7 +426,7 @@ impl OctaveShiftable for Interval{
 impl AddInterval for Interval{
     fn add_interval(self, interval: Interval) -> Option<Self>{
         let res = self.0.checked_add(interval.0)?;
-        match res < Self::MIN.0 || res > Self::MAX.0{
+        match !(Self::MIN.0 ..= Self::MAX.0).contains(&res){
             true => None,
             false => Some(Self(res)),
         }
