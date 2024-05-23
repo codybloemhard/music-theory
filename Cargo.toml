@@ -1,12 +1,12 @@
 [package]
 name = "music-theory-query"
-version = "1.1.0"
+version = "1.1.1"
 authors = ["Cody Bloemhard <codybloemhard@gmail.com>"]
 edition = "2021"
 description = "Music theory queries"
 readme = "README.md"
 license = "GPL-3.0"
-repository = "https://gitlab.com/codybloemhard/music-theory"
+repository = "https://github.com/codybloemhard/music-theory"
 keywords = ["music", "library"]
 # categories = ["command-line-interface"]
 
@@ -21,7 +21,7 @@ path = "src/bin.rs"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-fnrs = "0.1.4"
-itertools = "0.10.3"
+fnrs = "0.1.7"
+itertools = "0.13.0"
 lapp = "0.4.0"
-vec-string = "0.1.1"
+vec-string = "0.2.0"
